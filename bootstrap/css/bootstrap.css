@@ -5051,11 +5051,11 @@ a.thumbnail.active {
   position: relative;
   top: -2px;
   right: -21px;
-  color: inherit;
+  color: white;
 }
 .alert-success {
-  color: #3c763d;
-  background-color: #dff0d8;
+  background: rgba(34, 139, 32,0.8);
+  color: white;
   border-color: #d6e9c6;
 }
 .alert-success hr {
@@ -5087,8 +5087,8 @@ a.thumbnail.active {
   color: #66512c;
 }
 .alert-danger {
-  color: #a94442;
-  background-color: #f2dede;
+  background: rgba(214, 81, 65 ,0.8);
+  color: white;
   border-color: #ebccd1;
 }
 .alert-danger hr {
@@ -5841,14 +5841,14 @@ button.list-group-item-danger.active:focus {
   font-size: 21px;
   font-weight: bold;
   line-height: 1;
-  color: #000;
+  color: white;
   text-shadow: 0 1px 0 #fff;
   filter: alpha(opacity=20);
   opacity: .2;
 }
 .close:hover,
 .close:focus {
-  color: #000;
+  color: white;
   text-decoration: none;
   cursor: pointer;
   filter: alpha(opacity=50);
