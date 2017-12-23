@@ -235,7 +235,7 @@ class form_receive
 					$_SESSION['operator_id']=$operator_data['operator_id'];
 					$_SESSION['operator_name']=$operator_data['operator_name'];
 					$_SESSION['operator_username']=$username;
-					header ('location: home.php');		
+					header ('location: /ems/includes/home.php');		
 				}
 				else 
 				{	

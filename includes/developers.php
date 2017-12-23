@@ -49,8 +49,8 @@
 </head>
 <body>
     <?php
-    require("frontend_lib.php");
-    require("class_lib.php");
+    require($_SERVER['DOCUMENT_ROOT']."/ems/includes/frontend_lib.php");
+    require($_SERVER['DOCUMENT_ROOT']."/ems/includes/class_lib.php");
     $head=new head();
     $head->displayheader();
     $head->dispmenu(1,["home.php"],["glyphicon glyphicon-home"],["Home"]);
@@ -59,19 +59,19 @@
     ?>
     <div class="devp_contain col-md-12">
         <div class="well well-lg col-md-4">
-            <a href="images/chayan_bansal.jpg"><img src="images/chayan_bansal.jpg" alt="" height="300" class="img-rounded"></a> 
+            <a href="images/chayan_bansal.jpg"><img src="/ems/images/chayan_bansal.jpg" alt="" height="300" class="img-rounded"></a> 
             <div class="name">Chayan Bansal</div>
             <div class="email"><i class="glyphicon glyphicon-envelope"></i> <a href="mailto:bansalc10@gmail.com"> bansalc10@gmail.com </a></div>
             <div class="phone"><i class="glyphicon glyphicon-earphone"></i>+91-9644959600 </div>
         </div>
         <div class="well well-lg col-md-4">
-            <a href="images/raghav_mundhra.jpg"><img src="images/raghav_mundhra.jpg" alt="" height="300" class="img-rounded"> </a> 
+            <a href="images/raghav_mundhra.jpg"><img src="/ems/images/raghav_mundhra.jpg" alt="" height="300" class="img-rounded"> </a> 
             <div class="name">Raghav Mundhra</div>
             <div class="email"><i class="glyphicon glyphicon-envelope"></i> <a href="mailto:raghav.mundhra3011@gmail.com">raghav.mundhra3011@gmail.com</a></div>
             <div class="phone"><i class="glyphicon glyphicon-earphone"></i>+91-9981625830</div>
         </div>
         <div class="well well-lg col-md-4">
-            <a href="images/samyak_jain.jpg"><img src="images/samyak_jain.jpg" alt="" height="300" class="img-rounded"></a> 
+            <a href="images/samyak_jain.jpg"><img src="/ems/images/samyak_jain.jpg" alt="" height="300" class="img-rounded"></a> 
             <div class="name">Samyak Jain</div>
             <div class="email"><i class="glyphicon glyphicon-envelope"></i> <a href="mailto:jainsamyak330@gmail.com">jainsamyak330@gmail.com</a></div>
             <div class="phone"><i class="glyphicon glyphicon-earphone"></i>+91-8085479525</div>

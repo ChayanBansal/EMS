@@ -1,13 +1,16 @@
-<link rel="stylesheet" href="../bootstrap/css/bootstrap.css">
+<?php
+$docroot=$_SERVER['DOCUMENT_ROOT']."/ems/";
+?>
+<link rel="stylesheet" href="/ems/bootstrap/css/bootstrap.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-     <script src="../bootstrap/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="../css/front_styles.css">
+     <script src="/ems/bootstrap/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/ems/css/front_styles.css">
 <link href="https://fonts.googleapis.com/css?family=Cabin|Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto" rel="stylesheet">
 
 <?php
 class head{
     var $title="Symbiosis University of Applied Sciences";
-    var $logo="../images/logo2.jpg";
+    var $logo="/ems/images/logo2.jpg";
     var $rtitle="Examination Portal";
     function displayheader(){
         echo(' <div class="container">

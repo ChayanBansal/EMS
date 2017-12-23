@@ -28,16 +28,16 @@ if(isset($_POST['username'])){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Examination Portal</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <?php
-    require_once("config.php");
-    require("frontend_lib.php");
-    require("class_lib.php");
+    require_once("includes/config.php");
+    require("includes/frontend_lib.php");
+    require("includes/class_lib.php");
     $obj=new head();
     $obj->displayheader();
-    $obj->dispmenu(3,["home.php","index.php","developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-in","glyphicon glyphicon-info-sign"],["Home","Log In","About Us"]);
+    $obj->dispmenu(3,["includes/home.php","index.php","includes/developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-in","glyphicon glyphicon-info-sign"],["Home","Log In","About Us"]);
     $formobj=new form();
     $formobj->display("","","","","","","","");
     ?>
