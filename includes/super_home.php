@@ -193,7 +193,7 @@ $options->create_course($conn);
                     $get_courses_qry="SELECT course_name from courses";
                     $get_courses_qry_run=mysqli_query($conn,$get_courses_qry);
                     while($row=mysqli_fetch_assoc($get_courses_qry_run)){
-                        
+
                     }
                     ?>
                 </select>

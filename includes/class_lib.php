@@ -1090,5 +1090,45 @@ class data_table
 		}
 	}
 
+class create_operator{
+	function execute($conn){
+		if(isset($_POST['create']))
+{
+	$operator_name=$_POST['operator_name'];
+	$operator_email=$_POST['operator_email'];
+	if($operator_name=="")
+	{
+		$er = new alert();
+		$er->exec("Please enter operator name!", "alert");
+	}
+	if($operator_email=="")
+	{
+		$er = new alert();
+		$er->exec("Please enter operator email!", "alert");
+	}
+	$operator_username=substr($operator_email,0,2).substr($operator_name,0,2);
+	
+	$temp_pass=substr($operator_email,0,1)."".mt_rand(2000,6000);
+	$operator_password=md5($temp_pass);
+	$create_operator_query="INSERT INTO operators(operator_name, operator_email, operator_username, operator_password) 
+							VALUES('$operator_name', '$operator_email', '$operator_username', '$operator_password')";
+	try{$create_query_run=mysqli_query($conn,$create_operator_query);}
+	catch(Exception $e){$er = new alert(); $er->exec("Not able to connect to database!", "danger");}
+	if($create_query_run==TRUE)
+	{
+		$er = new alert();
+		$er->exec("New operator created!", "success");
+	}
+		$sent=0;
+		/*require('creation_mail.php');
+		if($sent==1){$er->exec("New operator created and a mail containing the login details has been sent!", "success");}*/
+	}
+	else
+	{
+		$er = new alert();
+		
+}	
+}
+}
 
 ?>
