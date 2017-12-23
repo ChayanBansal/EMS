@@ -1,7 +1,9 @@
 Chayan
+Samyak
 <?php
 //raghav
 //dropbox accha hai
+//Git Rocks
 session_start();
 session_destroy();
 session_start();
@@ -11,7 +13,6 @@ if(isset($_POST['login'])){
         header('location: /ems/super_login.php');
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
