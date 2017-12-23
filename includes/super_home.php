@@ -101,7 +101,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
         </div>
     </div>
     </div>
-	<!-- Create operator Modal -->
+	<!-- Create operator Modal Box-->
 	<!-- Modal -->
   <div class="modal fade" id="cr_op_modal" role="dialog">
     <div class="modal-dialog">
