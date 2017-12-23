@@ -80,7 +80,7 @@ $options->create_course($conn);
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
             <div class="sub-option" id="subopt1">
-                <button><i class="glyphicon glyphicon-plus"></i> Add</button>
+            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add</button>
                 <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
@@ -227,12 +227,52 @@ $options->create_course($conn);
         
       </div>
     </div>
+    	<!-- Create operator Modal Box-->
+	<!-- Modal -->
+  <div class="modal fade" id="cr_op_modal" role="dialog">
+    <div class="modal-dialog">
     
+      <!-- Modal content-->
+      <div class="modal-content">
+        <form action="<?php echo($_SERVER['PHP_SELF']);?>" method="post">
+		<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Fill in the following details to create a new operator</h4>
+        </div>
+        <div class="modal-body">
+          
+			<table>
+			   <tr>
+				<td>Operator Name: </td>
+				<td><?php $creation=new input_field(); $creation->display("", "", "text", "operator_name", "Name of Operator", 1); ?></td>
+			   </tr>
+			   <tr>
+				<td>Operator Email: </td>
+				<td><?php $creation->display("", "", "email", "operator_email", "Email of Operator", 1); ?>
+			   </tr>
+			  </table>
+			 
+		  
+        </div>
+        <div class="modal-footer">
+		  
+          <?php $creation_b=new input_button(); $creation_b->display("","btn btn-success","submit","create","submit","Create");?>
+		  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+		</form>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
   </div>
   <!--End-->
     <?php
     $obj = new footer();
     $obj->disp_footer();
+    $cr_op = new create_operator();
+	$cr_op->execute($conn);
     ?>
 </body>
 <script>
