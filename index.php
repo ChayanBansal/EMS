@@ -1,9 +1,4 @@
-
 <?php
-//raghav
-//dropbox accha hai
-//Git Rocks
-//Dono achhe hain apni apni khaysiyat hai
 session_start();
 session_destroy();
 session_start();

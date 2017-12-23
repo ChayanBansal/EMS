@@ -15,7 +15,7 @@
     require("includes/class_lib.php");
     $obj=new head();
     $obj->displayheader();
-    $obj->dispmenu(3,["includes/home.php","index.php","includes/developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-in","glyphicon glyphicon-info-sign"],["Home","Log In","About Us"]);
+    $obj->dispmenu(3,["includes/home.php","/index.php","includes/developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-in","glyphicon glyphicon-info-sign"],["Home","Log In","About Us"]);
     $user_name = new input_field();
     $password = new input_field();
     $submit = new input_button();
