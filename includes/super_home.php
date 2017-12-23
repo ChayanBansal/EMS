@@ -30,6 +30,7 @@
         font-family: 'PT Sans', sans-serif;
     }
     .sub-option{
+        margin-top: 5px;
         display: none;
         width: 100%;
         background: orangered;
