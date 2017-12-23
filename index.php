@@ -8,7 +8,6 @@ if(isset($_POST['login'])){
         header('location: /ems/super_login.php');
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
