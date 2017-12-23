@@ -9,6 +9,7 @@
 </head>
 <body>
     <?php
+    session_start();
     require_once("includes/config.php");
     require("includes/frontend_lib.php");
     require("includes/class_lib.php");
@@ -73,7 +74,6 @@
         </script>
 </html>
 <?php
-//Backend scripting
     $super_login=new form_receive();
     $super_login->super_login();
 ?>

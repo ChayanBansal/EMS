@@ -212,6 +212,7 @@ class form_receive
 		$alert=new alert();
 		if (isset($_POST['superlogin'])) //check button click
 		{
+			$_SESSION['1']="hello";
 			require("config.php");
 			$form_input_check = new input_check();
 			$username = md5($form_input_check->input_safe($conn,$_POST['username'])); //preventing SQL injection //name of the input field should be username
@@ -225,7 +226,6 @@ class form_receive
 					 //creating session//values of id, name and username
 					$_SESSION['super_admin_id']=$operator_data['super_admin_id'];
 					$_SESSION['super_admin_name']=$operator_data['super_admin_name'];
-					echo('set'.$_SESSION['super_admin_name']);
 					$_SESSION['super_admin_username']=$username;
 					$_SESSION['1']=1;
 					header ('location: /ems/includes/super_home.php');		
@@ -350,6 +350,32 @@ class dashboard{
 		</div>
 	</div>');
 	}
+	function display_super_dashboard($name,$options,$href,$last_option){
+		echo('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header"><a class="navbar-brand" href="#">Welcome, <b>'.$name.'</b></a>
+				
+			</div>
+			
+				<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="glyphicon glyphicon-cog"></i> Settings <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+				');
+				$i=0;
+				foreach($options as $option){
+					echo('<li><a href="'.$href[$i].'">'.$option.'</a></li>
+					');
+					$i++;
+				}
+				echo('	</ul>
+			  </li>
+			  <li><a href="mailto:coe@suas.ac.in"><i class="glyphicon glyphicon-envelope" style=""></i> '.$last_option.'</a></li>
+				</ul>
+			
+		</div>
+	</div>');
+	}
+	
 }
 class validate{
 	function conf_logged_in(){

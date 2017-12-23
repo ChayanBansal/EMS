@@ -5,7 +5,7 @@ $docroot=$_SERVER['DOCUMENT_ROOT']."/ems/";
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
      <script src="/ems/bootstrap/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="/ems/css/front_styles.css">
-<link href="https://fonts.googleapis.com/css?family=Cabin|Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Cabin|Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|PT+Sans" rel="stylesheet">
 
 <?php
 class head{
