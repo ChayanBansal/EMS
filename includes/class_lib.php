@@ -1106,6 +1106,10 @@ class create_operator{
 		$er = new alert();
 		$er->exec("Please enter operator email!", "alert");
 	}
+	$get_operator_list_query="SELECT operator_email from operators";
+	$get_op_list_query_run=mysqli_query($conn, $get_operator_list_query);
+	if(mysqli_num_rows($get_op_list_query_run)==0)
+	{
 	$operator_username=substr($operator_email,0,2).substr($operator_name,0,2);
 	
 	$temp_pass=substr($operator_email,0,1)."".mt_rand(2000,6000);
@@ -1127,6 +1131,7 @@ class create_operator{
 	{
 		$er = new alert();
 		
+	}
 }	
 }
 }
