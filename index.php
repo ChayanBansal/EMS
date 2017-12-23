@@ -2,24 +2,6 @@
 session_start();
 session_destroy();
 session_start();
-$_SESSION['superflag']=FALSE;
-if(isset($_SESSION['operator_id']))
-{
-	header('location: home.php');
-}
-if(isset($_SESSION['superadmin_id']))
-{
-	header('location: super_home.php');
-}
-?>
-<?php
-
-if(isset($_POST['username'])){
-    if(md5($_POST['username'])=="088c6475bae0675d3de5721bf4a11993"){
-        $_SESSION['superflag']=TRUE;
-    }
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,10 +20,36 @@ if(isset($_POST['username'])){
     $obj=new head();
     $obj->displayheader();
     $obj->dispmenu(3,["includes/home.php","index.php","includes/developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-in","glyphicon glyphicon-info-sign"],["Home","Log In","About Us"]);
-    $formobj=new form();
-    $formobj->display("","","","","","","","");
+    $user_name = new input_field();
+    $password = new input_field();
+    $submit = new input_button();
     ?>
-
+<form action='' method='post'>
+    <div class="form-container">
+		<div class="main">
+			 <div class="login">
+				 <div class="titleform">
+						Sign In
+				 </div>
+				 <div class="field" id="f1"> <span class="glyphicon glyphicon-user"></span>
+                 <?php
+                 $user_name->display_w_js("","","text","username","Username","1","change()","change2()");
+                 ?>
+				 </div>
+				 <div class="field" id="f2"><span class="glyphicon glyphicon-lock"></span>
+                 <?php
+                 $password->display_w_js("","","password","password","Password","1","change3()","change4()");
+                 ?>
+                 </div>
+				 <div class="field">
+                 <?php
+                 $submit->display("","","submit","login","openover()","Sign In");
+                 ?>
+                 </div>
+			 </div>
+			 </div>
+			 </div>
+			 </form>
     <?php
         $obj=new footer();
         $obj->disp_footer();
@@ -71,11 +79,6 @@ if(isset($_POST['username'])){
 </html>
 <?php
 //Backend scripting
-if($_SESSION['superflag']==TRUE){
-    $_SESSION['superflag']=FALSE;
-}
-else{
     $op_login=new form_receive();
     $op_login->login();
-}
 ?>

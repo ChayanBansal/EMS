@@ -105,46 +105,6 @@ class input_check
 	}
 }
 
-
-
-class form
-{
-
-	function display($form_id,$form_class,$id_1,$class_1,$id_2,$class_2,$button_id,$button_class)
-	{
-		$user_name = new input_field();
-		$password = new input_field();
-		$submit = new input_button();
-		
-		echo "<form action='' method='post'>";
-		echo('<div class="form-container">
-		<div class="main">
-			 <div class="login">
-				 <div class="titleform">');
-					 if($_SESSION['superflag']==TRUE){
-						 echo("Super-Admin");
-					 }else{
-						 echo("Sign In");
-					 }
-				 echo('</div>
-				 <div class="field" id="f1"> <span class="glyphicon glyphicon-user"></span>');
-				 $user_name->display_w_js("","","text","username","Username","1","change()","change2()");
-				 echo('</div>
-				 <div class="field" id="f2"><span class="glyphicon glyphicon-lock"></span>');
-				 $password->display_w_js("","","password","password","Password","1","change3()","change4()");
-				 echo('</div>
-				 <div class="field">');
-				 $submit->display("","","submit","login","openover()","Sign In");
-				 echo('</div>
-			 </div>
-			 </div>
-			 </div>');
-			 
-			 echo '</form>';
-			
-	}
-	 
-}
 class alert{
 	function exec($msg,$class){
 		echo(' <div class="alert alert-'.$class.' fade in" id="err" style="position:fixed; top:0;left:0;z-index:200">'.$msg.'<span class="close" data-dismiss="alert" style="font-size:2.6rem">&times</span></div>');
