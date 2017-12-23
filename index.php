@@ -2,6 +2,13 @@
 session_start();
 session_destroy();
 session_start();
+if(isset($_POST['login'])){
+    $super_key="17c4520f6cfd1ab53d8745e84681eb49";
+    if(md5($_POST['username'])==$super_key){
+        header('location: /ems/super_login.php');
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

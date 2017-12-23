@@ -107,7 +107,7 @@ class input_check
 
 class alert{
 	function exec($msg,$class){
-		echo(' <div class="alert alert-'.$class.' fade in" id="err" style="position:fixed; top:0;left:0;z-index:200">'.$msg.'<span class="close" data-dismiss="alert" style="font-size:2.6rem">&times</span></div>');
+		echo(' <div class="alert alert-'.$class.' fade in" id="err" style="position:fixed; top:0;left:0;z-index:200; width:100%; text-align:center">'.$msg.'<span class="close" data-dismiss="alert" style="font-size:2.6rem">&times</span></div>');
 	}
 } 
 
@@ -196,6 +196,39 @@ class form_receive
 					$_SESSION['operator_name']=$operator_data['operator_name'];
 					$_SESSION['operator_username']=$username;
 					header ('location: /ems/includes/home.php');		
+				}
+				else 
+				{	
+					$alert->exec("Please check your username or password!","danger");
+				}
+			}
+			else{
+				$alert->exec("Unable to connect to the server!","danger");
+			}
+		}
+	}
+	function super_login(){
+		
+		$alert=new alert();
+		if (isset($_POST['superlogin'])) //check button click
+		{
+			require("config.php");
+			$form_input_check = new input_check();
+			$username = md5($form_input_check->input_safe($conn,$_POST['username'])); //preventing SQL injection //name of the input field should be username
+			$password = md5($form_input_check->input_safe($conn,$_POST['password']));//preventing SQL injection //name of the input field should be password
+			$login_query="SELECT * FROM super_admin WHERE super_admin_username='$username' AND super_admin_password='$password'";
+			$login_query_run=mysqli_query($conn,$login_query);
+			if($login_query_run){
+				if(mysqli_num_rows($login_query_run)==1)
+				{
+					$operator_data=$login_query_run->fetch_assoc();
+					 //creating session//values of id, name and username
+					$_SESSION['super_admin_id']=$operator_data['super_admin_id'];
+					$_SESSION['super_admin_name']=$operator_data['super_admin_name'];
+					echo('set'.$_SESSION['super_admin_name']);
+					$_SESSION['super_admin_username']=$username;
+					$_SESSION['1']=1;
+					header ('location: /ems/includes/super_home.php');		
 				}
 				else 
 				{	

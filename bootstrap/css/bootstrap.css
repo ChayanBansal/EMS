@@ -5027,6 +5027,9 @@ a.thumbnail.active {
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: 4px;
+  font-size: 1.8rem;
+  font-family: 'Roboto';
+  font-weight: normal;
 }
 .alert h4 {
   margin-top: 0;
@@ -5054,7 +5057,7 @@ a.thumbnail.active {
   color: white;
 }
 .alert-success {
-  background: rgba(34, 139, 32,0.8);
+  background: rgba(34, 139, 32,0.9);
   color: white;
   border-color: #d6e9c6;
 }
@@ -5087,7 +5090,7 @@ a.thumbnail.active {
   color: #66512c;
 }
 .alert-danger {
-  background: rgba(214, 81, 65 ,0.8);
+  background: rgba(214, 81, 65 ,0.9);
   color: white;
   border-color: #ebccd1;
 }
@@ -5844,7 +5847,6 @@ button.list-group-item-danger.active:focus {
   color: white;
   text-shadow: 0 1px 0 #fff;
   filter: alpha(opacity=20);
-  opacity: .2;
 }
 .close:hover,
 .close:focus {
