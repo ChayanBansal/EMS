@@ -278,6 +278,34 @@ class course
 		
 	}
 }
+class super_user_options{
+	function create_course($conn){
+		if(isset($_POST['course_submit'])){
+			$level=0;
+			switch($_POST['level']){
+				case 'ug':
+				$level=1;
+				case 'pg':
+				$level=2;
+				default:
+				$level=1;
+			}
+			$create_course_qry="INSERT into courses(level_id,course_name,duration) VALUES($level,'".$_POST['cname']."',".$_POST['cduration'].")";
+			$create_course_qry_run=mysqli_query($conn,$create_course_qry);
+			echo($create_course_qry);
+			if($create_course_qry_run){
+				$_SESSION['course_inserted']=$_POST['cname'];
+				$_SESSION['semester']=$_POST['cduration']*2;
+				header("location: create_subject.php");
+			}
+			else{
+				$alert=new alert();
+				$alert->exec("Unable to process query! Please try again","danger");
+			}
+		}
+	
+	}
+}
 class useroptions{
 	function display($conn){
 		$button1=new input_button();

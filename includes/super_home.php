@@ -55,7 +55,9 @@
             opacity: 1;
         }
     }
-    
+    form label{
+        font-size: 1.6rem !important;
+    }
     </style>
 </head>
 <body>
@@ -69,6 +71,8 @@ $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/home.php", "/ems/includes/index.php", "/ems/includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "");
+$options = new super_user_options();
+$options->create_course($conn);
 ?>
     <div class="main-container col-md-12">
     <div class="sub-container">
@@ -85,7 +89,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             <div><i class="glyphicon glyphicon-file"></i></div>
             <div>Courses</div>
             <div class="sub-option" id="subopt2">
-                <button><i class="glyphicon glyphicon-plus"></i> Add</button>
+                <button data-toggle="modal" data-target="#addcourseModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
                 <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
@@ -97,10 +101,135 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                 <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
+            <div class="option pink" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
+            <div><i class="glyphicon glyphicon-user"></i></div>
+            <div>Subjects</div>
+            <div class="sub-option" id="subopt4">
+                <button><i class="glyphicon glyphicon-plus"></i> Add</button>
+                <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+            </div>
+            </div>
         </div>
-        </div>
+
+    </div>
+    </div> 
     </div>
     </div>
+    <!-- Course Modal -->
+    <div class="modal fade" id="addcourseModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Add New Course</h4>
+          </div>
+          <form action="" method="post">
+          <div class="modal-body">
+           
+                <?php
+                $input = new input_field();
+                ?>
+                <div class="form-group">
+                <label for="name">Course Name</label>
+                <?php
+                $input->display("name", "form-control", "text", "cname", "", 1);
+                ?>
+                </div>
+                <div class="form-group">
+                <label for="type">Course Type</label>
+                <select name="level" id="type" class="form-control">
+                    <option value="ug">Undergraduate</option>
+                    <option value="pg">Postgraduate</option>
+                </select>
+                </div>
+                <div class="form-group">
+                <label for="duration">Duration</label>
+                <?php
+                $input->display_table("duration", "form-control", "number", "cduration", "", 1, 1, 10, 0, 10);
+                ?>
+                </div>
+                <div class="form-group">
+                <label for="number">Number of subjects</label>
+                <?php
+                $input->display_table("number", "form-control", "number", "c_no_subjects", "", 1, 0, 20, 0, 20);
+                ?> 
+                </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+  
+  <!-- ADD Subject Modal -->
+  <div class="modal fade" id="addsubjectModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Add Subjects</h4>
+          </div>
+          <form action="" method="post">
+          <div class="modal-body">
+           
+                <?php
+                $input = new input_field();
+                ?>
+                <div class="form-group">
+                <label for="name">Course Name</label>
+                <select name="course" id="">
+                    <?php
+                    $get_courses_qry="SELECT course_name from courses";
+                    $get_courses_qry_run=mysqli_query($conn,$get_courses_qry);
+                    while($row=mysqli_fetch_assoc($get_courses_qry_run)){
+                        
+                    }
+                    ?>
+                </select>
+                </div>
+                <div class="form-group">
+                <label for="type">Course Type</label>
+                <select name="level" id="type" class="form-control">
+                    <option value="ug">Undergraduate</option>
+                    <option value="pg">Postgraduate</option>
+                </select>
+                </div>
+                <div class="form-group">
+                <label for="duration">Duration</label>
+                <?php
+                $input->display_table("duration", "form-control", "number", "cduration", "", 1, 1, 10, 0, 10);
+                ?>
+                </div>
+                <div class="form-group">
+                <label for="number">Number of subjects</label>
+                <?php
+                $input->display_table("number", "form-control", "number", "c_no_subjects", "", 1, 0, 20, 0, 20);
+                ?> 
+                </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
     <?php
     $obj = new footer();
     $obj->disp_footer();
