@@ -114,7 +114,7 @@ $options->create_course($conn);
             </div>
             </div>
             <div class="option green" onmouseover="show('subopt3')" onmouseout="hide('subopt3')">
-            <div><i class="glyphicon glyphicon-file"></i></div>
+            <div><i class="glyphicon glyphicon-retweet"></i></div>
             <div>Marks Processing</div>
             <div class="sub-option" id="subopt3">
                 <button><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
@@ -122,7 +122,7 @@ $options->create_course($conn);
             </div>
             </div>
             <div class="option pink" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
-            <div><i class="glyphicon glyphicon-user"></i></div>
+            <div><i class="glyphicon glyphicon-list-alt"></i></div>
             <div>Subjects</div>
             <div class="sub-option" id="subopt4">
                 <button data-toggle="modal" data-target="#addsubjectModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
