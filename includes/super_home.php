@@ -76,6 +76,7 @@
     }
     table caption{
         text-align: center;
+        margin: 5px;
     }
     </style>
 </head>
@@ -201,12 +202,27 @@ $options->create_course($conn);
 
    <caption class="form-inline">
         <div class="form-group">
-            <select name="mcourse" id="" class="form-control">
+            <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester()">
             <option value="" disabled selected>Select a course</option>   
+            <?php
+            $get_course_qry="SELECT * from courses";
+            $get_course_qry_run=mysqli_query($conn,$get_course_qry);
+            if($get_course_qry_run){
+                while($row=mysqli_fetch_assoc($get_course_qry_run)){
+                    echo('
+                    <option value="'.$row['course_id'].'" data-course-duration='.$row['duration'].'>'.$row['course_name'].'</option>   
+                    ');
+                }
+            }
+            else{
+                $alert=new alert();
+                $alert->exec("Unable to fetch courses!", "warning");
+            }
+            ?>
         </select>
         </div>
         <div class="form-group">
-            <select name="msemester" id="" class="form-control">
+            <select name="msemester" id="msemester" class="form-control">
             <option value="" disabled selected>Select semester</option>  
            </select>
         </div>
@@ -315,6 +331,17 @@ $options->create_course($conn);
         if(document.getElementById("no_subjects").value>1)
         document.getElementById("no_subjects").value--;
         display_subjects('down');
+    }
+    function show_semester(){
+        var sel = document.getElementById("mcourse");
+        var duration = sel.options[sel.selectedIndex].getAttribute("data-course-duration");
+        var sem=document.getElementById("msemester");
+        sem.innerHTML=`<option value="" disabled selected>Select semester</option> `;
+        for(var i=1;i<=duration;i++){
+            sem.innerHTML+=`
+            <option value="`+i+`">`+i+`</option>
+            `;
+        }
     }
     function display_subjects(direction){
         var val=document.getElementById("no_subjects").value;
