@@ -81,7 +81,7 @@ $options->create_course($conn);
             <div>Operators</div>
             <div class="sub-option" id="subopt1">
             <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-                <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+                <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
         </div>
@@ -268,6 +268,27 @@ $options->create_course($conn);
 </div>
   </div>
   <!--End-->
+  
+  <!-- Modal Box for viewing operators-->
+  <div id="view_op_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Operators</h4>
+      </div>
+      <div class="modal-body">
+        <?php $v_op = new view_operators; $v_op->execute($conn);?>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
     <?php
     $obj = new footer();
     $obj->disp_footer();

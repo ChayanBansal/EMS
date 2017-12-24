@@ -1101,39 +1101,112 @@ class create_operator{
 		$er = new alert();
 		$er->exec("Please enter operator name!", "alert");
 	}
-	if($operator_email=="")
+	else if($operator_email=="")
 	{
 		$er = new alert();
 		$er->exec("Please enter operator email!", "alert");
 	}
+	else{
 	$get_operator_list_query="SELECT operator_email from operators";
 	$get_op_list_query_run=mysqli_query($conn, $get_operator_list_query);
-	if(mysqli_num_rows($get_op_list_query_run)==0)
+	$permit=1;
+	while($row=mysqli_fetch_assoc($get_op_list_query_run))
 	{
-	$operator_username=substr($operator_email,0,2).substr($operator_name,0,2);
-	
-	$temp_pass=substr($operator_email,0,1)."".mt_rand(2000,6000);
-	$operator_password=md5($temp_pass);
-	$create_operator_query="INSERT INTO operators(operator_name, operator_email, operator_username, operator_password) 
-							VALUES('$operator_name', '$operator_email', '$operator_username', '$operator_password')";
-	try{$create_query_run=mysqli_query($conn,$create_operator_query);}
-	catch(Exception $e){$er = new alert(); $er->exec("Not able to connect to database!", "danger");}
-	if($create_query_run==TRUE)
-	{
-		$er = new alert();
-		$er->exec("New operator created!", "success");
+		if($row['operator_email']==$operator_email)
+		{
+			$permit=0;
+		}
 	}
-		$sent=0;
-		/*require('creation_mail.php');
-		if($sent==1){$er->exec("New operator created and a mail containing the login details has been sent!", "success");}*/
-	}
-	else
+	if($permit==1)
 	{
-		$er = new alert();
+		$i=0;
+		$j=0;
+		while($i<strlen($operator_email))
+		{
+			if(substr($operator_email,$i,1)!="@")
+			{
+				$j++;
+			}
+			else
+			{
+				break;
+			}
+			$i++;
+		}
 		
+		$operator_username=substr($operator_email,0,$j);
+	
+		$temp_pass=substr($operator_email,0,2)."".mt_rand(1000,9999);
+		$operator_password=md5($temp_pass);
+		$create_operator_query="INSERT INTO operators(operator_name, operator_email, operator_username, operator_password) 
+								VALUES('$operator_name', '$operator_email', '$operator_username', '$operator_password')";
+		try{$create_query_run=mysqli_query($conn,$create_operator_query);}
+		catch(Exception $e){$er = new alert(); $er->exec("Not able to connect to database!", "danger");}
+		if($create_query_run==TRUE)
+		{
+			$er = new alert();
+			$er->exec("New operator created!", "success");
+			$sent=0;
+			/*require('creation_mail.php');
+			if($sent==1){$er->exec("New operator created and a mail containing the login details has been sent!", "success");}*/
+		}
+		else
+		{
+			$er = new alert();
+			$er->exec("Error while creating new operator!", "danger");
+		}
 	}
-}	
+	else{
+		$er = new alert();
+			$er->exec("Operator already exists!", "danger");
+	}
+}
+}
 }
 }
 
+class view_operators
+{
+	function execute($conn)
+	{
+		$get_op_query="SELECT operator_name, operator_username, operator_email from operators";
+		$get_op_run=mysqli_query($conn,$get_op_query);
+		if(mysqli_num_rows($get_op_run)==0)
+		{
+			$al = new alert();
+			$al->exec("No operator exists!", "danger");
+		}
+		else
+		{
+			echo('
+              
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>');
+			
+			
+			while($result=mysqli_fetch_assoc($get_op_run))
+			{
+				
+      echo('
+	  <tr>
+        <td>'.$result["operator_name"].'</td>
+        <td>'.$result["operator_username"].'</td>
+        <td>'.$result["operator_email"].'</td>
+      </tr>');
+			}
+			echo('
+    </tbody>
+  </table>');
+				
+				
+			}
+		}
+	}
 ?>
