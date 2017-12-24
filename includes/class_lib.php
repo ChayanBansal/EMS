@@ -183,10 +183,11 @@ class form_receive
 		{
 			require("config.php");
 			$form_input_check = new input_check();
-			$username = md5($form_input_check->input_safe($conn,$_POST['username'])); //preventing SQL injection //name of the input field should be username
+			$username = $form_input_check->input_safe($conn,$_POST['username']); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn,$_POST['password']));//preventing SQL injection //name of the input field should be password
 			$login_query="SELECT * FROM operators WHERE operator_username='$username' AND operator_password='$password'";
 			$login_query_run=mysqli_query($conn,$login_query);
+			
 			if($login_query_run){
 				if(mysqli_num_rows($login_query_run)==1)
 				{
@@ -199,7 +200,7 @@ class form_receive
 				}
 				else 
 				{	
-					$alert->exec("Please check your username or password!","danger");
+					//$alert->exec("Please check your username or password!","danger");
 				}
 			}
 			else{
@@ -219,7 +220,10 @@ class form_receive
 			$password = md5($form_input_check->input_safe($conn,$_POST['password']));//preventing SQL injection //name of the input field should be password
 			$login_query="SELECT * FROM super_admin WHERE super_admin_username='$username' AND super_admin_password='$password'";
 			$login_query_run=mysqli_query($conn,$login_query);
-			if($login_query_run){
+			
+			if($login_query_run)
+			{
+				
 				if(mysqli_num_rows($login_query_run)==1)
 				{
 					$operator_data=$login_query_run->fetch_assoc();
@@ -248,34 +252,50 @@ class course
 		$i=mt_rand(0,4);
 		return $colors[$i];
 	}
+	
+	
+	
 	function display($conn)
 	{
-		$course_query="SELECT * FROM courses";
-		$c_q_run=mysqli_query($conn,$course_query);
-		if($c_q_run){
-			echo('<form action="useroptions.php" method="post">
-			<div class="tcaption">
-			COURSE SELECTION<br></div>
-			<div class="cr_container">
-			<div class="cr_restrict">
-			');
-			$i=0;
-			while ($courses=mysqli_fetch_assoc($c_q_run))
-			{
-				$c=$courses['course_name'];
-				$cid=$courses['course_id'];
-				$_SESSION['course_id_list'][$i]=$cid;
-				$button=new input_button();
-				$button->display("","course ".$this->randomize(),"submit","course","",$c);   //$id,$class,$type,$name,$onclick,$value
-			}
-			echo('</div>
-			</div></form>');
-		}
-		else{
-			$error=new alert();
-			$error->exec("Error connecting to database!","danger");
-		}
-		
+		echo('<div class="display_courses">
+			<form action="select_course.php" method="post"> 
+				<div class="tcaption"> 	COURSE SELECTION <br></div>');
+				//UG list
+				$ug_list_query="SELECT * FROM courses where level_id=1";
+				$ug_l_run=mysqli_query($conn,$ug_list_query);
+
+				$pg_list_query="SELECT * FROM courses where level_id=2";
+				$pg_l_run=mysqli_query($conn,$pg_list_query);
+
+				echo('<div class="c_ug_pg">');
+					echo('<div class="course_list">
+						<div class="level_head">Undergraduate</div>');
+					while($ug_course=mysqli_fetch_assoc($ug_l_run))
+					{		
+						$course_id=$ug_course['course_id'];
+						$course_name=$ug_course['course_name'];
+						$button=new input_button();
+						$button->display("s_c","course ".$this->randomize(),"submit",$course_id,"",$course_name);   //$id,$class,$type,$name,$onclick,$value
+					}
+					echo('</div>');
+					//UG list close
+					//PG list
+					
+					echo('<div class="course_list">
+						<div class="level_head">Postgraduate</div>');
+					while($pg_course=mysqli_fetch_assoc($pg_l_run))
+					{		
+						$course_id=$pg_course['course_id'];
+						$course_name=$pg_course['course_name'];
+						$button=new input_button();
+						$button->display("s_c","course ".$this->randomize(),"submit",$course_id,"",$course_name);   //$id,$class,$type,$name,$onclick,$value
+					}
+					echo('</div>');
+				echo('</div>');
+				//UG list close
+			echo('</form>
+		</div>
+		');		
 	}
 }
 class super_user_options{
@@ -408,7 +428,7 @@ class dashboard{
 class validate{
 	function conf_logged_in(){
 		if(!isset($_SESSION['operator_id']) && !isset($_SESSION['superadmin_id'])){
-			header('location:index.php');
+			header('location:../index.php');
 		}
 	}
 }
