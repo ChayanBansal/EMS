@@ -80,10 +80,12 @@
             ?></td>
        <td><label for="" id="total" class="form-control disabled"></label></td>
        <td style="text-align: center"><?php
-            $input->display_table("ie", "form-control", "checkbox", "enrol", "", 1, 0, 0, 0, 0)
-            ?></td>
+                                        $input->display_table("ie", "form-control", "checkbox", "enrol", "", 1, 0, 0, 0, 0)
+                                        ?></td>
      </tbody>
   </table>
+    </div>
+</form>
 <?php
 $obj = new footer();
 $obj->disp_footer();
