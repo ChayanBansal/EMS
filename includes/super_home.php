@@ -16,10 +16,17 @@
         justify-content: center;
         align-items: center;
     }
+    .modal-container{
+        width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    }
     .option{
-        padding: 15px;
-        padding-right: 30px;
-        padding-left: 30px;
+        padding: 20px;
+        padding-right: 40px;
+        padding-left: 40px;
         margin: 20px;
         display: flex;
         flex-wrap: wrap;
@@ -46,6 +53,10 @@
     .sub-option button:hover{
         background: white;
         color: orangered;
+    }
+    .sub-container{
+        display: flex;
+        align-items: center;
     }
     @keyframes fadein{
         0%{
@@ -76,6 +87,10 @@
     }
     table caption{
         text-align: center;
+        margin: 5px;
+    }
+    caption select{
+        margin: 5px;
     }
     </style>
 </head>
@@ -92,6 +107,7 @@ $dashboard = new dashboard();
 $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "");
 $options = new super_user_options();
 $options->create_course($conn);
+$options->add_subject($conn)
 ?>
     <div class="main-container col-md-12">
     <div class="sub-container">
@@ -103,7 +119,6 @@ $options->create_course($conn);
                 <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
-        </div>
         <div class="option blue" onmouseover="show('subopt2')" onmouseout="hide('subopt2')">
             <div><i class="glyphicon glyphicon-file"></i></div>
             <div>Courses</div>
@@ -113,7 +128,7 @@ $options->create_course($conn);
             </div>
             </div>
             <div class="option green" onmouseover="show('subopt3')" onmouseout="hide('subopt3')">
-            <div><i class="glyphicon glyphicon-file"></i></div>
+            <div><i class="glyphicon glyphicon-retweet"></i></div>
             <div>Marks Processing</div>
             <div class="sub-option" id="subopt3">
                 <button><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
@@ -121,15 +136,15 @@ $options->create_course($conn);
             </div>
             </div>
             <div class="option pink" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
-            <div><i class="glyphicon glyphicon-user"></i></div>
+            <div><i class="glyphicon glyphicon-list-alt"></i></div>
             <div>Subjects</div>
             <div class="sub-option" id="subopt4">
                 <button data-toggle="modal" data-target="#addsubjectModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
                 <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
-        </div>
 
+    </div>
     </div>
     </div> 
     </div>
@@ -195,25 +210,70 @@ $options->create_course($conn);
           </div>
           <form action="" method="post">
             <div class="modal-body">
-           
-            <div class="feed-container">
+            <div class="modal-container">
+        <div class="component">
+           <table class="table table-bordered table-responsive">
+               <caption>Subject Components</caption>
+               <tr>
+                <th>Component</th>
+               <th>Passing Marks</th>
+               <th>Maximum Marks</th>
+               </tr>
+               <?php
+               $get_components_qry="SELECT * from component";
+               $get_components_qry_run=mysqli_query($conn,$get_components_qry);
+               if($get_components_qry_run){
+                   while($row=mysqli_fetch_assoc($get_components_qry_run)){
+                       echo('
+                       <tr>
+                       <td>'.$row['component_name'].'</td>
+                       <td>');
+                           $input->display("","form-control input-sm","number","pass".$row['component_id'],"",1);
+                           echo('
+                       </td>
+                       <td>');
+                           
+                           $input->display("","form-control input-sm","number","max".$row['component_id'],"",1);
+                           echo('</td>
+                        </tr>
+                       ');
+                   }
+               }
+               ?>
+               
+            </table>
+        </div>
     <table class="table table-striped table-responsive table-bordered">
-
    <caption class="form-inline">
         <div class="form-group">
-            <select name="mcourse" id="" class="form-control">
+            <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester()">
             <option value="" disabled selected>Select a course</option>   
+            <?php
+            $get_course_qry="SELECT * from courses";
+            $get_course_qry_run=mysqli_query($conn,$get_course_qry);
+            if($get_course_qry_run){
+                while($row=mysqli_fetch_assoc($get_course_qry_run)){
+                    echo('
+                    <option value="'.$row['course_id'].'" data-course-duration='.$row['duration'].'>'.$row['course_name'].'</option>   
+                    ');
+                }
+            }
+            else{
+                $alert=new alert();
+                $alert->exec("Unable to fetch courses!", "warning");
+            }
+            ?>
         </select>
         </div>
         <div class="form-group">
-            <select name="msemester" id="" class="form-control">
+            <select name="msemester" id="msemester" class="form-control">
             <option value="" disabled selected>Select semester</option>  
            </select>
         </div>
         <div class="form-group">
             <div class="input-group">
             <span class="input-group-addon" onclick="subtract()"><i class="glyphicon glyphicon-minus"></i></span>
-            <input type="number" class="form-control" placeholder="Number of subjects" id="no_subjects" onkeyup="display_subjects('down')">
+            <input type="number" name="number_subjects" class="form-control" placeholder="Number of subjects" id="no_subjects" onkeyup="display_subjects('down')">
             <span class="input-group-addon" onclick="add()"><i class="glyphicon glyphicon-plus"></i></span>
             </div>
         </div>
@@ -239,7 +299,7 @@ $options->create_course($conn);
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
+            <button type="submit" class="btn btn-primary" name="add_sub_submit">Submit</button>
         </div>
         </form> 
         </div>
@@ -337,12 +397,21 @@ $options->create_course($conn);
         document.getElementById("no_subjects").value--;
         display_subjects('down');
     }
+    function show_semester(){
+        var sel = document.getElementById("mcourse");
+        var duration = sel.options[sel.selectedIndex].getAttribute("data-course-duration");
+        var sem=document.getElementById("msemester");
+        sem.innerHTML=`<option disabled selected>Select semester</option> `;
+        for(var i=1;i<=duration;i++){
+            sem.innerHTML+=`
+            <option value="`+i+`">`+i+`</option>
+            `;
+        }
+    }
     function display_subjects(direction){
         var val=document.getElementById("no_subjects").value;
         var table=document.getElementById("subject_area");
-        if(direction=="down"){
-            table.innerHTML="";
-        }
+        table.innerHTML="";
         if(isNaN(val)){
             table.innerHTML="Add a subject to insert";
         }
@@ -350,35 +419,98 @@ $options->create_course($conn);
                         for(var i=1;i<=val;i++){
                         table.innerHTML+=`
                         <tr>
-                <td><?php
-                        $input->display_table("subcode", "form-control", "text", "subcode", "", 1, 0, 0, 0, 0);
-                        ?></td>
-                <td><?php
-                        $input->display_table("subname", "form-control", "text", "subname", "", 1, 0, 0, 0, 0);
-                        ?></td>
                 <td>
-                <select name="type" id="" class="form-control">
-                            
+                <input type="text" name="subcode`+i+`" id="subcode`+i+`" class="form-control" required>
+                </td>
+                <td>
+                <input type="text" name="subname`+i+`" id="subname`+i+`" class="form-control" required>
+                </td>
+                <td>
+                <select name="type`+i+`" id="type`+i+`" class="form-control" onchange="check_credits(this,`+i+`)">            
                 <option value="theory">Theory</option>
                     <option value="practical">Practical</option>
-                <option value="both">Both</option>         
+                <option value="both" selected>Both</option>         
                     </select>
                 </td>
                 
-                <td><?php
-                        $input->display_table("theory", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-                        ?></td>
-                    <td><?php
-                        $input->display_table("practical", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-                        ?></td>
-                <td><label for="" id="total" class="form-control disabled"></label></td>
-                <td style="text-align: center"><?php
-                            $input->display_table("ie", "form-control", "checkbox", "enrol", "", 1, 0, 0, 0, 0)
-                        ?></td>
+                <td>
+                <input type="number" name="theory`+i+`" id="theory`+i+`" class="form-control" onkeyup="total(`+i+`)" value=0 required>
+                </td>
+                <td>
+                <input type="number" name="practical`+i+`" id="practical`+i+`" class="form-control" onkeyup="total(`+i+`)" value=0 required> 
+                </td>
+                <td><input id="total`+i+`" name="total`+i+`" class="form-control disabled" readonly type="number"></td>
+                <td style="text-align: center">
+                <input type="checkbox" name="ie`+i+`" id="ie`+i+`" class="form-control" onchange="disable_credits(this,`+i+`)">
+                </td>
                         `;
                     }
         }
        
     }
+    function total(no){
+        var theory=parseInt(document.getElementById("theory"+no).value);
+        var practical=parseInt(document.getElementById("practical"+no).value);
+        document.getElementById("total"+no).value=theory+practical;
+    }
+    function disable_credits(el,no){
+        var practical=document.getElementById("practical"+no);
+        var theory=document.getElementById("theory"+no);
+
+        if(el.checked){   
+        practical.classList.add("disabled");
+            practical.required=false;
+            practical.disabled=true;
+            theory.classList.add("disabled");
+            theory.required=false;
+            theory.disabled=true;
+            theory.value=0;
+            practical.value=0;
+        }
+        else{
+            
+        practical.classList.remove("disabled");
+            practical.required=true;
+            practical.disabled=false;
+            theory.classList.remove("disabled");
+            theory.required=true;
+            theory.disabled=false;
+        }
+       }
+    function check_credits(el,no){
+        var typename = el.options[el.selectedIndex].value;
+        console.log(typename);
+        var practical=document.getElementById("practical"+no);
+        var theory=document.getElementById("theory"+no);
+        switch (typename) {
+            case 'theory':
+            practical.classList.add("disabled");
+            practical.required=false;
+            practical.disabled=true;
+            theory.classList.remove("disabled");
+            theory.required=true;
+            theory.disabled=false;
+            practical.value=0;
+            break;
+            case 'practical':
+            theory.classList.add("disabled");
+            theory.required=false;
+            theory.disabled=true;
+            practical.classList.remove("disabled");
+            practical.required=true;
+            practical.disabled=false;
+            theory.value=0;
+            break;
+            case 'both':
+            theory.classList.remove("disabled");
+            theory.required=true;
+            theory.disabled=false;
+            practical.classList.remove("disabled");
+            practical.required=true;
+            practical.disabled=false;
+            break;
+        }
+    }
 </script>
+
 </html>

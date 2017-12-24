@@ -300,6 +300,7 @@ class course
 }
 class super_user_options{
 	function create_course($conn){
+		$alert=new alert();
 		if(isset($_POST['course_submit'])){
 			$level=0;
 			switch($_POST['level']){
@@ -316,15 +317,109 @@ class super_user_options{
 			if($create_course_qry_run){
 				$_SESSION['course_inserted']=$_POST['cname'];
 				$_SESSION['semester']=$_POST['cduration']*2;
-				header("location: create_subject.php");
+				$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course</a>',"success");
 			}
 			else{
-				$alert=new alert();
 				$alert->exec("Unable to process query! Please try again","danger");
 			}
 		}
 	
 	}
+	function add_subject($conn){
+		if(isset($_POST['add_sub_submit'])){
+			$no_of_sub=$_POST['number_subjects'];
+			$course_id=$_POST['mcourse'];
+			$semester=$_POST['msemester'];
+			for($i=1;$i<=$no_of_sub;$i++){
+				$subcode=$_POST['subcode'.$i];
+				$subname=$_POST['subname'.$i];
+				$type=$_POST['type'.$i];
+				if(isset($_POST['theory'.$i])){
+					$theory_cr=$_POST['theory'.$i];
+				}
+				else{
+					$theory_cr=0;
+				}
+				if(isset($_POST['practical'.$i])){
+					$practical_cr=$_POST['practical'.$i];
+				}
+				else{
+					$practical_cr=0;
+				}
+				$total_cr=$_POST['total'.$i];
+				$cat_pass=$_POST['pass1'];
+				$cat_max=$_POST['max1'];
+				$end_theory_pass=$_POST['pass2'];
+				$end_theory_max=$_POST['max2'];
+				$cap_pass=$_POST['pass3'];
+				$cap_max=$_POST['max3'];
+				$end_practical_pass=$_POST['pass4'];
+				$end_practical_max=$_POST['max4'];
+				$ia_pass=$_POST['pass5'];
+				$ia_max=$_POST['max5'];
+				if(isset($_POST['ie'.$i])){
+					$ie=1;
+					$theory_cr=0;
+					$practical_cr=0;
+					$total_cr=0;
+				}
+				else{
+					$ie=0;
+				}
+				$add_subject_qry="INSERT into subjects values('".$subcode."',".$course_id.",'".$subname."',".$total_cr.",".$semester.",".$ie.")";
+				$add_subject_qry_run=mysqli_query($conn,$add_subject_qry);
+				$alert=new alert();
+				if($add_subject_qry_run){
+					
+					switch ($type) {
+						case 'theory':
+						$sub_distribution_qry="INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('".$subcode."',0,".$theory_cr.")";	
+						break;
+					
+						case 'practical':
+						$sub_distribution_qry="INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('".$subcode."',0,".$theory_cr.")";	
+						break;
+						case 'both':
+						$sub_distribution_qry="INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('".$subcode."',0,".$theory_cr."),('".$subcode."',1,".$practical_cr.")";	
+						break;
+					}
+					$sub_distribution_qry_run=mysqli_query($conn,$sub_distribution_qry);
+					if($sub_distribution_qry_run){
+						$get_sub_id_qry="SELECT * from sub_distribution where sub_code='".$subcode."'";
+						$get_sub_id_qry_run=mysqli_query($conn,$get_sub_id_qry);
+						if($get_sub_id_qry_run){
+							while($row=mysqli_fetch_assoc($get_sub_id_qry_run)){
+								if($row['practical_flag']==0){
+									$comp_distribution_qry="INSERT into component_distribution VALUES(1,".$row['sub_id'].",".$cat_pass.",".$cat_max."),(2,".$row['sub_id'].",".$end_theory_pass.",".$end_theory_max.")";
+								}else{
+									$comp_distribution_qry="INSERT into component_distribution VALUES(3,".$row['sub_id'].",".$cap_pass.",".$cap_max."),(4,".$row['sub_id'].",".$end_practical_pass.",".$end_practical_max."),(5,".$row['sub_id'].",".$ia_pass.",".$ia_max.")";					
+								}
+								$comp_distribution_qry_run=mysqli_query($conn,$comp_distribution_qry);
+							}
+							if($comp_distribution_qry_run){
+								$alert->exec("Records successfully inserted!","success");
+							}
+							else{
+								echo($comp_distribution_qry);
+								$alert->exec("Unable to distribute components","danger");
+							}
+
+						}
+						else{
+							$alert->exec("Unable to fetch subjects","danger");
+						}
+					}
+					else{
+						$alert->exec("Unable to distribute subjects","danger");
+					}
+				}
+				else{
+					$alert->exec("Unable to insert subjects","danger");
+				}
+			}
+		}
+	}
+
 }
 class useroptions{
 	function display($conn){
