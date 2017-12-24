@@ -336,7 +336,7 @@ $options->create_course($conn);
         var sel = document.getElementById("mcourse");
         var duration = sel.options[sel.selectedIndex].getAttribute("data-course-duration");
         var sem=document.getElementById("msemester");
-        sem.innerHTML=`<option value="" disabled selected>Select semester</option> `;
+        sem.innerHTML=`<option disabled selected>Select semester</option> `;
         for(var i=1;i<=duration;i++){
             sem.innerHTML+=`
             <option value="`+i+`">`+i+`</option>
@@ -346,9 +346,7 @@ $options->create_course($conn);
     function display_subjects(direction){
         var val=document.getElementById("no_subjects").value;
         var table=document.getElementById("subject_area");
-        if(direction=="down"){
-            table.innerHTML="";
-        }
+        table.innerHTML="";
         if(isNaN(val)){
             table.innerHTML="Add a subject to insert";
         }
@@ -356,35 +354,98 @@ $options->create_course($conn);
                         for(var i=1;i<=val;i++){
                         table.innerHTML+=`
                         <tr>
-                <td><?php
-                        $input->display_table("subcode", "form-control", "text", "subcode", "", 1, 0, 0, 0, 0);
-                        ?></td>
-                <td><?php
-                        $input->display_table("subname", "form-control", "text", "subname", "", 1, 0, 0, 0, 0);
-                        ?></td>
                 <td>
-                <select name="type" id="" class="form-control">
-                            
+                <input type="text" name="subcode`+i+`" id="subcode`+i+`" class="form-control" required>
+                </td>
+                <td>
+                <input type="text" name="subname`+i+`" id="subname`+i+`" class="form-control" required>
+                </td>
+                <td>
+                <select name="type" id="type`+i+`" class="form-control" onchange="check_credits(this,`+i+`)">            
                 <option value="theory">Theory</option>
                     <option value="practical">Practical</option>
-                <option value="both">Both</option>         
+                <option value="both" selected>Both</option>         
                     </select>
                 </td>
                 
-                <td><?php
-                        $input->display_table("theory", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-                        ?></td>
-                    <td><?php
-                        $input->display_table("practical", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-                        ?></td>
-                <td><label for="" id="total" class="form-control disabled"></label></td>
-                <td style="text-align: center"><?php
-                            $input->display_table("ie", "form-control", "checkbox", "enrol", "", 1, 0, 0, 0, 0)
-                        ?></td>
+                <td>
+                <input type="number" name="theory`+i+`" id="theory`+i+`" class="form-control" onkeyup="total(`+i+`)" value=0 required>
+                </td>
+                <td>
+                <input type="number" name="practical`+i+`" id="practical`+i+`" class="form-control" onkeyup="total(`+i+`)" value=0 required> 
+                </td>
+                <td><label for="" id="total`+i+`" class="form-control disabled" readonly></label></td>
+                <td style="text-align: center">
+                <input type="checkbox" name="ie" id="ie`+i+`" class="form-control" onchange="disable_credits(this,`+i+`)">
+                </td>
                         `;
                     }
         }
        
     }
+    function total(no){
+        var theory=parseInt(document.getElementById("theory"+no).value);
+        var practical=parseInt(document.getElementById("practical"+no).value);
+        document.getElementById("total"+no).innerHTML=theory+practical;
+    }
+    function disable_credits(el,no){
+        var practical=document.getElementById("practical"+no);
+        var theory=document.getElementById("theory"+no);
+
+        if(el.checked){   
+        practical.classList.add("disabled");
+            practical.required=false;
+            practical.disabled=true;
+            theory.classList.add("disabled");
+            theory.required=false;
+            theory.disabled=true;
+            theory.value=0;
+            practical.value=0;
+        }
+        else{
+            
+        practical.classList.remove("disabled");
+            practical.required=true;
+            practical.disabled=false;
+            theory.classList.remove("disabled");
+            theory.required=true;
+            theory.disabled=false;
+        }
+       }
+    function check_credits(el,no){
+        var typename = el.options[el.selectedIndex].value;
+        console.log(typename);
+        var practical=document.getElementById("practical"+no);
+        var theory=document.getElementById("theory"+no);
+        switch (typename) {
+            case 'theory':
+            practical.classList.add("disabled");
+            practical.required=false;
+            practical.disabled=true;
+            theory.classList.remove("disabled");
+            theory.required=true;
+            theory.disabled=false;
+            practical.value=0;
+            break;
+            case 'practical':
+            theory.classList.add("disabled");
+            theory.required=false;
+            theory.disabled=true;
+            practical.classList.remove("disabled");
+            practical.required=true;
+            practical.disabled=false;
+            theory.value=0;
+            break;
+            case 'both':
+            theory.classList.remove("disabled");
+            theory.required=true;
+            theory.disabled=false;
+            practical.classList.remove("disabled");
+            practical.required=true;
+            practical.disabled=false;
+            break;
+        }
+    }
 </script>
+
 </html>
