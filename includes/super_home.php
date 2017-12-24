@@ -16,10 +16,17 @@
         justify-content: center;
         align-items: center;
     }
+    .modal-container{
+        width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    }
     .option{
-        padding: 15px;
-        padding-right: 30px;
-        padding-left: 30px;
+        padding: 20px;
+        padding-right: 40px;
+        padding-left: 40px;
         margin: 20px;
         display: flex;
         flex-wrap: wrap;
@@ -46,6 +53,10 @@
     .sub-option button:hover{
         background: white;
         color: orangered;
+    }
+    .sub-container{
+        display: flex;
+        align-items: center;
     }
     @keyframes fadein{
         0%{
@@ -78,6 +89,9 @@
         text-align: center;
         margin: 5px;
     }
+    caption select{
+        margin: 5px;
+    }
     </style>
 </head>
 <body>
@@ -93,6 +107,7 @@ $dashboard = new dashboard();
 $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "");
 $options = new super_user_options();
 $options->create_course($conn);
+$options->add_subject($conn)
 ?>
     <div class="main-container col-md-12">
     <div class="sub-container">
@@ -104,7 +119,6 @@ $options->create_course($conn);
                 <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
-        </div>
         <div class="option blue" onmouseover="show('subopt2')" onmouseout="hide('subopt2')">
             <div><i class="glyphicon glyphicon-file"></i></div>
             <div>Courses</div>
@@ -129,8 +143,8 @@ $options->create_course($conn);
                 <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
-        </div>
 
+    </div>
     </div>
     </div> 
     </div>
@@ -196,10 +210,40 @@ $options->create_course($conn);
           </div>
           <form action="" method="post">
             <div class="modal-body">
-           
-            <div class="feed-container">
+            <div class="modal-container">
+        <div class="component">
+           <table class="table table-bordered table-responsive">
+               <caption>Subject Components</caption>
+               <tr>
+                <th>Component</th>
+               <th>Passing Marks</th>
+               <th>Maximum Marks</th>
+               </tr>
+               <?php
+               $get_components_qry="SELECT * from component";
+               $get_components_qry_run=mysqli_query($conn,$get_components_qry);
+               if($get_components_qry_run){
+                   while($row=mysqli_fetch_assoc($get_components_qry_run)){
+                       echo('
+                       <tr>
+                       <td>'.$row['component_name'].'</td>
+                       <td>');
+                           $input->display("","form-control input-sm","number","pass".$row['component_id'],"",1);
+                           echo('
+                       </td>
+                       <td>');
+                           
+                           $input->display("","form-control input-sm","number","max".$row['component_id'],"",1);
+                           echo('</td>
+                        </tr>
+                       ');
+                   }
+               }
+               ?>
+               
+            </table>
+        </div>
     <table class="table table-striped table-responsive table-bordered">
-
    <caption class="form-inline">
         <div class="form-group">
             <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester()">
@@ -229,7 +273,7 @@ $options->create_course($conn);
         <div class="form-group">
             <div class="input-group">
             <span class="input-group-addon" onclick="subtract()"><i class="glyphicon glyphicon-minus"></i></span>
-            <input type="number" class="form-control" placeholder="Number of subjects" id="no_subjects" onkeyup="display_subjects('down')">
+            <input type="number" name="number_subjects" class="form-control" placeholder="Number of subjects" id="no_subjects" onkeyup="display_subjects('down')">
             <span class="input-group-addon" onclick="add()"><i class="glyphicon glyphicon-plus"></i></span>
             </div>
         </div>
@@ -255,7 +299,7 @@ $options->create_course($conn);
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
+            <button type="submit" class="btn btn-primary" name="add_sub_submit">Submit</button>
         </div>
         </form> 
         </div>
@@ -361,7 +405,7 @@ $options->create_course($conn);
                 <input type="text" name="subname`+i+`" id="subname`+i+`" class="form-control" required>
                 </td>
                 <td>
-                <select name="type" id="type`+i+`" class="form-control" onchange="check_credits(this,`+i+`)">            
+                <select name="type`+i+`" id="type`+i+`" class="form-control" onchange="check_credits(this,`+i+`)">            
                 <option value="theory">Theory</option>
                     <option value="practical">Practical</option>
                 <option value="both" selected>Both</option>         
@@ -374,9 +418,9 @@ $options->create_course($conn);
                 <td>
                 <input type="number" name="practical`+i+`" id="practical`+i+`" class="form-control" onkeyup="total(`+i+`)" value=0 required> 
                 </td>
-                <td><label for="" id="total`+i+`" class="form-control disabled" readonly></label></td>
+                <td><input id="total`+i+`" name="total`+i+`" class="form-control disabled" readonly type="number"></td>
                 <td style="text-align: center">
-                <input type="checkbox" name="ie" id="ie`+i+`" class="form-control" onchange="disable_credits(this,`+i+`)">
+                <input type="checkbox" name="ie`+i+`" id="ie`+i+`" class="form-control" onchange="disable_credits(this,`+i+`)">
                 </td>
                         `;
                     }
@@ -386,7 +430,7 @@ $options->create_course($conn);
     function total(no){
         var theory=parseInt(document.getElementById("theory"+no).value);
         var practical=parseInt(document.getElementById("practical"+no).value);
-        document.getElementById("total"+no).innerHTML=theory+practical;
+        document.getElementById("total"+no).value=theory+practical;
     }
     function disable_credits(el,no){
         var practical=document.getElementById("practical"+no);
