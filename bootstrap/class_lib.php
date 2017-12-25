@@ -209,7 +209,7 @@ class course
 		$c_q_run=$conn->query($course_query);
 		while ($courses=$c_q_run->fetch_assoc());
 		{
-			echo '<div><button id="" class="" onclick="" type="" value="" name="">courses['branch_name']</button><div>'
+			echo('<div><button id="" class="" onclick="" type="" value="" name="">'.$courses["branch_name"].'</button><div>');
 		}
 	}
 }
