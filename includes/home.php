@@ -17,7 +17,7 @@
     $validate->conf_logged_in();
     $obj=new head();
     $obj->displayheader();
-    $obj->dispmenu(3,["home.php","index.php","developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-out","glyphicon glyphicon-info-sign"],["Home","Log Out","About Us"]);
+    $obj->dispmenu(3,["home.php","../index.php","developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-out","glyphicon glyphicon-info-sign"],["Home","Log Out","About Us"]);
     $dashboard=new dashboard();
     $dashboard->display($_SESSION['operator_name'],["Change Password","Sign Out"],["change_password.php","index.php"],"Contact Super Admin");
     $ai=new course();

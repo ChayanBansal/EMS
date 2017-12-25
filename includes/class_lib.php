@@ -177,6 +177,26 @@ class form_receive
 					header('location: /ems/includes/home.php');
 				} else {
 					$alert->exec("Please check your username or password!", "danger");
+=======
+			$username = $form_input_check->input_safe($conn,$_POST['username']); //preventing SQL injection //name of the input field should be username
+			$password = md5($form_input_check->input_safe($conn,$_POST['password']));//preventing SQL injection //name of the input field should be password
+			$login_query="SELECT * FROM operators WHERE operator_username='$username' AND operator_password='$password'";
+			$login_query_run=mysqli_query($conn,$login_query);
+			
+			if($login_query_run){
+				if(mysqli_num_rows($login_query_run)==1)
+				{
+					$operator_data=$login_query_run->fetch_assoc();
+					 //creating session//values of id, name and username
+					$_SESSION['operator_id']=$operator_data['operator_id'];
+					$_SESSION['operator_name']=$operator_data['operator_name'];
+					$_SESSION['operator_username']=$username;
+					header ('location: /ems/includes/home.php');		
+				}
+				else 
+				{	
+					//$alert->exec("Please check your username or password!","danger");
+>>>>>>> 3d52a3bf1e96d09738a5254e8308144c76cf507b
 				}
 			} else {
 				$alert->exec("Unable to connect to the server!", "danger");
@@ -192,6 +212,7 @@ class form_receive
 			$_SESSION['1'] = "hello";
 			require("config.php");
 			$form_input_check = new input_check();
+<<<<<<< HEAD
 			$username = md5($form_input_check->input_safe($conn, $_POST['username'])); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn, $_POST['password']));//preventing SQL injection //name of the input field should be password
 			$login_query = "SELECT * FROM super_admin WHERE super_admin_username='$username' AND super_admin_password='$password'";
@@ -199,6 +220,19 @@ class form_receive
 			if ($login_query_run) {
 				if (mysqli_num_rows($login_query_run) == 1) {
 					$operator_data = $login_query_run->fetch_assoc();
+=======
+			$username = md5($form_input_check->input_safe($conn,$_POST['username'])); //preventing SQL injection //name of the input field should be username
+			$password = md5($form_input_check->input_safe($conn,$_POST['password']));//preventing SQL injection //name of the input field should be password
+			$login_query="SELECT * FROM super_admin WHERE super_admin_username='$username' AND super_admin_password='$password'";
+			$login_query_run=mysqli_query($conn,$login_query);
+			
+			if($login_query_run)
+			{
+				
+				if(mysqli_num_rows($login_query_run)==1)
+				{
+					$operator_data=$login_query_run->fetch_assoc();
+>>>>>>> 3d52a3bf1e96d09738a5254e8308144c76cf507b
 					 //creating session//values of id, name and username
 					$_SESSION['super_admin_id'] = $operator_data['super_admin_id'];
 					$_SESSION['super_admin_name'] = $operator_data['super_admin_name'];
@@ -222,8 +256,12 @@ class course
 		$i = mt_rand(0, 4);
 		return $colors[$i];
 	}
+	
+	
+	
 	function display($conn)
 	{
+<<<<<<< HEAD
 		$course_query = "SELECT * FROM courses";
 		$c_q_run = mysqli_query($conn, $course_query);
 		if ($c_q_run) {
@@ -248,6 +286,47 @@ class course
 			$error->exec("Error connecting to database!", "danger");
 		}
 
+=======
+		echo('<div class="display_courses">
+			<form action="select_course.php" method="post"> 
+				<div class="tcaption"> 	COURSE SELECTION <br></div>');
+				//UG list
+				$ug_list_query="SELECT * FROM courses where level_id=1";
+				$ug_l_run=mysqli_query($conn,$ug_list_query);
+
+				$pg_list_query="SELECT * FROM courses where level_id=2";
+				$pg_l_run=mysqli_query($conn,$pg_list_query);
+
+				echo('<div class="c_ug_pg">');
+					echo('<div class="course_list">
+						<div class="level_head">Undergraduate</div>');
+					while($ug_course=mysqli_fetch_assoc($ug_l_run))
+					{		
+						$course_id=$ug_course['course_id'];
+						$course_name=$ug_course['course_name'];
+						$button=new input_button();
+						$button->display("s_c","course ".$this->randomize(),"submit",$course_id,"",$course_name);   //$id,$class,$type,$name,$onclick,$value
+					}
+					echo('</div>');
+					//UG list close
+					//PG list
+					
+					echo('<div class="course_list">
+						<div class="level_head">Postgraduate</div>');
+					while($pg_course=mysqli_fetch_assoc($pg_l_run))
+					{		
+						$course_id=$pg_course['course_id'];
+						$course_name=$pg_course['course_name'];
+						$button=new input_button();
+						$button->display("s_c","course ".$this->randomize(),"submit",$course_id,"",$course_name);   //$id,$class,$type,$name,$onclick,$value
+					}
+					echo('</div>');
+				echo('</div>');
+				//UG list close
+			echo('</form>
+		</div>
+		');		
+>>>>>>> 3d52a3bf1e96d09738a5254e8308144c76cf507b
 	}
 }
 class super_user_options
@@ -516,12 +595,19 @@ class dashboard
 	}
 
 }
+<<<<<<< HEAD
 class validate
 {
 	function conf_logged_in()
 	{
 		if (!isset($_SESSION['operator_id']) && !isset($_SESSION['superadmin_id'])) {
 			header('location:index.php');
+=======
+class validate{
+	function conf_logged_in(){
+		if(!isset($_SESSION['operator_id']) && !isset($_SESSION['superadmin_id'])){
+			header('location:../index.php');
+>>>>>>> 3d52a3bf1e96d09738a5254e8308144c76cf507b
 		}
 	}
 }
@@ -1159,7 +1245,123 @@ class data_table
 
 class create_operator
 {
+<<<<<<< HEAD
 	
+=======
+	$operator_name=$_POST['operator_name'];
+	$operator_email=$_POST['operator_email'];
+	if($operator_name=="")
+	{
+		$er = new alert();
+		$er->exec("Please enter operator name!", "alert");
+	}
+	else if($operator_email=="")
+	{
+		$er = new alert();
+		$er->exec("Please enter operator email!", "alert");
+	}
+	else{
+	$get_operator_list_query="SELECT operator_email from operators";
+	$get_op_list_query_run=mysqli_query($conn, $get_operator_list_query);
+	$permit=1;
+	while($row=mysqli_fetch_assoc($get_op_list_query_run))
+	{
+		if($row['operator_email']==$operator_email)
+		{
+			$permit=0;
+		}
+	}
+	if($permit==1)
+	{
+		$i=0;
+		$j=0;
+		while($i<strlen($operator_email))
+		{
+			if(substr($operator_email,$i,1)!="@")
+			{
+				$j++;
+			}
+			else
+			{
+				break;
+			}
+			$i++;
+		}
+		
+		$operator_username=substr($operator_email,0,$j);
+	
+		$temp_pass=substr($operator_email,0,2)."".mt_rand(1000,9999);
+		$operator_password=md5($temp_pass);
+		$create_operator_query="INSERT INTO operators(operator_name, operator_email, operator_username, operator_password) 
+								VALUES('$operator_name', '$operator_email', '$operator_username', '$operator_password')";
+		try{$create_query_run=mysqli_query($conn,$create_operator_query);}
+		catch(Exception $e){$er = new alert(); $er->exec("Not able to connect to database!", "danger");}
+		if($create_query_run==TRUE)
+		{
+			$er = new alert();
+			$er->exec("New operator created!", "success");
+			$sent=0;
+			/*require('creation_mail.php');
+			if($sent==1){$er->exec("New operator created and a mail containing the login details has been sent!", "success");}*/
+		}
+		else
+		{
+			$er = new alert();
+			$er->exec("Error while creating new operator!", "danger");
+		}
+	}
+	else{
+		$er = new alert();
+			$er->exec("Operator already exists!", "danger");
+	}
+}
+}
+}
+>>>>>>> 3d52a3bf1e96d09738a5254e8308144c76cf507b
 }
 
+class view_operators
+{
+	function execute($conn)
+	{
+		$get_op_query="SELECT operator_name, operator_username, operator_email from operators";
+		$get_op_run=mysqli_query($conn,$get_op_query);
+		if(mysqli_num_rows($get_op_run)==0)
+		{
+			$al = new alert();
+			$al->exec("No operator exists!", "danger");
+		}
+		else
+		{
+			echo('
+              
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>');
+			
+			
+			while($result=mysqli_fetch_assoc($get_op_run))
+			{
+				
+      echo('
+	  <tr>
+        <td>'.$result["operator_name"].'</td>
+        <td>'.$result["operator_username"].'</td>
+        <td>'.$result["operator_email"].'</td>
+      </tr>');
+			}
+			echo('
+    </tbody>
+  </table>');
+				
+				
+			}
+		}
+	}
 ?>
