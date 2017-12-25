@@ -175,11 +175,11 @@ class form_receive
 					$_SESSION['operator_id'] = $operator_data['operator_id'];
 					$_SESSION['operator_name'] = $operator_data['operator_name'];
 					$_SESSION['operator_username'] = $username;
-					$update_operator_active_qry="UPDATE operators set operator_active=1 where operator_id=".$_SESSION['operator_id'];
-					$update_operator_active_qry_run=mysqli_query($conn,$update_operator_active_qry);
+					$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
+					$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
 					header('location: /ems/includes/home.php');
-				} else {	
-					$alert->exec("Please check your username or password!","danger");
+				} else {
+					$alert->exec("Please check your username or password!", "danger");
 				}
 			} else {
 				$alert->exec("Unable to connect to the server!", "danger");
@@ -434,7 +434,7 @@ class super_user_options
 					if ($create_query_run == true) {
 						$er = new alert();
 						$email = $operator_email;
-						$username=$operator_username;
+						$username = $operator_username;
 						$name = $operator_name;
 						$send_pass = $temp_pass;
 						require('phpmailer/sending_mail.php');
@@ -595,53 +595,42 @@ class change_password
 {
 	public function execute($conn)
 	{
-		if ($conn->connect_error) {
-			echo "<script> alert('Database connection error.')</script>";
-			die();
-		}
-
-
-
 		if (isset($_POST['change_password'])) {
 			$pass_input_check = new input_check();
-
-			$entered_cur_password = md5($pass_input_check->input_safe($conn, $_POST['cur_password']));
-			$new_password = md5($pass_input_check->input_safe($conn, $_POST['new_password']));
-			$confirm_new_password = md5($pass_input_check->input_safe($conn, $_POST['confirm_new_password']));
-
-			$operator_id = $_SESSION['operator_id'];
-			$get_pass = "SELECT password FROM operators WHERE operator_id=$operator_id"; //taking out current password from database
-			$get_pass_run = $conn->query($get_pass);
+			$entered_cur_password = md5($pass_input_check->input_safe($conn, $_POST['cur_pass']));
+			$new_password = md5($pass_input_check->input_safe($conn, $_POST['new_pass']));
+			$confirm_new_password = md5($pass_input_check->input_safe($conn, $_POST['retype_pass']));
+			$username=md5($pass_input_check->input_safe($conn, $_POST['username']));
+			$super_user_id = $_SESSION['super_admin_id'];
+			$get_pass = "SELECT * FROM super_admin"; //taking out current password from database
+			$get_pass_run = mysqli_query($conn, $get_pass);
 			$pass = $get_pass_run->fetch_assoc();
-			$cur_password = $pass['password'];
-
-
-			if ($cur_password != $entered_cur_password) {
-				echo "<script> alert('Please re-enter the current password')</script>";
-				die();
+			$cur_password = $pass['super_admin_password'];
+			$cur_username=$pass['super_admin_username'];
+			$alert = new alert();
+			if ($cur_password != $entered_cur_password OR $username!=$cur_username) {
+				$alert->exec("Incorrect username or password!", "warning");
 			}
-			if (empty($entered_cur_password)) {
-				echo "<script> alert('Please enter the current password')</script>";
-				die();
+			else if (empty($entered_cur_password)) {
+				$alert->exec("Please enter you current password!", "info");
 			}
-
-
-			if ($new_password != $confirm_new_password) {
-				echo "<script> alert('New passwords do not match')</script>";
-				die();
+			else if ($new_password != $confirm_new_password) {
+				$alert->exec("Passwords do not match!", "info");
 			}
-
-			$update_query = "UPDATE  operators SET password='$new_password' WHERE operator_id=$operator_id ";
-			$update = $conn->query($update_query);
-
-			if ($update == true) {
-				$_SESSION['pass_changed'] = 1;
-				header('location: index.php');
-			} else {
-				echo "<script> alert('Error! Not able to change password. Please try again.')</script>";
+			else if($new_password==$entered_cur_password){
+				$alert->exec("Please select a different new password!","warning");
 			}
-
-
+			else{
+				$update_query = "UPDATE  super_admin SET super_admin_password='$new_password' WHERE super_admin_id=" . $super_user_id;
+				$update_run = mysqli_query($conn, $update_query);
+				if ($update_run) {
+					session_destroy();
+					echo "<script type='text/javascript'>document.location.href='/ems/index.php';</script>";
+				} else {
+					$alert->exec("Unable to change password! Please try again..", "danger");
+				}
+			}
+			
 		}
 	}
 }
@@ -1238,13 +1227,12 @@ class view_operators
         <td>' . $result["operator_username"] . '</td>
 		<td>' . $result["operator_email"] . '</td>
 		<td>');
-		if($result['operator_active']==1){
-			echo('Active <i class="glyphicon glyphicon-record" style="color:green"></i>');
-		}
-		else{
-			echo('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
-		}
-		echo('
+				if ($result['operator_active'] == 1) {
+					echo ('Active <i class="glyphicon glyphicon-record" style="color:green"></i>');
+				} else {
+					echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
+				}
+				echo ('
       </tr>');
 			}
 			echo ('

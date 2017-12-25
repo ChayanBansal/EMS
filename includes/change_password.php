@@ -4,201 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <title>Document</title>
+    <title>Super Admin - Change Password</title>
     <style>
-        .overlay1{
-            position: absolute;
-            justify-content: center;
-            align-items: center;
-            background: rgba(22, 25, 126,0.8);
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-        }
-
-    .overlaycontainer1{
-        position: absolute;
+    .main-container{
         display: flex;
-        top: 0;
-        left: 0;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
         width: 100%;
         height: 100%;
+        position: absolute;
+        top: 0;
     }
-
-    table tr td {
-        padding: 15px;
-        margin-bottom: 5px;
+    .form-container{
+        border: 1px solid black;
+        padding: 20px;
+        border-radius: 7px;
     }
-
-    input[type=text],
-    input[type=password]
-    {
-        width: 100%;
-        border-radius: 4px;
-        font-size: 16px;
-        padding: 6px;
-        border: 1px solid white;
-        background: transparent;
-        font-family: 'Roboto', sans-serif;
-        color: white;
-        font-weight: normal;
-    }
-    input[type=text]:focus,
-    input[type=password]:focus
-    {
-        outline-width: 0;
-    }
-
-
-    form {
-        z-index: 100;
-        width: 40% !important;  
-        overflow: auto;  
-    }
-
-    table {
+    .form-container input{
         width: 100%;
     }
-
-    * {
-        font-size: 22px;
-        font-family: calibri;
-    }
-    body{
-    width: 100%;
-    height: 100%;
-    }
-    fieldset {
-        z-index: 100;
-        border: 1px solid white;
-        border-radius: 4px;
-    }
-
-    legend {
-        z-index: 100;
+    .ftitle{
+        margin-bottom: 20px;
         text-align: center;
-        background: white;
+        width: 100%;
+        font-size: 24px;
+    }
+    
+    button{
+        padding: 10px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 200 !important;
+    }
+    button[type=submit]{
+        border: none;
+        background: rgba(26, 87, 182,0.7);
         color: white;
-        height: 40px;
-        font-weight: 900;
+        font-size: 2rem;
+        transition: all 400ms;
     }
-    span{
-    color: white;
-    }
-    table tr button{
-        background: transparent;
-        font-weight: normal;
-        color: white;
-        width: 200px;
-        padding: 7px;
-        border: 1px solid white;
-        margin-right: 20px;
-        transition: all 300ms;
-        margin-top: 10px;
-        margin: 30px;
-        margin-bottom: 50px;
-        font-size: 20px;
-    }
-    table tr button:hover {
-        background: white;
+    
+    button[type=submit]:hover{
+        animation: moveup 300ms 1 ease-in-out;
+        animation-fill-mode: forwards;
+        background: rgba(255,255,255,0.8);
+        color: #1A57B6;    
+        box-shadow: 4px 4px 4px rgba(0,0,0,0.6);
         cursor: pointer;
-        color: black;
     }
-    label{
-            color:white;
-            width: 150px;
-            font-size: 18px;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: normal !important;
-        }
-    title{
-            padding: 15px;
-            font-weight: bolder;
-            font-family: 'Raleway', sans-serif;
-            font-weight: bold;
-            color: white;
-            font-size: 24px;
-        }
-    .qtitle1{
-        padding: 15px;
-        font-weight: bolder;
-        font-family: 'Raleway', sans-serif;
+    
+    button[type=reset]{
+        border: none;
+        background: rgba(227, 61, 31,0.7);
         color: white;
-        font-size: 30px;
+        font-size: 2rem;
+        transition: all 400ms;
     }
-    .usersign{
-        font-size: 22px;
-        font-weight: bolder;
-        font-family: 'Raleway', sans-serif;
+    
+    button[type=reset]:hover{
+        animation: moveup 300ms 1 ease-in-out;
+        animation-fill-mode: forwards;
+        background: rgba(255,255,255,0.8);
+        color: #E33D1F;    
+        box-shadow: 4px 4px 4px rgba(0,0,0,0.6);
+        cursor: pointer;
     }
-    .signin{
-        background: transparent;
-        font-weight: bolder;
-        color: white;
-        width: 300px;
-        padding: 7px;
-        border: 1px solid white;
-        border-radius: 5px;
-        margin-right: 20px;
-        transition: all 300ms;
-        margin-top: 10px;
-        margin: 30px;
-        margin-bottom: 50px;
-        font-size: 30px;
+    #btns{
+        display: flex;
+        justify-content: space-around;
     }
     </style>
 </head>
 <body>
 <?php
-    session_start();
-    require("config.php");
-    require("frontend_lib.php");
-    require("class_lib.php");
-    $obj=new head();
-    $obj->displayheader();
-    $obj->dispmenu(3,["home.php","index.php","developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-in","glyphicon glyphicon-info-sign"],["Home","Log Out","About Us"]);
-    $dashboard=new dashboard();
-    $dashboard->display($_SESSION['operator_name'],["Change Password","Sign Out"],["change_password.php","index.php"],"Conatct Super Admin");
-    $change_p=new change_password();
-    $change_p->execute($conn);
+session_start();
+require("config.php");
+require("frontend_lib.php");
+require("class_lib.php");
+$obj = new head();
+$obj->displayheader();
+$obj->dispmenu(3, ["/ems/includes/home.php", "/ems/includes/index.php", "/ems/includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
+$dashboard = new dashboard();
+$dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "");
+$input = new input_field();
+$change_pass=new change_password();
+$change_pass->execute($conn);
 ?>
-    <div class="overlay1">
-        <div class="overlaycontainer1">
-            <div class="qtitle1">Change Password</div>
-            <form action="" method="post" class="col-md-4">
-                <fieldset>
-                    <table>
-                        <tr>
-                            <td class="usersign"><label for=""  class="usersign">User Name </label></td>
-                            <td><input type="text" name="email" ></td>
-                        </tr>
-                        <tr>
-                            <td><label for=""  class="usersign">Old Password </label></td>
-                            <td><input type="password" name="cur_password" ></td>
-                        </tr>
-                        <tr>
-                            <td><label for=""  class="usersign">New Password </label></td>
-                            <td><input type="password" name="new_password" ></td>
-                        </tr>
-                        <tr>
-                            <td><label for=""  class="usersign">Retype New Password </label></td>
-                            <td><input type="password" name="confirm_new_password" ></td>
-                        </tr>
-                        <tr style="text-align:center; margin-bottom: 20px">
-                            <td colspan="2">
-                                <button type="submit" class="signin" name="change_password">Change Password</button> <!-- CHANGE THIS TO ATTEMPT NOW // USE input_button FORM -->
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-            </form>
-        </div>
+<div class="main-container">
+    <div class="form-container col-md-8 col-xs-10 col-sm-10 col-lg-4">
+    <div class="ftitle">Change Password</div>    
+    <form action="" method="post">
+
+        <div class="form-group">    
+        <label for="">Username</label>
+           <input type="text" name="username" id="" class="form-control" required>
+            </div>
+            <div class="form-group">    
+            <label for="">Current Password</label>
+            <input type="password" name="cur_pass" id="" required class="form-control">
+            </div>
+            <div class="form-group">    
+            <label for="">New Password</label>
+            <input type="password" name="new_pass" class="form-control" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+            </div>
+            <div class="form-group">    
+            <label for="">Retype Password</label>
+            <input type="password" name="retype_pass" id="" class="form-control" required>
+            </div>
+            <div class="form-group" id="btns">
+            <button type="reset" onclick="resetfields()">Reset <i class="glyphicon glyphicon-repeat"></i></button>
+                        <button type="submit" name="change_password">Submit <i class="glyphicon glyphicon-chevron-right"></i></button>   
+            </div>
+        </form>
     </div>
+</div>
+
+<?php
+$obj = new footer();
+$obj->disp_footer();
+?>
 </body>
 </html>
