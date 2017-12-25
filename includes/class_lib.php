@@ -167,16 +167,22 @@ class form_receive
 			$password = md5($form_input_check->input_safe($conn,$_POST['password']));//preventing SQL injection //name of the input field should be password
 			$login_query="SELECT * FROM operators WHERE operator_username='$username' AND operator_password='$password'";
 			$login_query_run=mysqli_query($conn,$login_query);
-			
 			if($login_query_run){
 				if(mysqli_num_rows($login_query_run)==1)
 				{
 					$operator_data=$login_query_run->fetch_assoc();
-					 //creating session//values of id, name and username
-					$_SESSION['operator_id']=$operator_data['operator_id'];
-					$_SESSION['operator_name']=$operator_data['operator_name'];
-					$_SESSION['operator_username']=$username;
-					header ('location: /ems/includes/home.php');		
+					$lock=$operator_data['locked'];
+					if($lock==1){
+						$alert->exec("Your Account has been blocked. Please contact Super Admin!","danger");
+					}
+
+					else{
+						//creating session//values of id, name and username
+						$_SESSION['operator_id']=$operator_data['operator_id'];
+						$_SESSION['operator_name']=$operator_data['operator_name'];
+						$_SESSION['operator_username']=$username;
+						header ('location: /ems/includes/home.php');	
+					}	
 				}
 				else 
 				{	
