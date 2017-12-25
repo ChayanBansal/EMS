@@ -18,7 +18,6 @@
             $mail->Password = 'ems@2017';                           // SMTP password
             $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
             $mail->Port = 587;                                    // TCP port to connect to
-
             //Recipients
             $mail->setFrom('ems.suas.2017@gmail.com', 'Examination Portal - SUAS Indore');         //CHANGE MAIL ID
             $mail->addAddress($email, $name);     // Add a recipient
@@ -33,7 +32,7 @@
             //Content
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = 'Operator Registration Confirmation';
-            $mail->Body    = Mail_text($email,$send_pass,$name);
+            $mail->Body    = Mail_text($email,$send_pass,$name,$username);
             $mail->send();
             $alert=new alert();
             $alert->exec("New operator created and a mail containing the login details has been sent!", "success");
@@ -42,7 +41,7 @@
             $alert->exec("Unable to send e-mail to operator!", "warning");
         }
 
-    function Mail_text($email,$password,$name){
+    function Mail_text($email,$password,$name,$username){
 		$mail="";
 		//require("frontend_lib.php");
         $mail.='<html>
@@ -134,7 +133,7 @@
                  You have been registered with the SUAS, Indore Examination Portal as an operator. Please use the following details to log into the portal:</div>
                 <div class="details">
                 Username: '.
-                $email.'<br> 
+                $username.'<br> 
                 Password: '.$password.' 
                 </div>
                 <div class="note">

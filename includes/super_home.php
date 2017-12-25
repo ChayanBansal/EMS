@@ -53,6 +53,7 @@
         border: none;
         width: 40%;
         background: orangered;
+        padding: 5px;
     }
     .sub-option button:hover{
         background: white;
@@ -205,7 +206,7 @@ $options->create_operator($conn);
   </div>
   <!--End-->
 
-  <!---->
+  <!--Add Sessions Modal-->
   <div class="modal fade" id="addcourseModal" role="dialog">
       <div class="modal-dialog">
       
@@ -213,7 +214,7 @@ $options->create_operator($conn);
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Add New Course</h4>
+            <h4 class="modal-title">Create New Session</h4>
           </div>
           <form action="" method="post">
             <div class="modal-body">
@@ -222,20 +223,19 @@ $options->create_operator($conn);
                 $input = new input_field();
                 ?>
                 <div class="form-group">
-                <label for="name">Course Name</label>
-                <?php
-                $input->display("name", "form-control", "text", "cname", "", 1);
-                ?>
-                </div>
-                <div class="form-group">
-                <label for="type">Course Type</label>
-                <select name="level" id="type" class="form-control">
-                    <option value="ug">Undergraduate</option>
-                    <option value="pg">Postgraduate</option>
+                <label for="name">Course Selection</label>
+                <select name="" id="">
+                    <option value="4" data-from-year="[2016,2018]">M.B.A</option>
                 </select>
                 </div>
                 <div class="form-group">
-                <label for="duration">Duration</label>
+                <label for="type">Academic Batch</label>
+                <select name="level" id="type" class="form-control">
+                   <option value="">2016-17</option>
+                </select>
+                </div>
+                <div class="form-group">
+                <label for="duration">Semester</label>
                 <?php
                 $input->display_table("duration", "form-control", "number", "cduration", "", 1, 1, 10, 0, 10);
                 ?>
@@ -276,26 +276,26 @@ $options->create_operator($conn);
                <th>Maximum Marks</th>
                </tr>
                <?php
-               $get_components_qry="SELECT * from component";
-               $get_components_qry_run=mysqli_query($conn,$get_components_qry);
-               if($get_components_qry_run){
-                   while($row=mysqli_fetch_assoc($get_components_qry_run)){
-                       echo('
+                $get_components_qry = "SELECT * from component";
+                $get_components_qry_run = mysqli_query($conn, $get_components_qry);
+                if ($get_components_qry_run) {
+                    while ($row = mysqli_fetch_assoc($get_components_qry_run)) {
+                        echo ('
                        <tr>
-                       <td>'.$row['component_name'].'</td>
+                       <td>' . $row['component_name'] . '</td>
                        <td>');
-                           $input->display("","form-control input-sm","number","pass".$row['component_id'],"",1);
-                           echo('
+                        $input->display("", "form-control input-sm", "number", "pass" . $row['component_id'], "", 1);
+                        echo ('
                        </td>
                        <td>');
-                           
-                           $input->display("","form-control input-sm","number","max".$row['component_id'],"",1);
-                           echo('</td>
+
+                        $input->display("", "form-control input-sm", "number", "max" . $row['component_id'], "", 1);
+                        echo ('</td>
                         </tr>
                        ');
-                   }
-               }
-               ?>
+                    }
+                }
+                ?>
                
             </table>
         </div>
@@ -305,17 +305,16 @@ $options->create_operator($conn);
             <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester()">
             <option value="" disabled selected>Select a course</option>   
             <?php
-            $get_course_qry="SELECT * from courses";
-            $get_course_qry_run=mysqli_query($conn,$get_course_qry);
-            if($get_course_qry_run){
-                while($row=mysqli_fetch_assoc($get_course_qry_run)){
-                    echo('
-                    <option value="'.$row['course_id'].'" data-course-duration='.$row['duration'].'>'.$row['course_name'].'</option>   
+            $get_course_qry = "SELECT * from courses";
+            $get_course_qry_run = mysqli_query($conn, $get_course_qry);
+            if ($get_course_qry_run) {
+                while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
+                    echo ('
+                    <option value="' . $row['course_id'] . '" data-course-duration=' . $row['duration'] . '>' . $row['course_name'] . '</option>   
                     ');
                 }
-            }
-            else{
-                $alert=new alert();
+            } else {
+                $alert = new alert();
                 $alert->exec("Unable to fetch courses!", "warning");
             }
             ?>
@@ -370,7 +369,7 @@ $options->create_operator($conn);
     	<!-- Create operator Modal Box-->
 	<!-- Modal -->
   <div class="modal fade" id="cr_op_modal" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog ">
     
       <!-- Modal content-->
       <div class="modal-content">
@@ -412,7 +411,7 @@ $options->create_operator($conn);
   
   <!-- Modal Box for viewing operators-->
   <div id="view_op_modal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -421,7 +420,8 @@ $options->create_operator($conn);
         <h4 class="modal-title">Operators</h4>
       </div>
       <div class="modal-body">
-        <?php $v_op = new view_operators; $v_op->execute($conn);?>
+        <?php $v_op = new view_operators;
+        $v_op->execute($conn); ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
