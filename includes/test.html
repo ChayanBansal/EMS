@@ -1,186 +1,297 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-    <title>Document</title>
+<html>
+    <head>
     <style>
-        .overlay1{
-            position: absolute;
-            justify-content: center;
-            align-items: center;
-            background: rgba(22, 25, 126,0.8);
-            z-index: 0;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-        }
-    .overlaycontainer1{
-        position: absolute;
+body
+    {
+        text-align:center;
+    }
+    .menu-contain{
+        position: fixed;
         display: flex;
-        top: 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        right: 0px;
+        height: 80vh;
+    }
+    .title{
+        font-size: 28px;
+        color: white;
+        text-transform: uppercase;
+        font-weight: 400;
+    }
+    .container{
+        font-size: 22px !important;
+        width: 100%!important;
+        min-height: 70px!important;
+        padding: 5px!important;
+        display: flex;         /* establish flex container */
+        flex-direction: row;            /* default value; can be omitted */
+        flex-wrap: nowrap;              /* default value; can be omitted */
+        justify-content: space-around; /* switched from default (flex-start, see below) */
+        background: rgba(41, 29, 100 ,0.7);
+        font-family: 'Open Sans', sans-serif;
+        align-items: center;
+        margin: 0;
+    }
+    .mailcontainer{
+        font-size: 24px !important;
+        width: 100% !important;
+        min-height: 70px !important;
+        padding: 5px !important;
+        display: flex;         /* establish flex container */
+        flex-direction: row;            /* default value; can be omitted */
+        flex-wrap: nowrap;              /* default value; can be omitted */
+        justify-content: space-around; /* switched from default (flex-start, see below) */
+        background: rgba(41, 29, 100 ,0.8);
+        font-family: 'Open Sans', sans-serif;
+        align-items: center;
+        margin-bottom:30px;
+    }
+    .logo img{
+        height: 70px;
+    }
+    .text{
+        font-family: 'Raleway', sans-serif;
+        font-size: 16px;
+        font-weight: 200;
+        color: white;
+        
+    }
+    #menu_span{
+        opacity: 0;
+        display: none;
+        transition: all 300ms ease-in-out;
+    }
+    a:hover{
+        color: #B1C3F8;  
+        text-decoration: none;
+    }
+    .item:hover #menu_span{
+        display: block;
+        opacity: 0;
+        animation: appear 300ms ease-in-out;
+        animation-fill-mode: forwards;
+    }
+    @keyframes appear{
+        from{
+            opacity: 0;
+        }
+        to{
+            opacity: 1;
+        }
+    }
+    a{
+        text-decoration: none;
+        color: inherit;
+        transition: all 300ms ease-in-out;
+    }
+    @keyframes easeleft{
+        from{
+            transform: translateX(70px);
+        }
+        to{
+            transform: translateX(0px);
+        }
+    }
+    .item{
+        padding: 5px;
+        margin: 10px;
+        line-height: 20px;
+        color: white;
+        font-size: 2.4rem;
+        text-align: center;
+    }
+    .footer {
+        background: rgba(41, 29, 100 ,0.7);
+        position: fixed;
+        display: flex;                  /* establish flex container */
+        flex-direction: row;            /* default value; can be omitted */
+        flex-wrap: nowrap;              /* default value; can be omitted */
+        justify-content: space-between;
+        align-items: center;
+        height: 8rem;
+        width: 100%;
+        padding: 5px;
+        color: white;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        bottom: 0;
+        font-family: 'Raleway', sans-serif;
+    }
+    
+    .uni_name {
+        font-size: 2rem;
+        font-weight: bolder;
+        margin-left: 15px;
+    }
+    
+    .copyright {
+        font-size: 2rem;
+    }
+    
+    .developers {
+        margin-right: 15px;
+        font-size: 2rem;
+        float: right;
+        right: 0px;
+    }
+    
+    .developers a {
+        color: inherit;
+        font-family: century gothic;
+        font-weight: bolder;
+        transition: 300ms;
+    }
+    .developers a:hover {
+        color: #B1C3F8;
+        transition: 300ms;
+        font-size: 2.1rem;
+    }
+    .uni_name a {
+        color: inherit;
+        font-family: century gothic;
+        font-weight: bolder;
+        transition: 300ms;
+    }
+    .uni_name a:hover {
+        color: #B1C3F8;
+        transition: 300ms;
+        font-size: 2.1rem;
+    }
+    .pcontain{
         left: 0;
+        top: 20%;
+        display: flex;
+        position: absolute;
+        width: 100%;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        width: 100%;
-        height: 100%;
     }
-
-    table tr td {
-        padding: 15px;
-        margin-bottom: 5px;
+    .name{
+        font-family: 'Muli', sans-serif;
+        font-size: 40px;
+        color: black;
+        font-weight: bold;
+        text-decoration:underline;
+padding:15px;
+width:100%;
     }
-
-    input[type=text],
-    input[type=password]
-    {
-        width: 100%;
-        border-radius: 4px;
-        font-size: 16px;
-        padding: 6px;
-        border: 1px solid white;
-        background: transparent;
-        font-family: 'Roboto', sans-serif;
-        color: white;
-        font-weight: normal;
+    .button{
+        margin: 10px;
+        padding: 10px;
     }
-    input[type=text]:focus,
-    input[type=password]:focus
-    {
+    
+    #disabled{
+        pointer-events:none;
+        opacity: 0.6;
+    }
+    #disabled:focus{
         outline-width: 0;
     }
-
-
-    form {
-        width: 40% !important;  
-        overflow: auto;  
+    #disabled:hover{
+        cursor: inherit;
+        background: transparent;
+        color: black !important;
     }
-
-    table {
-        width: 100%;
-    }
-
-    * {
-        font-size: 22px;
-        font-family: calibri;
-    }
-    body{
-    width: 100%;
-    height: 100%;
-    }
-    fieldset {
-        border: 1px solid white;
-        border-radius: 4px;
-    }
-
-    legend {
+    .dateinfo{
+        font-size: 30px;
+        font-weight: bolder;
         text-align: center;
-        background: white;
-        color: white;
-        height: 40px;
-        font-weight: 900;
-    }
-    span{
-    color: white;
-    }
-    table tr button{
-        background: transparent;
-        font-weight: normal;
-        color: white;
-        width: 200px;
-        padding: 7px;
-        border: 1px solid white;
-        margin-right: 20px;
-        transition: all 300ms;
-        margin-top: 10px;
-        margin: 30px;
-        margin-bottom: 50px;
-        font-size: 20px;
-    }
-    table tr button:hover {
-        background: white;
-        cursor: pointer;
         color: black;
-    }
-    label{
-            color:white;
-            width: 150px;
-            font-size: 18px;
-            font-family: 'Open Sans', sans-serif;
-            font-weight: normal !important;
-        }
-    title{
-            padding: 15px;
-            font-weight: bolder;
-            font-family: 'Raleway', sans-serif;
-            font-weight: bold;
-            color: white;
-            font-size: 24px;
-        }
-    .qtitle1{
-        padding: 15px;
-        font-weight: bolder;
         font-family: 'Raleway', sans-serif;
-        color: white;
-        font-size: 30px;
+        padding: 10px;
+        padding-top: 40px;
     }
-    .usersign{
-        font-size: 22px;
-        font-weight: bolder;
+    .dateinfo::selection{
+        color: red;
     }
-    .signin{
-        background: transparent;
-        font-weight: bolder;
-        color: white;
-        width: 300px;
-        padding: 7px;
-        border: 1px solid white;
-        border-radius: 5px;
-        margin-right: 20px;
-        transition: all 300ms;
-        margin-top: 10px;
-        margin: 30px;
-        margin-bottom: 50px;
+    .info{
+        text-align:center;
+        font-family: 'Open Sans', sans-serif;
+        font-size:20px;
+        line-height: 35px;
+      }
+    .dateinfo1{
         font-size: 30px;
+        font-weight: bolder;
+        text-align: center;
+        color: black;
+        font-family: 'Raleway', sans-serif;
+        padding: 10px;
+        padding-top: 15px !important;
+    }
+    .dateinfo1::selection{
+        color: red;
+    }
+    .details{
+        margin: 10px;
+        padding: 10px;
+        border: 2px dashed black;
+        font-weight:bolder;
+        font-family: 'Open Sans', sans-serif;
+        text-decoration:none;
+    }
+    .inforem{
+        text-decoration: underline;
+    }
+    .infomail{
+        text-align: left;
+        font-family: 'Open Sans', sans-serif;
+        font-size:20px;
+        line-height: 35px;
+    }
+    .infolast{
+        text-align: left;
+        font-family: 'Open Sans', sans-serif;
+        font-size:16px;
+        line-height: 35px;        
     }
     </style>
-</head>
-<body>
-    <div class="overlay1">
-        <div class="overlaycontainer1">
-            <div class="qtitle1">Change Password</div>
-            <form action="<?php echo(htmlspecialchars('attempt_now_submit.php'));?>" method="post" class="col-md-4" onsubmit="validate()">
-                <fieldset>
-                    <table>
-                        <tr>
-                            <td class="usersign"><label for=""  class="usersign">User Name </label></td>
-                            <td><input type="text" name="email" ></td>
-                        </tr>
-                        <tr>
-                            <td><label for=""  class="usersign">Old Password </label></td>
-                            <td><input type="password" name="opassword" ></td>
-                        </tr>
-                        <tr>
-                            <td><label for=""  class="usersign">New Password </label></td>
-                            <td><input type="password" name="npassword" ></td>
-                        </tr>
-                        <tr>
-                            <td><label for=""  class="usersign">Retype New Password </label></td>
-                            <td><input type="password" name="rnpassword" ></td>
-                        </tr>
-                        <tr style="text-align:center; margin-bottom: 20px">
-                            <td colspan="2">
-                                <button type="submit" class="signin" name="attempt_now">Change Password</button> <!-- CHANGE THIS TO ATTEMPT NOW // USE input_button FORM -->
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-            </form>
-        </div>
+    </head>
+    <body>
+    <div class="mailcontainer">
+    <div class="title">SYMBIOSIS UNIVERSITY OF APPLIED SCIENCES</div>
     </div>
-</body>
-</html>
+    <div class="pcontain">
+         
+         <div class="button">
+         
+             <div class="info">
+<div class="name" >
+         Quiz Wiz 2017
+        </div>
+Dear '.$name.', 	
+Greetings from Symbiosis University of Applied Sciences!<br>
+                Thank You for registering with QuizWiz, 2017.
+            <div class="inforem">
+                Please use the following details to attempt the quiz:
+            </div>
+            <div class="details">
+            Username: '.
+            $email.'<br> 
+            Password: '.$password.' 
+            </div>   
+            </div>
+            <div class="dateinfo1">Prelims on Nov 17, 2017</div>
+            <div class="dateinfo1">Top 4 students from each institution will be selected for the second round!</div>
+            <div class="dateinfo1" style="text-align:left">Points to remember:</div> 
+            <div ><ul type="square">
+            <li><div class="infomail">Use Google Chrome web browser for better performance.</div></li>
+<li><div class="infomail">Do not leave the browsing screen while attempting the quiz.</div></li>
+            <li><div class="infomail">There is one and only one attempt available for the quiz.</div></li> 
+<li><div class="infomail">Every question carries one mark.</div></li> 
+<li><div class="infomail">There is no negative marking.</div></li>
+<li><div class="infomail">25 minutes will be alloted per attempt.</div></li>  
+            <li><div class="infomail">The quiz timer will start as soon as you login on 17th November 2017.</div></li>
+<li><div class="infomail">Please remember the points mentioned above.</div></li>  
+            <li><div class="infomail">For any technical queries please contact the following:
+                <a href="mailto:suas.quizwiz2017@gmail.com">Technical Team (suas.quizwiz2017@gmail.com).</a></li></ul>
+                </div>
+            <div class="infolast">NOTE: <ol><li>Please retain this mail for reference.</li>
+<li>Please make sure to reproduce proof of your identification as per details filled during registration.</li></ol></div>
+            </div>
+     </div>
+    </body>
+    </html>

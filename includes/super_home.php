@@ -107,7 +107,8 @@ $dashboard = new dashboard();
 $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "");
 $options = new super_user_options();
 $options->create_course($conn);
-$options->add_subject($conn)
+$options->add_subject($conn);
+$options->create_operator($conn);
 ?>
     <div class="main-container col-md-12">
     <div class="sub-container">
@@ -356,8 +357,6 @@ $options->add_subject($conn)
     <?php
     $obj = new footer();
     $obj->disp_footer();
-    $cr_op = new create_operator();
-    $cr_op->execute($conn);
     ?>
 </body>
 <script>
