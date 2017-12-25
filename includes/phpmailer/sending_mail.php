@@ -6,7 +6,7 @@
         use PHPMailer\PHPMailer\Exception;
         //Load composer's autoloader
         require 'vendor/autoload.php';
-        require_once('../class_lib.php');
+        require_once('class_lib.php');
         $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
         try {
             //Server settings
@@ -34,7 +34,6 @@
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = 'Operator Registration Confirmation';
             $mail->Body    = Mail_text($email,$send_pass,$name);
-            $mail->AltBody = strip_tags(Mail_text($email,$send_pass,$name));
             $mail->send();
             $alert=new alert();
             $alert->exec("New operator created and a mail containing the login details has been sent!", "success");
@@ -46,311 +45,111 @@
     function Mail_text($email,$password,$name){
 		$mail="";
 		//require("frontend_lib.php");
-        $mail.=`
-        <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
-        <!--[if gte mso 9]><xml>
-         <o:OfficeDocumentSettings>
-          <o:AllowPNG/>
-          <o:PixelsPerInch>96</o:PixelsPerInch>
-         </o:OfficeDocumentSettings>
-        </xml><![endif]-->
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width">
-        <!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge"><!--<![endif]-->
-        <title></title>
-        <!--[if !mso]><!-- -->
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
-        <!--<![endif]-->
-        
-        <style type="text/css" id="media-query">
-          body {
-      margin: 0;
-      padding: 0; }
-    
-    table, tr, td {
-      vertical-align: top;
-      border-collapse: collapse; }
-    
-    .ie-browser table, .mso-container table {
-      table-layout: fixed; }
-    
-    * {
-      line-height: inherit; }
-    
-    a[x-apple-data-detectors=true] {
-      color: inherit !important;
-      text-decoration: none !important; }
-    
-    [owa] .img-container div, [owa] .img-container button {
-      display: block !important; }
-    
-    [owa] .fullwidth button {
-      width: 100% !important; }
-    
-    [owa] .block-grid .col {
-      display: table-cell;
-      float: none !important;
-      vertical-align: top; }
-    
-    .ie-browser .num12, .ie-browser .block-grid, [owa] .num12, [owa] .block-grid {
-      width: 610px !important; }
-    
-    .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {
-      line-height: 100%; }
-    
-    .ie-browser .mixed-two-up .num4, [owa] .mixed-two-up .num4 {
-      width: 200px !important; }
-    
-    .ie-browser .mixed-two-up .num8, [owa] .mixed-two-up .num8 {
-      width: 400px !important; }
-    
-    .ie-browser .block-grid.two-up .col, [owa] .block-grid.two-up .col {
-      width: 305px !important; }
-    
-    .ie-browser .block-grid.three-up .col, [owa] .block-grid.three-up .col {
-      width: 203px !important; }
-    
-    .ie-browser .block-grid.four-up .col, [owa] .block-grid.four-up .col {
-      width: 152px !important; }
-    
-    .ie-browser .block-grid.five-up .col, [owa] .block-grid.five-up .col {
-      width: 122px !important; }
-    
-    .ie-browser .block-grid.six-up .col, [owa] .block-grid.six-up .col {
-      width: 101px !important; }
-    
-    .ie-browser .block-grid.seven-up .col, [owa] .block-grid.seven-up .col {
-      width: 87px !important; }
-    
-    .ie-browser .block-grid.eight-up .col, [owa] .block-grid.eight-up .col {
-      width: 76px !important; }
-    
-    .ie-browser .block-grid.nine-up .col, [owa] .block-grid.nine-up .col {
-      width: 67px !important; }
-    
-    .ie-browser .block-grid.ten-up .col, [owa] .block-grid.ten-up .col {
-      width: 61px !important; }
-    
-    .ie-browser .block-grid.eleven-up .col, [owa] .block-grid.eleven-up .col {
-      width: 55px !important; }
-    
-    .ie-browser .block-grid.twelve-up .col, [owa] .block-grid.twelve-up .col {
-      width: 50px !important; }
-    
-    @media only screen and (min-width: 630px) {
-      .block-grid {
-        width: 610px !important; }
-      .block-grid .col {
-        vertical-align: top; }
-        .block-grid .col.num12 {
-          width: 610px !important; }
-      .block-grid.mixed-two-up .col.num4 {
-        width: 200px !important; }
-      .block-grid.mixed-two-up .col.num8 {
-        width: 400px !important; }
-      .block-grid.two-up .col {
-        width: 305px !important; }
-      .block-grid.three-up .col {
-        width: 203px !important; }
-      .block-grid.four-up .col {
-        width: 152px !important; }
-      .block-grid.five-up .col {
-        width: 122px !important; }
-      .block-grid.six-up .col {
-        width: 101px !important; }
-      .block-grid.seven-up .col {
-        width: 87px !important; }
-      .block-grid.eight-up .col {
-        width: 76px !important; }
-      .block-grid.nine-up .col {
-        width: 67px !important; }
-      .block-grid.ten-up .col {
-        width: 61px !important; }
-      .block-grid.eleven-up .col {
-        width: 55px !important; }
-      .block-grid.twelve-up .col {
-        width: 50px !important; } }
-    
-    @media (max-width: 630px) {
-      .block-grid, .col {
-        min-width: 320px !important;
-        max-width: 100% !important;
-        display: block !important; }
-      .block-grid {
-        width: calc(100% - 40px) !important; }
-      .col {
-        width: 100% !important; }
-        .col > div {
-          margin: 0 auto; }
-      img.fullwidth, img.fullwidthOnMobile {
-        max-width: 100% !important; }
-      .no-stack .col {
-        min-width: 0 !important;
-        display: table-cell !important; }
-      .no-stack.two-up .col {
-        width: 50% !important; }
-      .no-stack.mixed-two-up .col.num4 {
-        width: 33% !important; }
-      .no-stack.mixed-two-up .col.num8 {
-        width: 66% !important; }
-      .no-stack.three-up .col.num4 {
-        width: 33% !important; }
-      .no-stack.four-up .col.num3 {
-        width: 25% !important; } }
-    
-        </style>
-    </head>
-    <body class="clean-body" style="margin: 0;padding: 0;-webkit-text-size-adjust: 100%;background-color: #FFFFFF">
-      <style type="text/css" id="media-query-bodytag">
-        @media (max-width: 520px) {
-          .block-grid {
-            min-width: 320px!important;
-            max-width: 100%!important;
-            width: 100%!important;
-            display: block!important;
-          }
-    
-          .col {
-            min-width: 320px!important;
-            max-width: 100%!important;
-            width: 100%!important;
-            display: block!important;
-          }
-    
-            .col > div {
-              margin: 0 auto;
-            }
-    
-          img.fullwidth {
-            max-width: 100%!important;
-          }
-                img.fullwidthOnMobile {
-            max-width: 100%!important;
-          }
-          .no-stack .col {
-                    min-width: 0!important;
-                    display: table-cell!important;
-                }
-                .no-stack.two-up .col {
-                    width: 50%!important;
-                }
-                .no-stack.mixed-two-up .col.num4 {
-                    width: 33%!important;
-                }
-                .no-stack.mixed-two-up .col.num8 {
-                    width: 66%!important;
-                }
-                .no-stack.three-up .col.num4 {
-                    width: 33%!important
-                }
-                .no-stack.four-up .col.num3 {
-                    width: 25%!important
-                }
+        $mail.='<html>
+        <head>
+        <style>
+        body
+        {
+            text-align:center;
         }
-      </style>
-      <!--[if IE]><div class="ie-browser"><![endif]-->
-      <!--[if mso]><div class="mso-container"><![endif]-->
-      <table class="nl-container" style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #FFFFFF;width: 100%" cellpadding="0" cellspacing="0">
-        <tbody>
-        <tr style="vertical-align: top">
-            <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
-        <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="background-color: #FFFFFF;"><![endif]-->
-    
-        <div style="background-color:#FFFFFF;">
-          <div style="Margin: 0 auto;min-width: 320px;max-width: 610px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;" class="block-grid ">
-            <div style="border-collapse: collapse;display: table;width: 100%;background-color:transparent;">
-              <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#FFFFFF;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width: 610px;"><tr class="layout-full-width" style="background-color:transparent;"><![endif]-->
-    
-                  <!--[if (mso)|(IE)]><td align="center" width="610" style=" width:610px; padding-right: 5px; padding-left: 5px; padding-top:5px; padding-bottom:5px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><![endif]-->
-                <div class="col num12" style="min-width: 320px;max-width: 610px;display: table-cell;vertical-align: top;">
-                  <div style="background-color: transparent; width: 100% !important;">
-                  <!--[if (!mso)&(!IE)]><!--><div style="border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent; padding-top:5px; padding-bottom:5px; padding-right: 5px; padding-left: 5px;"><!--<![endif]-->
-    
-                      
-                        <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 15px; padding-left: 15px; padding-top: 15px; padding-bottom: 15px;"><![endif]-->
-    <div style="color:#2A458E;line-height:150%;font-family: 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Geneva, Verdana, sans-serif; padding-right: 15px; padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">	
-        <div style="font-size:12px;line-height:18px;font-family:'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Geneva, Verdana, sans-serif;color:#2A458E;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 21px;text-align: center"><span style="font-size: 22px; line-height: 33px;">﻿Symbioisis University of Applied Sciences</span></p></div>	
-    </div>
-    <!--[if mso]></td></tr></table><![endif]-->
-    
-                      
-                      
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="divider" style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%">
-        <tbody>
-            <tr style="vertical-align: top">
-                <td class="divider_inner" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;padding-right: 5px;padding-left: 5px;padding-top: 5px;padding-bottom: 5px;min-width: 100%;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%">
-                    <table class="divider_content" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;border-top: 3px solid #0068A5;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%">
-                        <tbody>
-                            <tr style="vertical-align: top">
-                                <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%">
-                                    <span></span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-                      
-                      
-                        <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 5px; padding-left: 5px; padding-top: 5px; padding-bottom: 5px;"><![endif]-->
-    <div style="color:#555555;line-height:150%;font-family:'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; padding-right: 5px; padding-left: 5px; padding-top: 5px; padding-bottom: 5px;">	
-        <div style="font-size:12px;line-height:18px;font-family:'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;color:#555555;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 21px;text-align: center"><span style="text-decoration: underline; font-size: 14px; line-height: 21px;"><span style="font-size: 18px; line-height: 27px;">Examination Portal Registration</span></span></p></div>	
-    </div>
-    <!--[if mso]></td></tr></table><![endif]-->
-    
-                      
-                      
-                        <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;"><![endif]-->
-    <div style="color:#000000;line-height:150%;font-family:Georgia, Times, 'Times New Roman', serif; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">	
-        <div style="font-size:12px;line-height:18px;font-family:Georgia, Times, 'Times New Roman', serif;color:#000000;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 21px"><span style="font-size: 16px; line-height: 24px;">Congratulations `.$name.`,</span></p><p style="margin: 0;font-size: 14px;line-height: 21px"><span style="font-size: 16px; line-height: 24px;">&#160;You have been registered with the SUAS, Indore Examination Portal as an operator. Please use the following details to log into the portal:</span></p></div>	
-    </div>
-    <!--[if mso]></td></tr></table><![endif]-->
-    
-                      
-                      
-                        <div style="font-size: 16px;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif; text-align: center;"><style>
-      .details{
+        .text{
+            color: #000000;
+            line-height: 150%;
+            margin: 10px;
+        font-family: Georgia, Times, "Times New Roman", serif;
+        font-size: 16px;
+        text-align: left;
+        }
+        .title{
+            font-size: 24px;
+            color: #2A458E;
+            font-family: "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Geneva, Verdana, sans-serif;
+            font-weight: 400;
+            line-height: 33px;
+        }
+        .mcontainer{
+            padding: 10px;
+            display: flex;
+          justify-content: center;
+        }
+        .mailcontainer{
+            font-size: 24px !important;
+            width: 610px !important;
+            min-height: 70px !important;
+            padding: 5px !important;
+            text-align: center;
+            background: white;
+            font-family: "Open Sans", sans-serif;
+            align-items: center;
+            margin-bottom:30px;
+           
+        }
+        .portal{
+            font-size: 18px;
+        line-height: 27px;
+        color: #555555;;
+        border-bottom: 1px solid black;
+        margin: 15px;
+        }
+        #hr{
+            color: #1978C8;
+            border: 2px solid #1978C8;
+            width: 100%;
+        }
+       
+        
+        .details{
             margin: 10px;
             padding: 10px;
             border: 2px dashed black;
-            font-weight:bolder;
-            font-family: 'Open Sans', sans-serif;
-            text-decoration:none;
+            font-weight: bolder;
+            font-family: "Open Sans", sans-serif;
+            text-decoration: none;
             font-size: 16px;
+            line-height: 33px;
+            width: 100%;
+            margin: 20px;
         }
-    </style>
-    <div class="details">
-                Username: `.
-                $email.`<br> 
-                Password: `.$password.` 
-                </div>  </div>
-    
-                      
-                      
-                        <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;"><![endif]-->
-    <div style="color:#555555;line-height:120%;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">	
-        <div style="line-height:14px;font-size:12px;color:#555555;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;text-align:left;"><p style="margin: 0;font-size: 14px;line-height: 17px"><span style="font-size: 14px; line-height: 16px;"><span style="font-size: 16px; line-height: 19px;"><strong>NOTE:&#160;</strong></span></span></p><ol><li style="font-size: 12px; line-height: 16px; text-align: left;"><span style="font-size: 16px; line-height: 19px; background-color: rgb(255, 255, 255);">Please change your password as soon as you log into the portal for maximum security.</span></li><li style="line-height: 16px; text-align: left;"><span style="font-size: 16px; line-height: 19px; background-color: rgb(255, 255, 255);">Keep these details private, do not share these details with anyone.</span></li><li style="line-height: 16px; text-align: left;"><span style="font-size: 16px; line-height: 19px; background-color: rgb(255, 255, 255);">This is an auto-generated e-mail, please do not reply to it.</span></li></ol></div>	
-    </div>
-    <!--[if mso]></td></tr></table><![endif]-->
-    
-                      
-                  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
-                  </div>
+        .note{
+            line-height: 15px;
+        font-size: 16px;
+        color: #555555;
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+        text-align: left;
+        }
+        ol li{
+            line-height: 18px;
+            margin: 10px;
+        }
+        </style>
+        </head>
+        <body>
+        <div class="mcontainer">
+        <div class="mailcontainer">
+        <div class="title">Symbiosis University Of Applied Sciences</div>
+        <hr id="hr">
+        <div class="portal">Examination Portal Registration</div>
+        <div class="text">Congratulations '.$name.',
+                <br>
+                 You have been registered with the SUAS, Indore Examination Portal as an operator. Please use the following details to log into the portal:</div>
+                <div class="details">
+                Username: '.
+                $email.'<br> 
+                Password: '.$password.' 
                 </div>
-              <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                <div class="note">
+                        <b>NOTE:</b> 
+                        <br>
+                        <ol>
+                      <li>  Please change your password as soon as you log into the portal for maximum security.
+                            <li> Keep these details private, do not share these details with anyone.
+                                    <li>This is an auto-generated e-mail, please do not reply to it.    
+                    </ol>
+                    </div>   
             </div>
-          </div>
-        </div>   <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
-            </td>
-      </tr>
-      </tbody>
-      </table>
-      <!--[if (mso)|(IE)]></div><![endif]-->
-    
-    
-    </body></html>`;
+        </div>
+        </body>
+        </html>';
 		return $mail;
 	}
 
