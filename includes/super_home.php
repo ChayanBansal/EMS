@@ -15,6 +15,7 @@
         width: 100%;
         justify-content: center;
         align-items: center;
+        margin-bottom: 100px;
     }
     .modal-container{
         width: 100%;
@@ -23,11 +24,23 @@
     align-items: center;
     flex-direction: column;
     }
+   
+    .sub-option{
+        margin-top: 5px;
+        display: none;
+        width: 100%;
+        background: orangered;
+        justify-content: space-around;
+        color: white;
+        border: 1px solid white;
+        transition: all 300ms;
+    }
     .option{
         padding: 20px;
         padding-right: 40px;
         padding-left: 40px;
         margin: 20px;
+        width: 100% !important;
         display: flex;
         flex-wrap: wrap;
         color: white;
@@ -36,27 +49,14 @@
         align-items: center;
         font-family: 'PT Sans', sans-serif;
     }
-    .sub-option{
-        margin-top: 5px;
-        display: none;
-        width: 100%;
-        background: orangered;
-        color: white;
-        border: 1px solid white;
-        transition: all 300ms;
-    }
     .sub-option button{
-        padding: 5px;
         border: none;
+        width: 40%;
         background: orangered;
     }
     .sub-option button:hover{
         background: white;
         color: orangered;
-    }
-    .sub-container{
-        display: flex;
-        align-items: center;
     }
     @keyframes fadein{
         0%{
@@ -111,7 +111,7 @@ $options->add_subject($conn);
 $options->create_operator($conn);
 ?>
     <div class="main-container col-md-12">
-    <div class="sub-container">
+    <div class="sub-container col-lg-4 col-md-8 col-sm-12 col-xs-12">
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
@@ -144,10 +144,16 @@ $options->create_operator($conn);
                 <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
+            <div class="option yellow" onmouseover="show('subopt5')" onmouseout="hide('subopt5')">
+            <div><i class="glyphicon glyphicon-user"></i></div>
+            <div>Sessions</div>
+            <div class="sub-option" id="subopt5">
+            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add</button>
+            <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+            </div>
+            </div>
 
-    </div>
-    </div>
-    </div> 
+
     </div>
     </div>
     <!-- Course Modal -->
@@ -198,7 +204,56 @@ $options->create_operator($conn);
     
   </div>
   <!--End-->
-  
+
+  <!---->
+  <div class="modal fade" id="addcourseModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Add New Course</h4>
+          </div>
+          <form action="" method="post">
+            <div class="modal-body">
+           
+                <?php
+                $input = new input_field();
+                ?>
+                <div class="form-group">
+                <label for="name">Course Name</label>
+                <?php
+                $input->display("name", "form-control", "text", "cname", "", 1);
+                ?>
+                </div>
+                <div class="form-group">
+                <label for="type">Course Type</label>
+                <select name="level" id="type" class="form-control">
+                    <option value="ug">Undergraduate</option>
+                    <option value="pg">Postgraduate</option>
+                </select>
+                </div>
+                <div class="form-group">
+                <label for="duration">Duration</label>
+                <?php
+                $input->display_table("duration", "form-control", "number", "cduration", "", 1, 1, 10, 0, 10);
+                ?>
+                </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
   <!-- ADD Subject Modal -->
   <div class="modal fade" id="addsubjectModal" role="dialog">
       <div class="modal-dialog modal-lg" style="width: 90%">
@@ -382,7 +437,7 @@ $options->create_operator($conn);
 </body>
 <script>
     function show(el){
-        document.getElementById(el).style.display="block";
+        document.getElementById(el).style.display="flex";
     }
     function hide(el){
         document.getElementById(el).style.display="none";
