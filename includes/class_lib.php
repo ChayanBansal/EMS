@@ -53,6 +53,23 @@ class input_field
 			}
 		}
 	}
+	function display_table_btn($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $disabled_flag, $maximum_value,$value,$actual_value)
+	{
+		if ($disabled_flag == 1) {
+			if ($required_flag == 1) {
+				echo "<button id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) disabled required value='$value'> $actual_value </button>";
+			} else {
+				echo "<button id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) disabled value='$value'> $actual_value </button>";
+			}
+		} else {
+			if ($required_flag == 1) {
+				echo "<button id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) required value='$value'> $actual_value </button>";
+			} else {
+				echo "<button id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) value='$value'> $actual_value </button>";
+			}
+		}
+	}
+	
 	function display_textarea($id, $class/*password or text or email*/, $name, $placeholder, $rows, $cols, $required_flag/*0 or 1 */ )
 	{
 		if ($required_flag == 1) {
@@ -161,29 +178,58 @@ class form_receive
 		$alert = new alert();
 		if (isset($_POST['login'])) //check button click
 		{
+			if(!isset($_SESSION['remaining_attempts'])){
+				$_SESSION['remaining_attempts']=4;
+			}
 			require("config.php");
 			$form_input_check = new input_check();
 			$username = $form_input_check->input_safe($conn, $_POST['username']); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn, $_POST['password']));//preventing SQL injection //name of the input field should be password
-			$login_query = "SELECT * FROM operators WHERE operator_username='$username' AND operator_password='$password'";
-			$login_query_run = mysqli_query($conn, $login_query);
-
-			if ($login_query_run) {
-				if (mysqli_num_rows($login_query_run) == 1) {
-					$operator_data = $login_query_run->fetch_assoc();
-					 //creating session//values of id, name and username
-					$_SESSION['operator_id'] = $operator_data['operator_id'];
-					$_SESSION['operator_name'] = $operator_data['operator_name'];
-					$_SESSION['operator_username'] = $username;
-					$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
-					$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
-					header('location: /ems/includes/home.php');
-				} else {
-					$alert->exec("Please check your username or password!", "danger");
-				}
-			} else {
-				$alert->exec("Unable to connect to the server!", "danger");
+			$check_locked_qry="SELECT locked from operators where operator_username='".$username."'";
+			$check_locked_qry_run=mysqli_query($conn,$check_locked_qry);
+			$locked=mysqli_fetch_assoc($check_locked_qry_run);
+			$locked=$locked['locked'];
+			if($locked==1){
+				$alert->exec("Your account is locked for security reasons! Please contact the superadmin to unlock your account!","warning");
 			}
+			else{
+				$login_query = "SELECT * FROM operators WHERE operator_username='$username' AND operator_password='$password'";
+				$login_query_run = mysqli_query($conn, $login_query);
+	
+				if ($login_query_run) {
+					if (mysqli_num_rows($login_query_run) == 1) {
+						$operator_data = $login_query_run->fetch_assoc();
+						 //creating session//values of id, name and username
+						$_SESSION['operator_id'] = $operator_data['operator_id'];
+						$_SESSION['operator_name'] = $operator_data['operator_name'];
+						$_SESSION['operator_username'] = $username;
+						$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
+						$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
+						header('location: /ems/includes/home.php');
+					} else {
+						$_SESSION['remaining_attempts']--;
+						if($_SESSION['remaining_attempts']==0){
+							$update_locked_qry="UPDATE operators set locked=1 where operator_username='".$username."'";
+							$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
+							if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
+								$alert->exec("Your account is locked for security reasons! Please contact the superadmin to unlock your account!" ,"warning");
+								session_destroy();
+							}
+							else{
+								$alert->exec("You are not registered with the portal!" ,"info");
+								session_destroy();
+							}
+						}
+						else{
+							$alert->exec("Please check your username or password! <b>".$_SESSION['remaining_attempts']." attempts remaining!</b>", "danger");
+						}
+						
+					}
+				} else {
+					$alert->exec("Unable to connect to the server!", "danger");
+				}
+			}
+			
 		}
 	}
 	function super_login()
@@ -488,6 +534,36 @@ class super_user_options
 					$er = new alert();
 					$er->exec("Operator already exists!", "danger");
 				}
+			}
+		}
+	}
+
+	function lock_operator($conn){
+		if(isset($_POST['lock'])){
+			$alert=new alert();
+			$username=$_POST['lock'];
+			$update_locked_qry="UPDATE operators set locked=1 where operator_username='".$username."'";
+			$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
+			if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
+				$alert->exec("Operator account successfully locked!","success");
+			}
+			else{
+				$alert->exec("Unable to lock account!","danger");
+			}
+		}
+	}
+
+	function unlock_operator($conn){
+		if(isset($_POST['unlock'])){
+			$alert=new alert();
+			$username=$_POST['unlock'];
+			$update_locked_qry="UPDATE operators set locked=0 where operator_username='".$username."'";
+			$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
+			if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
+				$alert->exec("Operator account successfully unlocked!","success");
+			}
+			else{
+				$alert->exec("Unable to unlock account!","danger");
 			}
 		}
 	}
@@ -1244,17 +1320,17 @@ class view_operators
 		} else {
 			echo ('
               
-  <table class="table table-striped table-bordered">
+  <table class="table table-striped table-bordered" style="width: 100%">
     <thead>
-      <tr>
+      <tr style="text-align:center">
         <th>Name</th>
         <th>Username</th>
 		<th>Email</th>
 		<th>Operator Status</th>
-		
+		<th>Lock/Unlock Account</th>
       </tr>
     </thead>
-    <tbody>');
+    <tbody><form action="" method="post">');
 
 
 			while ($result = mysqli_fetch_assoc($get_op_run)) {
@@ -1270,11 +1346,18 @@ class view_operators
 				} else {
 					echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
 				}
-				echo ('
+				echo('</td><td>');
+				if($result['locked']==0){
+					echo('<button type="submit" class="btn btn-default" name="lock" value="'.$result['operator_username'].'"><i class="fa fa-lock" aria-hidden="true"> Lock </i> </button>');
+				}
+				else{
+					echo('<button type="submit" class="btn btn-default" name="unlock" value="'.$result['operator_username'].'"><i class="fa fa-unlock"> Unlock</i> </button>');		
+				}
+				echo ('</td>
       </tr>');
 			}
 			echo ('
-    </tbody>
+   </form> </tbody>
   </table>');
 
 

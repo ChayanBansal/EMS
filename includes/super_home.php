@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
     <link rel="stylesheet" href="/ems/css/style.css">
+    <script src="/ems/js/super_home_script.js"></script>
     <style>
     .main-container{
         animation: fadein 500ms ease-in-out 1;
@@ -110,9 +111,11 @@ $options = new super_user_options();
 $options->create_course($conn);
 $options->add_subject($conn);
 $options->create_operator($conn);
+$options->lock_operator($conn);
+$options->unlock_operator($conn);
 ?>
     <div class="main-container col-md-12">
-    <div class="sub-container col-lg-4 col-md-8 col-sm-12 col-xs-12">
+    <div class="sub-container col-lg-5 col-md-8 col-sm-10 col-xs-12">
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
@@ -419,7 +422,7 @@ $options->create_operator($conn);
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Operators</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body modal-lg">
         <?php $v_op = new view_operators;
         $v_op->execute($conn); ?>
       </div>
@@ -435,136 +438,4 @@ $options->create_operator($conn);
     $obj->disp_footer();
     ?>
 </body>
-<script>
-    function show(el){
-        document.getElementById(el).style.display="flex";
-    }
-    function hide(el){
-        document.getElementById(el).style.display="none";
-    }
-    function add(){
-        document.getElementById("no_subjects").value++;
-        display_subjects('up');
-    }
-    function subtract(){
-        if(document.getElementById("no_subjects").value>1)
-        document.getElementById("no_subjects").value--;
-        display_subjects('down');
-    }
-    function show_semester(){
-        var sel = document.getElementById("mcourse");
-        var duration = sel.options[sel.selectedIndex].getAttribute("data-course-duration");
-        var sem=document.getElementById("msemester");
-        sem.innerHTML=`<option disabled selected>Select semester</option> `;
-        for(var i=1;i<=(duration*2);i++){
-            sem.innerHTML+=`
-            <option value="`+i+`">`+i+`</option>
-            `;
-        }
-    }
-    function display_subjects(direction){
-        var val=document.getElementById("no_subjects").value;
-        var table=document.getElementById("subject_area");
-        table.innerHTML="";
-        if(isNaN(val)){
-            table.innerHTML="Add a subject to insert";
-        }
-        else{
-                        for(var i=1;i<=val;i++){
-                        table.innerHTML+=`
-                        <tr>
-                <td>
-                <input type="text" name="subcode`+i+`" id="subcode`+i+`" class="form-control" required>
-                </td>
-                <td>
-                <input type="text" name="subname`+i+`" id="subname`+i+`" class="form-control" required>
-                </td>
-                <td>
-                <select name="type`+i+`" id="type`+i+`" class="form-control" onchange="check_credits(this,`+i+`)">            
-                <option value="theory">Theory</option>
-                    <option value="practical">Practical</option>
-                <option value="both" selected>Both</option>         
-                    </select>
-                </td>
-                
-                <td>
-                <input type="number" name="theory`+i+`" id="theory`+i+`" class="form-control" onkeyup="total(`+i+`)" value=0 required>
-                </td>
-                <td>
-                <input type="number" name="practical`+i+`" id="practical`+i+`" class="form-control" onkeyup="total(`+i+`)" value=0 required> 
-                </td>
-                <td><input id="total`+i+`" name="total`+i+`" class="form-control disabled" readonly type="number"></td>
-                <td style="text-align: center">
-                <input type="checkbox" name="ie`+i+`" id="ie`+i+`" class="form-control" onchange="disable_credits(this,`+i+`)">
-                </td>
-                        `;
-                    }
-        }
-       
-    }
-    function total(no){
-        var theory=parseInt(document.getElementById("theory"+no).value);
-        var practical=parseInt(document.getElementById("practical"+no).value);
-        document.getElementById("total"+no).value=theory+practical;
-    }
-    function disable_credits(el,no){
-        var practical=document.getElementById("practical"+no);
-        var theory=document.getElementById("theory"+no);
-
-        if(el.checked){   
-        practical.classList.add("disabled");
-            practical.required=false;
-            practical.disabled=true;
-            theory.classList.add("disabled");
-            theory.required=false;
-            theory.disabled=true;
-            theory.value=0;
-            practical.value=0;
-        }
-        else{
-            
-        practical.classList.remove("disabled");
-            practical.required=true;
-            practical.disabled=false;
-            theory.classList.remove("disabled");
-            theory.required=true;
-            theory.disabled=false;
-        }
-       }
-    function check_credits(el,no){
-        var typename = el.options[el.selectedIndex].value;
-        console.log(typename);
-        var practical=document.getElementById("practical"+no);
-        var theory=document.getElementById("theory"+no);
-        switch (typename) {
-            case 'theory':
-            practical.classList.add("disabled");
-            practical.required=false;
-            practical.disabled=true;
-            theory.classList.remove("disabled");
-            theory.required=true;
-            theory.disabled=false;
-            practical.value=0;
-            break;
-            case 'practical':
-            theory.classList.add("disabled");
-            theory.required=false;
-            theory.disabled=true;
-            practical.classList.remove("disabled");
-            practical.required=true;
-            practical.disabled=false;
-            theory.value=0;
-            break;
-            case 'both':
-            theory.classList.remove("disabled");
-            theory.required=true;
-            theory.disabled=false;
-            practical.classList.remove("disabled");
-            practical.required=true;
-            practical.disabled=false;
-            break;
-        }
-    }
-</script>
-
 </html>

@@ -6,7 +6,7 @@ $docroot=$_SERVER['DOCUMENT_ROOT']."/ems/";
      <script src="/ems/bootstrap/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="/ems/css/front_styles.css">
 <link href="https://fonts.googleapis.com/css?family=Cabin|Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|PT+Sans" rel="stylesheet">
-
+<link rel="stylesheet" href="/ems/font-awesome/css/font-awesome.css">
 <?php
 class head{
     var $title="Symbiosis University of Applied Sciences";

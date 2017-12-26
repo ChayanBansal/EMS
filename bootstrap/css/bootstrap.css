@@ -5068,8 +5068,8 @@ a.thumbnail.active {
   color: #2b542c;
 }
 .alert-info {
-  color: #31708f;
-  background-color: #d9edf7;
+  color: white;
+  background-color: rgba(26, 104, 157,0.9);
   border-color: #bce8f1;
 }
 .alert-info hr {
@@ -5983,7 +5983,12 @@ button.close {
 }
 @media (min-width: 992px) {
   .modal-lg {
-    width: 900px;
+    width: 1000px;
+  }
+}
+@media(max-width:992px){
+  .modal-lg {
+    width: 90%;
   }
 }
 .tooltip {

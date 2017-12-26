@@ -72,6 +72,9 @@ a:hover{
     color: #B1C3F8;  
     text-decoration: none;
 }
+a:focus{
+    color: white;
+}
 .item:hover #menu_span{
     display: block;
     opacity: 0;
@@ -106,6 +109,9 @@ a{
     color: white;
     font-size: 2.4rem;
     text-align: center;
+}
+.item:active{
+    color: white;
 }
 .footer {
     background: rgba(17, 34, 84, 0.95);
