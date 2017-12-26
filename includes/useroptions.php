@@ -146,7 +146,7 @@ function getSemester(examType) {
     $.ajax({
 	type: "POST",
 	url: "ajax_response.php",
-	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch+'&getType=0&getSubject=0',
+	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch+'&getType=0&getSubject=0&getComponent=0',
 	success: function(data){
         $("#sem_list").html(data);
     },
@@ -159,7 +159,7 @@ function getType(batch){
     $.ajax({
 	type: "POST",
 	url: "ajax_response.php",
-	data: 'from_year='+batch+'&getType=1&getSemester=0&getSubject=0',
+	data: 'from_year='+batch+'&getType=1&getSemester=0&getSubject=0&getComponent=0',
 	success: function(data){
         $("#exam_type").html(data);
     },
@@ -175,9 +175,27 @@ function getSubject(semester)
     $.ajax({
 	type: "POST",
 	url: "ajax_response.php",
-	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getSemester=0',
+	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getSemester=0&getComponent=0',
 	success: function(data){
         $("#sub_list").html(data);
+    },
+    error: function(e){
+        alert('Come back again');
+    }
+	});
+}
+
+function getComponent(sub_code)
+{
+    var batch=document.getElementById("batch_list").value;
+    var main_atkt=document.getElementById("exam_type").value;
+    var semester=document.getElementById("sub_list").value;
+    $.ajax({
+	type: "POST",
+	url: "ajax_response.php",
+	data: 'getSubject=0'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getComponent=1&getSemester=0'+'&sub_code='+sub_code,
+	success: function(data){
+        $("#sub_component").html(data);
     },
     error: function(e){
         alert('Come back again');
@@ -203,6 +221,7 @@ function getSubject(semester)
   <div class="modal-dialog">
   
     <!-- Modal content-->
+    <form action="feed.php" method="post">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -210,7 +229,7 @@ function getSubject(semester)
       </div>
       <div class="modal-body">
         <div>
-            <form action=".<?php echo($_SERVER['PHP_SELF']);?>." method="post">
+            
                 <div class="form-group" style="display: flex; justify-content: center;">
                     <label for="batch">Batch (Starting Year) :</label>
                     <select id="batch_list" name="batch" class="btn-default" onChange="getType(this.value)" >
@@ -228,47 +247,39 @@ function getSubject(semester)
                 <div class="form-group" style="display: flex; justify-content: center;">
                 <label for="semester">Type :</label>
                     <select id="exam_type" name="main_atkt" class="btn-default" onChange="getSemester(this.value)">
+                    <option value="">Select Type</option>
                     </select>
                 </div>
                         
                 <div class="form-group" style="display: flex; justify-content: center;">
                     <label for="semester">Semeter :</label>
                     <select id="sem_list" name="semester" class="btn-default" onChange="getSubject(this.value)">
+                    <option value="">Select Semester</option>
                     </select>
                 </div>  
                 
                 <div class="form-group" style="display: flex; justify-content: center;">
                     <label for="subject">Subject : </label>
-                    <select id="sub_list" name="subject" class="btn-default">
+                    <select id="sub_list" name="subject" class="btn-default" onChange="getComponent(this.value)">
+                    <option value="">Select Subject</option>
                     </select>
                 </div>
-                <!--
-                <div class="form-group" style="display: flex; justify-content: center;">
-                    <label for="subject">Subject Component :</label>
-                    <select id="sub_list" name="subject" class="btn-default">
-                    
-                    </select>
-                </div>
-                        -->                
+                          
                 <div class="form-group" style="display: flex; justify-content: center;">
                     <label for="sub_comp">Subject Component :</label>
                     <select id="sub_component" name="sub_comp" class="btn-default">
-                        <option value="Cat">Continuous Assessment (Theory)</option>
-                        <option value="Cap">Continuous Assessment (Practical)</option>
-                        <option value="endsem_theory">End Semester (Theory)</option>
-                        <option value="endsem_practical">End Semester (Practical)</option>
-                        <option value="ia">Industry Assessment (IA)</option>
+                    <option value="">Select Component</option>
                     </select>
                 </div>            
-            </form>
+            
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success">Proceed</button>
+        <input type="submit" class="btn btn-success" name="proceed_to_feed" value="Proceed" >
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
-
+    </form>
   </div>
 </div>
 

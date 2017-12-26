@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+<?php
+if(isset($_POST['proceed_to_feed']))
+{
+    session_start();
+    $_SESSION['from_year']=$_POST['batch'];
+    $_SESSION['main_atkt']=$_POST['main_atkt'];
+    $_SESSION['semester']=$_POST['semester'];
+    $_SESSION['sub_code']=$_POST['subject'];
+    $_SESSION['sub_comp_id']=$_POST['sub_comp'];
+    header('location: feed.php');
+}?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

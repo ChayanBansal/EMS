@@ -13,10 +13,12 @@ if($_POST['getType']==1)
         $result=mysqli_fetch_assoc($get_semester_run);
         if($result['current_semester']==1)
         {
+            echo('<option value="">Select Type</option>');
             echo('<option value="main" >Main</option>');
         }
         else
         {
+            echo('<option value="">Select Type</option>');
             echo('<option value="main" >Main</option>');
             echo('<option value="atkt" >ATKT</option>');
         }
@@ -26,6 +28,7 @@ if($_POST['getSemester']==1)
 {
     if($_POST['from_year'] AND $_POST['main_atkt'])
     {
+        echo('<option value="">Select Semester</option>');
         $from_year=$_POST['from_year'];
         $examType=$_POST['main_atkt'];
         if($examType=='main')
@@ -53,6 +56,7 @@ if($_POST['getSubject']==1)
 {
     if($_POST['from_year'] AND $_POST['main_atkt'] AND $_POST['semester'])
     {
+        echo('<option value="">Select Subject</option>');
         if($_POST['main_atkt']=='main')
         {
             $get_sub_main="SELECT sub_code, sub_name FROM subjects WHERE course_id=".$_SESSION['current_course_id']." AND semester=".$_POST['semester'];
@@ -66,14 +70,42 @@ if($_POST['getSubject']==1)
         {
             $get_atkt_sub="SELECT sub_code, sub_name FROM subjects WHERE sub_code IN 
                             (SELECT DISTINCT(sub_code) FROM sub_distribution WHERE sub_id IN
-                            (SELECT sub_id FROM atkt_list WHERE roll_id IN
-                            (SELECT roll_id FROM roll_list WHERE enrol_no IN
+                            (SELECT sub_id FROM atkt_subjects WHERE roll_id IN
+                            (SELECT roll_id FROM atkt_list WHERE semester=".$_POST['semester']." AND enrol_no IN
                             (SELECT enrol_no FROM students WHERE course_id=".$_SESSION['current_course_id']." AND from_year=".$_POST['from_year']." AND current_sem=".$_POST['semester']."))))";
             $get_atkt_sub_run=mysqli_query($conn,$get_atkt_sub);
             while($atkt_sub=mysqli_fetch_assoc($get_atkt_sub_run))
             {
                 echo('<option value="'.$atkt_sub['sub_code'].'">'.$atkt_sub['sub_name'].'</option>');
             }
+        }
+    }
+}
+if($_POST['getComponent'])
+{
+    echo('<option value="">Select Component</option>');
+    if($_POST['from_year'] AND $_POST['main_atkt'] AND $_POST['semester'] AND $_POST['sub_code'])
+    {    
+        if($_POST['main_atkt']=='main')
+        {
+           $get_sub_comp="SELECT component_id, component_name FROM component WHERE component_id IN 
+                                (SELECT component_id FROM component_distribution WHERE sub_id IN
+                                (SELECT sub_id FROM sub_distribution WHERE sub_code='".$_POST['sub_code']."'))"; 
+                                /*SELECT component_id, component_name FROM component WHERE component_id IN 
+                                (SELECT component_id FROM component_distribution WHERE sub_id IN
+                                (SELECT sub_id FROM sub_distribution WHERE sub_code='BTCS003003'))*/
+            $get_sub_comp_run=mysqli_query($conn,$get_sub_comp);
+            while($sub_comp=mysqli_fetch_assoc($get_sub_comp_run))
+            {
+                echo('<option value="'.$sub_comp['component_id'].'">'.$sub_comp['component_name'].'</option>');
+            }   
+        }
+        else if($_POST['main_atkt']=='atkt')
+        {
+            $get_atkt_sub_comp="SELECT component_id, component_name FROM component WHERE component_id IN
+            (SELECT DISTINCT(component_id) FROM atkt_subjects WHERE roll_id IN
+            (SELECT roll_id FROM atkt_list WHERE enrol_no IN
+            (SELECT enrol_no FROM students WHERE course_id=".$_SESSION['current_course_id']." AND from_year=".$_POST['from_year']." AND current_sem=".$_POST['semester'].")))";
         }
     }
 }
