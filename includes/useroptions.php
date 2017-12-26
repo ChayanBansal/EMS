@@ -142,11 +142,11 @@ $options->check_opt();*/
 ?>
 <script>
 function getSemester(examType) {
-	var batch=document.getElementById("batch_list").value
+	var batch=document.getElementById("batch_list").value;
     $.ajax({
 	type: "POST",
 	url: "ajax_response.php",
-	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch+'&getType=0',
+	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch+'&getType=0&getSubject=0',
 	success: function(data){
         $("#sem_list").html(data);
     },
@@ -159,7 +159,7 @@ function getType(batch){
     $.ajax({
 	type: "POST",
 	url: "ajax_response.php",
-	data: 'from_year='+batch+'&getType=1&getSemester=0',
+	data: 'from_year='+batch+'&getType=1&getSemester=0&getSubject=0',
 	success: function(data){
         $("#exam_type").html(data);
     },
@@ -170,12 +170,14 @@ function getType(batch){
 }
 function getSubject(semester)
 {
+    var batch=document.getElementById("batch_list").value;
+    var main_atkt=document.getElementById("exam_type").value;
     $.ajax({
 	type: "POST",
 	url: "ajax_response.php",
-	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&getType=0&getSemester=0',
+	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getSemester=0',
 	success: function(data){
-        $("#exam_type").html(data);
+        $("#sub_list").html(data);
     },
     error: function(e){
         alert('Come back again');
@@ -224,14 +226,14 @@ function getSubject(semester)
                     </select>
                 </div>
                 <div class="form-group" style="display: flex; justify-content: center;">
-                <div id="exam_type" class="radio" >
-                <label for="main_atkt">Type : </label>
-                    </div>
+                <label for="semester">Type :</label>
+                    <select id="exam_type" name="main_atkt" class="btn-default" onChange="getSemester(this.value)">
+                    </select>
                 </div>
                         
                 <div class="form-group" style="display: flex; justify-content: center;">
                     <label for="semester">Semeter :</label>
-                    <select id="sem_list" name="semester" class="btn-default">
+                    <select id="sem_list" name="semester" class="btn-default" onChange="getSubject(this.value)">
                     </select>
                 </div>  
                 
