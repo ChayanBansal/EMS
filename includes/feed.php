@@ -2,13 +2,17 @@
 <?php
 if(isset($_POST['proceed_to_feed']))
 {
+    require('config.php');
     session_start();
     $_SESSION['from_year']=$_POST['batch'];
     $_SESSION['main_atkt']=$_POST['main_atkt'];
     $_SESSION['semester']=$_POST['semester'];
     $_SESSION['sub_code']=$_POST['subject'];
     $_SESSION['sub_comp_id']=$_POST['sub_comp'];
-    header('location: feed.php');
+    $getComponentName="SELECT component_name FROM component WHERE component_id=".$_SESSION['sub_comp_id'];
+    $getComponentNameRun=mysqli_query($conn,$getComponentName);
+    $comp=mysqli_fetch_assoc($getComponentNameRun);
+    $_SESSION['sub_comp_name']=$comp['component_name'];
 }?>
 <html lang="en">
 <head>
@@ -73,7 +77,10 @@ $input = new input_field();
  <form action="" method="post">
      <div class="feed-container">
         <div class="subselected">
-            Showing results for: Subject name | Theory
+            Showing results for: <?php 
+
+            echo($_SESSION['current_course_name']." | ".$_SESSION['from_year']." | ". $_SESSION['main_atkt']." | Semster ".$_SESSION['semester']." | Subject Code ".$_SESSION['sub_code']." | ".$_SESSION['sub_comp_name']);
+            ?>
         </div>
      <table class="table table-striped table-responsive table-bordered">
     <thead>
