@@ -53,6 +53,23 @@ class input_field
 			}
 		}
 	}
+	function display_table_btn($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $disabled_flag, $maximum_value,$value,$actual_value)
+	{
+		if ($disabled_flag == 1) {
+			if ($required_flag == 1) {
+				echo "<button id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) disabled required value='$value'> $actual_value </button>";
+			} else {
+				echo "<button id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) disabled value='$value'> $actual_value </button>";
+			}
+		} else {
+			if ($required_flag == 1) {
+				echo "<button id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) required value='$value'> $actual_value </button>";
+			} else {
+				echo "<button id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) value='$value'> $actual_value </button>";
+			}
+		}
+	}
+	
 	function display_textarea($id, $class/*password or text or email*/, $name, $placeholder, $rows, $cols, $required_flag/*0 or 1 */ )
 	{
 		if ($required_flag == 1) {
