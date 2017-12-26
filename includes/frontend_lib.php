@@ -2,8 +2,8 @@
 $docroot=$_SERVER['DOCUMENT_ROOT']."/ems/";
 ?>
 <link rel="stylesheet" href="/ems/bootstrap/css/bootstrap.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-     <script src="/ems/bootstrap/js/bootstrap.min.js"></script>
+<script src="/ems/js/jquery.js"></script>
+<script src="/ems/bootstrap/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="/ems/css/front_styles.css">
 <link href="https://fonts.googleapis.com/css?family=Cabin|Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|PT+Sans" rel="stylesheet">
 <link rel="stylesheet" href="/ems/font-awesome/css/font-awesome.css">
