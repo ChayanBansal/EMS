@@ -110,9 +110,11 @@ $options = new super_user_options();
 $options->create_course($conn);
 $options->add_subject($conn);
 $options->create_operator($conn);
+$options->lock_operator($conn);
+$options->unlock_operator($conn);
 ?>
     <div class="main-container col-md-12">
-    <div class="sub-container col-lg-4 col-md-8 col-sm-12 col-xs-12">
+    <div class="sub-container col-lg-5 col-md-8 col-sm-10 col-xs-12">
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
@@ -419,7 +421,7 @@ $options->create_operator($conn);
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Operators</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body modal-lg">
         <?php $v_op = new view_operators;
         $v_op->execute($conn); ?>
       </div>

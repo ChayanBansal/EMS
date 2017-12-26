@@ -521,6 +521,36 @@ class super_user_options
 		}
 	}
 
+	function lock_operator($conn){
+		if(isset($_POST['lock'])){
+			$alert=new alert();
+			$username=$_POST['lock'];
+			$update_locked_qry="UPDATE operators set locked=1 where operator_username='".$username."'";
+			$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
+			if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
+				$alert->exec("Operator account successfully locked!","success");
+			}
+			else{
+				$alert->exec("Unable to lock account!","danger");
+			}
+		}
+	}
+
+	function unlock_operator($conn){
+		if(isset($_POST['unlock'])){
+			$alert=new alert();
+			$username=$_POST['unlock'];
+			$update_locked_qry="UPDATE operators set locked=0 where operator_username='".$username."'";
+			$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
+			if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
+				$alert->exec("Operator account successfully unlocked!","success");
+			}
+			else{
+				$alert->exec("Unable to unlock account!","danger");
+			}
+		}
+	}
+
 }
 class useroptions
 {
@@ -1273,17 +1303,17 @@ class view_operators
 		} else {
 			echo ('
               
-  <table class="table table-striped table-bordered">
+  <table class="table table-striped table-bordered" style="width: 100%">
     <thead>
-      <tr>
+      <tr style="text-align:center">
         <th>Name</th>
         <th>Username</th>
 		<th>Email</th>
 		<th>Operator Status</th>
-		
+		<th>Lock/Unlock Account</th>
       </tr>
     </thead>
-    <tbody>');
+    <tbody><form action="" method="post">');
 
 
 			while ($result = mysqli_fetch_assoc($get_op_run)) {
@@ -1299,11 +1329,18 @@ class view_operators
 				} else {
 					echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
 				}
-				echo ('
+				echo('</td><td>');
+				if($result['locked']==0){
+					echo('<button type="submit" class="btn btn-default" name="lock" value="'.$result['operator_username'].'"><i class="fa fa-lock" aria-hidden="true"> Lock </i> </button>');
+				}
+				else{
+					echo('<button type="submit" class="btn btn-default" name="unlock" value="'.$result['operator_username'].'"><i class="fa fa-unlock"> Unlock</i> </button>');		
+				}
+				echo ('</td>
       </tr>');
 			}
 			echo ('
-    </tbody>
+   </form> </tbody>
   </table>');
 
 
