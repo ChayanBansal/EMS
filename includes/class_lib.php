@@ -161,29 +161,58 @@ class form_receive
 		$alert = new alert();
 		if (isset($_POST['login'])) //check button click
 		{
+			if(!isset($_SESSION['remaining_attempts'])){
+				$_SESSION['remaining_attempts']=4;
+			}
 			require("config.php");
 			$form_input_check = new input_check();
 			$username = $form_input_check->input_safe($conn, $_POST['username']); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn, $_POST['password']));//preventing SQL injection //name of the input field should be password
-			$login_query = "SELECT * FROM operators WHERE operator_username='$username' AND operator_password='$password'";
-			$login_query_run = mysqli_query($conn, $login_query);
-
-			if ($login_query_run) {
-				if (mysqli_num_rows($login_query_run) == 1) {
-					$operator_data = $login_query_run->fetch_assoc();
-					 //creating session//values of id, name and username
-					$_SESSION['operator_id'] = $operator_data['operator_id'];
-					$_SESSION['operator_name'] = $operator_data['operator_name'];
-					$_SESSION['operator_username'] = $username;
-					$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
-					$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
-					header('location: /ems/includes/home.php');
-				} else {
-					$alert->exec("Please check your username or password!", "danger");
-				}
-			} else {
-				$alert->exec("Unable to connect to the server!", "danger");
+			$check_locked_qry="SELECT locked from operators where operator_username='".$username."'";
+			$check_locked_qry_run=mysqli_query($conn,$check_locked_qry);
+			$locked=mysqli_fetch_assoc($check_locked_qry_run);
+			$locked=$locked['locked'];
+			if($locked==1){
+				$alert->exec("Your account is locked for security reasons! Please contact the superadmin to unlock your account!","warning");
 			}
+			else{
+				$login_query = "SELECT * FROM operators WHERE operator_username='$username' AND operator_password='$password'";
+				$login_query_run = mysqli_query($conn, $login_query);
+	
+				if ($login_query_run) {
+					if (mysqli_num_rows($login_query_run) == 1) {
+						$operator_data = $login_query_run->fetch_assoc();
+						 //creating session//values of id, name and username
+						$_SESSION['operator_id'] = $operator_data['operator_id'];
+						$_SESSION['operator_name'] = $operator_data['operator_name'];
+						$_SESSION['operator_username'] = $username;
+						$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
+						$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
+						header('location: /ems/includes/home.php');
+					} else {
+						$_SESSION['remaining_attempts']--;
+						if($_SESSION['remaining_attempts']==0){
+							$update_locked_qry="UPDATE operators set locked=1 where operator_username='".$username."'";
+							$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
+							if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
+								$alert->exec("Your account is locked for security reasons! Please contact the superadmin to unlock your account!" ,"warning");
+								session_destroy();
+							}
+							else{
+								$alert->exec("You are not registered with the portal!" ,"info");
+								session_destroy();
+							}
+						}
+						else{
+							$alert->exec("Please check your username or password! <b>".$_SESSION['remaining_attempts']." attempts remaining!</b>", "danger");
+						}
+						
+					}
+				} else {
+					$alert->exec("Unable to connect to the server!", "danger");
+				}
+			}
+			
 		}
 	}
 	function super_login()
