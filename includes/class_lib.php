@@ -175,11 +175,11 @@ class form_receive
 					$_SESSION['operator_id'] = $operator_data['operator_id'];
 					$_SESSION['operator_name'] = $operator_data['operator_name'];
 					$_SESSION['operator_username'] = $username;
-					$update_operator_active_qry="UPDATE operators set operator_active=1 where operator_id=".$_SESSION['operator_id'];
-					$update_operator_active_qry_run=mysqli_query($conn,$update_operator_active_qry);
+					$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
+					$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
 					header('location: /ems/includes/home.php');
-				} else {	
-					$alert->exec("Please check your username or password!","danger");
+				} else {
+					$alert->exec("Please check your username or password!", "danger");
 				}
 			} else {
 				$alert->exec("Unable to connect to the server!", "danger");
@@ -192,7 +192,6 @@ class form_receive
 		$alert = new alert();
 		if (isset($_POST['superlogin'])) //check button click
 		{
-			$_SESSION['1'] = "hello";
 			require("config.php");
 			$form_input_check = new input_check();
 			$username = md5($form_input_check->input_safe($conn, $_POST['username'])); //preventing SQL injection //name of the input field should be username
@@ -208,7 +207,6 @@ class form_receive
 					$_SESSION['super_admin_id'] = $operator_data['super_admin_id'];
 					$_SESSION['super_admin_name'] = $operator_data['super_admin_name'];
 					$_SESSION['super_admin_username'] = $username;
-					$_SESSION['1'] = 1;
 					header('location: /ems/includes/super_home.php');
 				} else {
 					$alert->exec("Please check your username or password!", "danger");
@@ -302,11 +300,22 @@ class super_user_options
 	function add_subject($conn)
 	{
 		if (isset($_POST['add_sub_submit'])) {
+			$alert = new alert();
+			$success=FALSE;
 			$no_of_sub = $_POST['number_subjects'];
 			$course_id = $_POST['mcourse'];
 			$semester = $_POST['msemester'];
 			for ($i = 1; $i <= $no_of_sub; $i++) {
 				$subcode = $_POST['subcode' . $i];
+				$check_sub_exists_qry="SELECT count(*) from subjects where sub_code='".$subcode."'";
+				$check_sub_exists_qry_run=mysqli_query($conn,$check_sub_exists_qry);
+				if($check_sub_exists_qry_run){
+					$get_count=mysqli_fetch_assoc($check_sub_exists_qry_run);
+					if($get_count['count(*)']>0){
+						$alert->exec("Subject with subject code ".$subcode." already exists!","warning");
+						continue;
+					}
+				}
 				$subname = $_POST['subname' . $i];
 				$type = $_POST['type' . $i];
 				if (isset($_POST['theory' . $i])) {
@@ -330,60 +339,93 @@ class super_user_options
 				$end_practical_max = $_POST['max4'];
 				$ia_pass = $_POST['pass5'];
 				$ia_max = $_POST['max5'];
+				$ie_pass = $_POST['pass6'];
+				$ie_max = $_POST['max6'];
 				if (isset($_POST['ie' . $i])) {
 					$ie = 1;
 					$theory_cr = 0;
 					$practical_cr = 0;
 					$total_cr = 0;
+					$add_subject_qry = "INSERT into subjects values('" . $subcode . "'," . $course_id . ",'" . $subname . "'," . $total_cr . "," . $semester . "," . $ie . ")";
+					$add_subject_qry_run = mysqli_query($conn, $add_subject_qry);
+					if ($add_subject_qry_run) {
+						$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',2,0)";
+						$sub_distribution_qry_run = mysqli_query($conn, $sub_distribution_qry);
+						if ($sub_distribution_qry_run) {
+							$get_sub_id_qry = "SELECT * from sub_distribution where sub_code='" . $subcode . "'";
+							$get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
+							if ($get_sub_id_qry_run) {
+								$row = mysqli_fetch_assoc($get_sub_id_qry_run);
+								$comp_distribution_qry = "INSERT into component_distribution VALUES(6," . $row['sub_id'] . "," . $ie_pass . "," . $ie_max . ")";
+								$comp_distribution_qry_run = mysqli_query($conn, $comp_distribution_qry);
+								if ($comp_distribution_qry_run) {
+									$success=TRUE;
+								}
+								else{
+									$success=FALSE;
+								}
+							}
+						}
+					}
 				} else {
 					$ie = 0;
-				}
-				$add_subject_qry = "INSERT into subjects values('" . $subcode . "'," . $course_id . ",'" . $subname . "'," . $total_cr . "," . $semester . "," . $ie . ")";
-				$add_subject_qry_run = mysqli_query($conn, $add_subject_qry);
-				$alert = new alert();
-				if ($add_subject_qry_run) {
+					$add_subject_qry = "INSERT into subjects values('" . $subcode . "'," . $course_id . ",'" . $subname . "'," . $total_cr . "," . $semester . "," . $ie . ")";
+					$add_subject_qry_run = mysqli_query($conn, $add_subject_qry);
+					
+					if ($add_subject_qry_run) {
 
-					switch ($type) {
-						case 'theory':
-							$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . ")";
-							break;
+						switch ($type) {
+							case 'theory':
+								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . ")";
+								break;
 
-						case 'practical':
-							$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . ")";
-							break;
-						case 'both':
-							$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . "),('" . $subcode . "',1," . $practical_cr . ")";
-							break;
-					}
-					$sub_distribution_qry_run = mysqli_query($conn, $sub_distribution_qry);
-					if ($sub_distribution_qry_run) {
-						$get_sub_id_qry = "SELECT * from sub_distribution where sub_code='" . $subcode . "'";
-						$get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
-						if ($get_sub_id_qry_run) {
-							while ($row = mysqli_fetch_assoc($get_sub_id_qry_run)) {
-								if ($row['practical_flag'] == 0) {
-									$comp_distribution_qry = "INSERT into component_distribution VALUES(1," . $row['sub_id'] . "," . $cat_pass . "," . $cat_max . "),(2," . $row['sub_id'] . "," . $end_theory_pass . "," . $end_theory_max . ")";
-								} else {
-									$comp_distribution_qry = "INSERT into component_distribution VALUES(3," . $row['sub_id'] . "," . $cap_pass . "," . $cap_max . "),(4," . $row['sub_id'] . "," . $end_practical_pass . "," . $end_practical_max . "),(5," . $row['sub_id'] . "," . $ia_pass . "," . $ia_max . ")";
+							case 'practical':
+								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . ")";
+								break;
+							case 'both':
+								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . "),('" . $subcode . "',1," . $practical_cr . ")";
+								break;
+						}
+						$sub_distribution_qry_run = mysqli_query($conn, $sub_distribution_qry);
+						if ($sub_distribution_qry_run) {
+							$get_sub_id_qry = "SELECT * from sub_distribution where sub_code='" . $subcode . "'";
+							$get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
+							if ($get_sub_id_qry_run) {
+								while ($row = mysqli_fetch_assoc($get_sub_id_qry_run)) {
+									if ($row['practical_flag'] == 0) {
+										$comp_distribution_qry = "INSERT into component_distribution VALUES(1," . $row['sub_id'] . "," . $cat_pass . "," . $cat_max . "),(2," . $row['sub_id'] . "," . $end_theory_pass . "," . $end_theory_max . ")";
+									} else {
+										$comp_distribution_qry = "INSERT into component_distribution VALUES(3," . $row['sub_id'] . "," . $cap_pass . "," . $cap_max . "),(4," . $row['sub_id'] . "," . $end_practical_pass . "," . $end_practical_max . "),(5," . $row['sub_id'] . "," . $ia_pass . "," . $ia_max . ")";
+									}
+									$comp_distribution_qry_run = mysqli_query($conn, $comp_distribution_qry);
 								}
-								$comp_distribution_qry_run = mysqli_query($conn, $comp_distribution_qry);
-							}
-							if ($comp_distribution_qry_run) {
-								$alert->exec("Records successfully inserted!", "success");
-							} else {
-								echo ($comp_distribution_qry);
-								$alert->exec("Unable to distribute components", "danger");
-							}
+								if ($comp_distribution_qry_run) {
+									$alert->exec("Records successfully inserted!", "success");
+									$success=TRUE;
+								} else {
+									$success=FALSE;
+									$alert->exec("Unable to distribute components", "danger");
+								}
 
+							} else {
+								$success=FALSE;
+								$alert->exec("Unable to fetch subjects", "danger");
+							}
 						} else {
-							$alert->exec("Unable to fetch subjects", "danger");
+							$success=FALSE;
+							$alert->exec("Unable to distribute subjects", "danger");
 						}
 					} else {
-						$alert->exec("Unable to distribute subjects", "danger");
+						$success=FALSE;
+						$alert->exec("Unable to insert subjects! Please try again later...", "danger");
 					}
-				} else {
-					$alert->exec("Unable to insert subjects", "danger");
 				}
+			}
+			if($success){
+				$alert->exec("Records successfully inserted!", "success");
+			}
+			else{
+				$alert->exec("Unable to insert subjects", "danger");	
 			}
 		}
 	}
@@ -434,7 +476,7 @@ class super_user_options
 					if ($create_query_run == true) {
 						$er = new alert();
 						$email = $operator_email;
-						$username=$operator_username;
+						$username = $operator_username;
 						$name = $operator_name;
 						$send_pass = $temp_pass;
 						require('phpmailer/sending_mail.php');
@@ -595,52 +637,37 @@ class change_password
 {
 	public function execute($conn)
 	{
-		if ($conn->connect_error) {
-			echo "<script> alert('Database connection error.')</script>";
-			die();
-		}
-
-
-
 		if (isset($_POST['change_password'])) {
 			$pass_input_check = new input_check();
-
-			$entered_cur_password = md5($pass_input_check->input_safe($conn, $_POST['cur_password']));
-			$new_password = md5($pass_input_check->input_safe($conn, $_POST['new_password']));
-			$confirm_new_password = md5($pass_input_check->input_safe($conn, $_POST['confirm_new_password']));
-
-			$operator_id = $_SESSION['operator_id'];
-			$get_pass = "SELECT password FROM operators WHERE operator_id=$operator_id"; //taking out current password from database
-			$get_pass_run = $conn->query($get_pass);
+			$entered_cur_password = md5($pass_input_check->input_safe($conn, $_POST['cur_pass']));
+			$new_password = md5($pass_input_check->input_safe($conn, $_POST['new_pass']));
+			$confirm_new_password = md5($pass_input_check->input_safe($conn, $_POST['retype_pass']));
+			$username = md5($pass_input_check->input_safe($conn, $_POST['username']));
+			$super_user_id = $_SESSION['super_admin_id'];
+			$get_pass = "SELECT * FROM super_admin"; //taking out current password from database
+			$get_pass_run = mysqli_query($conn, $get_pass);
 			$pass = $get_pass_run->fetch_assoc();
-			$cur_password = $pass['password'];
-
-
-			if ($cur_password != $entered_cur_password) {
-				echo "<script> alert('Please re-enter the current password')</script>";
-				die();
-			}
-			if (empty($entered_cur_password)) {
-				echo "<script> alert('Please enter the current password')</script>";
-				die();
-			}
-
-
-			if ($new_password != $confirm_new_password) {
-				echo "<script> alert('New passwords do not match')</script>";
-				die();
-			}
-
-			$update_query = "UPDATE  operators SET password='$new_password' WHERE operator_id=$operator_id ";
-			$update = $conn->query($update_query);
-
-			if ($update == true) {
-				$_SESSION['pass_changed'] = 1;
-				header('location: index.php');
+			$cur_password = $pass['super_admin_password'];
+			$cur_username = $pass['super_admin_username'];
+			$alert = new alert();
+			if ($cur_password != $entered_cur_password or $username != $cur_username) {
+				$alert->exec("Incorrect username or password!", "warning");
+			} else if (empty($entered_cur_password)) {
+				$alert->exec("Please enter you current password!", "info");
+			} else if ($new_password != $confirm_new_password) {
+				$alert->exec("Passwords do not match!", "info");
+			} else if ($new_password == $entered_cur_password) {
+				$alert->exec("Please select a different new password!", "warning");
 			} else {
-				echo "<script> alert('Error! Not able to change password. Please try again.')</script>";
+				$update_query = "UPDATE  super_admin SET super_admin_password='$new_password' WHERE super_admin_id=" . $super_user_id;
+				$update_run = mysqli_query($conn, $update_query);
+				if ($update_run) {
+					session_destroy();
+					echo "<script type='text/javascript'>document.location.href='/ems/index.php';</script>";
+				} else {
+					$alert->exec("Unable to change password! Please try again..", "danger");
+				}
 			}
-
 
 		}
 	}
@@ -1238,13 +1265,12 @@ class view_operators
         <td>' . $result["operator_username"] . '</td>
 		<td>' . $result["operator_email"] . '</td>
 		<td>');
-		if($result['operator_active']==1){
-			echo('Active <i class="glyphicon glyphicon-record" style="color:green"></i>');
-		}
-		else{
-			echo('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
-		}
-		echo('
+				if ($result['operator_active'] == 1) {
+					echo ('Active <i class="glyphicon glyphicon-record" style="color:green"></i>');
+				} else {
+					echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
+				}
+				echo ('
       </tr>');
 			}
 			echo ('

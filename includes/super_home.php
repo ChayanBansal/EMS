@@ -456,7 +456,7 @@ $options->create_operator($conn);
         var duration = sel.options[sel.selectedIndex].getAttribute("data-course-duration");
         var sem=document.getElementById("msemester");
         sem.innerHTML=`<option disabled selected>Select semester</option> `;
-        for(var i=1;i<=duration;i++){
+        for(var i=1;i<=(duration*2);i++){
             sem.innerHTML+=`
             <option value="`+i+`">`+i+`</option>
             `;
