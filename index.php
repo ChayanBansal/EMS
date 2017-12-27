@@ -28,7 +28,7 @@ if(isset($_POST['login'])){
     $password = new input_field();
     $submit = new input_button();
     ?>
-<form name='login' onsubmit='return validate()' action='' method='post'>
+<form  action='' method='post'>
     <div class="form-container">
 		<div class="main">
 			 <div class="login">
@@ -64,8 +64,6 @@ if(isset($_POST['login'])){
         function change(){
             var d=document.getElementById("f1");
             d.style.borderBottomColor="darkblue";
-           
-        
         }
         function change2(){
             var d=document.getElementById("f1");
@@ -78,27 +76,6 @@ if(isset($_POST['login'])){
         function change3(){
             var d=document.getElementById("f2");
             d.style.borderBottomColor="darkblue";
-        }
-        function validate(){
-            var x = document.forms["login"]["username"].value;
-            var y = document.forms['login']['password'].value;
-            l1=x.length;
-            z=false;
-            var i=0;
-            for(i=0;i<l1;i++){
-                if(x.charAt(i)=='#'||x.charAt(i)=='!'||x.charAt(i)=='$'||x.charAt(i)=='&'||x.charAt(i)=='*'){
-                    z=true;
-                    break;
-                }
-            }
-            if(z==true){
-                alert("Special characters not allowed in username!!");
-                return false;
-            }
-            else{
-                return true;
-            }
-            
         }
         </script>
 </html>
