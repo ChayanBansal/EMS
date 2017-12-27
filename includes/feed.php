@@ -117,6 +117,7 @@ $input = new input_field();
             </div>
         </div>
      <table class="table table-striped table-responsive table-bordered">
+         <caption> <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students.."></caption>
     <thead>
       <tr>
         <th>Enrollment Number</th>
@@ -125,7 +126,7 @@ $input = new input_field();
         <th><?= $_SESSION['sub_comp_name'] ?> Marks</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="student_table">
     <?php
     if ($_SESSION['main_atkt'] == "main") {
         $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,roll_list r where course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
@@ -150,7 +151,8 @@ $input = new input_field();
         }
         $_SESSION['num_rows'] = mysqli_num_rows($get_stud_qry_run);
     } else {
-        echo ("error");
+        $alert=new alert();
+        $alert->exec("Unable to fetch roll list!","warning");
     }
     ?>  
       
@@ -180,4 +182,15 @@ $obj = new footer();
 $obj->disp_footer();
 ?>
 </body>
+
+<script>
+$(document).ready(function(){
+  $("#searchbar").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#student_table tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
 </html>
