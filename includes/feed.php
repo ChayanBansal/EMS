@@ -96,7 +96,7 @@ $options->insert_marks($conn);
 $input = new input_field();
 
 ?>
- <div id="err"></div>
+ <div id="err" style="position: fixed; top: 0; width: 100%"></div>
  <form action="" method="post">
      <div class="feed-container">
         <div class="subselected">

@@ -133,7 +133,7 @@ $options->unlock_operator($conn);
             <div>Courses</div>
             <div class="sub-option" id="subopt2">
                 <button data-toggle="modal" data-target="#addcourseModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-                <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+                <button data-toggle="modal" data-target="#viewcourseModal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
             <div class="option green" onmouseover="show('subopt3')" onmouseout="hide('subopt3')">
@@ -213,7 +213,7 @@ $options->unlock_operator($conn);
   </div>
   <!--End-->
 
-  <!--Add Sessions Modal-->
+  <!--View Courses Modal-->
   <div class="modal fade" id="addcourseModal" role="dialog">
       <div class="modal-dialog">
       
@@ -221,7 +221,7 @@ $options->unlock_operator($conn);
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Create New Session</h4>
+            <h4 class="modal-title">Add New Course</h4>
           </div>
           <form action="" method="post">
             <div class="modal-body">
@@ -230,19 +230,20 @@ $options->unlock_operator($conn);
                 $input = new input_field();
                 ?>
                 <div class="form-group">
-                <label for="name">Course Selection</label>
-                <select name="" id="">
-                    <option value="4" data-from-year="[2016,2018]">M.B.A</option>
-                </select>
+                <label for="name">Course Name</label>
+                <?php
+                $input->display("name", "form-control", "text", "cname", "", 1);
+                ?>
                 </div>
                 <div class="form-group">
-                <label for="type">Academic Batch</label>
+                <label for="type">Course Type</label>
                 <select name="level" id="type" class="form-control">
-                   <option value="">2016-17</option>
+                    <option value="ug">Undergraduate</option>
+                    <option value="pg">Postgraduate</option>
                 </select>
                 </div>
                 <div class="form-group">
-                <label for="duration">Semester</label>
+                <label for="duration">Duration</label>
                 <?php
                 $input->display_table("duration", "form-control", "number", "cduration", "", 1, 1, 10, 0, 10);
                 ?>
@@ -251,6 +252,70 @@ $options->unlock_operator($conn);
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+<!--End-->
+
+  <!--Add Sessions Modal-->
+  <div class="modal fade" id="viewcourseModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">List of Courses</h4>
+          </div>
+          <form action="" method="post">
+            <div class="modal-body">
+            <table class="table table-striped table-bordered" style="width: 100%">
+    <thead>
+      <tr style="text-align:center">
+        <th>Course ID</th>
+        <th>Course Type</th>
+        <th>Course Name</th>
+		<th>Duration</th>
+	  </tr>
+    </thead>
+    <tbody>
+        
+            <?php
+                $get_course_qry="SELECT * from courses";
+                $get_course_qry_run=mysqli_query($conn,$get_course_qry);
+                if($get_course_qry_run){
+                    while($course=mysqli_fetch_assoc($get_course_qry_run)){
+                        echo('<tr style="text-align:center">
+                        <td>'.$course['course_id'].'</td>
+                        <td>');
+                        if($course['level_id']==1){
+                            echo("Undergraduate");
+                        }
+                        else{
+                            echo("Postgraduate");
+                        }
+                        echo('</td>
+                        <td>'.$course['course_name'].'</td>
+                        <td>'.$course['duration'].'</td>
+                        </tr>');
+                    }
+                }
+                else{
+                    $alert->exec("Unable to fetch courses!","warning");
+                }
+            ?>
+        
+    </tbody>
+    </table>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <!--<button type="submit" class="btn btn-primary" name="course_submit">Submit</button>-->
         </div>
         </form> 
         </div>
