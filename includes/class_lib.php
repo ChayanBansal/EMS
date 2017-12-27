@@ -633,7 +633,6 @@ class useroptions
 			}
 			$component_id = $_SESSION['sub_comp_id'];
 			$sub_id = $_SESSION['sub_id'];
-
 			$alert = new alert();
 			$insert_score_qry = "INSERT INTO score VALUES ";
 			for ($i = 1; $i <= $_SESSION['num_rows']; $i++) {
@@ -648,6 +647,8 @@ class useroptions
 			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
 			if ($insert_score_qry_run) {
 				$_SESSION['score_entered_success']=TRUE;
+				$audit_qry="INSERT INTO audit VALUES(".$_SESSION['from_year'].",".$_SESSION['current_course_id'].",".$_SESSION['semester'].",'".$_SESSION['sub_code']."',".$transaction_id.",NULL,$component_id)";
+				$audit_qry_run=mysqli_query($conn,$audit_qry);
 				header('location: /ems/includes/useroptions.php');
 			}
 			else{
@@ -1345,10 +1346,6 @@ class data_table
 	}
 }
 
-class create_operator
-{
-
-}
 
 class view_operators
 {
@@ -1373,10 +1370,7 @@ class view_operators
       </tr>
     </thead>
     <tbody><form action="" method="post">');
-
-
 			while ($result = mysqli_fetch_assoc($get_op_run)) {
-
 				echo ('
 	  <tr style="text-align:center">
         <td>' . $result["operator_name"] . '</td>

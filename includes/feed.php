@@ -30,7 +30,7 @@ if (isset($_POST['proceed_to_feed'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Feed Marks</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .remarks{
@@ -96,7 +96,7 @@ $options->insert_marks($conn);
 $input = new input_field();
 
 ?>
- <div id="err"></div>
+ <div id="err" style="position: fixed; top: 0; width: 100%"></div>
  <form action="" method="post">
      <div class="feed-container">
         <div class="subselected">
@@ -106,14 +106,10 @@ $input = new input_field();
                                 ?>
             </div>
             <div class="subtitle">
-                <?php
-                echo ($_SESSION['sub_name']);
-                ?>
+                <?=$_SESSION['sub_name']?> -- <?=$_SESSION['sub_comp_name']?> 
             </div>
-            <div class="subtitle" style="font-style: italic;">
-                <?php
-                echo ($_SESSION['sub_comp_name']);
-                ?>
+            <div class="subtitle">
+            Maximum Marks: <?=$_SESSION['max_marks']?>
             </div>
         </div>
      <table class="table table-striped table-responsive table-bordered">
