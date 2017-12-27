@@ -219,8 +219,8 @@ function getComponent(sub_code)
 <div class="main-container col-md-12">
     <div class="sub-container">
         <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
-        <button class="option blue " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-eye-open" ></i></div> View Marks</button>       
-        <button class="option green " data-toggle="modal" data-target="#view_op_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
+        <button class="option blue " data-toggle="modal" data-target=""><div><i class= "glyphicon glyphicon-eye-open" ></i></div> View Marks</button>       
+        <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
         <button class="option pink " data-toggle="modal" data-target="#view_op_modal"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
     </div>
 </div> 
@@ -298,7 +298,7 @@ function getComponent(sub_code)
 
 <!-- Check Marks Modal Box -->
 <div id="check_marks_modal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -307,15 +307,58 @@ function getComponent(sub_code)
         <h4 class="modal-title">Marks Verification And Approval</h4>
       </div>
       <div class="modal-body">
-        <?php
-            $get_check_list="SELECT * FROM audit_table WHERE course_id=".$_SESSION['current_course_id']." AND transaction_id!=NULL";
-            $get_check_list_run=mysqli_query($conn,$get_check_list);
-            while($check_list=mysqli_fetch_assoc($get_check_list_run))
-            {
-                
-            }
-        ?>
-        <p>Some text in the modal.</p>
+      <table class="table">
+    <thead>
+      <tr>
+        <th>Batch (FROM YEAR)</th>
+        <th>Semester</th>
+        <th>Subject</th>
+        <th>Component</th>
+        <th>Operator</th>
+        <th>Operator's Remark</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php
+    $get_check_list="SELECT A.*, S.sub_name, C.component_name, O.operator_name, T.remark FROM audit A, subjects S, component C, transactions T, operators O WHERE S.sub_code=A.sub_code AND T.operator_id=O.operator_id AND A.component_id=C.component_id AND A.course_id=".$_SESSION['current_course_id'];
+    $get_check_list_run=mysqli_query($conn,$get_check_list);
+    while($check_list=mysqli_fetch_assoc($get_check_list_run))
+    {
+        if($check_list["check_id"]==NULL)
+        {
+            echo('<tr class="warning">');
+                echo('<td>'.$check_list["from_year"].'</td>');
+                echo('<td>'.$check_list["semester"].'</td>');
+                echo('<td>'.$check_list["sub_code"].'</td>');
+                echo('<td>'.$check_list["component_name"].'</td>');
+                echo('<td>'.$check_list["sub_name"].'</td>');
+                echo('<td>'.$check_list["operator_name"].'</td>');
+                echo('<td>'.$check_list["remark"].'</td>');
+                echo('<td style="text-align:center"><div class="glyphicon glyphicon-check"></div><div>Check Now</div></td>');
+            echo('</tr>');
+        }
+        else
+        {
+            echo('<tr class="success">');
+                echo('<td>'.$check_list["from_year"].'</td>');
+                echo('<td>'.$check_list["semester"].'</td>');
+                echo('<td>'.$check_list["sub_code"].'</td>');
+                echo('<td>'.$check_list["component_name"].'</td>');
+                echo('<td>'.$check_list["sub_name"].'</td>');
+                echo('<td>'.$check_list["operator_name"].'</td>');
+                echo('<td>'.$check_list["remark"].'</td>');
+                echo('<td></td>');
+            echo('</tr>');
+        }
+    }
+?>
+    </tbody>
+  </table>
+
+
+
+
+        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
