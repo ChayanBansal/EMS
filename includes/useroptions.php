@@ -122,7 +122,19 @@ $obj->displayheader();
 $obj->dispmenu(3,["home.php","index.php","developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-out","glyphicon glyphicon-info-sign"],["Home","Log Out","About Us"]);
 $dashboard=new dashboard();
 $dashboard->display($_SESSION['operator_name'],["Change Password","Sign Out"],["change_password.php","index.php"],"Contact Super Admin");
+/*Alert while coming from feed*/
+if(isset($_SESSION['score_entered_success'])){
+    if($_SESSION['score_entered_success']==TRUE){
+        $alert=new alert();
+        $alert->exec("Score successfully inserted!","success");
+    }else{
+        $alert->exec("Unable to insert marks! Please try again..","danger");
+    }
+    unset($_SESSION['score_entered_success']);
+}
+
 ?>
+
 <div class="cr_container">
 <div class="tcaption">
 Please select a choice:</div>

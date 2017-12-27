@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <?php
+session_start();
 if (isset($_POST['proceed_to_feed'])) {
     require('config.php');
-    session_start();
     $_SESSION['from_year'] = $_POST['batch'];
     $_SESSION['main_atkt'] = $_POST['main_atkt'];
     $_SESSION['semester'] = $_POST['semester'];
@@ -20,6 +20,10 @@ if (isset($_POST['proceed_to_feed'])) {
     $get_subject_name_qry_run = mysqli_query($conn, $get_subject_name_qry);
     $subname = mysqli_fetch_assoc($get_subject_name_qry_run);
     $_SESSION['sub_name'] = $subname['sub_name'];
+    $get_max_marks_qry="SELECT max_marks from component_distribution WHERE sub_id=".$_SESSION['sub_id']." AND component_id=". $_SESSION['sub_comp_id'];
+    $get_max_marks_qry_run=mysqli_query($conn,$get_max_marks_qry);
+    $max_result=mysqli_fetch_assoc($get_max_marks_qry_run);
+    $_SESSION['max_marks']=round($max_result['max_marks']);
 } ?>
 <html lang="en">
 <head>
@@ -79,7 +83,6 @@ if (isset($_POST['proceed_to_feed'])) {
 </head>
 <body>
 <?php
-session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
@@ -138,7 +141,7 @@ $input = new input_field();
                   <td>' . $row['first_name'] . " " . $row['last_name'] . '</td>
                   <td>' . $row['father_name'] . '</td>
                   <td>');
-            $input->display_table("enrol", "form-control", "number", "score" . $row_count, "", 1, 0, 60, 0, 60);
+            $input->display_table("enrol", "form-control", "number", "score" . $row_count, "",1,0,$_SESSION['max_marks'],0,$_SESSION['max_marks']);
             $input->display_w_value("", "", "hidden", "roll_id" . $row_count, "", $row['roll_id'], 0);
             echo ('</td>
                 </tr>

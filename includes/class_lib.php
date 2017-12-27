@@ -623,40 +623,36 @@ class useroptions
 	{
 		if (isset($_POST['feed_marks'])) {
 			$operator_id = $_SESSION['operator_id'];
-			$remark=$_POST['remark'];
-			$transaction_qry="INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
-			$transaction_qry_run=mysqli_query($conn,$transaction_qry);
-			if($transaction_qry_run){
-				$transaction_id=mysqli_insert_id($conn);
-			}
-			else{
+			$remark = $_POST['remark'];
+			$transaction_qry = "INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
+			$transaction_qry_run = mysqli_query($conn, $transaction_qry);
+			if ($transaction_qry_run) {
+				$transaction_id = mysqli_insert_id($conn);
+			} else {
 				die();
 			}
 			$component_id = $_SESSION['sub_comp_id'];
 			$sub_id = $_SESSION['sub_id'];
-			
-			$failures=array();
-			$success=TRUE;
-			$alert=new alert();
+
+			$alert = new alert();
+			$insert_score_qry = "INSERT INTO score VALUES ";
 			for ($i = 1; $i <= $_SESSION['num_rows']; $i++) {
 				$roll_id = $_POST['roll_id' . $i];
 				$marks = $_POST['score' . $i];
-				$insert_score_qry = "INSERT into score VALUES($roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL)";
-				$insert_score_qry_run=mysqli_query($conn,$insert_score_qry);
-				if(!$insert_score_qry_run){
-					$success=FALSE;
-					array_push($failures,$roll_id);
+				if ($i == $_SESSION['num_rows']) {
+					$insert_score_qry .= "($roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL)";
+				} else {
+					$insert_score_qry .= "($roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL),";
 				}
 			}
-			if($success==TRUE){
-				$alert->exec("Records successfully inserted!","success");
+			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
+			if ($insert_score_qry_run) {
+				$_SESSION['score_entered_success']=TRUE;
+				header('location: /ems/includes/useroptions.php');
 			}
 			else{
-				$failed="";
-				foreach($failures as $val){
-					$failed.=" ".$val;
-				}
-				$alert->exec("Unable to insert scores with roll ID's: $failed","danger");
+				$_SESSION['score_entered_success']=FALSE;
+				header('location: /ems/includes/useroptions.php');
 			}
 		}
 
