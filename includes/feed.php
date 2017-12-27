@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <?php
+session_start();
 if (isset($_POST['proceed_to_feed'])) {
     require('config.php');
-    session_start();
+    
     $_SESSION['from_year'] = $_POST['batch'];
     $_SESSION['main_atkt'] = $_POST['main_atkt'];
     $_SESSION['semester'] = $_POST['semester'];
@@ -79,7 +80,6 @@ if (isset($_POST['proceed_to_feed'])) {
 </head>
 <body>
 <?php
-session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
