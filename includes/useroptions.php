@@ -219,7 +219,7 @@ function getComponent(sub_code)
 <div class="main-container col-md-12">
     <div class="sub-container">
         <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
-        <button class="option blue " data-toggle="modal" data-target="#view_op_modal"><div><i class= "glyphicon glyphicon-eye-open" ></i></div> View Marks</button>       
+        <button class="option blue " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-eye-open" ></i></div> View Marks</button>       
         <button class="option green " data-toggle="modal" data-target="#view_op_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
         <button class="option pink " data-toggle="modal" data-target="#view_op_modal"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
     </div>
@@ -292,6 +292,36 @@ function getComponent(sub_code)
       </div>
     </div>
     </form>
+  </div>
+</div>
+
+
+<!-- Check Marks Modal Box -->
+<div id="check_marks_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Marks Verification And Approval</h4>
+      </div>
+      <div class="modal-body">
+        <?php
+            $get_check_list="SELECT * FROM audit_table WHERE course_id=".$_SESSION['current_course_id']." AND transaction_id!=NULL";
+            $get_check_list_run=mysqli_query($conn,$get_check_list);
+            while($check_list=mysqli_fetch_assoc($get_check_list_run))
+            {
+                
+            }
+        ?>
+        <p>Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
