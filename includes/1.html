@@ -1,42 +1,96 @@
-<div class="modal fade" id="cr_op_modal" role="dialog">
-    <div class="modal-dialog">
+<!DOCTYPE html>
+<html>
 
-        <!-- Modal content-->
-        <div class="modal-content">
-            <form action="<?php echo ($_SERVER['PHP_SELF']); ?>" method="post">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Fill in the following details to create a new operator</h4>
-                </div>
-                <div class="modal-body">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .main {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .result {}
+        
+        table,
+        td,
+        th {
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+        
+        td,
+        th {
+            padding: 15px;
+        }
+        
+        @media print {
+            table {
+                margin-left: 78px;
+                margin-top: 12cm;
+                margin-bottom: 7.3cm;
+                width: 75%;
+            }
+            .main {
+                display: block;
+            }
+        }
+    </style>
+</head>
 
-                    <table>
-                        <tr>
-                            <td>Operator Name: </td>
-                            <td>
-                                <?php $creation = new input_field();
-            $creation->display("", "form-control", "text", "operator_name", "Name of Operator", 1); ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Operator Email: </td>
-                            <td>
-                                <?php $creation->display("", "form-control", "email", "operator_email", "Email of Operator", 1); ?>
-                        </tr>
-                    </table>
-
-                </div>
-                <div class="modal-footer">
-
-                    <?php $creation_b = new input_button();
-                $creation_b->display("", "btn btn-success", "submit", "create", "submit", "Create"); ?>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </form>
+<body>
+    <div class="main">
+        <div class="result">
+            <table>
+                <tr>
+                    <th>abc</th>
+                    <th>asd</th>
+                    <th>qwe</th>
+                    <th>zxc</th>
+                    <th>ccc</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                </tr>
+            </table>
         </div>
-
     </div>
-</div>
+</body>
 
-</div>
-</div>
+</html>
