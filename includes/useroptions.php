@@ -124,8 +124,9 @@ $dashboard=new dashboard();
 $dashboard->display($_SESSION['operator_name'],["Change Password","Sign Out"],["change_password.php","index.php"],"Contact Super Admin");
 /*Alert while coming from feed*/
 if(isset($_SESSION['score_entered_success'])){
+    $alert=new alert();
     if($_SESSION['score_entered_success']==TRUE){
-        $alert=new alert();
+       
         $alert->exec("Score successfully inserted!","success");
     }else{
         $alert->exec("Unable to insert marks! Please try again..","danger");
