@@ -29,6 +29,14 @@ class input_field
 			echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder'>";
 		}
 	}
+	function display_w_value($id, $class, $type/*password or text or email*/, $name, $placeholder, $value, $required_flag/*0 or 1 */ )
+	{
+		if ($required_flag == 1) {
+			echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' required value='$value'>";
+		} else {
+			echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' value='$value'>";
+		}
+	}
 	function display_w_js($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $funcin, $funcout)
 	{
 		if ($required_flag == 1) {
@@ -53,7 +61,7 @@ class input_field
 			}
 		}
 	}
-	function display_table_btn($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $disabled_flag, $maximum_value,$value,$actual_value)
+	function display_table_btn($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $disabled_flag, $maximum_value, $value, $actual_value)
 	{
 		if ($disabled_flag == 1) {
 			if ($required_flag == 1) {
@@ -69,7 +77,7 @@ class input_field
 			}
 		}
 	}
-	
+
 	function display_textarea($id, $class/*password or text or email*/, $name, $placeholder, $rows, $cols, $required_flag/*0 or 1 */ )
 	{
 		if ($required_flag == 1) {
@@ -178,24 +186,23 @@ class form_receive
 		$alert = new alert();
 		if (isset($_POST['login'])) //check button click
 		{
-			if(!isset($_SESSION['remaining_attempts'])){
-				$_SESSION['remaining_attempts']=4;
+			if (!isset($_SESSION['remaining_attempts'])) {
+				$_SESSION['remaining_attempts'] = 4;
 			}
 			require("config.php");
 			$form_input_check = new input_check();
 			$username = $form_input_check->input_safe($conn, $_POST['username']); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn, $_POST['password']));//preventing SQL injection //name of the input field should be password
-			$check_locked_qry="SELECT locked from operators where operator_username='".$username."'";
-			$check_locked_qry_run=mysqli_query($conn,$check_locked_qry);
-			$locked=mysqli_fetch_assoc($check_locked_qry_run);
-			$locked=$locked['locked'];
-			if($locked==1){
-				$alert->exec("Your account is locked for security reasons! Please contact the superadmin to unlock your account!","warning");
-			}
-			else{
+			$check_locked_qry = "SELECT locked from operators where operator_username='" . $username . "'";
+			$check_locked_qry_run = mysqli_query($conn, $check_locked_qry);
+			$locked = mysqli_fetch_assoc($check_locked_qry_run);
+			$locked = $locked['locked'];
+			if ($locked == 1) {
+				$alert->exec("Your account is locked for security reasons! Please contact the superadmin to unlock your account!", "warning");
+			} else {
 				$login_query = "SELECT * FROM operators WHERE operator_username='$username' AND operator_password='$password'";
 				$login_query_run = mysqli_query($conn, $login_query);
-	
+
 				if ($login_query_run) {
 					if (mysqli_num_rows($login_query_run) == 1) {
 						$operator_data = $login_query_run->fetch_assoc();
@@ -206,30 +213,29 @@ class form_receive
 						$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
 						$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
 						header('location: /ems/includes/home.php');
+						unset($_SESSION['remaining_attempts']);
 					} else {
 						$_SESSION['remaining_attempts']--;
-						if($_SESSION['remaining_attempts']==0){
-							$update_locked_qry="UPDATE operators set locked=1 where operator_username='".$username."'";
-							$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
-							if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
-								$alert->exec("Your account is locked for security reasons! Please contact the superadmin to unlock your account!" ,"warning");
+						if ($_SESSION['remaining_attempts'] == 0) {
+							$update_locked_qry = "UPDATE operators set locked=1 where operator_username='" . $username . "'";
+							$update_locked_qry_run = mysqli_query($conn, $update_locked_qry);
+							if ($update_locked_qry_run && mysqli_affected_rows($conn) > 0) {
+								$alert->exec("Your account is locked for security reasons! Please contact the superadmin to unlock your account!", "warning");
+								session_destroy();
+							} else {
+								$alert->exec("You are not registered with the portal!", "info");
 								session_destroy();
 							}
-							else{
-								$alert->exec("You are not registered with the portal!" ,"info");
-								session_destroy();
-							}
+						} else {
+							$alert->exec("Please check your username or password! <b>" . $_SESSION['remaining_attempts'] . " attempts remaining!</b>", "danger");
 						}
-						else{
-							$alert->exec("Please check your username or password! <b>".$_SESSION['remaining_attempts']." attempts remaining!</b>", "danger");
-						}
-						
+
 					}
 				} else {
 					$alert->exec("Unable to connect to the server!", "danger");
 				}
 			}
-			
+
 		}
 	}
 	function super_login()
@@ -347,18 +353,18 @@ class super_user_options
 	{
 		if (isset($_POST['add_sub_submit'])) {
 			$alert = new alert();
-			$success=FALSE;
+			$success = false;
 			$no_of_sub = $_POST['number_subjects'];
 			$course_id = $_POST['mcourse'];
 			$semester = $_POST['msemester'];
 			for ($i = 1; $i <= $no_of_sub; $i++) {
 				$subcode = $_POST['subcode' . $i];
-				$check_sub_exists_qry="SELECT count(*) from subjects where sub_code='".$subcode."'";
-				$check_sub_exists_qry_run=mysqli_query($conn,$check_sub_exists_qry);
-				if($check_sub_exists_qry_run){
-					$get_count=mysqli_fetch_assoc($check_sub_exists_qry_run);
-					if($get_count['count(*)']>0){
-						$alert->exec("Subject with subject code ".$subcode." already exists!","warning");
+				$check_sub_exists_qry = "SELECT count(*) from subjects where sub_code='" . $subcode . "'";
+				$check_sub_exists_qry_run = mysqli_query($conn, $check_sub_exists_qry);
+				if ($check_sub_exists_qry_run) {
+					$get_count = mysqli_fetch_assoc($check_sub_exists_qry_run);
+					if ($get_count['count(*)'] > 0) {
+						$alert->exec("Subject with subject code " . $subcode . " already exists!", "warning");
 						continue;
 					}
 				}
@@ -405,10 +411,9 @@ class super_user_options
 								$comp_distribution_qry = "INSERT into component_distribution VALUES(6," . $row['sub_id'] . "," . $ie_pass . "," . $ie_max . ")";
 								$comp_distribution_qry_run = mysqli_query($conn, $comp_distribution_qry);
 								if ($comp_distribution_qry_run) {
-									$success=TRUE;
-								}
-								else{
-									$success=FALSE;
+									$success = true;
+								} else {
+									$success = false;
 								}
 							}
 						}
@@ -417,7 +422,7 @@ class super_user_options
 					$ie = 0;
 					$add_subject_qry = "INSERT into subjects values('" . $subcode . "'," . $course_id . ",'" . $subname . "'," . $total_cr . "," . $semester . "," . $ie . ")";
 					$add_subject_qry_run = mysqli_query($conn, $add_subject_qry);
-					
+
 					if ($add_subject_qry_run) {
 
 						switch ($type) {
@@ -447,31 +452,30 @@ class super_user_options
 								}
 								if ($comp_distribution_qry_run) {
 									$alert->exec("Records successfully inserted!", "success");
-									$success=TRUE;
+									$success = true;
 								} else {
-									$success=FALSE;
+									$success = false;
 									$alert->exec("Unable to distribute components", "danger");
 								}
 
 							} else {
-								$success=FALSE;
+								$success = false;
 								$alert->exec("Unable to fetch subjects", "danger");
 							}
 						} else {
-							$success=FALSE;
+							$success = false;
 							$alert->exec("Unable to distribute subjects", "danger");
 						}
 					} else {
-						$success=FALSE;
+						$success = false;
 						$alert->exec("Unable to insert subjects! Please try again later...", "danger");
 					}
 				}
 			}
-			if($success){
+			if ($success) {
 				$alert->exec("Records successfully inserted!", "success");
-			}
-			else{
-				$alert->exec("Unable to insert subjects", "danger");	
+			} else {
+				$alert->exec("Unable to insert subjects", "danger");
 			}
 		}
 	}
@@ -538,32 +542,32 @@ class super_user_options
 		}
 	}
 
-	function lock_operator($conn){
-		if(isset($_POST['lock'])){
-			$alert=new alert();
-			$username=$_POST['lock'];
-			$update_locked_qry="UPDATE operators set locked=1 where operator_username='".$username."'";
-			$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
-			if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
-				$alert->exec("Operator account successfully locked!","success");
-			}
-			else{
-				$alert->exec("Unable to lock account!","danger");
+	function lock_operator($conn)
+	{
+		if (isset($_POST['lock'])) {
+			$alert = new alert();
+			$username = $_POST['lock'];
+			$update_locked_qry = "UPDATE operators set locked=1 where operator_username='" . $username . "'";
+			$update_locked_qry_run = mysqli_query($conn, $update_locked_qry);
+			if ($update_locked_qry_run && mysqli_affected_rows($conn) > 0) {
+				$alert->exec("Operator account successfully locked!", "success");
+			} else {
+				$alert->exec("Unable to lock account!", "danger");
 			}
 		}
 	}
 
-	function unlock_operator($conn){
-		if(isset($_POST['unlock'])){
-			$alert=new alert();
-			$username=$_POST['unlock'];
-			$update_locked_qry="UPDATE operators set locked=0 where operator_username='".$username."'";
-			$update_locked_qry_run=mysqli_query($conn,$update_locked_qry);
-			if($update_locked_qry_run && mysqli_affected_rows($conn)>0){
-				$alert->exec("Operator account successfully unlocked!","success");
-			}
-			else{
-				$alert->exec("Unable to unlock account!","danger");
+	function unlock_operator($conn)
+	{
+		if (isset($_POST['unlock'])) {
+			$alert = new alert();
+			$username = $_POST['unlock'];
+			$update_locked_qry = "UPDATE operators set locked=0 where operator_username='" . $username . "'";
+			$update_locked_qry_run = mysqli_query($conn, $update_locked_qry);
+			if ($update_locked_qry_run && mysqli_affected_rows($conn) > 0) {
+				$alert->exec("Operator account successfully unlocked!", "success");
+			} else {
+				$alert->exec("Unable to unlock account!", "danger");
 			}
 		}
 	}
@@ -614,6 +618,48 @@ class useroptions
 			$_SESSION['selected_semester'] = $_POST['semester'];
 			header('location: view.php');
 		}
+	}
+	function insert_marks($conn)
+	{
+		if (isset($_POST['feed_marks'])) {
+			$operator_id = $_SESSION['operator_id'];
+			$remark=$_POST['remark'];
+			$transaction_qry="INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
+			$transaction_qry_run=mysqli_query($conn,$transaction_qry);
+			if($transaction_qry_run){
+				$transaction_id=mysqli_insert_id($conn);
+			}
+			else{
+				die();
+			}
+			$component_id = $_SESSION['sub_comp_id'];
+			$sub_id = $_SESSION['sub_id'];
+			
+			$failures=array();
+			$success=TRUE;
+			$alert=new alert();
+			for ($i = 1; $i <= $_SESSION['num_rows']; $i++) {
+				$roll_id = $_POST['roll_id' . $i];
+				$marks = $_POST['score' . $i];
+				$insert_score_qry = "INSERT into score VALUES($roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL)";
+				$insert_score_qry_run=mysqli_query($conn,$insert_score_qry);
+				if(!$insert_score_qry_run){
+					$success=FALSE;
+					array_push($failures,$roll_id);
+				}
+			}
+			if($success==TRUE){
+				$alert->exec("Records successfully inserted!","success");
+			}
+			else{
+				$failed="";
+				foreach($failures as $val){
+					$failed.=" ".$val;
+				}
+				$alert->exec("Unable to insert scores with roll ID's: $failed","danger");
+			}
+		}
+
 	}
 }
 class dashboard
@@ -1346,12 +1392,11 @@ class view_operators
 				} else {
 					echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
 				}
-				echo('</td><td>');
-				if($result['locked']==0){
-					echo('<button type="submit" class="btn btn-default" name="lock" value="'.$result['operator_username'].'"><i class="fa fa-lock" aria-hidden="true"> Lock </i> </button>');
-				}
-				else{
-					echo('<button type="submit" class="btn btn-default" name="unlock" value="'.$result['operator_username'].'"><i class="fa fa-unlock"> Unlock</i> </button>');		
+				echo ('</td><td>');
+				if ($result['locked'] == 0) {
+					echo ('<button type="submit" class="btn btn-default" name="lock" value="' . $result['operator_username'] . '"><i class="fa fa-lock" aria-hidden="true"> Lock </i> </button>');
+				} else {
+					echo ('<button type="submit" class="btn btn-default" name="unlock" value="' . $result['operator_username'] . '"><i class="fa fa-unlock"> Unlock</i> </button>');
 				}
 				echo ('</td>
       </tr>');

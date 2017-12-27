@@ -7,13 +7,6 @@
     <title>User Options</title>
     <link rel="stylesheet" href="/ems/css/style.css">
     <style>
-        <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
-        <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
-        <script language="JavaScript" type="text/javascript" src="/js/sprinkle.js"></script>
-
-
-
-
     #sem{
         margin: 10px;
         width: 40%;
