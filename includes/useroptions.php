@@ -146,6 +146,22 @@ $options->check_opt();*/
 
 ?>
 <script>
+function getType(batch){
+    $.ajax({
+	type: "POST",
+	url: "ajax_response.php",
+	data: 'from_year='+batch+'&getType=1&getSemester=0&getSubject=0&getComponent=0',
+	success: function(data){
+        $("#exam_type").html(data);
+        $("#sem_list").html("<option value=''>Select Semester</option>");
+        $("#sub_list").html(" <option value=''>Select Subject</option>");
+        $("#sub_component").html("<option value=''>Select Component</option>");
+    },
+    error: function(e){
+        alert('Come back again');
+    }
+	});
+}
 function getSemester(examType) {
 	var batch=document.getElementById("batch_list").value;
     $.ajax({
@@ -154,25 +170,15 @@ function getSemester(examType) {
 	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch+'&getType=0&getSubject=0&getComponent=0',
 	success: function(data){
         $("#sem_list").html(data);
+        $("#sub_list").html(" <option value=''>Select Subject</option>");
+        $("#sub_component").html("<option value=''>Select Component</option>");
     },
     error: function(e){
         alert('Come back again');
     }
 	});
 }
-function getType(batch){
-    $.ajax({
-	type: "POST",
-	url: "ajax_response.php",
-	data: 'from_year='+batch+'&getType=1&getSemester=0&getSubject=0&getComponent=0',
-	success: function(data){
-        $("#exam_type").html(data);
-    },
-    error: function(e){
-        alert('Come back again');
-    }
-	});
-}
+
 function getSubject(semester)
 {
     var batch=document.getElementById("batch_list").value;
@@ -183,6 +189,7 @@ function getSubject(semester)
 	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getSemester=0&getComponent=0',
 	success: function(data){
         $("#sub_list").html(data);
+        $("#sub_component").html("<option value=''>Select Component</option>");
     },
     error: function(e){
         alert('Come back again');
