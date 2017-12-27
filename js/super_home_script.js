@@ -72,7 +72,6 @@
     function disable_credits(el,no){
         var practical=document.getElementById("practical"+no);
         var theory=document.getElementById("theory"+no);
-
         if(el.checked){   
         practical.classList.add("disabled");
             practical.required=false;

@@ -71,6 +71,9 @@ require("class_lib.php");
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(4, ["home.php", "index.php", "useroptions.php", "developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
+$dashboard=new dashboard();
+ $dashboard->display($_SESSION['operator_name'],["Change Password","Sign Out"],["change_password.php","index.php"],"Contact Super Admin");
+   
 $input = new input_field();
 ?>
  <div id="err"></div>

@@ -94,6 +94,10 @@
     caption select{
         margin: 5px;
     }
+
+    .span-btn:hover{
+        cursor: pointer;
+    }
     </style>
 </head>
 <body>
@@ -330,9 +334,9 @@ $options->unlock_operator($conn);
         </div>
         <div class="form-group">
             <div class="input-group">
-            <span class="input-group-addon" onclick="subtract()"><i class="glyphicon glyphicon-minus"></i></span>
-            <input type="number" name="number_subjects" class="form-control" placeholder="Number of subjects" id="no_subjects" onkeyup="display_subjects('down')">
-            <span class="input-group-addon" onclick="add()"><i class="glyphicon glyphicon-plus"></i></span>
+            <span class="input-group-addon" onclick="subtract()" class="span-btn"><i class="glyphicon glyphicon-minus"></i></span>
+            <input type="number" name="number_subjects" class="form-control" placeholder="Number of subjects" id="no_subjects" onkeyup="display_subjects('down')" min="0" onchange="display_subjects('down')" >
+            <span class="input-group-addon" onclick="add()" class="span-btn"><i class="glyphicon glyphicon-plus"></i></span>
             </div>
         </div>
         
