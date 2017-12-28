@@ -647,7 +647,7 @@ class useroptions
 			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
 			if ($insert_score_qry_run) {
 				$_SESSION['score_entered_success']=TRUE;
-				$audit_qry="INSERT INTO audit VALUES(".$_SESSION['from_year'].",".$_SESSION['current_course_id'].",".$_SESSION['semester'].",'".$_SESSION['sub_code']."',".$transaction_id.",NULL,$component_id)";
+				$audit_qry="INSERT INTO auditing VALUES(".$_SESSION['from_year'].",".$_SESSION['current_course_id'].",".$_SESSION['semester'].",'".$_SESSION['sub_code']."',".$transaction_id.",NULL,$component_id)";
 				$audit_qry_run=mysqli_query($conn,$audit_qry);
 				header('location: /ems/includes/useroptions.php');
 			}
@@ -724,8 +724,11 @@ class validate
 {
 	function conf_logged_in()
 	{
-		if (!isset($_SESSION['operator_id']) && !isset($_SESSION['superadmin_id'])) {
-			header('location:../index.php');
+		if (!isset($_SESSION['operator_id'])) {
+			header('location: /ems/index.php');
+		}
+		else{
+			echo('<script>startTimer();</script>');
 		}
 	}
 }

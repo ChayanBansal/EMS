@@ -56,6 +56,8 @@
     $head->dispmenu(1,["home.php"],["glyphicon glyphicon-home"],["Home"]);
      $foot=new footer();
     $foot->disp_footer();
+    $logout_modal=new modals();
+    $logout_modal->display_logout_modal();
     ?>
     <div class="devp_contain col-md-12">
         <div class="well well-lg col-md-4">

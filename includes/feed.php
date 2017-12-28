@@ -11,10 +11,12 @@ if (isset($_POST['proceed_to_feed'])) {
 
     $check_exists_audit_qry = "SELECT count(*) as 'count' from audit where from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . " AND semester=" . $_SESSION['semester'] . " AND component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
     $check_exists_audit_qry_run = mysqli_query($conn, $check_exists_audit_qry);
-    $count = mysqli_fetch_assoc($check_exists_audit_qry_run);
-    if ($count['count'] > 0) {
-        $_SESSION['marks_entered_audit'] = true;
-        header('location: /ems/includes/useroptions.php');
+    if($check_exists_audit_qry_run){
+        $count = mysqli_fetch_assoc($check_exists_audit_qry_run);
+        if ($count['count'] > 0) {
+            $_SESSION['marks_entered_audit'] = true;
+            header('location: /ems/includes/useroptions.php');
+        }
     }
     $get_sub_id_qry = "SELECT cd.sub_id from component_distribution cd,sub_distribution sd where cd.sub_id=sd.sub_id and component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
     $get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
@@ -94,9 +96,11 @@ if (isset($_POST['proceed_to_feed'])) {
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+$validate=new validate();
+$validate->conf_logged_in();
 $obj = new head();
 $obj->displayheader();
-$obj->dispmenu(4, ["home.php", "index.php", "useroptions.php", "developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
+$obj->dispmenu(4, ["/ems/includes/home.php", "/ems/includes/logout.php", "/ems/includes/useroptions.php", "/ems/includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "Contact Super Admin");
 $options = new useroptions();
@@ -184,6 +188,8 @@ $input = new input_field();
 <?php
 $obj = new footer();
 $obj->disp_footer();
+$logout_modal=new modals();
+$logout_modal->display_logout_modal();
 ?>
 </body>
 

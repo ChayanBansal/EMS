@@ -221,7 +221,7 @@ $options->unlock_operator($conn);
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Add New Course</h4>
+            <h4 class="modal-title">View Courses</h4>
           </div>
           <form action="" method="post">
             <div class="modal-body">
