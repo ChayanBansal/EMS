@@ -61,6 +61,22 @@ class input_field
 			}
 		}
 	}
+	function display_table_readonly($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $readonly_flag, $maximum_value)
+	{
+		if ($readonly_flag == 1) {
+			if ($required_flag == 1) {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) readonly required>";
+			} else {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) readonly>";
+			}
+		} else {
+			if ($required_flag == 1) {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) required>";
+			} else {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) >";
+			}
+		}
+	}
 	function display_table_btn($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $disabled_flag, $maximum_value, $value, $actual_value)
 	{
 		if ($disabled_flag == 1) {
@@ -572,6 +588,48 @@ class super_user_options
 		}
 	}
 
+	function add_session($conn)
+	{
+		if (isset($_POST['session_submit'])) {
+			$alert = new alert();
+			$course_id = $_POST['session_course'];
+			$from_year = $_POST['session_year'];
+			$semester = $_POST['session_semester'];
+			$check_session_qry = "SELECT count(*) from academic_sessions where from_year=$from_year AND course_id=$course_id";
+			$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+			if($check_session_qry_run){
+				$result_count = mysqli_fetch_assoc($check_session_qry_run);
+				if ($result_count['count(*)'] == 0) {
+					$add_session_qry = "INSERT into academic_sessions VALUES($from_year,$course_id,$semester)";
+					$add_session_qry_run = mysqli_query($conn, $add_session_qry);
+					if ($add_session_qry_run) {
+						$alert->exec("Session successfully created!", "success");
+					}
+				} else {
+					$alert->exec("Academic session already exists! Check again..", "warning");
+				}
+			}
+		}
+	}
+
+	function update_session($conn){
+		if(isset($_POST['session_update_submit'])){
+			$alert = new alert();
+			$ay=$_POST['session_ay'];
+			$course_id=$_POST['session_update_submit'];
+			$semester=$_POST['session_semester'];
+			$update_session_qry="UPDATE academic_sessions SET current_semester=$semester WHERE from_year=$ay AND course_id=$course_id";
+			$update_session_qry_run=mysqli_query($conn,$update_session_qry);
+			if($update_session_qry_run){
+				$alert->exec("Academic Session successfully updated!","success");
+			}
+			else{
+				$alert->exec("Failed to update session!","danger");
+				
+			}
+		}
+	}
+
 }
 class useroptions
 {
@@ -646,13 +704,12 @@ class useroptions
 			}
 			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
 			if ($insert_score_qry_run) {
-				$_SESSION['score_entered_success']=TRUE;
-				$audit_qry="INSERT INTO auditing VALUES(".$_SESSION['from_year'].",".$_SESSION['current_course_id'].",".$_SESSION['semester'].",'".$_SESSION['sub_code']."',".$transaction_id.",NULL,$component_id)";
-				$audit_qry_run=mysqli_query($conn,$audit_qry);
+				$_SESSION['score_entered_success'] = true;
+				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['from_year'] . "," . $_SESSION['current_course_id'] . "," . $_SESSION['semester'] . ",'" . $_SESSION['sub_code'] . "'," . $transaction_id . ",NULL,$component_id)";
+				$audit_qry_run = mysqli_query($conn, $audit_qry);
 				header('location: /ems/includes/useroptions.php');
-			}
-			else{
-				$_SESSION['score_entered_success']=FALSE;
+			} else {
+				$_SESSION['score_entered_success'] = false;
 				header('location: /ems/includes/useroptions.php');
 			}
 		}
@@ -726,9 +783,8 @@ class validate
 	{
 		if (!isset($_SESSION['operator_id'])) {
 			header('location: /ems/index.php');
-		}
-		else{
-			echo('<script>startTimer();</script>');
+		} else {
+			echo ('<script>startTimer();</script>');
 		}
 	}
 }

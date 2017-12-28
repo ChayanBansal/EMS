@@ -115,6 +115,8 @@ $options = new super_user_options();
 $options->create_course($conn);
 $options->add_subject($conn);
 $options->create_operator($conn);
+$options->add_session($conn);
+$options->update_session($conn);
 $options->lock_operator($conn);
 $options->unlock_operator($conn);
 ?>
@@ -124,8 +126,8 @@ $options->unlock_operator($conn);
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
             <div class="sub-option" id="subopt1">
-            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-                <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add New</button>
+                <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Lock/Delete</button>
             </div>
             </div>
         <div class="option blue" onmouseover="show('subopt2')" onmouseout="hide('subopt2')">
@@ -156,14 +158,15 @@ $options->unlock_operator($conn);
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Sessions</div>
             <div class="sub-option" id="subopt5">
-            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-            <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+            <button data-toggle="modal" data-target="#addsessionModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
+            <button data-toggle="modal" data-target="#viewsessionModal"><i class="glyphicon glyphicon-pencil"></i> Update Session</button>
             </div>
             </div>
 
 
     </div>
     </div>
+
     <!-- Course Modal -->
     <div class="modal fade" id="addcourseModal" role="dialog">
       <div class="modal-dialog">
@@ -203,6 +206,183 @@ $options->unlock_operator($conn);
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
+   <!-- Add Session Modal -->
+   <div class="modal fade" id="addsessionModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Add New Session</h4>
+          </div>
+          <form action="" method="post">
+            <div class="modal-body">
+            <?php
+            $input = new input_field();
+            ?>
+            <div class="form-group">
+                <label for="name">Academic Year</label>
+                <select name="session_year" id="type" class="form-control">
+                    <?php
+                    $input = new input_field();
+                    $get_details_qry = "SELECT distinct(from_year) as acad_year from students";
+                    $get_details_qry_run = mysqli_query($conn, $get_details_qry);
+                    if ($get_details_qry_run) {
+                        while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
+                            echo ('
+                        <option value="' . $row['acad_year'] . '">' . $row['acad_year'] . '</option>
+                        ');
+                        }
+                    } else {
+                        $alert = new alert();
+                        $alert->exec("Unable to fetch session academic years....", "warning");
+                    }
+                    ?>
+                 </select>
+                </div>
+                <div class="form-group">
+                <label for="type">Course Name</label>
+                <select name="session_course" id="type" class="form-control">
+                <?php
+                $get_details_qry = "SELECT distinct s.course_id,course_name from students s, courses c where s.course_id=c.course_id";
+                $get_details_qry_run = mysqli_query($conn, $get_details_qry);
+                if ($get_details_qry_run) {
+                    while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
+                        echo ('
+                        <option value="' . $row['course_id'] . '">' . $row['course_name'] . '</option>
+                        ');
+                    }
+                } else {
+                    $alert = new alert();
+                    $alert->exec("Unable to fetch session courses....", "warning");
+                }
+                ?>
+                 </select>
+                </div>
+                <div class="form-group">
+                <label for="semester">Semester</label>
+                <?php
+                $input->display_table("semester", "form-control", "number", "session_semester", "", 1, 0, 8, 0, 8);
+                ?>
+                </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success" name="session_submit">Add Session<i class="glyphicon glyphicon-chevron-right"></i></button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
+  <!-- View Session Modal -->
+  <div class="modal fade" id="viewsessionModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">List of existing Sessions</h4>
+          </div>
+            <div class="modal-body">
+            <?php
+            $input = new input_button();
+            ?>
+            <table class="table table-responsive table-striped table-bordered">
+            <thead>
+                <th>Academic Year</th>
+                <th>Course Name</th>
+                <th>Current Semester</th>
+                <th>Update</th>
+            </thead>
+                <tbody>
+                    <?php
+                    $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id";
+                    $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
+                    if ($get_sessions_qry_run) {
+                        while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
+                            echo ('
+                            <tr>
+                            <td>' . $row['from_year'] . '</td>
+                            <td>' . $row['course_name'] . '</td>
+                            <td>' . $row['current_semester'] . '</td>
+                            <td>');
+                            ?>
+                           <button type="button" class="btn btn-default" data-target="#updateSessiondialog" data-toggle="modal" data-course="<?=$row['course_name']?>" data-year="<?=$row['from_year']?>" data-course-id="<?=$row['course_id']?>" data-current-semester="<?=$row['current_semester']?>" onclick="set_session_values(this)"><i class="glyphicon glyphicon-edit"></i></button>             
+                        <?php
+                        echo ('</td>
+                        ');
+                    }
+                }
+                ?>
+                </tbody>
+        </table>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success" name="session_submit">Add Session<i class="glyphicon glyphicon-chevron-right"></i></button>
+        </div>
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
+ <!-- Update Session Modal -->
+ <div class="modal fade" id="updateSessiondialog" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Update Session</h4>
+          </div>
+          <form action="" method="post">
+          <div class="modal-body">
+          <?php
+            $input = new input_field();
+            ?>
+          <div class="form-group">
+              <label for="name">Academic Year</label>
+                <?php
+                $input->display_table_readonly("session_ay", "form-control", "number", "session_ay", "",1,0,0,1,0);
+                ?>
+              </div>
+              <div class="form-group">
+              <label for="type">Course Name</label>
+              <?php
+                $input->display_table_readonly("session_course_name", "form-control", "text", "session_course_name", "", 0, 0, 0, 1, 0);
+                ?>
+              </div>
+              <div class="form-group">
+              <label for="semester">Semester</label>
+              <?php
+                $input->display_table("session_semester", "form-control", "number", "session_semester", "", 1, 0, 8, 0, 8);
+                ?>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
+            <button type="submit" class="btn btn-success" name="session_update_submit" value="" id="btn_session_update">Update Session<i class="glyphicon glyphicon-chevron-right"></i></button>
         </div>
         </form> 
         </div>
@@ -286,28 +466,26 @@ $options->unlock_operator($conn);
     <tbody>
         
             <?php
-                $get_course_qry="SELECT * from courses";
-                $get_course_qry_run=mysqli_query($conn,$get_course_qry);
-                if($get_course_qry_run){
-                    while($course=mysqli_fetch_assoc($get_course_qry_run)){
-                        echo('<tr style="text-align:center">
-                        <td>'.$course['course_id'].'</td>
+            $get_course_qry = "SELECT * from courses";
+            $get_course_qry_run = mysqli_query($conn, $get_course_qry);
+            if ($get_course_qry_run) {
+                while ($course = mysqli_fetch_assoc($get_course_qry_run)) {
+                    echo ('<tr style="text-align:center">
+                        <td>' . $course['course_id'] . '</td>
                         <td>');
-                        if($course['level_id']==1){
-                            echo("Undergraduate");
-                        }
-                        else{
-                            echo("Postgraduate");
-                        }
-                        echo('</td>
-                        <td>'.$course['course_name'].'</td>
-                        <td>'.$course['duration'].'</td>
-                        </tr>');
+                    if ($course['level_id'] == 1) {
+                        echo ("Undergraduate");
+                    } else {
+                        echo ("Postgraduate");
                     }
+                    echo ('</td>
+                        <td>' . $course['course_name'] . '</td>
+                        <td>' . $course['duration'] . '</td>
+                        </tr>');
                 }
-                else{
-                    $alert->exec("Unable to fetch courses!","warning");
-                }
+            } else {
+                $alert->exec("Unable to fetch courses!", "warning");
+            }
             ?>
         
     </tbody>
@@ -476,9 +654,7 @@ $options->unlock_operator($conn);
       
     </div>
   </div>
-  
-</div>
-  </div>
+
   <!--End-->
   
   <!-- Modal Box for viewing operators-->
@@ -507,4 +683,12 @@ $options->unlock_operator($conn);
     $obj->disp_footer();
     ?>
 </body>
+<script>
+    function set_session_values(el){
+        document.getElementById("session_ay").value=el.getAttribute("data-year");
+        document.getElementById("session_course_name").value=el.getAttribute("data-course");
+        document.getElementById("session_semester").value=el.getAttribute("data-current-semester");
+        document.getElementById("btn_session_update").value=el.getAttribute("data-course-id");
+    }
+</script>
 </html>
