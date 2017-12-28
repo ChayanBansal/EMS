@@ -8,6 +8,14 @@ if (isset($_POST['proceed_to_feed'])) {
     $_SESSION['semester'] = $_POST['semester'];
     $_SESSION['sub_code'] = $_POST['subject'];
     $_SESSION['sub_comp_id'] = $_POST['sub_comp'];
+
+    $check_exists_audit_qry = "SELECT count(*) as 'count' from audit where from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . " AND semester=" . $_SESSION['semester'] . " AND component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
+    $check_exists_audit_qry_run = mysqli_query($conn, $check_exists_audit_qry);
+    $count = mysqli_fetch_assoc($check_exists_audit_qry_run);
+    if ($count['count'] > 0) {
+        $_SESSION['marks_entered_audit'] = true;
+        header('location: /ems/includes/useroptions.php');
+    }
     $get_sub_id_qry = "SELECT cd.sub_id from component_distribution cd,sub_distribution sd where cd.sub_id=sd.sub_id and component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
     $get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
     $sub_id = mysqli_fetch_assoc($get_sub_id_qry_run);
@@ -20,10 +28,10 @@ if (isset($_POST['proceed_to_feed'])) {
     $get_subject_name_qry_run = mysqli_query($conn, $get_subject_name_qry);
     $subname = mysqli_fetch_assoc($get_subject_name_qry_run);
     $_SESSION['sub_name'] = $subname['sub_name'];
-    $get_max_marks_qry="SELECT max_marks from component_distribution WHERE sub_id=".$_SESSION['sub_id']." AND component_id=". $_SESSION['sub_comp_id'];
-    $get_max_marks_qry_run=mysqli_query($conn,$get_max_marks_qry);
-    $max_result=mysqli_fetch_assoc($get_max_marks_qry_run);
-    $_SESSION['max_marks']=round($max_result['max_marks']);
+    $get_max_marks_qry = "SELECT max_marks from component_distribution WHERE sub_id=" . $_SESSION['sub_id'] . " AND component_id=" . $_SESSION['sub_comp_id'];
+    $get_max_marks_qry_run = mysqli_query($conn, $get_max_marks_qry);
+    $max_result = mysqli_fetch_assoc($get_max_marks_qry_run);
+    $_SESSION['max_marks'] = round($max_result['max_marks']);
 } ?>
 <html lang="en">
 <head>
@@ -91,7 +99,7 @@ $obj->displayheader();
 $obj->dispmenu(4, ["home.php", "index.php", "useroptions.php", "developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "Contact Super Admin");
-$options=new useroptions();
+$options = new useroptions();
 $options->insert_marks($conn);
 $input = new input_field();
 
@@ -106,10 +114,10 @@ $input = new input_field();
                                 ?>
             </div>
             <div class="subtitle">
-                <?=$_SESSION['sub_name']?> -- <?=$_SESSION['sub_comp_name']?> 
+                <?= $_SESSION['sub_name'] ?> -- <?= $_SESSION['sub_comp_name'] ?> 
             </div>
             <div class="subtitle">
-            Maximum Marks: <?=$_SESSION['max_marks']?>
+            Maximum Marks: <?= $_SESSION['max_marks'] ?>
             </div>
         </div>
      <table class="table table-striped table-responsive table-bordered">
@@ -138,8 +146,8 @@ $input = new input_field();
                   <td>' . $row['first_name'] . " " . $row['last_name'] . '</td>
                   <td>' . $row['father_name'] . '</td>
                   <td>');
-            $input->display_table("enrol", "form-control", "number", "score" . $row_count, "",1,0,$_SESSION['max_marks'],0,$_SESSION['max_marks']);
-            $input->display_w_value("", "", "hidden", "roll_id" . $row_count, "", $row['roll_id'], 0);
+            $input->display_table("enrol", "form-control", "number", "score" . $row_count, "", 1, 0, $_SESSION['max_marks'], 0, $_SESSION['max_marks']);
+            $_SESSION['roll_id' . $row_count] = $row['roll_id'];
             echo ('</td>
                 </tr>
                 ');
@@ -147,8 +155,8 @@ $input = new input_field();
         }
         $_SESSION['num_rows'] = mysqli_num_rows($get_stud_qry_run);
     } else {
-        $alert=new alert();
-        $alert->exec("Unable to fetch roll list!","warning");
+        $alert = new alert();
+        $alert->exec("Unable to fetch roll list!", "warning");
     }
     ?>  
       

@@ -636,7 +636,7 @@ class useroptions
 			$alert = new alert();
 			$insert_score_qry = "INSERT INTO score VALUES ";
 			for ($i = 1; $i <= $_SESSION['num_rows']; $i++) {
-				$roll_id = $_POST['roll_id' . $i];
+				$roll_id = $_SESSION['roll_id' . $i];
 				$marks = $_POST['score' . $i];
 				if ($i == $_SESSION['num_rows']) {
 					$insert_score_qry .= "($roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL)";
