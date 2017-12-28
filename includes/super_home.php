@@ -121,12 +121,12 @@ $options->lock_operator($conn);
 $options->unlock_operator($conn);
 ?>
     <div class="main-container col-md-12">
-    <div class="sub-container col-lg-5 col-md-8 col-sm-10 col-xs-12">
+    <div class="sub-container col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
             <div class="sub-option" id="subopt1">
-            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add New</button>
+            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add</button>
                 <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Lock/Delete</button>
             </div>
             </div>

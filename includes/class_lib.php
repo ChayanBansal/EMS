@@ -354,11 +354,10 @@ class super_user_options
 			}
 			$create_course_qry = "INSERT into courses(level_id,course_name,duration) VALUES($level,'" . $_POST['cname'] . "'," . $_POST['cduration'] . ")";
 			$create_course_qry_run = mysqli_query($conn, $create_course_qry);
-			echo ($create_course_qry);
 			if ($create_course_qry_run) {
 				$_SESSION['course_inserted'] = $_POST['cname'];
 				$_SESSION['semester'] = $_POST['cduration'] * 2;
-				$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course</a>', "success");
+				$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course <i class="glyphicon glyphicon-circle-arrow-right"></i></a>', "success");
 			} else {
 				$alert->exec("Unable to process query! Please try again", "danger");
 			}
@@ -606,7 +605,7 @@ class super_user_options
 						$alert->exec("Session successfully created!", "success");
 					}
 				} else {
-					$alert->exec("Academic session already exists! Check again..", "warning");
+					$alert->exec("Academic session already exists! Consider updating session..", "warning");
 				}
 			}
 		}
