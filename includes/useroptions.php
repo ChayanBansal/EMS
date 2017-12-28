@@ -335,7 +335,7 @@ function getComponent(sub_code)
     </thead>
     <tbody style="overflow: auto;">
     <?php
-    $get_check_list="SELECT A.*, S.sub_name, C.component_name, O.operator_name, T.remark FROM audit A, subjects S, component C, transactions T, operators O WHERE S.sub_code=A.sub_code AND T.operator_id=O.operator_id AND A.component_id=C.component_id AND A.course_id=".$_SESSION['current_course_id'];
+    $get_check_list="SELECT A.*, S.sub_name, C.component_name, O.operator_name, T.remark FROM auditing A, subjects S, component C, transactions T, operators O WHERE S.sub_code=A.sub_code AND T.operator_id=O.operator_id AND A.component_id=C.component_id AND A.course_id=".$_SESSION['current_course_id'];
     $get_check_list_run=mysqli_query($conn,$get_check_list);
     while($check_list=mysqli_fetch_assoc($get_check_list_run))
     {
