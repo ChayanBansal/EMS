@@ -106,6 +106,12 @@
     caption select{
         margin: 5px;
     }
+    #check_list{
+        text-align: center;
+    }
+    th{
+        text-align: center;
+    }
 
     </style>
 </head>
@@ -305,7 +311,7 @@ function getComponent(sub_code)
 
 <!-- Check Marks Modal Box -->
 <div id="check_marks_modal" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg" style="width:95%">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -314,18 +320,20 @@ function getComponent(sub_code)
         <h4 class="modal-title">Marks Verification And Approval</h4>
       </div>
       <div class="modal-body">
-      <table class="table">
+      <table id="check_list" class="table">
     <thead>
       <tr>
-        <th>Batch (FROM YEAR)</th>
+        <th>Batch<br>(FROM YEAR)</th>
         <th>Semester</th>
-        <th>Subject</th>
-        <th>Component</th>
+        <th>Subject Code</th>
+        <th>Subject Name</th>
+        <th>Component Name</th>
         <th>Operator</th>
         <th>Operator's Remark</th>
+        <th>Status</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody style="overflow: auto;">
     <?php
     $get_check_list="SELECT A.*, S.sub_name, C.component_name, O.operator_name, T.remark FROM audit A, subjects S, component C, transactions T, operators O WHERE S.sub_code=A.sub_code AND T.operator_id=O.operator_id AND A.component_id=C.component_id AND A.course_id=".$_SESSION['current_course_id'];
     $get_check_list_run=mysqli_query($conn,$get_check_list);
@@ -337,11 +345,19 @@ function getComponent(sub_code)
                 echo('<td>'.$check_list["from_year"].'</td>');
                 echo('<td>'.$check_list["semester"].'</td>');
                 echo('<td>'.$check_list["sub_code"].'</td>');
-                echo('<td>'.$check_list["component_name"].'</td>');
                 echo('<td>'.$check_list["sub_name"].'</td>');
+                echo('<td>'.$check_list["component_name"].'</td>');
                 echo('<td>'.$check_list["operator_name"].'</td>');
                 echo('<td>'.$check_list["remark"].'</td>');
-                echo('<td style="text-align:center"><div class="glyphicon glyphicon-check"></div><div>Check Now</div></td>');
+                echo('<td style="text-align:center">
+                        <form action="'.htmlspecialchars("checking.php").'">
+                            <button name="check_button" type="submit" value='.$check_list["transaction_id"].'>
+                            <div class="glyphicon glyphicon-check">
+                            </div>
+                            <div>Check Now</div>
+                            </button>
+                        </form>
+                     </td>');
             echo('</tr>');
         }
         else
@@ -354,7 +370,7 @@ function getComponent(sub_code)
                 echo('<td>'.$check_list["sub_name"].'</td>');
                 echo('<td>'.$check_list["operator_name"].'</td>');
                 echo('<td>'.$check_list["remark"].'</td>');
-                echo('<td></td>');
+                echo('<td style="text-align:center"><div class="glyphicon glyphicon-ok"></div><div>Already Checked</div></td>');
             echo('</tr>');
         }
     }
