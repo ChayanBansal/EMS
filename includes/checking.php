@@ -3,8 +3,8 @@
 session_start();
 if(isset($_POST['check_button']))
 {
-    $check_transaction_id=$_POST['check_button'];
-    $get_check_detail="SELECT A.* T.remark FROM auditing WHERE A.transaction_id=T.transaction_id AND A.transaction_id=".$check_transaction_id;
+    $_SESSION['check_transaction_id']=$_POST['check_button'];
+    $get_check_detail="SELECT A.* T.remark FROM auditing WHERE A.transaction_id=T.transaction_id AND A.transaction_id=".$_SESSION['check_transaction_id'];
     $get_check_detail_run=$mysqli_query($conn,$get_check_detail);
     while($check_detail=mysqli_fetch_assoc($get_check_detail_run))
     {
@@ -12,7 +12,7 @@ if(isset($_POST['check_button']))
         $_SESSION['semester']=$check_detail['semester'];
         $_SESSION['sub_code']=$check_detail['sub_code'];
         $_SESSION['component_id']=$check_detail['component_id'];
-        $_SESSION['cheked_by_operator_id']=$check_detail['operator_id'];
+        $_SESSION['checked_by_operator_id']=$check_detail['operator_id'];
         $_SESSION['remark']=$check_detail['remark'];
     }
     $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code=".$_SESSION['sub_code'];
@@ -28,7 +28,7 @@ if(isset($_POST['check_button']))
     $get_operator_name="SELECT operator_name FROM operators WHERE operator_id=".$_SESSION['operator_id'];
     $get_operator_name_run=mysql_query($conn,$get_operator_name);
     $result_operator_name_run=mysqli_fetch_assoc($get_operator_name_run);
-    $_SESSION['cheked_by_operator_name']=$result_operator_name_run['operator_name'];
+    $_SESSION['checked_by_operator_name']=$result_operator_name_run['operator_name'];
 
     $get_maximum_marks="SELECT max_marks FROM component_distribution WHERE component_id=".$_SESSION['component_id']." AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code=".$_SESSION['sub_code'].")";
     $get_maximum_marks_run=mysql_query($conn,$get_maximum_marks);
@@ -83,7 +83,14 @@ if(isset($_POST['check_button']))
         border: 1px solid #204F93 !important;
     }
     </style>
-    <script src="../js/feed_validation.js"></script>
+    <script src="../js/feed_validation.js"></script>\
+    <script>
+        function remove_readonly(value)
+        {
+            $("#"+value).removeAttr("readonly");
+            $("")
+        }
+    </script>
 </head>
 <body>
 <?php
@@ -105,138 +112,32 @@ $input_btn=new input_button();
      <table class="table table-striped table-responsive table-bordered">
     <thead>
       <tr>
+        <th>Enrollment Number</th>
         <th>First Name</th>
         <th>Middle Name</th>
         <th>Lastname</th>
+        <th>Father Name</th>
         <th>Marks</th>
         <th>Edit</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 1, 60)
-            ?></td>
-        <td>
-            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#editMarks" data-first-name="Samyak" data-last-name="Jain" onclick="setvalues(this)"><i class="glyphicon glyphicon-edit"></i></button>
-        </td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-
-      <tr>
-        <td>Mary</td>
-        <td>Moe</td>
-        <td>mary@example.com</td> <td><?php
-                                        $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-                                        ?></td>
-      </tr>
-      <tr>
-        <td>July</td>
-        <td>Dooley</td>
-        <td>july@example.com</td>
-        <td><?php
-            $input->display_table("enrol", "form-control", "number", "enrol", "", 1, 0, 60, 0, 60)
-            ?></td>
-      </tr>
-      
+     <?php 
+        $get_fed_marks="SELECT st.enrol_no, st.first_name, st.middle_name, st.last_name, st.father_name, sc.marks FROM students st, score sc, roll_list r WHERE sc.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=".$_SESSION['check_transaction_id']." AND st.enrol_no IN
+                        (SELECT enrol_no FROM students WHERE from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'].")";
+        $get_fed_marks_run=mysqli_query($conn,$get_fed_marks);
+        while($fed_marks=mysqli_fetah_assoc($get_fed_marks_run))
+        {
+            echo('<tr>');
+                echo('<td>'.$fed_marks['enrol_no'].'</td>');
+                echo('<td>'.$fed_marks['first_name'].'</td>');
+                echo('<td>'.$fed_marks['middle_name'].'</td>');
+                echo('<td>'.$fed_marks['last_name'].'</td>');
+                echo('<td>'.$fed_marks['father_name'].'</td>');
+                echo('<td><input id="'.$fed_marks['enrol_no'].'" type="number" min="0" max="'.$_SESSION['max_marks'].'" value="'.$fed_marks['marks'].'" readonly></td>');
+                echo('<td><button type="button" value="'.$fed_marks['enrol_no'].'" onClick="remove_readonly(this.value)" >'.$fed_marks[''].'Change</button></td>');
+        }
+     ?>
     </tbody>
   </table>
   <div class="remarks">
@@ -258,47 +159,7 @@ $input_btn=new input_button();
   </div>
     </form>
 
-    <!--Edit Modal-->
-    <div class="modal fade" id="editMarks" role="dialog">
-      <div class="modal-dialog">
-      
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Edit Marks</h4>
-          </div>
-          <form action="" method="post">
-            <div class="modal-body">
-           
-                <?php
-                $input = new input_field();
-                ?>
-                <div class="form-group">
-                <label for="name">Student Name</label>
-                <?php
-                $input->display_table("stud_name","form-control","text","","",0,0,0,1,0);
-                ?>
-                </div>
-               <div class="form-group">
-                <label for="duration">Marks</label>
-                <?php
-                $input->display_table("marks", "form-control", "number", "marks", "",1,0,100,0,100);
-                ?>
-                </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" name="update_mks" value="">Update</button>
-        </div>
-        </form> 
-        </div>
-        
-      </div>
-    </div>
     
-  </div>
-  <!--End-->
 <?php
 $obj = new footer();
 $obj->disp_footer();
