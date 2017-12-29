@@ -36,8 +36,6 @@ if(isset($_POST["check_button"]))
     $get_maximum_marks_run=mysqli_query($conn,$get_maximum_marks);
     $result_max_marks=mysqli_fetch_assoc($get_maximum_marks_run);
     $_SESSION['max_marks']=$result_max_marks['max_marks'];
-    echo('FORWARDED');
-    header('location: checking.php');
 }
 else{
     echo("yo");
