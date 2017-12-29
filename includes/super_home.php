@@ -306,10 +306,12 @@ $options->unlock_operator($conn);
             ?>
             <table class="table table-responsive table-striped table-bordered">
             <thead>
+                <tr style="text-align:center">
                 <th>Academic Year</th>
                 <th>Course Name</th>
                 <th>Current Semester</th>
                 <th>Update</th>
+                </tr>
             </thead>
                 <tbody>
                     <?php
@@ -318,7 +320,7 @@ $options->unlock_operator($conn);
                     if ($get_sessions_qry_run) {
                         while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
                             echo ('
-                            <tr>
+                            <tr style="text-align:center">
                             <td>' . $row['from_year'] . '</td>
                             <td>' . $row['course_name'] . '</td>
                             <td>' . $row['current_semester'] . '</td>

@@ -9,7 +9,7 @@ if (isset($_POST['proceed_to_feed'])) {
     $_SESSION['sub_code'] = $_POST['subject'];
     $_SESSION['sub_comp_id'] = $_POST['sub_comp'];
 
-    $check_exists_audit_qry = "SELECT count(*) as 'count' from audit where from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . " AND semester=" . $_SESSION['semester'] . " AND component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
+    $check_exists_audit_qry = "SELECT count(*) as 'count' from auditing where from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . " AND semester=" . $_SESSION['semester'] . " AND component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
     $check_exists_audit_qry_run = mysqli_query($conn, $check_exists_audit_qry);
     if($check_exists_audit_qry_run){
         $count = mysqli_fetch_assoc($check_exists_audit_qry_run);
