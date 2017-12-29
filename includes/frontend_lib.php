@@ -60,8 +60,7 @@ class modals{
             <!-- Modal content-->
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Inactivity Detected!</h4>
+                 <h4 class="modal-title">Inactivity Detected!</h4>
               </div>
               <div class="modal-body" style="text-align: center; font-size: 2rem">
                   <p>Do you wish to continue?</p>
@@ -69,7 +68,7 @@ class modals{
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-danger" onclick="location.href=`/ems/includes/logout.php`" data-dismiss="modal">LogOut Now <i class="glyphicon glyphicon-new-window"></i></button>
-                <button type="button" class="btn btn-success" onclick="startTimer(); show_conf_dialog(`stop`);" data-dismiss="modal">Keep Me Logged In <i class="glyphicon glyphicon-arrow-right"></i></button>
+                <button type="button" class="btn btn-success" onclick="startTimer(); stopTimer();" data-dismiss="modal">Keep Me Logged In <i class="glyphicon glyphicon-arrow-right"></i></button>
               </div>
             </div>');
     }

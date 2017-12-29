@@ -10,10 +10,7 @@
         });
     });
     function show_conf_dialog(stop){
-        if(stop=="stop"){
-            clearInterval(wintimer);
             document.getElementById("logout_timer").innerHTML="00:60";
-        }else{
             var timer=60;
             window.wintimer=window.setInterval(function(){
                 document.getElementById("logout_timer").innerHTML="00:"+timer;
@@ -21,12 +18,16 @@
                 if(timer==0){
                     location.href="/ems/includes/logout.php";
                 }
+                console.log(timer);
             },1000);
+            $('#logoutModal').modal({backdrop: 'static', keyboard: false})  
             $('#logoutModal').modal('show');
-        }
+    }
+    function stopTimer(){
+        clearInterval(wintimer);
     }
     function startTimer(){
         window.setTimeout(function(){
-            show_conf_dialog("");
+            show_conf_dialog();
         },300000);
     }

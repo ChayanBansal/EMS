@@ -745,7 +745,7 @@ class dashboard
 {
 	function display($name, $options, $href, $last_option)
 	{
-		echo('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation" style="z-index:2000">
+		echo('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation" style="z-index:200">
 		<div class="container-fluid">
 			<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">

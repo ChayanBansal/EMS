@@ -29,7 +29,7 @@
         width: 100%;
         justify-content: center;
         align-items: center;
-        
+        margin-bottom: 100px;
     }
     .modal-container{
         width: 100%;
@@ -120,31 +120,31 @@
 </head>
 <body>
 <?php
-    session_start();
-    require("config.php");
-    require("frontend_lib.php");
-    require("class_lib.php");
-$valid=new validate();
+session_start();
+require("config.php");
+require("frontend_lib.php");
+require("class_lib.php");
+$valid = new validate();
 $valid->conf_logged_in();
-$obj=new head();
+$obj = new head();
 $obj->displayheader();
-$obj->dispmenu(3,["/ems/includes/home.php","/ems/includes/logout.php","/ems/includes/developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-out","glyphicon glyphicon-info-sign"],["Home","Log Out","About Us"]);
-$dashboard=new dashboard();
-$dashboard->display($_SESSION['operator_name'],["Change Password","Sign Out"],["change_password.php","index.php"],"Contact Super Admin");
+$obj->dispmenu(3, ["/ems/includes/home.php", "/ems/includes/logout.php", "/ems/includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
+$dashboard = new dashboard();
+$dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "Contact Super Admin");
 /*Alert while coming from feed*/
-if(isset($_SESSION['score_entered_success'])){
-    $alert=new alert();
-    if($_SESSION['score_entered_success']==TRUE){
-        $alert->exec("Score successfully inserted!","success");
-    }else{
-        $alert->exec("Unable to insert marks! Please try again..","danger");
+if (isset($_SESSION['score_entered_success'])) {
+    $alert = new alert();
+    if ($_SESSION['score_entered_success'] == true) {
+        $alert->exec("Score successfully inserted!", "success");
+    } else {
+        $alert->exec("Unable to insert marks! Please try again..", "danger");
     }
     unset($_SESSION['score_entered_success']);
 }
-if(isset($_SESSION['marks_entered_audit'])){
-    $alert=new alert();
-    if($_SESSION['marks_entered_audit']==TRUE){
-        $alert->exec("Marks for this component have already been entered!","warning");
+if (isset($_SESSION['marks_entered_audit'])) {
+    $alert = new alert();
+    if ($_SESSION['marks_entered_audit'] == true) {
+        $alert->exec("Marks for this component have already been entered!", "warning");
     }
     unset($_SESSION['marks_entered_audit']);
 }
@@ -241,8 +241,6 @@ function getComponent(sub_code)
     </div>
 </div> 
  
- 
-
 
 <!-- Modal -->
 <div id="feed_marks_modal" class="modal fade" role="dialog">
@@ -257,46 +255,44 @@ function getComponent(sub_code)
       </div>
       <div class="modal-body">
         <div>
-            
-                <div class="form-group" style="display: flex; justify-content: center;">
+                <div class="form-group">
                     <label for="batch">Batch (Starting Year) :</label>
-                    <select id="batch_list" name="batch" class="btn-default" onChange="getType(this.value)" >
-                        <option value="">Select Batch</option>
+                    <select id="batch_list" name="batch" class="form-control" onChange="getType(this.value)" required>
+                        <option value="" disabled selected>Select Batch</option>
                         <?php 
-                            $get_batch="SELECT DISTINCT(from_year), to_year FROM students WHERE course_id=".$_SESSION['current_course_id'];
-                            $get_batch_run=mysqli_query($conn,$get_batch);
-                            while($batches=mysqli_fetch_assoc($get_batch_run))
-                            {
-                                echo('<option value="'.$batches['from_year'].'">'.$batches['from_year'].'-'.$batches['to_year'].'</option>');
-                            }
+                        $get_batch = "SELECT DISTINCT(from_year), to_year FROM students WHERE course_id=" . $_SESSION['current_course_id'];
+                        $get_batch_run = mysqli_query($conn, $get_batch);
+                        while ($batches = mysqli_fetch_assoc($get_batch_run)) {
+                            echo ('<option value="' . $batches['from_year'] . '">' . $batches['from_year'] . '-' . $batches['to_year'] . '</option>');
+                        }
                         ?>
                     </select>
                 </div>
-                <div class="form-group" style="display: flex; justify-content: center;">
+                <div class="form-group">
                 <label for="semester">Type :</label>
-                    <select id="exam_type" name="main_atkt" class="btn-default" onChange="getSemester(this.value)">
-                    <option value="">Select Type</option>
+                    <select id="exam_type" name="main_atkt" class="form-control" onChange="getSemester(this.value)">
+                    <option value="" disabled selected>Select Type</option>
                     </select>
                 </div>
                         
-                <div class="form-group" style="display: flex; justify-content: center;">
+                <div class="form-group">
                     <label for="semester">Semeter :</label>
-                    <select id="sem_list" name="semester" class="btn-default" onChange="getSubject(this.value)">
-                    <option value="">Select Semester</option>
+                    <select id="sem_list" name="semester" class="form-control" onChange="getSubject(this.value)">
+                    <option value="" disabled selected>Select Semester</option>
                     </select>
                 </div>  
                 
-                <div class="form-group" style="display: flex; justify-content: center;">
+                <div class="form-group">
                     <label for="subject">Subject : </label>
-                    <select id="sub_list" name="subject" class="btn-default" onChange="getComponent(this.value)">
-                    <option value="">Select Subject</option>
+                    <select id="sub_list" name="subject" class="form-control" onChange="getComponent(this.value)">
+                    <option value="" disabled selected>Select Subject</option>
                     </select>
                 </div>
                           
-                <div class="form-group" style="display: flex; justify-content: center;">
+                <div class="form-group">
                     <label for="sub_comp">Subject Component :</label>
-                    <select id="sub_component" name="sub_comp" class="btn-default">
-                    <option value="">Select Component</option>
+                    <select id="sub_component" name="sub_comp" class="form-control">
+                    <option value="" disabled selected>Select Component</option>
                     </select>
                 </div>            
             
@@ -339,77 +335,67 @@ function getComponent(sub_code)
     </thead>
     <tbody style="overflow: auto;">
     <?php
-    $get_check_list="SELECT A.*, T.operator_id FROM auditing A, transactions T WHERE A.transaction_id=T.transaction_id AND A.course_id=".$_SESSION['current_course_id'];
-    $get_check_list_run=mysqli_query($conn,$get_check_list);
-    echo('<form action="checking.php" method="post">');
-    while($check_list=mysqli_fetch_assoc($get_check_list_run))
-    {
-        if($check_list["check_id"]==NULL)
-        {
-            echo('<tr class="warning">');
-                echo('<td>'.$check_list["from_year"].'</td>');
-                echo('<td>'.$check_list["semester"].'</td>');
-                if($check_list["atkt_flag"]==0)
-                {
-                    echo('<td>MAIN</td>');
-                }
-                else
-                {
-                    echo('<td>ATKT</td>');
-                }
-                echo('<td>'.$check_list["sub_code"].'</td>');
-                $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code='".$check_list['sub_code']."'";
-                $get_sub_name_run=mysqli_query($conn,$get_sub_name);
-                $result_sub_name=mysqli_fetch_assoc($get_sub_name_run);
-                echo('<td>'. $result_sub_name['sub_name'].'</td>');
+    $get_check_list = "SELECT A.*, T.operator_id FROM auditing A, transactions T WHERE A.transaction_id=T.transaction_id AND A.course_id=" . $_SESSION['current_course_id'];
+    $get_check_list_run = mysqli_query($conn, $get_check_list);
+    echo ('<form action="checking.php" method="post">');
+    while ($check_list = mysqli_fetch_assoc($get_check_list_run)) {
+        if ($check_list["check_id"] == null) {
+            echo ('<tr class="warning">');
+            echo ('<td>' . $check_list["from_year"] . '</td>');
+            echo ('<td>' . $check_list["semester"] . '</td>');
+            if ($check_list["atkt_flag"] == 0) {
+                echo ('<td>MAIN</td>');
+            } else {
+                echo ('<td>ATKT</td>');
+            }
+            echo ('<td>' . $check_list["sub_code"] . '</td>');
+            $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $check_list['sub_code'] . "'";
+            $get_sub_name_run = mysqli_query($conn, $get_sub_name);
+            $result_sub_name = mysqli_fetch_assoc($get_sub_name_run);
+            echo ('<td>' . $result_sub_name['sub_name'] . '</td>');
 
-                $get_component_name="SELECT component_name FROM component WHERE component_id=".$check_list['component_id'];
-                $get_component_name_run=mysqli_query($conn,$get_component_name);
-                $result_component_name=mysqli_fetch_assoc($get_component_name_run);
-                echo('<td>'. $result_component_name['component_name'].'</td>');
-            
-                $get_operator_name="SELECT operator_name FROM operators WHERE operator_id=".$check_list['operator_id'];
-                $get_operator_name_run=mysqli_query($conn,$get_operator_name);
-                $result_operator_name_run=mysqli_fetch_assoc($get_operator_name_run);            
-                echo('<td>'.$result_operator_name_run['operator_name'].'</td>');
+            $get_component_name = "SELECT component_name FROM component WHERE component_id=" . $check_list['component_id'];
+            $get_component_name_run = mysqli_query($conn, $get_component_name);
+            $result_component_name = mysqli_fetch_assoc($get_component_name_run);
+            echo ('<td>' . $result_component_name['component_name'] . '</td>');
 
-                $get_remark="SELECT remark FROM transactions WHERE transaction_id=".$check_list['transaction_id'];
-                $get_remark_run=mysqli_query($conn,$get_remark);
-                $result_remark=mysqli_fetch_assoc($get_remark_run);            
-                echo('<td>'.$result_remark['remark'].'</td>');
-                echo('<td style="text-align:center">
-                            <button name="check_button" type="submit" value='.$check_list["transaction_id"].'>
+            $get_operator_name = "SELECT operator_name FROM operators WHERE operator_id=" . $check_list['operator_id'];
+            $get_operator_name_run = mysqli_query($conn, $get_operator_name);
+            $result_operator_name_run = mysqli_fetch_assoc($get_operator_name_run);
+            echo ('<td>' . $result_operator_name_run['operator_name'] . '</td>');
+
+            $get_remark = "SELECT remark FROM transactions WHERE transaction_id=" . $check_list['transaction_id'];
+            $get_remark_run = mysqli_query($conn, $get_remark);
+            $result_remark = mysqli_fetch_assoc($get_remark_run);
+            echo ('<td>' . $result_remark['remark'] . '</td>');
+            echo ('<td style="text-align:center">
+                            <button name="check_button" type="submit" value=' . $check_list["transaction_id"] . '>
                             <div class="glyphicon glyphicon-check">
                             </div>
                             <div>Check Now</div>
                             </button>
                      </td>');
-            echo('</tr>');
-        }
-        else
-        {
-            echo('<tr class="success">');
-                echo('<td>'.$check_list["from_year"].'</td>');
-                echo('<td>'.$check_list["semester"].'</td>');
-                if($check_list["atkt_flag"])
-                {
-                    echo('<td>MAIN</td>');
-                }
-                else
-                {
-                    echo('<td>ATKT</td>');
-                }
-                echo('<td>'.$check_list["sub_code"].'</td>');
-                echo('<td>'.$check_list["component_name"].'</td>');
-                echo('<td>'.$check_list["sub_name"].'</td>');
-                echo('<td>'.$check_list["operator_name"].'</td>');
-                echo('<td>'.$check_list["remark"].'</td>');
-                echo('<td style="text-align:center"><div class="glyphicon glyphicon-ok"></div><div>Already Checked</div></td>');
-            echo('</tr>');
+            echo ('</tr>');
+        } else {
+            echo ('<tr class="success">');
+            echo ('<td>' . $check_list["from_year"] . '</td>');
+            echo ('<td>' . $check_list["semester"] . '</td>');
+            if ($check_list["atkt_flag"]) {
+                echo ('<td>MAIN</td>');
+            } else {
+                echo ('<td>ATKT</td>');
+            }
+            echo ('<td>' . $check_list["sub_code"] . '</td>');
+            echo ('<td>' . $check_list["component_name"] . '</td>');
+            echo ('<td>' . $check_list["sub_name"] . '</td>');
+            echo ('<td>' . $check_list["operator_name"] . '</td>');
+            echo ('<td>' . $check_list["remark"] . '</td>');
+            echo ('<td style="text-align:center"><div class="glyphicon glyphicon-ok"></div><div>Already Checked</div></td>');
+            echo ('</tr>');
         }
     }
-    echo('</form>');
-?>
+    echo ('</form>');
+    ?>
     </tbody>
   </table>
 
@@ -429,11 +415,11 @@ function getComponent(sub_code)
 
 
 <?php
-        $obj=new footer();
-        $obj->disp_footer();
-        $logout_modal=new modals();
-        $logout_modal->display_logout_modal();
-    ?>
+$obj = new footer();
+$obj->disp_footer();
+$logout_modal = new modals();
+$logout_modal->display_logout_modal();
+?>
 
 
 </body>
