@@ -336,7 +336,7 @@ function getComponent(sub_code)
     </thead>
     <tbody style="overflow: auto;">
     <?php
-    $get_check_list="SELECT A.*, S.sub_name, C.component_name, O.operator_name, T.remark FROM auditing A, subjects S, component C, transactions T, operators O WHERE S.sub_code=A.sub_code AND T.operator_id=O.operator_id AND A.component_id=C.component_id AND A.course_id=".$_SESSION['current_course_id'];
+    $get_check_list="SELECT A.*, T.operator_id FROM auditing A, transactions T WHERE A.transaction_id=T.transaction_id AND A.course_id=".$_SESSION['current_course_id'];
     $get_check_list_run=mysqli_query($conn,$get_check_list);
     while($check_list=mysqli_fetch_assoc($get_check_list_run))
     {
@@ -345,7 +345,7 @@ function getComponent(sub_code)
             echo('<tr class="warning">');
                 echo('<td>'.$check_list["from_year"].'</td>');
                 echo('<td>'.$check_list["semester"].'</td>');
-                if($check_list["atkt_flag"])
+                if($check_list["atkt_flag"]==0)
                 {
                     echo('<td>MAIN</td>');
                 }
@@ -354,12 +354,27 @@ function getComponent(sub_code)
                     echo('<td>ATKT</td>');
                 }
                 echo('<td>'.$check_list["sub_code"].'</td>');
-                echo('<td>'.$check_list["sub_name"].'</td>');
-                echo('<td>'.$check_list["component_name"].'</td>');
-                echo('<td>'.$check_list["operator_name"].'</td>');
-                echo('<td>'.$check_list["remark"].'</td>');
+                $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code='".$check_list['sub_code']."'";
+                $get_sub_name_run=mysqli_query($conn,$get_sub_name);
+                $result_sub_name=mysqli_fetch_assoc($get_sub_name_run);
+                echo('<td>'. $result_sub_name['sub_name'].'</td>');
+
+                $get_component_name="SELECT component_name FROM component WHERE component_id=".$check_list['component_id'];
+                $get_component_name_run=mysqli_query($conn,$get_component_name);
+                $result_component_name=mysqli_fetch_assoc($get_component_name_run);
+                echo('<td>'. $result_component_name['component_name'].'</td>');
+            
+                $get_operator_name="SELECT operator_name FROM operators WHERE operator_id=".$check_list['operator_id'];
+                $get_operator_name_run=mysqli_query($conn,$get_operator_name);
+                $result_operator_name_run=mysqli_fetch_assoc($get_operator_name_run);            
+                echo('<td>'.$result_operator_name_run['operator_name'].'</td>');
+
+                $get_remark="SELECT remark FROM transactions WHERE transaction_id=".$check_list['transaction_id'];
+                $get_remark_run=mysqli_query($conn,$get_remark);
+                $result_remark=mysqli_fetch_assoc($get_remark_run);            
+                echo('<td>'.$result_remark['remark'].'</td>');
                 echo('<td style="text-align:center">
-                        <form action="'.htmlspecialchars("checking.php").'">
+                        <form action="'.$_SERVER['PHP_SELF'].'">
                             <button name="check_button" type="submit" value='.$check_list["transaction_id"].'>
                             <div class="glyphicon glyphicon-check">
                             </div>
@@ -416,5 +431,50 @@ function getComponent(sub_code)
         $logout_modal=new modals();
         $logout_modal->display_logout_modal();
     ?>
+<?php
+if($_POST["check_button"])
+{
+    session_start();
+    echo("ANDAr AAYA");
+    $_SESSION['check_transaction_id']=$_POST['check_button'];
+    echo($_SESSION['check_transaction_id']);
+    $get_check_detail="SELECT A.* T.remark FROM auditing WHERE A.transaction_id=T.transaction_id AND A.transaction_id=".$_SESSION['check_transaction_id'];
+    echo($get_check_detail);
+    $get_check_detail_run=$mysqli_query($conn,$get_check_detail);
+    while($check_detail=mysqli_fetch_assoc($get_check_detail_run))
+    {
+        $_SESSION['from_year']=$check_detail['from_year'];
+        $_SESSION['semester']=$check_detail['semester'];
+        $_SESSION['sub_code']=$check_detail['sub_code'];
+        $_SESSION['component_id']=$check_detail['component_id'];
+        $_SESSION['checked_by_operator_id']=$check_detail['operator_id'];
+        $_SESSION['remark']=$check_detail['remark'];
+    }
+    $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code=".$_SESSION['sub_code'];
+    $get_sub_name_run=mysqli_query($conn,$get_sub_name);
+    $result_sub_name=mysqli_fetch_assoc($get_sub_name_run);
+    $_SESSION['sub_name']=$result_sub_name['sub_name'];
+    
+    $get_component_name="SELECT component_name FROM component WHERE component_id=".$_SESSION['component_id'];
+    $get_component_name_run=mysqli_query($conn,$get_component_name);
+    $result_component_name=mysqli_fetch_assoc($get_component_name_run);
+    $_SESSION['component_name']=$result_component_name['component_name'];
+
+    $get_operator_name="SELECT operator_name FROM operators WHERE operator_id=".$_SESSION['operator_id'];
+    $get_operator_name_run=mysqli_query($conn,$get_operator_name);
+    $result_operator_name_run=mysqli_fetch_assoc($get_operator_name_run);
+    $_SESSION['checked_by_operator_name']=$result_operator_name_run['operator_name'];
+
+    $get_maximum_marks="SELECT max_marks FROM component_distribution WHERE component_id=".$_SESSION['component_id']." AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code=".$_SESSION['sub_code'].")";
+    $get_maximum_marks_run=mysqli_query($conn,$get_maximum_marks);
+    $result_max_marks=mysqli_fetch_assoc($get_maximum_marks_run);
+    $_SESSION['max_marks']=$result_max_marks['max_marks'];
+    echo('FORWARDED');
+    header('location: checking.php');
+}
+?>
+
+
+
 </body>
 </html>

@@ -1,41 +1,4 @@
 <!DOCTYPE html>
-<?php
-session_start();
-if(isset($_POST['check_button']))
-{
-    $_SESSION['check_transaction_id']=$_POST['check_button'];
-    $get_check_detail="SELECT A.* T.remark FROM auditing WHERE A.transaction_id=T.transaction_id AND A.transaction_id=".$_SESSION['check_transaction_id'];
-    $get_check_detail_run=$mysqli_query($conn,$get_check_detail);
-    while($check_detail=mysqli_fetch_assoc($get_check_detail_run))
-    {
-        $_SESSION['from_year']=$check_detail['from_year'];
-        $_SESSION['semester']=$check_detail['semester'];
-        $_SESSION['sub_code']=$check_detail['sub_code'];
-        $_SESSION['component_id']=$check_detail['component_id'];
-        $_SESSION['checked_by_operator_id']=$check_detail['operator_id'];
-        $_SESSION['remark']=$check_detail['remark'];
-    }
-    $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code=".$_SESSION['sub_code'];
-    $get_sub_name_run=mysql_query($conn,$get_sub_name);
-    $result_sub_name=mysqli_fetch_assoc($get_sub_name_run);
-    $_SESSION['sub_name']=$result_sub_name['sub_name'];
-    
-    $get_component_name="SELECT component_name FROM component WHERE component_id=".$_SESSION['component_id'];
-    $get_component_name_run=mysql_query($conn,$get_component_name);
-    $result_component_name=mysqli_fetch_assoc($get_component_name_run);
-    $_SESSION['component_name']=$result_component_name['component_name'];
-
-    $get_operator_name="SELECT operator_name FROM operators WHERE operator_id=".$_SESSION['operator_id'];
-    $get_operator_name_run=mysql_query($conn,$get_operator_name);
-    $result_operator_name_run=mysqli_fetch_assoc($get_operator_name_run);
-    $_SESSION['checked_by_operator_name']=$result_operator_name_run['operator_name'];
-
-    $get_maximum_marks="SELECT max_marks FROM component_distribution WHERE component_id=".$_SESSION['component_id']." AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code=".$_SESSION['sub_code'].")";
-    $get_maximum_marks_run=mysql_query($conn,$get_maximum_marks);
-    $result_max_marks=mysqli_fetch_assoc($get_maximum_marks_run);
-    $_SESSION['max_marks']=$result_max_marks['max_marks'];
-}
-?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -83,16 +46,57 @@ if(isset($_POST['check_button']))
         border: 1px solid #204F93 !important;
     }
     </style>
-    <script src="../js/feed_validation.js"></script>\
+    <script src="../js/feed_validation.js"></script>
     <script>
         function remove_readonly(value)
         {
             $("#"+value).removeAttr("readonly");
-            $("")
+          
         }
     </script>
 </head>
 <body>
+<?php
+
+if($_POST['check_button'])
+{
+    session_start();
+    echo("ANDAr AAYA");
+    $_SESSION['check_transaction_id']=$_POST['check_button'];
+    echo($_SESSION['check_transaction_id']);
+    $get_check_detail="SELECT A.* T.remark FROM auditing WHERE A.transaction_id=T.transaction_id AND A.transaction_id=".$_SESSION['check_transaction_id'];
+    echo($get_check_detail);
+    $get_check_detail_run=$mysqli_query($conn,$get_check_detail);
+    while($check_detail=mysqli_fetch_assoc($get_check_detail_run))
+    {
+        $_SESSION['from_year']=$check_detail['from_year'];
+        $_SESSION['semester']=$check_detail['semester'];
+        $_SESSION['sub_code']=$check_detail['sub_code'];
+        $_SESSION['component_id']=$check_detail['component_id'];
+        $_SESSION['checked_by_operator_id']=$check_detail['operator_id'];
+        $_SESSION['remark']=$check_detail['remark'];
+    }
+    $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code=".$_SESSION['sub_code'];
+    $get_sub_name_run=mysqli_query($conn,$get_sub_name);
+    $result_sub_name=mysqli_fetch_assoc($get_sub_name_run);
+    $_SESSION['sub_name']=$result_sub_name['sub_name'];
+    
+    $get_component_name="SELECT component_name FROM component WHERE component_id=".$_SESSION['component_id'];
+    $get_component_name_run=mysqli_query($conn,$get_component_name);
+    $result_component_name=mysqli_fetch_assoc($get_component_name_run);
+    $_SESSION['component_name']=$result_component_name['component_name'];
+
+    $get_operator_name="SELECT operator_name FROM operators WHERE operator_id=".$_SESSION['operator_id'];
+    $get_operator_name_run=mysqli_query($conn,$get_operator_name);
+    $result_operator_name_run=mysqli_fetch_assoc($get_operator_name_run);
+    $_SESSION['checked_by_operator_name']=$result_operator_name_run['operator_name'];
+
+    $get_maximum_marks="SELECT max_marks FROM component_distribution WHERE component_id=".$_SESSION['component_id']." AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code=".$_SESSION['sub_code'].")";
+    $get_maximum_marks_run=mysqli_query($conn,$get_maximum_marks);
+    $result_max_marks=mysqli_fetch_assoc($get_maximum_marks_run);
+    $_SESSION['max_marks']=$result_max_marks['max_marks'];
+}
+?>
 <?php
 require("config.php");
 require("frontend_lib.php");
@@ -126,7 +130,7 @@ $input_btn=new input_button();
         $get_fed_marks="SELECT st.enrol_no, st.first_name, st.middle_name, st.last_name, st.father_name, sc.marks FROM students st, score sc, roll_list r WHERE sc.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=".$_SESSION['check_transaction_id']." AND st.enrol_no IN
                         (SELECT enrol_no FROM students WHERE from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'].")";
         $get_fed_marks_run=mysqli_query($conn,$get_fed_marks);
-        while($fed_marks=mysqli_fetah_assoc($get_fed_marks_run))
+        while($fed_marks=mysqli_fetch_assoc($get_fed_marks_run))
         {
             echo('<tr>');
                 echo('<td>'.$fed_marks['enrol_no'].'</td>');
