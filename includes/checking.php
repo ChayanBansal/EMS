@@ -110,7 +110,7 @@ $input = new input_field();
 $input_btn=new input_button();
 ?>
  <div id="err"></div>
- <form action= " method="post">
+ <form action="<?php echo($_SESSION['PHP_SELF']);?>" method="post">
      <div class="feed-container">
         <div class="subselected">
             Showing results for: Subject name | Theory
@@ -140,7 +140,7 @@ $input_btn=new input_button();
                 echo('<td>'.$fed_marks['middle_name'].'</td>');
                 echo('<td>'.$fed_marks['last_name'].'</td>');
                 echo('<td>'.$fed_marks['father_name'].'</td>');
-                echo('<td><input class="form-control" id="'.$fed_marks['enrol_no'].'" type="number" name="'.$fed_marks['roll_id'].'" min="0" max="'.$_SESSION['max_marks'].'" value="'.$fed_marks['marks'].'" readonly></td>');
+                echo('<td><input class="form-control" id="'.$fed_marks['enrol_no'].'" type="number" name="'.$fed_marks['roll_id'].'" min="0" max="'.$_SESSION['max_marks'].'" value="'.$fed_marks['marks'].'" required readonly></td>');
                 echo('<td><button class="btn btn-default form-control" type="button" value="'.$fed_marks['enrol_no'].'" onClick="remove_readonly(this.value)" >Change</button></td>');
             echo('</tr>');
         }
@@ -172,7 +172,7 @@ $obj = new footer();
 $obj->disp_footer();
 ?>
 <?php
-    if($_POST['check_done'])
+    if(isset($_POST['check_done']))
     {
         try{
             mysqli_autocommit($conn,FALSE);
