@@ -374,7 +374,7 @@ function getComponent(sub_code)
                 $result_remark=mysqli_fetch_assoc($get_remark_run);            
                 echo('<td>'.$result_remark['remark'].'</td>');
                 echo('<td style="text-align:center">
-                        <form action="'.$_SERVER['PHP_SELF'].'">
+                        <form action="'.$_SERVER['PHP_SELF'].'" method="POST">
                             <button name="check_button" type="submit" value='.$check_list["transaction_id"].'>
                             <div class="glyphicon glyphicon-check">
                             </div>
