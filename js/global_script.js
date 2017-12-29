@@ -28,5 +28,5 @@
     function startTimer(){
         window.setTimeout(function(){
             show_conf_dialog("");
-        },30000);
+        },300000);
     }

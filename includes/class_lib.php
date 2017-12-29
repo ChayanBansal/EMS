@@ -1,6 +1,9 @@
 <?php 
 
-
+function clear_data()
+{
+	$_POST = array();
+}
 class header
 {
 	function display($logo_location, $portal_name)
@@ -352,12 +355,23 @@ class super_user_options
 				default:
 					$level = 1;
 			}
+			$check_course_exists_qry = "SELECT count(*) from courses WHERE level_id=$level AND course_name='" . $_POST['cname'] . "' AND duration=" . $_POST['cduration'];
+			$check_course_exists_qry_run = mysqli_query($conn, $check_course_exists_qry);
+			if ($check_course_exists_qry_run) {
+				$num_rows = mysqli_fetch_assoc($check_course_exists_qry_run);
+				if ($num_rows['count(*)'] > 0) {
+					$alert->exec("Course already exists!", "warning");
+					clear_data();
+					return;
+				}
+			}
 			$create_course_qry = "INSERT into courses(level_id,course_name,duration) VALUES($level,'" . $_POST['cname'] . "'," . $_POST['cduration'] . ")";
 			$create_course_qry_run = mysqli_query($conn, $create_course_qry);
 			if ($create_course_qry_run) {
 				$_SESSION['course_inserted'] = $_POST['cname'];
 				$_SESSION['semester'] = $_POST['cduration'] * 2;
 				$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course <i class="glyphicon glyphicon-circle-arrow-right"></i></a>', "success");
+				clear_data();
 			} else {
 				$alert->exec("Unable to process query! Please try again", "danger");
 			}
@@ -492,6 +506,7 @@ class super_user_options
 			} else {
 				$alert->exec("Unable to insert subjects", "danger");
 			}
+			clear_data();
 		}
 	}
 	function create_operator($conn)
@@ -554,6 +569,7 @@ class super_user_options
 					$er->exec("Operator already exists!", "danger");
 				}
 			}
+			clear_data();
 		}
 	}
 
@@ -570,6 +586,7 @@ class super_user_options
 				$alert->exec("Unable to lock account!", "danger");
 			}
 		}
+		clear_data();
 	}
 
 	function unlock_operator($conn)
@@ -585,6 +602,7 @@ class super_user_options
 				$alert->exec("Unable to unlock account!", "danger");
 			}
 		}
+		clear_data();
 	}
 
 	function add_session($conn)
@@ -596,7 +614,7 @@ class super_user_options
 			$semester = $_POST['session_semester'];
 			$check_session_qry = "SELECT count(*) from academic_sessions where from_year=$from_year AND course_id=$course_id";
 			$check_session_qry_run = mysqli_query($conn, $check_session_qry);
-			if($check_session_qry_run){
+			if ($check_session_qry_run) {
 				$result_count = mysqli_fetch_assoc($check_session_qry_run);
 				if ($result_count['count(*)'] == 0) {
 					$add_session_qry = "INSERT into academic_sessions VALUES($from_year,$course_id,$semester)";
@@ -609,24 +627,26 @@ class super_user_options
 				}
 			}
 		}
+		clear_data();
 	}
 
-	function update_session($conn){
-		if(isset($_POST['session_update_submit'])){
+	function update_session($conn)
+	{
+		if (isset($_POST['session_update_submit'])) {
 			$alert = new alert();
-			$ay=$_POST['session_ay'];
-			$course_id=$_POST['session_update_submit'];
-			$semester=$_POST['session_semester'];
-			$update_session_qry="UPDATE academic_sessions SET current_semester=$semester WHERE from_year=$ay AND course_id=$course_id";
-			$update_session_qry_run=mysqli_query($conn,$update_session_qry);
-			if($update_session_qry_run){
-				$alert->exec("Academic Session successfully updated!","success");
-			}
-			else{
-				$alert->exec("Failed to update session!","danger");
-				
+			$ay = $_POST['session_ay'];
+			$course_id = $_POST['session_update_submit'];
+			$semester = $_POST['session_semester'];
+			$update_session_qry = "UPDATE academic_sessions SET current_semester=$semester WHERE from_year=$ay AND course_id=$course_id";
+			$update_session_qry_run = mysqli_query($conn, $update_session_qry);
+			if ($update_session_qry_run) {
+				$alert->exec("Academic Session successfully updated!", "success");
+			} else {
+				$alert->exec("Failed to update session!", "danger");
+
 			}
 		}
+		clear_data();
 	}
 
 }
@@ -688,6 +708,12 @@ class useroptions
 			} else {
 				die();
 			}
+			if($_SESSION['main_atkt']=="main"){
+				$atkt_flag=0;
+			}
+			else if($_SESSION['main_atkt']=="atkt"){
+				$atkt_flag=1;
+			}
 			$component_id = $_SESSION['sub_comp_id'];
 			$sub_id = $_SESSION['sub_id'];
 			$alert = new alert();
@@ -704,7 +730,7 @@ class useroptions
 			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
 			if ($insert_score_qry_run) {
 				$_SESSION['score_entered_success'] = true;
-				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['from_year'] . "," . $_SESSION['current_course_id'] . "," . $_SESSION['semester'] . ",'" . $_SESSION['sub_code'] . "'," . $transaction_id . ",NULL,$component_id)";
+				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['from_year'] . "," . $_SESSION['current_course_id'] . "," . $_SESSION['semester'] . ",'" . $_SESSION['sub_code'] . "'," . $transaction_id . ",NULL,$component_id,$atkt_flag)";
 				$audit_qry_run = mysqli_query($conn, $audit_qry);
 				header('location: /ems/includes/useroptions.php');
 			} else {
@@ -751,7 +777,7 @@ class dashboard
 			</div>
 			<ul class="nav navbar-nav">
 			
-			<li id="refresh" onclick="window.location.reload(false)"><a href="#"><i class="glyphicon glyphicon-refresh"></i></a></li>
+			<li id="refresh" onclick="window.location.reload(false)"><a href="#">Refresh <i class="glyphicon glyphicon-refresh"></i></a></li>
 		  </ul>
 				<ul class="nav navbar-nav navbar-right">
 
@@ -768,7 +794,6 @@ class dashboard
 		</ul>
 			  </li>
 			  <li><a href="mailto:coe@suas.ac.in"><i class="glyphicon glyphicon-envelope" style=""></i> ' . $last_option . '</a></li>
-					
 			  </ul>
 			
 		</div>
