@@ -2,11 +2,8 @@
 if($_POST["check_button"])
 {
     session_start();
-    echo("ANDAr AAYA");
     $_SESSION['check_transaction_id']=$_POST['check_button'];
-    echo($_SESSION['check_transaction_id']);
     $get_check_detail="SELECT A.* T.remark FROM auditing WHERE A.transaction_id=T.transaction_id AND A.transaction_id=".$_SESSION['check_transaction_id'];
-    echo($get_check_detail);
     $get_check_detail_run=mysqli_query($conn,$get_check_detail);
     while($check_detail=mysqli_fetch_assoc($get_check_detail_run))
     {

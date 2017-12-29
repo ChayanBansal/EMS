@@ -338,6 +338,7 @@ function getComponent(sub_code)
     <?php
     $get_check_list="SELECT A.*, T.operator_id FROM auditing A, transactions T WHERE A.transaction_id=T.transaction_id AND A.course_id=".$_SESSION['current_course_id'];
     $get_check_list_run=mysqli_query($conn,$get_check_list);
+    echo('<form action="checking.php" method="post">');
     while($check_list=mysqli_fetch_assoc($get_check_list_run))
     {
         if($check_list["check_id"]==NULL)
@@ -374,7 +375,6 @@ function getComponent(sub_code)
                 $result_remark=mysqli_fetch_assoc($get_remark_run);            
                 echo('<td>'.$result_remark['remark'].'</td>');
                 echo('<td style="text-align:center">
-                        <form action="checking.php" method="post">
                             <button name="check_button" type="submit" value='.$check_list["transaction_id"].'>
                             <div class="glyphicon glyphicon-check">
                             </div>
@@ -406,6 +406,7 @@ function getComponent(sub_code)
             echo('</tr>');
         }
     }
+    echo('</form>');
 ?>
     </tbody>
   </table>
