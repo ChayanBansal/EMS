@@ -745,11 +745,17 @@ class dashboard
 {
 	function display($name, $options, $href, $last_option)
 	{
-		echo ('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation">
+		echo('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation" style="z-index:2000">
 		<div class="container-fluid">
-			<div class="navbar-header"><a class="navbar-brand" href="#">Welcome, <b>' . $name . '</b></a>
-				
+			<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>                        
+		  	</button>
+			<a class="navbar-brand" href="#">Welcome, <b>' . $name . '</b></a>	
 			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
 			<ul class="nav navbar-nav">
 			
 			<li id="refresh" onclick="window.location.reload(false)"><a href="#">Refresh <i class="glyphicon glyphicon-refresh"></i></a></li>
@@ -757,6 +763,7 @@ class dashboard
 				<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>
 				<ul class="dropdown-menu">
+			
 				');
 		$i = 0;
 		foreach ($options as $option) {
@@ -768,7 +775,7 @@ class dashboard
 			  </li>
 			  <li><a href="mailto:coe@suas.ac.in"><i class="glyphicon glyphicon-envelope" style=""></i> ' . $last_option . '</a></li>
 				</ul>
-			
+				</div>
 		</div>
 	</div>');
 	}

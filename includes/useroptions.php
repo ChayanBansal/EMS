@@ -29,6 +29,7 @@
         width: 100%;
         justify-content: center;
         align-items: center;
+        
     }
     .modal-container{
         width: 100%;
@@ -49,6 +50,7 @@
         flex-direction: column;
         align-items: center;
         font-family: 'PT Sans', sans-serif;
+        width: 100%;
     }
     .sub-option{
         margin-top: 5px;
@@ -71,6 +73,7 @@
     .sub-container{
         display: flex;
         align-items: center;
+        flex-direction: column;
     }
     @keyframes fadein{
         0%{
@@ -230,7 +233,7 @@ function getComponent(sub_code)
 </script>
 
 <div class="main-container col-md-12">
-    <div class="sub-container">
+    <div class="sub-container col-lg-5 col-xs-12 col-sm-12 col-md-8">
         <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
         <button class="option blue " data-toggle="modal" data-target=""><div><i class= "glyphicon glyphicon-eye-open" ></i></div> View Marks</button>       
         <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
