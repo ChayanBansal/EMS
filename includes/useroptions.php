@@ -325,6 +325,7 @@ function getComponent(sub_code)
       <tr>
         <th>Batch<br>(FROM YEAR)</th>
         <th>Semester</th>
+        <th>Type</th>
         <th>Subject Code</th>
         <th>Subject Name</th>
         <th>Component Name</th>
@@ -344,6 +345,14 @@ function getComponent(sub_code)
             echo('<tr class="warning">');
                 echo('<td>'.$check_list["from_year"].'</td>');
                 echo('<td>'.$check_list["semester"].'</td>');
+                if($check_list["atkt_flag"])
+                {
+                    echo('<td>MAIN</td>');
+                }
+                else
+                {
+                    echo('<td>ATKT</td>');
+                }
                 echo('<td>'.$check_list["sub_code"].'</td>');
                 echo('<td>'.$check_list["sub_name"].'</td>');
                 echo('<td>'.$check_list["component_name"].'</td>');
@@ -365,6 +374,14 @@ function getComponent(sub_code)
             echo('<tr class="success">');
                 echo('<td>'.$check_list["from_year"].'</td>');
                 echo('<td>'.$check_list["semester"].'</td>');
+                if($check_list["atkt_flag"])
+                {
+                    echo('<td>MAIN</td>');
+                }
+                else
+                {
+                    echo('<td>ATKT</td>');
+                }
                 echo('<td>'.$check_list["sub_code"].'</td>');
                 echo('<td>'.$check_list["component_name"].'</td>');
                 echo('<td>'.$check_list["sub_name"].'</td>');
