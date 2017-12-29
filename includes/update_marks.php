@@ -16,7 +16,7 @@
         $update_score_run = mysqli_query($conn, $update_score);
 
         while ($new_score = mysqli_fetch_assoc($update_score_run)) {
-            $update_record = "UPDATE score SET marks=" . $_POST[$new_score['enrol_no']] . " AND check_id=" . $check_id . " WHERE roll_id=" . $new_score['roll_id'] ."AND transaction_id=". $_SESSION['check_transaction_id'];
+            $update_record = "UPDATE score SET marks=" . $_POST[$new_score['enrol_no']] . ", check_id=" . $check_id . " WHERE roll_id=" . $new_score['roll_id'] ."AND transaction_id=". $_SESSION['check_transaction_id'];
             $update_record_run = mysqli_query($conn, $update_record);
         }
 
