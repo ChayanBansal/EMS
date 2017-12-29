@@ -750,7 +750,10 @@ class dashboard
 			<div class="navbar-header"><a class="navbar-brand" href="#">Welcome, <b>' . $name . '</b></a>
 				
 			</div>
+			<ul class="nav navbar-nav">
 			
+			<li id="refresh" onclick="window.location.reload(false)"><a href="#">Refresh <i class="glyphicon glyphicon-refresh"></i></a></li>
+		  </ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>
 				<ul class="dropdown-menu">
