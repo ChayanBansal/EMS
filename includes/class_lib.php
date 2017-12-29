@@ -311,8 +311,8 @@ class course
 		$pg_list_query = "SELECT * FROM courses where level_id=2";
 		$pg_l_run = mysqli_query($conn, $pg_list_query);
 
-		echo ('<div class="c_ug_pg">');
-		echo ('<div class="course_list">
+		echo ('<div class="c_ug_pg col-sm-12 col-xs-12 col-lg-12">');
+		echo ('<div class="course_list col-sm-6 col-xs-6 col-lg-6">
 						<div class="level_head">Undergraduate</div>');
 		while ($ug_course = mysqli_fetch_assoc($ug_l_run)) {
 			$course_id = $ug_course['course_id'];
@@ -324,7 +324,7 @@ class course
 					//UG list close
 					//PG list
 
-		echo ('<div class="course_list">
+		echo ('<div class="course_list col-sm-6 col-xs-6 col-lg-6">
 						<div class="level_head">Postgraduate</div>');
 		while ($pg_course = mysqli_fetch_assoc($pg_l_run)) {
 			$course_id = $pg_course['course_id'];

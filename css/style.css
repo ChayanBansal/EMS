@@ -267,9 +267,9 @@ table td{
     margin-left: 20px;
     margin-right: 20px;
     font-family: "AtlasGrotesk","Open Sans",sans-serif;
-    font-size: 24px;
+    font-size: 2.4rem;
     color: white;
-    width: 50%;
+    width: 100%;
     /*overflow: auto;*/
     white-space: normal !important;
     transition: all 300ms ease-in-out;

@@ -6,6 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
     <link rel="stylesheet" href="/ems/css/style.css">
+    <style>
+    .c_ug_pg{
+        margin-bottom: 100px;
+    }
+    </style>
 </head>
 <body>
 <?php
