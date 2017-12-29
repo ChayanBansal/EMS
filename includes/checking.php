@@ -32,9 +32,7 @@ if (isset($_POST["check_button"])) {
     $get_maximum_marks_run = mysqli_query($conn, $get_maximum_marks);
     $result_max_marks = mysqli_fetch_assoc($get_maximum_marks_run);
     $_SESSION['max_marks'] = $result_max_marks['max_marks'];
-} else {
-    header('location: useroptions.php');
-}
+} 
 ?>
 
 <!DOCTYPE html>
@@ -114,7 +112,7 @@ $input = new input_field();
 $input_btn = new input_button();
 ?>
  <div id="err"></div>
- <form action="<?php echo($_SESSION['PHP_SELF']);?>" method="post">
+ <form action="" method="post">
      <div class="feed-container">
         <div class="subselected">
         <div class="subtitle">
