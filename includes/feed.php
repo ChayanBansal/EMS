@@ -44,7 +44,7 @@ if (isset($_POST['proceed_to_feed'])) {
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .remarks{
-            border: 4px solid #581CA0 !important;
+            border: 1px dashed #581CA0 !important;
             border-radius: 7px;
             padding: 20px;
         }
@@ -176,7 +176,6 @@ $input = new input_field();
           <label for="review">Remarks/Comments</label>
       <?php
         $textarea->display_textarea("review", "reviewtext form-control", "remark", "", "3", "100", 1);
-
         ?>
       <span id="controls"><center><?php
                                     $btn->display_btn("", "btn btn-primary", "submit", "feed_marks", "", "Submit All"); ?></span>

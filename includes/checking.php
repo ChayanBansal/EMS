@@ -1,7 +1,7 @@
 <?php
-if($_POST["check_button"])
+ session_start();
+if(isset($_POST["check_button"]))
 {
-    session_start();
     $_SESSION['check_transaction_id']=$_POST['check_button'];
     $get_check_detail="SELECT A.* T.remark FROM auditing WHERE A.transaction_id=T.transaction_id AND A.transaction_id=".$_SESSION['check_transaction_id'];
     $get_check_detail_run=mysqli_query($conn,$get_check_detail);
@@ -33,6 +33,9 @@ if($_POST["check_button"])
     $get_maximum_marks_run=mysqli_query($conn,$get_maximum_marks);
     $result_max_marks=mysqli_fetch_assoc($get_maximum_marks_run);
     $_SESSION['max_marks']=$result_max_marks['max_marks'];
+}
+else{
+    header('location: useroptions.php');
 }
 ?>
 
