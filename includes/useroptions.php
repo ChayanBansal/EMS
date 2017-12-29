@@ -378,16 +378,11 @@ function getComponent(sub_code)
                 $result_remark=mysqli_fetch_assoc($get_remark_run);            
                 echo('<td>'.$result_remark['remark'].'</td>');
                 echo('<td style="text-align:center">
-<<<<<<< HEAD
-=======
-                        <form action="checking.php" method="POST">
->>>>>>> 3676738920aee0206002db9b7316d78837aeb271
                             <button name="check_button" type="submit" value='.$check_list["transaction_id"].'>
                             <div class="glyphicon glyphicon-check">
                             </div>
                             <div>Check Now</div>
                             </button>
-                        </form>
                      </td>');
             echo('</tr>');
         }
@@ -439,7 +434,6 @@ function getComponent(sub_code)
         $logout_modal=new modals();
         $logout_modal->display_logout_modal();
     ?>
-
 
 
 </body>
