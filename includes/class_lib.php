@@ -822,28 +822,6 @@ class validate
 		}
 	}
 }
-/*class course_backend
-{
-	function execute($conn)
-	{
-		$course_query="SELECT * FROM courses";
-		$c_q_run=mysqli_query($conn,$course_query);
-		var i=0;
-		for(i; i<mysqli_num_rows($c_q_run); i++)
-		{
-			$courses=mysqli_fetch_assoc($)
-			if(isset($_POST['submit']))
-			{
-				if($_POST['name']==$cid)
-				{
-					
-				}
-			}
-		}
-			
-		
-	}
-}*/
 
 class change_password
 {
