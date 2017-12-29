@@ -140,7 +140,7 @@ $input_btn=new input_button();
                 echo('<td>'.$fed_marks['middle_name'].'</td>');
                 echo('<td>'.$fed_marks['last_name'].'</td>');
                 echo('<td>'.$fed_marks['father_name'].'</td>');
-                echo('<td><input class="form-control" id="'.$fed_marks['enrol_no'].'" type="number" name="'.$_fed_marks['roll_id'].'" min="0" max="'.$_SESSION['max_marks'].'" value="'.$fed_marks['marks'].'" readonly></td>');
+                echo('<td><input class="form-control" id="'.$fed_marks['enrol_no'].'" type="number" name="'.$fed_marks['roll_id'].'" min="0" max="'.$_SESSION['max_marks'].'" value="'.$fed_marks['marks'].'" readonly></td>');
                 echo('<td><button class="btn btn-default form-control" type="button" value="'.$fed_marks['enrol_no'].'" onClick="remove_readonly(this.value)" >Change</button></td>');
             echo('</tr>');
         }
@@ -159,7 +159,7 @@ $input_btn=new input_button();
 
         ?>
       <span id="controls"><center><?php
-           $btn->display_btn("", "btn btn-primary", "submit", "", "", "Submit All"); ?></span> <!--($id, $class, $type, $name, $onclick, $value-->
+           $btn->display_btn("", "btn btn-primary", "submit", "check_done", "", "Submit All"); ?></span> <!--($id, $class, $type, $name, $onclick, $value-->
       </center></div>
       
   </div>
@@ -172,7 +172,37 @@ $obj = new footer();
 $obj->disp_footer();
 ?>
 <?php
-    if($_POST[''])
+    if($_POST['check_done'])
+    {
+        try{
+            mysqli_autocommit($conn,FALSE);
+            $create_check_id="INSERT INTO checking(operator_id, remark) VALUES(".$_SESSION['operator_id'].",'".$_POST['remark']."')"; //check_id	operator_id	timestamp	remark
+            $create_check_id_run=mysqli_query($conn,$create_check_id);
+            $check_id=mysqli_insert_id($conn);
+
+            $update_score="SELECT st.enrol_no, r.roll_id FROM students st, score sc, roll_list r WHERE sc.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=".$_SESSION['check_transaction_id']." AND st.enrol_no IN
+            (SELECT enrol_no FROM students WHERE from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'].")";
+            $update_score_run=mysqli_query($conn,$update_score);
+            
+            while($new_score=mysqli_fetch_assoc($update_score_run))
+            {
+                $update_record="UPDATE score SET marks=".$_POST[$update_score_run['enrol_no']]." AND check_id=".$check_id." WHERE roll_id=".$update_score_run['roll_id'];
+                $update_recor_run=mysqli_query($conn,$update_record);
+            }
+
+            $update_auditing="UPDATE auditing WHERE transaction_id=".$_SESSION['check_transaction_id'];
+            $update_auditing_run=mysqli_query($conn,$update_auditing);
+
+            mysqli_commit($conn);
+        }
+        catch(Exception $e)
+        {
+            mysqli_rollback($conn);
+            $al = new alert();
+            $al->exec("Not able to execute the updation. Please try again!","danger");
+        }
+    }
+
 ?>
 </body>
 <script>

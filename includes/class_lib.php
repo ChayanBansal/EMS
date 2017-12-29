@@ -115,7 +115,7 @@ class input_button
 	{
 		echo "<input id='$id' class='$class' type='$type' name='$name' onclick='$onclick' value='$value'>";
 	}
-	function display_btn($id, $class, $type, $name, $onclick, $value)
+	function display_btn($id, $class, $type, $name, $onclick, $value) 
 	{
 		echo "<button id='$id' class='$class' type='$type' name='$name' onclick='$onclick'>$value</button>";
 	}
