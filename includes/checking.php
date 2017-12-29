@@ -32,8 +32,6 @@ if (isset($_POST["check_button"])) {
     $get_maximum_marks_run = mysqli_query($conn, $get_maximum_marks);
     $result_max_marks = mysqli_fetch_assoc($get_maximum_marks_run);
     $_SESSION['max_marks'] = $result_max_marks['max_marks'];
-} else {
-    header('location: useroptions.php');
 }
 ?>
 
@@ -97,7 +95,6 @@ if (isset($_POST["check_button"])) {
         function remove_readonly(value)
         {
             $("#"+value).removeAttr("readonly");
-          
         }
     </script>
 </head>
@@ -198,8 +195,8 @@ $obj->disp_footer();
         $update_score_run = mysqli_query($conn, $update_score);
 
         while ($new_score = mysqli_fetch_assoc($update_score_run)) {
-            $update_record = "UPDATE score SET marks=" . $_POST[$update_score_run['enrol_no']] . " AND check_id=" . $check_id . " WHERE roll_id=" . $update_score_run['roll_id'];
-            $update_recor_run = mysqli_query($conn, $update_record);
+            $update_record = "UPDATE score SET marks=" . $_POST[$new_score['enrol_no']] . " AND check_id=" . $check_id . " WHERE roll_id=" . $new_score['roll_id'];
+            $update_record_run = mysqli_query($conn, $update_record);
         }
 
         $update_auditing = "UPDATE auditing WHERE transaction_id=" . $_SESSION['check_transaction_id'];
