@@ -150,7 +150,7 @@ $input_btn = new input_button();
                 echo('<td>'.$fed_marks['middle_name'].'</td>');
                 echo('<td>'.$fed_marks['last_name'].'</td>');
                 echo('<td>'.$fed_marks['father_name'].'</td>');
-                echo('<td><input class="form-control" id="'.$fed_marks['enrol_no'].'" type="number" name="'.$fed_marks['roll_id'].'" min="0" max="'.$_SESSION['max_marks'].'" value="'.$fed_marks['marks'].'" required readonly></td>');
+                echo('<td><input class="form-control" id="'.$fed_marks['enrol_no'].'" type="number" name="'.$fed_marks['enrol_no'].'" min="0" max="'.$_SESSION['max_marks'].'" value="'.$fed_marks['marks'].'" required readonly></td>');
                 echo('<td><button class="btn btn-default form-control" type="button" value="'.$fed_marks['enrol_no'].'" onClick="remove_readonly(this.value)" >Change</button></td>');
             echo('</tr>');
         }
