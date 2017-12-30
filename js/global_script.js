@@ -27,7 +27,8 @@
         clearInterval(wintimer);
     }
     function startTimer(){
-        window.setTimeout(function(){
+        window.timeout=setTimeout(function(){
             show_conf_dialog();
+            clearTimeout(timeout);
         },300000);
     }
