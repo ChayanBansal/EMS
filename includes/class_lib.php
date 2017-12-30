@@ -700,7 +700,8 @@ class useroptions
 	{
 		if (isset($_POST['feed_marks'])) {
 			$operator_id = $_SESSION['operator_id'];
-			$remark = $_POST['remark'];
+			$form_input_check = new input_check();
+			$remark=$form_input_check->input_safe($conn,$_POST['remark']);
 			$transaction_qry = "INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
 			$transaction_qry_run = mysqli_query($conn, $transaction_qry);
 			if ($transaction_qry_run) {
