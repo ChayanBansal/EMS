@@ -58,7 +58,7 @@ if (isset($_POST["check_button"])) {
             width: 100%;
             text-align: center;
         }
-    /*button[type=submit]{
+    button[type=submit]{
         border: none;
         background: rgba(26, 87, 182,0.7);
         color: white;
@@ -76,7 +76,7 @@ if (isset($_POST["check_button"])) {
         color: #1A57B6;    
         box-shadow: 4px 4px 4px rgba(0,0,0,0.6);
         cursor: pointer;
-    }*/
+    }
     .subtitle{
         padding: 10px;
         font-family: 'Open Sans';
