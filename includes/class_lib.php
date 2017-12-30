@@ -350,10 +350,10 @@ class super_user_options
 			switch ($_POST['level']) {
 				case 'ug':
 					$level = 1;
+					break;
 				case 'pg':
 					$level = 2;
-				default:
-					$level = 1;
+					break;
 			}
 			$check_course_exists_qry = "SELECT count(*) from courses WHERE level_id=$level AND course_name='" . $_POST['cname'] . "' AND duration=" . $_POST['cduration'];
 			$check_course_exists_qry_run = mysqli_query($conn, $check_course_exists_qry);
