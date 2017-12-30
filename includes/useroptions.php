@@ -319,7 +319,7 @@ function getComponent(sub_code)
         <h4 class="modal-title">Marks Verification And Approval</h4>
       </div>
       <div class="modal-body">
-      <table id="check_list" class="table">
+      <table id="check_list" class="table table-hover">
     <thead>
       <tr>
         <th>Batch<br>(FROM YEAR)</th>
