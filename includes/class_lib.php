@@ -622,10 +622,12 @@ class super_user_options
 					$add_session_qry_run = mysqli_query($conn, $add_session_qry);
 					if ($add_session_qry_run ) {
 						mysqli_commit($conn);
+						mysqli_autocommit($conn,TRUE);
 						$alert->exec("Session successfully created!", "success");
 					}
 				} else {
 					mysqli_rollback($conn);
+					mysqli_autocommit($conn,TRUE);
 					$alert->exec("Academic session already exists! Consider updating session..", "warning");
 				}
 			}
@@ -644,12 +646,14 @@ class super_user_options
 			$update_session_qry = "UPDATE academic_sessions SET current_semester=$semester WHERE from_year=$ay AND course_id=$course_id";
 			$update_session_qry_run = mysqli_query($conn, $update_session_qry);
 			$update_student_semester="UPDATE students SET current_sem=$semester WHERE from_year=$from_year AND course_id=$course_id";
-					$update_student_semester_run=mysqli_query($conn,$update_student_semester);
+			$update_student_semester_run=mysqli_query($conn,$update_student_semester);
 			if ($update_session_qry_run AND $update_student_semester_run) {
 				mysqli_commit($conn);
+				mysqli_autocommit($conn,TRUE);
 				$alert->exec("Academic Session successfully updated!", "success");
 			} else {
 				mysqli_rollback($conn);
+				mysqli_autocommit($conn,TRUE);
 				$alert->exec("Failed to update session!", "danger");
 
 			}
