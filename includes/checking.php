@@ -94,7 +94,14 @@ if (isset($_POST["check_button"])) {
     <script>
         function remove_readonly(value)
         {
-            $("#"+value).removeAttr("readonly");
+            if(document.getElementById(value).hasAttribute("readonly"))
+            {
+                $("#"+value).removeAttr("readonly");
+            }
+            else
+            {
+                $("#"+value).attr("readonly",'');
+            }
         }
     </script>
 </head>
