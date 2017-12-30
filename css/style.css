@@ -435,8 +435,4 @@ a{
     text-align: center;
     color: #52555D;
 }
-.course_list{
-    width: 40% !important;
-    text-align: center;
-    overflow: auto;
-}
+
