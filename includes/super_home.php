@@ -8,8 +8,16 @@
     <link rel="stylesheet" href="/ems/css/style.css">
     <script src="/ems/js/super_home_script.js"></script>
     <link rel="stylesheet" href="/ems/css/super_home_styles.css">
+    <style>
+      .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    </style>
 </head>
 <body>
+
 <?php
 session_start();
 require("config.php");
@@ -29,7 +37,16 @@ $options->update_session($conn);
 $options->lock_operator($conn);
 $options->unlock_operator($conn);
 ?>
+   
     <div class="main-container col-md-12">
+    <div class="col-sm-2 sidenav">
+    <?php
+    
+    ?>
+      <p><a href="#">Link</a></p>
+      <p><a href="#">Link</a></p>
+      <p><a href="#">Link</a></p>
+    </div>
     <div class="sub-container col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
