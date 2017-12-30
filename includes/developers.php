@@ -56,8 +56,7 @@
     $head->dispmenu(1,["home.php"],["glyphicon glyphicon-home"],["Home"]);
      $foot=new footer();
     $foot->disp_footer();
-    $logout_modal=new modals();
-    $logout_modal->display_logout_modal();
+   
     ?>
     <div class="devp_contain col-md-12">
         <div class="well well-lg col-md-4">
@@ -82,5 +81,9 @@
         <q>Be as simple as you can be....You'll be astonished to see how uncomplicated and happy your life can become.</q>
         </div>
     </div>
+    <?php
+     $logout_modal=new modals();
+     $logout_modal->display_logout_modal();
+    ?>
 </body>
 </html>
