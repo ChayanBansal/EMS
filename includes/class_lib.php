@@ -617,12 +617,17 @@ class super_user_options
 			if ($check_session_qry_run) {
 				$result_count = mysqli_fetch_assoc($check_session_qry_run);
 				if ($result_count['count(*)'] == 0) {
+					mysqli_autocommit($conn,FALSE);
 					$add_session_qry = "INSERT into academic_sessions VALUES($from_year,$course_id,$semester)";
 					$add_session_qry_run = mysqli_query($conn, $add_session_qry);
-					if ($add_session_qry_run) {
+					$update_student_semester="UPDATE students SET current_sem=$semester WHERE from_year=$from_year AND course_id=$course_id";
+					$update_student_semester_run=mysqli_query($conn,$update_student_semester);
+					if ($add_session_qry_run AND $update_student_semester_run ) {
+						mysqli_commit($conn);
 						$alert->exec("Session successfully created!", "success");
 					}
 				} else {
+					mysqli_rollback($conn);
 					$alert->exec("Academic session already exists! Consider updating session..", "warning");
 				}
 			}
