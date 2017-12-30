@@ -340,7 +340,7 @@ function getComponent(sub_code)
     echo ('<form action="checking.php" method="post">');
     while ($check_list = mysqli_fetch_assoc($get_check_list_run)) {
         if ($check_list["check_id"] == null) {
-            echo ('<tr class="warning">');
+            echo ('<tr class="danger">');
             echo ('<td>' . $check_list["from_year"] . '</td>');
             echo ('<td>' . $check_list["semester"] . '</td>');
             if ($check_list["atkt_flag"] == 0) {
@@ -369,7 +369,7 @@ function getComponent(sub_code)
             $result_remark = mysqli_fetch_assoc($get_remark_run);
             echo ('<td>' . $result_remark['remark'] . '</td>');
             echo ('<td style="text-align:center">
-                            <button name="check_button" type="submit" value=' . $check_list["transaction_id"] . '>
+                            <button class="btn btn-default" name="check_button" type="submit" value=' . $check_list["transaction_id"] . '>
                             <div class="glyphicon glyphicon-check">
                             </div>
                             <div>Check Now</div>
