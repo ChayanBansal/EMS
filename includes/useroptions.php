@@ -318,7 +318,7 @@ function getComponent(sub_code)
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Marks Verification And Approval</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body table-responsive">
       <table id="check_list" class="table table-hover">
       <caption> <input class="form-control" id="searchbar_modal_checking" type="text" placeholder="Search table by any parameter...."></caption>
     <thead>
