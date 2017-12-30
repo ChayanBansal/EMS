@@ -51,7 +51,7 @@ $options->unlock_operator($conn);
             <div><i class="glyphicon glyphicon-retweet"></i></div>
             <div>Marks Processing</div>
             <div class="sub-option" id="subopt3">
-                <button><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
+                <button data-toggle="modal" data-target="#trSelectiondialog"><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
                 <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
@@ -148,14 +148,14 @@ $options->unlock_operator($conn);
                     $get_details_qry = "SELECT distinct(from_year) as acad_year from students";
                     $get_details_qry_run = mysqli_query($conn, $get_details_qry);
                     if ($get_details_qry_run) {
-                        while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
-                            echo ('
+                      while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
+                        echo ('
                         <option value="' . $row['acad_year'] . '">' . $row['acad_year'] . '</option>
                         ');
-                        }
+                      }
                     } else {
-                        $alert = new alert();
-                        $alert->exec("Unable to fetch session academic years....", "warning");
+                      $alert = new alert();
+                      $alert->exec("Unable to fetch session academic years....", "warning");
                     }
                     ?>
                  </select>
@@ -167,14 +167,14 @@ $options->unlock_operator($conn);
                 $get_details_qry = "SELECT distinct s.course_id,course_name from students s, courses c where s.course_id=c.course_id";
                 $get_details_qry_run = mysqli_query($conn, $get_details_qry);
                 if ($get_details_qry_run) {
-                    while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
-                        echo ('
+                  while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
+                    echo ('
                         <option value="' . $row['course_id'] . '">' . $row['course_name'] . '</option>
                         ');
-                    }
+                  }
                 } else {
-                    $alert = new alert();
-                    $alert->exec("Unable to fetch session courses....", "warning");
+                  $alert = new alert();
+                  $alert->exec("Unable to fetch session courses....", "warning");
                 }
                 ?>
                  </select>
@@ -227,21 +227,21 @@ $options->unlock_operator($conn);
                     $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id";
                     $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
                     if ($get_sessions_qry_run) {
-                        while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
-                            echo ('
+                      while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
+                        echo ('
                             <tr style="text-align:center">
                             <td>' . $row['from_year'] . '</td>
                             <td>' . $row['course_name'] . '</td>
                             <td>' . $row['current_semester'] . '</td>
                             <td>');
-                            ?>
-                           <button type="button" class="btn btn-default" data-target="#updateSessiondialog" data-toggle="modal" data-course="<?=$row['course_name']?>" data-year="<?=$row['from_year']?>" data-course-id="<?=$row['course_id']?>" data-current-semester="<?=$row['current_semester']?>" onclick="set_session_values(this)"><i class="glyphicon glyphicon-edit"></i></button>             
+                        ?>
+                           <button type="button" class="btn btn-default" data-target="#updateSessiondialog" data-toggle="modal" data-course="<?= $row['course_name'] ?>" data-year="<?= $row['from_year'] ?>" data-course-id="<?= $row['course_id'] ?>" data-current-semester="<?= $row['current_semester'] ?>" onclick="set_session_values(this)"><i class="glyphicon glyphicon-edit"></i></button>             
                         <?php
                         echo ('</td>
                         ');
+                      }
                     }
-                }
-                ?>
+                    ?>
                 </tbody>
         </table>
             </div>
@@ -269,25 +269,25 @@ $options->unlock_operator($conn);
           <form action="" method="post">
           <div class="modal-body">
           <?php
-            $input = new input_field();
-            ?>
+          $input = new input_field();
+          ?>
           <div class="form-group">
               <label for="name">Academic Year</label>
                 <?php
-                $input->display_table_readonly("session_ay", "form-control", "number", "session_ay", "",1,0,0,1,0);
+                $input->display_table_readonly("session_ay", "form-control", "number", "session_ay", "", 1, 0, 0, 1, 0);
                 ?>
               </div>
               <div class="form-group">
               <label for="type">Course Name</label>
               <?php
-                $input->display_table_readonly("session_course_name", "form-control", "text", "session_course_name", "", 0, 0, 0, 1, 0);
-                ?>
+              $input->display_table_readonly("session_course_name", "form-control", "text", "session_course_name", "", 0, 0, 0, 1, 0);
+              ?>
               </div>
               <div class="form-group">
               <label for="semester">Semester</label>
               <?php
-                $input->display_table("session_semester", "form-control", "number", "session_semester", "", 1, 0, 8, 0, 8);
-                ?>
+              $input->display_table("session_semester", "form-control", "number", "session_semester", "", 1, 0, 8, 0, 8);
+              ?>
               </div>
           </div>
           <div class="modal-footer">
@@ -379,22 +379,22 @@ $options->unlock_operator($conn);
             $get_course_qry = "SELECT * from courses";
             $get_course_qry_run = mysqli_query($conn, $get_course_qry);
             if ($get_course_qry_run) {
-                while ($course = mysqli_fetch_assoc($get_course_qry_run)) {
-                    echo ('<tr style="text-align:center">
+              while ($course = mysqli_fetch_assoc($get_course_qry_run)) {
+                echo ('<tr style="text-align:center">
                         <td>' . $course['course_id'] . '</td>
                         <td>');
-                    if ($course['level_id'] == 1) {
-                        echo ("Undergraduate");
-                    } else {
-                        echo ("Postgraduate");
-                    }
-                    echo ('</td>
+                if ($course['level_id'] == 1) {
+                  echo ("Undergraduate");
+                } else {
+                  echo ("Postgraduate");
+                }
+                echo ('</td>
                         <td>' . $course['course_name'] . '</td>
                         <td>' . $course['duration'] . '</td>
                         </tr>');
-                }
+              }
             } else {
-                $alert->exec("Unable to fetch courses!", "warning");
+              $alert->exec("Unable to fetch courses!", "warning");
             }
             ?>
         
@@ -414,6 +414,67 @@ $options->unlock_operator($conn);
   </div>
   <!--End-->
 
+  <!--TR Selection Modal-->
+  <div class="modal fade" id="trSelectiondialog" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Fill in the following details</h4>
+          </div>
+          <form action="generate_tr.php" method="post">
+          <div class="modal-body">
+          <?php
+          $input = new input_field();
+          ?>
+          <div class="form-group">
+              <label for="name">Academic Year</label>
+                <select name="tr_from_year" id="" class="form-control">
+                  <?php
+                  $get_ay_qry = "SELECT distinct(from_year) from academic_sessions";
+                  $get_ay_qry_run = mysqli_query($conn, $get_ay_qry);
+                  if ($get_ay_qry_run) {
+                    while ($row = mysqli_fetch_assoc($get_ay_qry_run)) {
+                      echo ('
+                      <option value="' . $row['from_year'] . '">' . $row['from_year'] . '</option>
+                      ');
+                    }
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+              <label for="type">Select Semester</label>
+              <select name="tr_semester" id="" class="form-control">
+                  <?php
+                  $get_sem_qry = "SELECT distinct(current_semester) from academic_sessions";
+                  $get_sem_qry_run = mysqli_query($conn, $get_ay_qry);
+                  if ($get_sem_qry_run) {
+                    while ($row = mysqli_fetch_assoc($get_sem_qry_run)) {
+                      echo ('
+                      <option value="' . $row['from_year'] . '">' . $row['current_semester'] . '</option>
+                      ');
+                    }
+                  }
+                  ?>
+                </select>
+              </div>
+             
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success" name="session_update_submit" value="" id="btn_session_update">Proceed<i class="glyphicon glyphicon-chevron-right"></i></button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
   <!-- ADD Subject Modal -->
   <div class="modal fade" id="addsubjectModal" role="dialog">
       <div class="modal-dialog modal-lg" style="width: 90%">
@@ -436,26 +497,26 @@ $options->unlock_operator($conn);
                <th>Maximum Marks</th>
                </tr>
                <?php
-                $get_components_qry = "SELECT * from component";
-                $get_components_qry_run = mysqli_query($conn, $get_components_qry);
-                if ($get_components_qry_run) {
-                    while ($row = mysqli_fetch_assoc($get_components_qry_run)) {
-                        echo ('
+              $get_components_qry = "SELECT * from component";
+              $get_components_qry_run = mysqli_query($conn, $get_components_qry);
+              if ($get_components_qry_run) {
+                while ($row = mysqli_fetch_assoc($get_components_qry_run)) {
+                  echo ('
                        <tr>
                        <td>' . $row['component_name'] . '</td>
                        <td>');
-                        $input->display("", "form-control input-sm", "number", "pass" . $row['component_id'], "", 1);
-                        echo ('
+                  $input->display("", "form-control input-sm", "number", "pass" . $row['component_id'], "", 1);
+                  echo ('
                        </td>
                        <td>');
 
-                        $input->display("", "form-control input-sm", "number", "max" . $row['component_id'], "", 1);
-                        echo ('</td>
+                  $input->display("", "form-control input-sm", "number", "max" . $row['component_id'], "", 1);
+                  echo ('</td>
                         </tr>
                        ');
-                    }
                 }
-                ?>
+              }
+              ?>
                
             </table>
         </div>
@@ -468,14 +529,14 @@ $options->unlock_operator($conn);
             $get_course_qry = "SELECT * from courses";
             $get_course_qry_run = mysqli_query($conn, $get_course_qry);
             if ($get_course_qry_run) {
-                while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
-                    echo ('
+              while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
+                echo ('
                     <option value="' . $row['course_id'] . '" data-course-duration=' . $row['duration'] . '>' . $row['course_name'] . '</option>   
                     ');
-                }
+              }
             } else {
-                $alert = new alert();
-                $alert->exec("Unable to fetch courses!", "warning");
+              $alert = new alert();
+              $alert->exec("Unable to fetch courses!", "warning");
             }
             ?>
         </select>
@@ -556,7 +617,7 @@ $options->unlock_operator($conn);
         <div class="modal-footer">
 		  
           <?php $creation_b = new input_button();
-            $creation_b->display("", "btn btn-success", "submit", "create", "submit", "Create"); ?>
+          $creation_b->display("", "btn btn-success", "submit", "create", "submit", "Create"); ?>
 		  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
 		</form>
