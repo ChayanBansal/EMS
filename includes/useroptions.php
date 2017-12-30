@@ -320,6 +320,7 @@ function getComponent(sub_code)
       </div>
       <div class="modal-body">
       <table id="check_list" class="table table-hover">
+      <caption> <input class="form-control" id="searchbar_modal_checking" type="text" placeholder="Search table by any parameter...."></caption>
     <thead>
       <tr>
         <th>Batch<br>(FROM YEAR)</th>
@@ -333,7 +334,7 @@ function getComponent(sub_code)
         <th>Status</th>
       </tr>
     </thead>
-    <tbody style="overflow: auto;">
+    <tbody style="overflow: auto;" id="checking_modal">
     <?php
     $get_check_list = "SELECT A.*, T.operator_id FROM auditing A, transactions T WHERE A.transaction_id=T.transaction_id AND A.course_id=" . $_SESSION['current_course_id'];
     $get_check_list_run = mysqli_query($conn, $get_check_list);
@@ -441,6 +442,15 @@ $logout_modal = new modals();
 $logout_modal->display_logout_modal();
 ?>
 
-
 </body>
+<script>
+     $(document).ready(function(){
+  $("#searchbar_modal_checking").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#checking_modal tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
 </html>

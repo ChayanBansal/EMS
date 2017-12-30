@@ -151,7 +151,7 @@ a{
     font-size: 2rem;
     float: right;
     right: 0px;
-  
+    font-family: century gothic;
 }
 @keyframes rotate{
     from{
@@ -164,7 +164,6 @@ a{
 .developers a {
     color: inherit;
     font-family: century gothic;
-    font-weight: bolder;
     transition: 300ms;
 }
 .developers a:hover {

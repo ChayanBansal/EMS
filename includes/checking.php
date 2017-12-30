@@ -107,6 +107,9 @@ require("class_lib.php");
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(4, ["home.php", "index.php", "useroptions.php", "developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
+$dashboard = new dashboard();
+$dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "Contact Super Admin");
+
 $input = new input_field();
 $input_btn = new input_button();
 ?>
@@ -126,7 +129,8 @@ $input_btn = new input_button();
         </div>
              </div>
      <table class="table table-striped table-responsive table-bordered">
-    <thead>
+     <caption> <input class="form-control input-lg" id="searchbarchecking" type="text" placeholder="Search students.."></caption>
+     <thead>
       <tr>
         <th>Enrollment Number</th>
         <th>First Name</th>
@@ -137,7 +141,7 @@ $input_btn = new input_button();
         <th>Edit</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="checking_table">
      <?php 
         $get_fed_marks="SELECT st.enrol_no, st.first_name, st.middle_name, st.last_name, st.father_name, sc.marks, r.roll_id FROM students st, score sc, roll_list r WHERE sc.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=".$_SESSION['check_transaction_id']." AND st.enrol_no IN
                         (SELECT enrol_no FROM students WHERE from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'].")";
@@ -189,5 +193,14 @@ $obj->disp_footer();
         var lname=el.getAttribute("data-last-name");
         document.getElementById("stud_name").value=fname+" "+lname;
     }
+    $(document).ready(function(){
+  $("#searchbarchecking").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#checking_table tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
 </script>
 </html>

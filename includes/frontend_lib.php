@@ -41,10 +41,10 @@ class footer
     function disp_footer()
     {
         echo ('<div class="footer col-sm-12 col-md-12 col-lg-12">
-                <div class="copyright col-md-4" style="text-align:center">
+                <div class="copyright col-md-6" style="text-align:center">
                     © ' . date("Y") . '
                 </div>
-                <div class="developers col-md-4" style="text-align:center"> 
+                <div class="developers col-md-6" style="text-align:center"> 
                 Designed & Developed By <a href="/ems/includes/developers.php">Team Techknowplore</a>    
                 
                 </div>
