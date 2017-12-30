@@ -265,7 +265,6 @@ table td{
     border: 1px solid;
     margin: 10px;
     margin-left: 20px;
-    margin-right: 20px;
     font-family: "AtlasGrotesk","Open Sans",sans-serif;
     font-size: 2.4rem;
     color: white;
@@ -435,8 +434,4 @@ a{
     text-align: center;
     color: #52555D;
 }
-.course_list{
-    width: 40% !important;
-    text-align: center;
-    overflow: auto;
-}
+
