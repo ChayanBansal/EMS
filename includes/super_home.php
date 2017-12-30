@@ -446,15 +446,15 @@ $options->unlock_operator($conn);
                 </select>
               </div>
               <div class="form-group">
-              <label for="type">Select Semester</label>
-              <select name="tr_semester" id="" class="form-control">
+              <label for="type">Select Course</label>
+              <select name="tr_course" id="" class="form-control">
                   <?php
-                  $get_sem_qry = "SELECT distinct(current_semester) from academic_sessions";
-                  $get_sem_qry_run = mysqli_query($conn, $get_ay_qry);
-                  if ($get_sem_qry_run) {
-                    while ($row = mysqli_fetch_assoc($get_sem_qry_run)) {
+                  $get_course_qry = "SELECT course_id,course_name from courses";
+                  $get_course_qry_run = mysqli_query($conn, $get_course_qry);
+                  if ($get_course_qry_run) {
+                    while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
                       echo ('
-                      <option value="' . $row['from_year'] . '">' . $row['current_semester'] . '</option>
+                      <option value="' . $row['course_id'] . '">' . $row['course_name'] . '</option>
                       ');
                     }
                   }
@@ -465,7 +465,7 @@ $options->unlock_operator($conn);
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success" name="session_update_submit" value="" id="btn_session_update">Proceed<i class="glyphicon glyphicon-chevron-right"></i></button>
+            <button type="submit" class="btn btn-success" name="tr_submit" value="" id="btn_session_update">Proceed<i class="glyphicon glyphicon-chevron-right"></i></button>
         </div>
         </form> 
         </div>
