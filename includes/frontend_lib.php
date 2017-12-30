@@ -40,14 +40,14 @@ class footer
 {
     function disp_footer()
     {
-        echo ('<div class="footer">
-                <div class="uni_name">
+        echo ('<div class="footer col-sm-12 col-md-12 col-lg-12">
+                <div class="uni_name col-md-4" style="text-align:center">
                     <a href="http://www.suas.ac.in">Symbiosis University of Applied Sciences</a>
                 </div>
-                <div class="copyright">
+                <div class="copyright col-md-4" style="text-align:center">
                     © ' . date("Y") . '
                 </div>
-                <div class="developers">
+                <div class="developers col-md-4" style="text-align:center"> 
                     <a href="#">Developers</a>
                 </div>
             </div>');
