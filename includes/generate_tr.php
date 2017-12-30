@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Generate TR</title>
+    <style>
+    table caption{
+        width: 100%;
+    }
+    </style>
 </head>
 <body>
 <?php
@@ -33,6 +38,10 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             <td>IA</td>
         </tr>
     </thead>
+    <tbody>
+
+    </tbody>
+    <caption align="bottom">B.Tech CSIT</caption>
 </table>
 <?php
 $obj = new footer();
