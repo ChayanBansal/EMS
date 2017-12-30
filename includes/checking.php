@@ -12,12 +12,13 @@ if (isset($_POST["check_button"])) {
         $_SESSION['component_id'] = $check_detail['component_id'];
         $_SESSION['checked_by_operator_id'] = $check_detail['operator_id'];
         $_SESSION['remark'] = $check_detail['remark'];
+        if(!is_null($check_detail['check_id']))
+        {
+            $_SESSION['already_checked']=true;
+            header('location: useroptions.php');
+        }
     }
-    if($check_detail['check_id']!="")
-    {
-        $_SESSION['already_checked']=true;
-        header('location: useroptions.php');
-    }
+    
     $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "'";
     $get_sub_name_run = mysqli_query($conn, $get_sub_name);
     $result_sub_name = mysqli_fetch_assoc($get_sub_name_run);
