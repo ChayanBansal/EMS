@@ -12,7 +12,8 @@ if (isset($_POST["check_button"])) {
         $_SESSION['component_id'] = $check_detail['component_id'];
         $_SESSION['checked_by_operator_id'] = $check_detail['operator_id'];
         $_SESSION['remark'] = $check_detail['remark'];
-        if($check_detail['check_id']!='Null')
+
+        if(!is_null($check_detail['check_id']))
         {
             $_SESSION['already_checked']=true;
             header('location: useroptions.php');
