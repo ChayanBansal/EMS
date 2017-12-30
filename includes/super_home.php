@@ -9,14 +9,16 @@
     <script src="/ems/js/super_home_script.js"></script>
     <link rel="stylesheet" href="/ems/css/super_home_styles.css">
     <style>
-      .sidenav {
-      padding-top: 20px;
+      #accordion{
+      display: block;
+      padding: 20px;
       background-color: #f1f1f1;
       height: 100%;
+      margin-bottom: 70px;
     }
     </style>
 </head>
-<body>
+<body onload="get_recent_act()">
 
 <?php
 session_start();
@@ -37,17 +39,82 @@ $options->update_session($conn);
 $options->lock_operator($conn);
 $options->unlock_operator($conn);
 ?>
-   
-    <div class="main-container col-md-12">
-    <div class="col-sm-2 sidenav">
-    <?php
-    
-    ?>
-      <p><a href="#">Link</a></p>
-      <p><a href="#">Link</a></p>
-      <p><a href="#">Link</a></p>
+   <!--<a id="recent-act" onmouseover="show(this.id)" onmouseout="hide(sidenav)">Hover to show recent activities</a>-->
+ <!--<button id="recent-act" onClick="show_recent_act()">Hover to show recent activities</button>-->
+  <!--<div id="sidenav" class="col-lg-2 col-md-4 col-sm-4 col-xs-4">
+   <h2><center>Recent Activities</center></h2>-->
+<script>
+  function get_recent_act()
+  {
+    get_check_act();
+    get_feed_act();
+  }
+  
+  function get_check_act()
+  {
+  $.ajax({
+	type: "POST",
+	url: "recent_activity.php",
+	data: 'feed_activity=0',
+	success: function(data){
+        $("#check_marks_list").html(data);
+    },
+    error: function(e){
+      $("#check_marks_list").html("Unable to load recent activities");
+    }
+	});
+  }
+  function get_feed_act()
+  {
+  $.ajax({
+	type: "POST",
+	url: "recent_activity.php",
+	data: 'feed_activity=1',
+	success: function(data){
+        $("#feed_marks_list").html(data);
+    },
+    error: function(e){
+      $("#feed_marks_list").html("Unable to load recent activities");
+    }
+	});
+  }
+</script>
+<div class="panel-group col-lg-3 col-md-4 col-sm-6 col-xs-12" id="accordion">
+  <h3>Recent Activities</h3>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#marks_feeding">Marks Feeding</a>
+        </h4>
+      </div>
+      <div id="marks_feeding" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <ul id="feed_marks_list" class="list-group" style="overflow:auto; height:300px;">
+          </ul>
+        </div>
+      </div>
     </div>
-    <div class="sub-container col-lg-6 col-md-8 col-sm-10 col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#marks_checking">Marks Checking</a>
+        </h4>
+      </div>
+      <div id="marks_checking" class="panel-collapse collapse">
+        <div class="panel-body">
+          <ul id="check_marks_list" class="list-group" style="overflow:auto; height:300px;">
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+   
+
+  </div>
+    
+    <div class="main-container col-lg-6 col-md-10 col-sm-6 col-xs-12 ">
+    <div class="sub-container ">
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
