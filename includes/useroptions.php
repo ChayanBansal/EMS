@@ -386,10 +386,30 @@ function getComponent(sub_code)
                 echo ('<td>ATKT</td>');
             }
             echo ('<td>' . $check_list["sub_code"] . '</td>');
+            $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $check_list['sub_code'] . "'";
+            $get_sub_name_run = mysqli_query($conn, $get_sub_name);
+            $result_sub_name = mysqli_fetch_assoc($get_sub_name_run);
+            echo ('<td>' . $result_sub_name['sub_name'] . '</td>');
+
+            $get_component_name = "SELECT component_name FROM component WHERE component_id=" . $check_list['component_id'];
+            $get_component_name_run = mysqli_query($conn, $get_component_name);
+            $result_component_name = mysqli_fetch_assoc($get_component_name_run);
+            echo ('<td>' . $result_component_name['component_name'] . '</td>');
+
+            $get_operator_name = "SELECT operator_name FROM operators WHERE operator_id=" . $check_list['operator_id'];
+            $get_operator_name_run = mysqli_query($conn, $get_operator_name);
+            $result_operator_name_run = mysqli_fetch_assoc($get_operator_name_run);
+            echo ('<td>' . $result_operator_name_run['operator_name'] . '</td>');
+
+            $get_remark = "SELECT remark FROM transactions WHERE transaction_id=" . $check_list['transaction_id'];
+            $get_remark_run = mysqli_query($conn, $get_remark);
+            $result_remark = mysqli_fetch_assoc($get_remark_run);
+            echo ('<td>' . $result_remark['remark'] . '</td>');
+            /*echo ('<td>' . $check_list["sub_code"] . '</td>');
             echo ('<td>' . $check_list["component_name"] . '</td>');
             echo ('<td>' . $check_list["sub_name"] . '</td>');
             echo ('<td>' . $check_list["operator_name"] . '</td>');
-            echo ('<td>' . $check_list["remark"] . '</td>');
+            echo ('<td>' . $check_list["remark"] . '</td>');*/
             echo ('<td style="text-align:center"><div class="glyphicon glyphicon-ok"></div><div>Already Checked</div></td>');
             echo ('</tr>');
         }
