@@ -369,7 +369,7 @@ function getComponent(sub_code)
             $result_remark = mysqli_fetch_assoc($get_remark_run);
             echo ('<td>' . $result_remark['remark'] . '</td>');
             echo ('<td style="text-align:center">
-                            <button name="check_button" type="submit" value=' . $check_list["transaction_id"] . '>
+                            <button name="check_button" class="btn btn-default" type="submit" value=' . $check_list["transaction_id"] . '>
                             <div class="glyphicon glyphicon-check">
                             </div>
                             <div>Check Now</div>
