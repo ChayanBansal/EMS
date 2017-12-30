@@ -152,7 +152,7 @@ if(isset($_SESSION['already_checked']))
 {
     $alert = new alert();
     if ($_SESSION['already_checked'] == true) {
-        $alert->exec("Marks for this component have already been entered!", "warning");
+        $alert->exec("Checking for this component has already been done!", "warning");
     }
     unset($_SESSION['already_checked']);
 }
