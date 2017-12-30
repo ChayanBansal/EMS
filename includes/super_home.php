@@ -247,8 +247,7 @@ $options->unlock_operator($conn);
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success" name="session_submit">Add Session<i class="glyphicon glyphicon-chevron-right"></i></button>
-        </div>
+            </div>
         </div>
         
       </div>
