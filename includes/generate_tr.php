@@ -169,14 +169,14 @@ if ($get_current_sem_qry_run) {
                             $check_auditing_qry_run = mysqli_query($conn, $check_auditing_qry);
                             $check_id = mysqli_fetch_assoc($check_auditing_qry_run);
                             if (is_null($check_id)) {
-                                echo (' <td><i class="glyphicon glyphicon-remove" style="color: #CD331D"></i></td>');
+                                echo (' <td><i class="glyphicon glyphicon-remove" style="color: #CD331D" title="Marks for the component have not been entered!"></i></td>');
                             } else {
                                 echo (' <td><i class="glyphicon glyphicon-ok" style="color:#30A21C" title="Marks for the component have been entered!"></i></td>
                                 ');
                                 $component_count++;
                             }
                         } else {
-                            echo ('<td><i class="glyphicon glyphicon-minus-sign"></i></td>');
+                            echo ('<td><i class="glyphicon glyphicon-minus-sign" title="The subject does not contain this component."></i></td>');
                         }
                     }
                     if ($no_of_comp == $component_count) {
