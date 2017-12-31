@@ -34,8 +34,8 @@
                 $course_name=mysqli_fetch_assoc($get_course_run);
                 //$course_name['course_name']
 
-                echo('<li class="list-group-item">');
-                    echo($op_name['operator_name']." fed marks for batch ".$audit['from_year']." of ".$course_name['course_name']." of suject ".$sub_name['sub_name']." (".$audit['sub_code'].") of ".$comp_name['component_name']." (");
+                echo('<li class="list-group-item" style="font-size:1.5rem">');
+                    echo("<span style='color: #FF9702; font-size:1.5rem'>".$data['timestamp'].": </span><br>".$op_name['operator_name']." fed marks for batch ".$audit['from_year']." of ".$course_name['course_name']." of suject ".$sub_name['sub_name']." (".$audit['sub_code'].") of ".$comp_name['component_name']." (");
                         if($audit['atkt_flag']==1)
                         {
                             echo('ATKT) ');
@@ -44,7 +44,6 @@
                         {
                             echo('MAIN) ');
                         }
-                    echo("at ".$data['timestamp']);
                 echo('</li>');
             }
         }
@@ -83,8 +82,8 @@
                 $course_name=mysqli_fetch_assoc($get_course_run);
                 //$course_name['course_name']
 
-                echo('<li class="list-group-item">');
-                    echo($op_name['operator_name']." checked marks for batch ".$audit['from_year']." of ".$course_name['course_name']." of suject ".$sub_name['sub_name']." (".$audit['sub_code'].") of ".$comp_name['component_name']." (");
+                echo('<li class="list-group-item" style="font-size:1.5rem">');
+                    echo("<span style='color: #FF9702; font-size:1.5rem'>".$data['timestamp'].": </span><br>".$op_name['operator_name']." checked marks for batch ".$audit['from_year']." of ".$course_name['course_name']." of suject ".$sub_name['sub_name']." (".$audit['sub_code'].") of ".$comp_name['component_name']." (");
                         if($audit['atkt_flag']==1)
                         {
                             echo('ATKT) ');
@@ -93,7 +92,6 @@
                         {
                             echo('MAIN) ');
                         }
-                    echo("at ".$data['timestamp']);
                 echo('</li>');
             }
         }
