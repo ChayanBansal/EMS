@@ -180,6 +180,7 @@ table td{
         transform: rotate(180deg);
     }
 }
+button[]
 .search-bar{
     display: flex;
     justify-content: center;

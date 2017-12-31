@@ -25,6 +25,8 @@ session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+$validate=new validate();
+$validate->conf_logged_in_super();
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/home.php", "/ems/includes/index.php", "/ems/includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
@@ -170,7 +172,7 @@ $options->unlock_operator($conn);
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Add New Course</h4>
           </div>
-          <form action="" method="post">
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
             <div class="modal-body">
            
                 <?php
@@ -219,7 +221,7 @@ $options->unlock_operator($conn);
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Add New Session</h4>
           </div>
-          <form action="" method="post">
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
             <div class="modal-body">
             <?php
             $input = new input_field();
@@ -350,7 +352,7 @@ $options->unlock_operator($conn);
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Update Session</h4>
           </div>
-          <form action="" method="post">
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
           <div class="modal-body">
           <?php
           $input = new input_field();
@@ -459,7 +461,7 @@ $options->unlock_operator($conn);
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Fill in the following details</h4>
           </div>
-          <form action="generate_tr.php" method="post">
+          <form action="generate_tr.php" method="post" onsubmit="return disable_on_submitbtn()">
           <div class="modal-body">
           <?php
           $input = new input_field();
@@ -520,7 +522,7 @@ $options->unlock_operator($conn);
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Add Subjects</h4>
           </div>
-          <form action="" method="post">
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
             <div class="modal-body">
             <div class="modal-container">
         <div class="component">
@@ -629,7 +631,7 @@ $options->unlock_operator($conn);
     
       <!-- Modal content-->
       <div class="modal-content">
-        <form action="<?php echo ($_SERVER['PHP_SELF']); ?>" method="post">
+        <form action="<?php echo ($_SERVER['PHP_SELF']); ?>" method="post" onsubmit="return disable_on_submitinput()">
 		<div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Fill in the following details to create a new operator</h4>
@@ -669,13 +671,60 @@ $options->unlock_operator($conn);
 
     <!-- Modal content-->
     <div class="modal-content">
+    <form action="<?php echo ($_SERVER['PHP_SELF']); ?>" method="post" onsubmit="return disable_on_submitbtn()">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Operators</h4>
       </div>
       <div class="modal-body modal-lg">
-        <?php $v_op = new view_operators;
-        $v_op->execute($conn); ?>
+        <?php $get_op_query = "SELECT locked,operator_active,operator_name, operator_username, operator_email from operators";
+		$get_op_run = mysqli_query($conn, $get_op_query);
+		if (mysqli_num_rows($get_op_run) == 0) {
+			$al = new alert();
+			$al->exec("No operator exists!", "danger");
+		} else {
+			echo ('
+              
+  <table class="table table-striped table-bordered" style="width: 100%">
+    <thead>
+      <tr style="text-align:center">
+        <th>Name</th>
+        <th>Username</th>
+		<th>Email</th>
+		<th>Operator Status</th>
+		<th>Lock/Unlock Account</th>
+      </tr>
+    </thead>
+    <tbody> 
+   
+    ');
+			while ($result = mysqli_fetch_assoc($get_op_run)) {
+				echo ('
+	  <tr style="text-align:center">
+    <td>' . $result["operator_name"] . '</td>
+        <td>' . $result["operator_username"] . '</td>
+		<td>' . $result["operator_email"] . '</td>
+		<td>');
+				if ($result['operator_active'] == 1) {
+					echo ('Active <i class="glyphicon glyphicon-record" style="color:green"></i>');
+				} else {
+					echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
+				}
+				echo ('</td><td>');
+				if ($result['locked'] == 0) {
+					echo ('<button type="submit" class="btn btn-default" name="lock" value="' . $result['operator_username'] . '"><i class="fa fa-lock" aria-hidden="true"> Lock </i> </button>');
+				} else {
+					echo ('<button type="submit" class="btn btn-default" name="unlock" value="' . $result['operator_username'] . '"><i class="fa fa-unlock"> Unlock</i> </button>');
+				}
+				echo ('</td>
+      </tr>');
+			}
+			echo ('
+   </form> </tbody>
+  </table>');
+
+
+		} ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -687,6 +736,8 @@ $options->unlock_operator($conn);
     <?php
     $obj = new footer();
     $obj->disp_footer();
+    $logout_modal=new modals();
+    $logout_modal->display_logout_modal();
     ?>
 </body>
 <script>
