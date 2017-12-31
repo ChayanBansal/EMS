@@ -21,7 +21,10 @@ if (isset($_POST['tr_submit'])) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Generate TR</title>
     <link rel="stylesheet" href="/ems/css/progress-bar.css">
-    <style>
+     <style>
+         body{
+             background: white !important;
+         }
     table{
         font-family: 'Open Sans';
         font-size: 1.6rem;
@@ -30,9 +33,12 @@ if (isset($_POST['tr_submit'])) {
        vertical-align: middle !important;
        text-align: center;
     }
+    table tr th{
+        font-weight: bolder!important;
+    }
     table caption{
         width: 100%;
-        padding: 1rem;
+        padding: 1.2rem;
         background: #2D79E9;
         color: white;
         text-align: center;
@@ -40,17 +46,31 @@ if (isset($_POST['tr_submit'])) {
     .name{
         float: left;
     }
+    .progress{
+        margin-bottom: 0;
+    }
     .progress-bar{
         display: flex;
         align-items: center;    
+        width: 0%;
+        animation: loadprog 1800ms ease-in-out;
     }
-    .progress-text{
-        padding-left: 10px;
-        font-size: 1.6rem;
+    @keyframes loadprog{
+        0%{
+            width: 0%;
+        }
     }
+    .progress span {
+        position: absolute;
+        display: block;
+        width: 100%;
+        color: black;
+        font-size: 1.4rem;
+     }
     hr{
         border: 2px solid red !important;
         width: 100%;
+        margin-bottom: 30px;
     }
     .subtitle{
         padding: 10px;
@@ -61,6 +81,7 @@ if (isset($_POST['tr_submit'])) {
         font-size: 1.6rem;
         
     }
+
     .display{
         display: flex;
         justify-content: center;
@@ -82,9 +103,11 @@ $input_btn = new input_button();
 ?>
  <div class="display">
         <div class="subtitle">
-           Showing results for: <?= $_SESSION['course_name'] ?>
+            Academic Session: <?= $_SESSION['from_year'] ?>
             </div>
-        
+            <div class="subtitle">
+           Course:  <?= $_SESSION['course_name'] ?>
+            </div>
 
 <?php
 $get_current_sem_qry = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id'];
@@ -94,8 +117,8 @@ if ($get_current_sem_qry_run) {
         $sem = $semester['current_semester'];
         echo ('
         <table class="table table-responsive table-striped table-bordered">
-        <caption><div class="name col-lg-6 col-md-6">' . $_SESSION['course_name'] . '</div>  
-        <div class="col-lg-3 col-md-3">
+        <caption><div class="name col-lg-7 col-md-7">' . $_SESSION['course_name'] . '</div>  
+        <div class="col-lg-5 col-md-5">
         SEMESTER ' . $sem . '
         </div>
        
@@ -103,7 +126,7 @@ if ($get_current_sem_qry_run) {
 
 <thead>
 <tr>
-<th rowspan="2">Subject Name</th>
+<th rowspan="2"><strong>Subject Name</strong></th>
 <th colspan="6">Components</th>
 </tr>
 <tr>        
@@ -113,7 +136,7 @@ if ($get_current_sem_qry_run) {
         if ($get_comp_qry_run) {
             while ($comp = mysqli_fetch_assoc($get_comp_qry_run)) {
                 echo ('
-                <th>' . $comp['component_name'] . '</th>
+                <th>' . $comp['component_name'] . ' <a data-toggle="popover" title="Meaning of symbols" data-content="A tick indicates marks have been entered, a cross indicates marks for that component are due to be entered, and a minus sign indicates the subject does not have that component"><i class="glyphicon glyphicon-info-sign"></i></a></th>
                     ');
             }
         }
@@ -147,7 +170,7 @@ if ($get_current_sem_qry_run) {
                             if (is_null($check_id)) {
                                 echo (' <td><i class="glyphicon glyphicon-remove" style="color: #CD331D"></i></td>');
                             } else {
-                                echo (' <td><i class="glyphicon glyphicon-ok" style="color:#30A21C"></i></td>
+                                echo (' <td><i class="glyphicon glyphicon-ok" style="color:#30A21C" title="Marks for the component have been entered!"></i></td>
                                 ');
                                 $component_count++;
                             }
@@ -163,20 +186,21 @@ if ($get_current_sem_qry_run) {
                 $subject_count++;
             }
         }
+        $prog_width = ($subject_completed / $subject_count) * 100;
         echo ('</tbody>
         <caption align="bottom">
-        <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center">
-        <div class="col-lg-7 col-md-7 col-sm-6">');
-        if($subject_count==$subject_completed){
-            echo('<button class="btn btn-default input-lg" type="submit" name="tr_submit" value="'.$semester.'">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+        <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center;">
+        <div class="col-lg-7 col-md-7 col-sm-7">');
+        if ($subject_count == $subject_completed) {
+            echo ('<button class="btn btn-default input-lg" type="submit" name="tr_submit" value="' . $semester . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+        } else {
+            echo ('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
         }
-        else{
-        echo('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');   
-        }
-        echo (' </div><div class="col-lg-5 col-md-5 col-sm-6">
+        echo ('</div>
+        <div class="col-lg-5 col-md-5 col-sm-5" style="vertical-align: middle;">
         <div class="progress">
-        <div class="progress-bar progress-bar-custom" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 49%;">
-        <span class="progress-text"></span>
+        <div class="progress-bar progress-bar-custom" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: ' . $prog_width . '%">
+        <span>' . $subject_completed . '/' . $subject_count . ' Subjects Completed</span>
         </div>
     </div></div> 
     </div>
@@ -194,4 +218,9 @@ $obj = new footer();
 $obj->disp_footer();
 ?>
 </body>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();   
+});
+</script>
 </html>
