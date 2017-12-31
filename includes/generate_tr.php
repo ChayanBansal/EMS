@@ -70,7 +70,7 @@ if (isset($_POST['tr_submit'])) {
     hr{
         border: 2px solid red !important;
         width: 100%;
-        margin-bottom: 30px;
+        margin-bottom: 5rem;
     }
     .subtitle{
         padding: 10px;
@@ -89,6 +89,7 @@ if (isset($_POST['tr_submit'])) {
         padding: 20px;
         flex-direction: column;
     }
+   
     </style>
 </head>
 <body>
@@ -190,14 +191,14 @@ if ($get_current_sem_qry_run) {
         echo ('</tbody>
         <caption align="bottom">
         <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center;">
-        <div class="col-lg-7 col-md-7 col-sm-7">');
+        <div class="col-sm-6 col-xs-12">');
         if ($subject_count == $subject_completed) {
-            echo ('<button class="btn btn-default input-lg" type="submit" name="tr_submit" value="' . $semester . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+            echo ('<button class="btn btn-default btn-lg" type="submit" name="tr_submit" value="' . $semester . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
         } else {
-            echo ('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+            echo ('<button class="btn btn-default btn-lg" disabled title="This option will be enabled once marks for all components corresponding to all subjects have been entered">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
         }
         echo ('</div>
-        <div class="col-lg-5 col-md-5 col-sm-5" style="vertical-align: middle;">
+        <div class="col-sm-6 col-xs-12" style="vertical-align: middle;">
         <div class="progress">
         <div class="progress-bar progress-bar-custom" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: ' . $prog_width . '%">
         <span>' . $subject_completed . '/' . $subject_count . ' Subjects Completed</span>
