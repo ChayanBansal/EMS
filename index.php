@@ -1,8 +1,8 @@
 <?php
 session_start();
-if(isset($_POST['login'])){
-    $super_key="17c4520f6cfd1ab53d8745e84681eb49";
-    if(md5($_POST['username'])==$super_key){
+if (isset($_POST['login'])) {
+    $super_key = "17c4520f6cfd1ab53d8745e84681eb49";
+    if (md5($_POST['username']) == $super_key) {
         header('location: /ems/super_login.php');
     }
 }
@@ -21,14 +21,14 @@ if(isset($_POST['login'])){
     require_once("includes/config.php");
     require("includes/frontend_lib.php");
     require("includes/class_lib.php");
-    $obj=new head();
+    $obj = new head();
     $obj->displayheader();
-    $obj->dispmenu(3,["includes/home.php","index.php","includes/developers.php"],["glyphicon glyphicon-home","glyphicon glyphicon-log-in","glyphicon glyphicon-info-sign"],["Home","Log In","About Us"]);
+    $obj->dispmenu(3, ["includes/home.php", "index.php", "includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-in", "glyphicon glyphicon-info-sign"], ["Home", "Log In", "About Us"]);
     $user_name = new input_field();
     $password = new input_field();
     $submit = new input_button();
     ?>
-<form  action='' method='post'>
+<form  action='' method='post' onsubmit="return disable_on_submitinput()">
     <div class="form-container">
 		<div class="main">
 			 <div class="login">
@@ -37,26 +37,26 @@ if(isset($_POST['login'])){
 				 </div>
 				 <div class="field" id="f1"> <span class="glyphicon glyphicon-user"></span>
                  <?php
-                 $user_name->display_w_js("","","text","username","Username","1","change()","change2()");
-                 ?>
+                $user_name->display_w_js("", "", "text", "username", "Username", "1", "change()", "change2()");
+                ?>
 				 </div>
 				 <div class="field" id="f2"><span class="glyphicon glyphicon-lock"></span>
                  <?php
-                 $password->display_w_js("","","password","password","Password","1","change3()","change4()");
-                 ?>
+                $password->display_w_js("", "", "password", "password", "Password", "1", "change3()", "change4()");
+                ?>
                  </div>
 				 <div class="field">
                  <?php
-                 $submit->display("","","submit","login","openover()","Sign In");
-                 ?>
+                $submit->display("", "", "submit", "login", "openover()", "Sign In");
+                ?>
                  </div>
 			 </div>
 			 </div>
 			 </div>
 			 </form>
     <?php
-        $obj=new footer();
-        $obj->disp_footer();
+    $obj = new footer();
+    $obj->disp_footer();
     ?>
 
 </body>
@@ -81,6 +81,6 @@ if(isset($_POST['login'])){
 </html>
 <?php
 //Backend scripting
-    $op_login=new form_receive();
-    $op_login->login();
+$op_login = new form_receive();
+$op_login->login();
 ?>

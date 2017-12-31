@@ -20,7 +20,7 @@
     $password = new input_field();
     $submit = new input_button();
     ?>
-<form action='' method='post'>
+<form action='' method='post' onsubmit="return disable_on_submitinput()">
     <div class="form-container">
 		<div class="main">
 			 <div class="login">

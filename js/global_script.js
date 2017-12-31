@@ -9,6 +9,17 @@
             error: function (data) { location.reload(); }
         });
     });
+    function disable_on_submitbtn(){
+        var btn=document.querySelector('button[type="submit"]');
+        btn.classList.add("disabled");
+        btn.style.pointerEvents="none";
+        return true;
+    }
+    function disable_on_submitinput(){
+        var btn=document.querySelector('input[type="submit"]');
+        btn.classList.add("disabled");
+        return true;
+    }
     function show_conf_dialog(stop){
             document.getElementById("logout_timer").innerHTML="00:60";
             var timer=60;
