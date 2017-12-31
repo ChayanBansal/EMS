@@ -3,6 +3,8 @@ session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+$validate=new validate();
+$validate->conf_logged_in_super();
 if (isset($_POST['tr_submit'])) {
     $_SESSION['from_year'] = $_POST['tr_from_year'];
     $_SESSION['course_id'] = $_POST['tr_course'];
@@ -12,6 +14,9 @@ if (isset($_POST['tr_submit'])) {
         $res = mysqli_fetch_assoc($get_course_name_qry_run);
         $_SESSION['course_name'] = $res['course_name'];
     }
+}
+else{
+    header('location: super_home.php');
 }
 ?><!DOCTYPE html>
 <html lang="en">
@@ -218,6 +223,8 @@ if ($get_current_sem_qry_run) {
 <?php
 $obj = new footer();
 $obj->disp_footer();
+$logout_modal=new modals();
+    $logout_modal->display_logout_modal();
 ?>
 </body>
 <script>

@@ -361,7 +361,7 @@ class super_user_options
 				$num_rows = mysqli_fetch_assoc($check_course_exists_qry_run);
 				if ($num_rows['count(*)'] > 0) {
 					$alert->exec("Course already exists!", "warning");
-					clear_data();
+					
 					return;
 				}
 			}
@@ -371,7 +371,7 @@ class super_user_options
 				$_SESSION['course_inserted'] = $_POST['cname'];
 				$_SESSION['semester'] = $_POST['cduration'] * 2;
 				$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course <i class="glyphicon glyphicon-circle-arrow-right"></i></a>', "success");
-				clear_data();
+			
 			} else {
 				$alert->exec("Unable to process query! Please try again", "danger");
 			}
@@ -506,7 +506,7 @@ class super_user_options
 			} else {
 				$alert->exec("Unable to insert subjects", "danger");
 			}
-			clear_data();
+			
 		}
 	}
 	function create_operator($conn)
@@ -569,13 +569,14 @@ class super_user_options
 					$er->exec("Operator already exists!", "danger");
 				}
 			}
-			clear_data();
+			
 		}
 	}
 
 	function lock_operator($conn)
 	{
 		if (isset($_POST['lock'])) {
+			echo("Locked");
 			$alert = new alert();
 			$username = $_POST['lock'];
 			$update_locked_qry = "UPDATE operators set locked=1 where operator_username='" . $username . "'";
@@ -630,7 +631,7 @@ class super_user_options
 				}
 			}
 		}
-		clear_data();
+		
 	}
 
 	function update_session($conn)
@@ -643,9 +644,9 @@ class super_user_options
 			mysqli_autocommit($conn,FALSE);
 			$update_session_qry = "UPDATE academic_sessions SET current_semester=$semester WHERE from_year=$ay AND course_id=$course_id";
 			$update_session_qry_run = mysqli_query($conn, $update_session_qry);
-			$update_student_semester="UPDATE students SET current_sem=$semester WHERE from_year=$from_year AND course_id=$course_id";
-			$update_student_semester_run=mysqli_query($conn,$update_student_semester);
-			if ($update_session_qry_run AND $update_student_semester_run) {
+			//$update_student_semester="UPDATE students SET current_sem=$semester WHERE from_year=$from_year AND course_id=$course_id";
+			//$update_student_semester_run=mysqli_query($conn,$update_student_semester);
+			if ($update_session_qry_run /*AND $update_student_semester_run*/) {
 				mysqli_commit($conn);
 				mysqli_autocommit($conn,TRUE);
 				$alert->exec("Academic Session successfully updated!", "success");
@@ -656,7 +657,6 @@ class super_user_options
 
 			}
 		}
-		clear_data();
 	}
 
 }
@@ -834,6 +834,13 @@ class validate
 	function conf_logged_in()
 	{
 		if (!isset($_SESSION['operator_id'])) {
+			header('location: /ems/index.php');
+		} else {
+			echo ('<script>startTimer();</script>');
+		}
+	}
+	function conf_logged_in_super(){
+		if (!isset($_SESSION['super_admin_id'])) {
 			header('location: /ems/index.php');
 		} else {
 			echo ('<script>startTimer();</script>');
@@ -1440,53 +1447,7 @@ class view_operators
 {
 	function execute($conn)
 	{
-		$get_op_query = "SELECT locked,operator_active,operator_name, operator_username, operator_email from operators";
-		$get_op_run = mysqli_query($conn, $get_op_query);
-		if (mysqli_num_rows($get_op_run) == 0) {
-			$al = new alert();
-			$al->exec("No operator exists!", "danger");
-		} else {
-			echo ('
-              
-  <table class="table table-striped table-bordered" style="width: 100%">
-    <thead>
-      <tr style="text-align:center">
-        <th>Name</th>
-        <th>Username</th>
-		<th>Email</th>
-		<th>Operator Status</th>
-		<th>Lock/Unlock Account</th>
-      </tr>
-    </thead>
-	<tbody>
-	<form action="" method="POST">');
-			echo('<form action="" method="POST">');
-			while ($result = mysqli_fetch_assoc($get_op_run)) {
-				echo ('
-				<form action="" method="POST">
-	  <tr style="text-align:center">
-        <td>' . $result["operator_name"] . '</td>
-        <td>' . $result["operator_username"] . '</td>
-		<td>' . $result["operator_email"] . '</td>
-		<td>');
-				if ($result['operator_active'] == 1) {
-					echo ('Active <i class="glyphicon glyphicon-record" style="color:green"></i>');
-				} else {
-					echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
-				}
-				echo ('</td><td>');
-				if ($result['locked'] == 0) {
-					echo ('<button type="submit" class="btn btn-default" name="lock" value="' . $result['operator_username'] . '"><i class="fa fa-lock" aria-hidden="true"> Lock </i> </button>');
-				} else {
-					echo ('<button type="submit" class="btn btn-default" name="unlock" value="' . $result['operator_username'] . '"><i class="fa fa-unlock"> Unlock</i> </button>');
-				}
-				echo ('</td>
-      </tr>');
-			}
-			echo ('
-   </form> </tbody>
-  </table>');
-		}
+		
 	}
 }
 ?>
