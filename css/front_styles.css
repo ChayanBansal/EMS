@@ -68,6 +68,16 @@ body{
     display: none;
     transition: all 300ms ease-in-out;
 }
+input[type="submit"].disabled{
+    opacity: 0.6;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+button[type="submit"].disabled{
+    opacity: 0.6;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
 a:hover{
     color: #B1C3F8;  
     text-decoration: none;

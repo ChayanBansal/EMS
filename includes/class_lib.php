@@ -586,7 +586,6 @@ class super_user_options
 				$alert->exec("Unable to lock account!", "danger");
 			}
 		}
-		clear_data();
 	}
 
 	function unlock_operator($conn)
@@ -602,7 +601,6 @@ class super_user_options
 				$alert->exec("Unable to unlock account!", "danger");
 			}
 		}
-		clear_data();
 	}
 
 	function add_session($conn)
@@ -1460,9 +1458,12 @@ class view_operators
 		<th>Lock/Unlock Account</th>
       </tr>
     </thead>
-    <tbody><form action="" method="post">');
+	<tbody>
+	<form action="" method="POST">');
+			echo('<form action="" method="POST">');
 			while ($result = mysqli_fetch_assoc($get_op_run)) {
 				echo ('
+				<form action="" method="POST">
 	  <tr style="text-align:center">
         <td>' . $result["operator_name"] . '</td>
         <td>' . $result["operator_username"] . '</td>
@@ -1485,8 +1486,6 @@ class view_operators
 			echo ('
    </form> </tbody>
   </table>');
-
-
 		}
 	}
 }
