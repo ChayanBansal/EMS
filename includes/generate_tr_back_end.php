@@ -9,6 +9,10 @@
     $get_roll_id_run=mysqli_query($conn,$get_roll_id);
     while($roll_id=mysqli_fetch_assoc($get_roll_id_run)) //$roll_id['roll_id']
     {
+        $total_credits_earned = 0; 
+        $cr = 0;
+        $total_earned_gpv = 0;
+                
         $get_sub_id="SELECT sub_id, practical_flag, credits_alloted FROM sub_distribution WHERE sub_code IN
                     (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester.")";
         $get_sub_id_run=mysqli_query($conn,$get_sub_id); 
@@ -34,6 +38,19 @@
                         {
                             echo('If else condition satisfied here, then there might be an error in the database (because a theory subject_id can only have two above mentioned components)');
                         }
+
+                        $get_passing_marks="SELECT passing_marks FROM component_distribution WHERE roll_id=".$roll_id['roll_id']." AND component_id=".$comp_marks['component_id'];
+                        $get_passing_marks_run=mysqli_query($conn,$get_passing_marks);
+                        $passing_marks=mysqli_fetch_assoc($get_passing_marks_run); //$passing_marks['passing_marks']
+                        if($comp_marks['marks'] < $passing_marks['passing_marks'])
+                        {
+                            $update_roll_list="UPDATE roll_list SET atkt_flag=1 WHERE roll_id=".$roll_id['roll_id'];//Updating atkt_flag
+                            $update_roll_list_run=mysqli_query($conn,$update_roll_list);
+
+                            $insert_failure_report="INSERT INTO failure_report(roll_id, sub_id, component_id) 
+                                                                        VALUES(".$roll_id['roll_id'].", ".$sub_id['sub_id'].", ".$comp_marks['component_id'].")";
+                            $insert_failure_report=mysqli_query($conn,$insert_failure_report);
+                        }
                     }
                 }
                 else if($sub_id['practical_flag']==1) //for practical sub_id
@@ -58,6 +75,19 @@
                         else
                         {
                             echo('If else condition satisfied here, then there might be an error in the database (because a practical subject_id can only have two above mentioned components)');
+                        }
+
+                        $get_passing_marks="SELECT passing_marks FROM component_distribution WHERE roll_id=".$roll_id['roll_id']." AND component_id=".$comp_marks['component_id'];
+                        $get_passing_marks_run=mysqli_query($conn,$get_passing_marks);
+                        $passing_marks=mysqli_fetch_assoc($get_passing_marks_run); //$passing_marks['passing_marks']
+                        if($comp_marks['marks'] < $passing_marks['passing_marks'])
+                        {
+                            $update_roll_list="UPDATE roll_list SET atkt_flag=1 WHERE roll_id=".$roll_id['roll_id'];//Updating atkt_flag
+                            $update_roll_list_run=mysqli_query($conn,$update_roll_list);
+
+                            $insert_failure_report="INSERT INTO failure_report(roll_id, sub_id, component_id) 
+                                                                        VALUES(".$roll_id['roll_id'].", ".$sub_id['sub_id'].", ".$comp_marks['component_id'].")";
+                            $insert_failure_report=mysqli_query($conn,$insert_failure_report);
                         }
                     }
                 }
@@ -126,6 +156,9 @@
                     VALUES(".$roll_id['roll_id'].", ".$sub_id['sub_id'].", ".$cat_cap_ia.", ".$endsem.", ".$total.", ".$percentage.", '".$grade."', ".$gp.", ".$cr.", ".$gpv.")";
                 $insert_tr_run=mysqli_query($conn,$insert_tr);
                 //An entry in a practical or theory subject done till here 
+
+                $total_credits_earned = $total_credits_earned + $cr;
+				$total_earned_gpv = $total_earned_gpv + $gpv;
             }
             else if($sub_id['practical_flag']==2) //for IE sub_id
             {
@@ -140,6 +173,19 @@
                     else
                     {
                         echo('If else condition satisfied here, then there might be an error in the database (because an IE subject_id can only have one component)');
+                    }
+
+                    $get_passing_marks="SELECT passing_marks FROM component_distribution WHERE roll_id=".$roll_id['roll_id']." AND component_id=".$comp_marks['component_id'];
+                    $get_passing_marks_run=mysqli_query($conn,$get_passing_marks);
+                    $passing_marks=mysqli_fetch_assoc($get_passing_marks_run); //$passing_marks['passing_marks']
+                    if($comp_marks['marks'] < $passing_marks['passing_marks'])
+                    {
+                        $update_roll_list="UPDATE roll_list SET atkt_flag=1 WHERE roll_id=".$roll_id['roll_id'];//Updating atkt_flag
+                        $update_roll_list_run=mysqli_query($conn,$update_roll_list);
+
+                        $insert_failure_report="INSERT INTO failure_report(roll_id, sub_id, component_id) 
+                                                                    VALUES(".$roll_id['roll_id'].", ".$sub_id['sub_id'].", ".$comp_marks['component_id'].")";
+                        $insert_failure_report=mysqli_query($conn,$insert_failure_report);
                     }
                 }    
                     $total = $ie;
@@ -206,7 +252,16 @@
                     VALUES(".$roll_id['roll_id'].", ".$sub_id['sub_id'].", ".$ie.", ".$total.", ".$percentage.", '".$grade."', ".$gp.", ".$cr.", ".$gpv.")";
                 $insert_tr_run=mysqli_query($conn,$insert_tr);
                 //An entry in a Internal Examination(IE) subject done here 
+
+                $total_credits_earned = $total_credits_earned + $cr;
+				$total_earned_gpv = $total_earned_gpv + $gpv;
             }
         }
+
+        // exam summary
+        $sgpa = $total_earned_gpv / $total_credits_earned;
+
+        $insert_exam_summary="INSERT INTO exam_summary(roll_id, total_credits_earned, total_gpv_earned, sgpa) 
+                                    VALUES(".$roll_id['roll_id'].", ".$total_credits_earned.", ".$total_earned_gpv.", ".$sgpa.")";
     }
 ?>

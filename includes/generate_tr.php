@@ -190,7 +190,6 @@ if ($get_current_sem_qry_run) {
         $prog_width = ($subject_completed / $subject_count) * 100;
         echo ('</tbody>
         <caption align="bottom">
-<<<<<<< HEAD
         <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center">
         <div class="col-lg-7 col-md-7 col-sm-6">');
         if($subject_count==$subject_completed){
@@ -198,14 +197,6 @@ if ($get_current_sem_qry_run) {
         }
         else{
         echo('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');   
-=======
-        <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center;">
-        <div class="col-sm-6 col-xs-12">');
-        if ($subject_count == $subject_completed) {
-            echo ('<button class="btn btn-default btn-lg" type="submit" name="tr_submit" value="' . $semester . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
-        } else {
-            echo ('<button class="btn btn-default btn-lg" disabled title="This option will be enabled once marks for all components corresponding to all subjects have been entered">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
->>>>>>> 0b80bd72813607bbf8f7275691884e61919f9e42
         }
         echo ('</div>
         <div class="col-sm-6 col-xs-12" style="vertical-align: middle;">
