@@ -794,10 +794,17 @@ class dashboard
 	}
 	function display_super_dashboard($name, $options, $href, $last_option)
 	{
-		echo ('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation">
+		echo ('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation" style="z-index:200">
 		<div class="container-fluid">
 			<div class="navbar-header"><a class="navbar-brand">Welcome, <b>' . $name . '</b> </a>
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>                        
+		  	</button>
 			</div>
+
+			<div class="collapse navbar-collapse" id="myNavbar">
 			<ul class="nav navbar-nav">
 			
 			<li id="refresh" onclick="window.location.reload(false)"><a href="#">Refresh <i class="glyphicon glyphicon-refresh"></i></a></li>
@@ -818,7 +825,7 @@ class dashboard
 			  </li>
 			  <li><a href="mailto:coe@suas.ac.in"><i class="glyphicon glyphicon-envelope" style=""></i> ' . $last_option . '</a></li>
 			  </ul>
-			
+			</div>
 		</div>
 	</div>');
 	}

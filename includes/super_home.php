@@ -79,7 +79,7 @@ $options->unlock_operator($conn);
 	});
   }
 </script>
-<div class="panel-group col-lg-3 col-md-4 col-sm-6 col-xs-12" id="accordion">
+<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion">
   <h3>Recent Activities</h3>
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -113,8 +113,8 @@ $options->unlock_operator($conn);
 
   </div>
     
-    <div class="main-container col-lg-6 col-md-10 col-sm-6 col-xs-12 ">
-    <div class="sub-container ">
+    <div class="main-container col-lg-9 col-md-8 col-sm-12 col-xs-12 ">
+    <div class="sub-container col-lg-8 col-md-10 col-sm-12">
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
@@ -148,7 +148,7 @@ $options->unlock_operator($conn);
             </div>
             </div>
             <div class="option yellow" onmouseover="show('subopt5')" onmouseout="hide('subopt5')">
-            <div><i class="glyphicon glyphicon-user"></i></div>
+            <div><i class="glyphicon glyphicon-th-list"></i></div>
             <div>Sessions</div>
             <div class="sub-option" id="subopt5">
             <button data-toggle="modal" data-target="#addsessionModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
@@ -285,7 +285,7 @@ $options->unlock_operator($conn);
 
   <!-- View Session Modal -->
   <div class="modal fade" id="viewsessionModal" role="dialog">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
       
         <!-- Modal content-->
         <div class="modal-content">
@@ -388,57 +388,8 @@ $options->unlock_operator($conn);
   <!--End-->
 
   <!--View Courses Modal-->
-  <div class="modal fade" id="addcourseModal" role="dialog">
-      <div class="modal-dialog">
-      
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">View Courses</h4>
-          </div>
-          <form action="" method="post">
-            <div class="modal-body">
-           
-                <?php
-                $input = new input_field();
-                ?>
-                <div class="form-group">
-                <label for="name">Course Name</label>
-                <?php
-                $input->display("name", "form-control", "text", "cname", "", 1);
-                ?>
-                </div>
-                <div class="form-group">
-                <label for="type">Course Type</label>
-                <select name="level" id="type" class="form-control">
-                    <option value="ug">Undergraduate</option>
-                    <option value="pg">Postgraduate</option>
-                </select>
-                </div>
-                <div class="form-group">
-                <label for="duration">Duration</label>
-                <?php
-                $input->display_table("duration", "form-control", "number", "cduration", "", 1, 1, 10, 0, 10);
-                ?>
-                </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
-        </div>
-        </form> 
-        </div>
-        
-      </div>
-    </div>
-    
-  </div>
-<!--End-->
-
-  <!--Add Sessions Modal-->
   <div class="modal fade" id="viewcourseModal" role="dialog">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
       
         <!-- Modal content-->
         <div class="modal-content">
