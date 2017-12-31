@@ -1,18 +1,20 @@
-<script>
-    function start_time(stop) {
-        if (stop == "stop") {
-            console.log("Stopped");
-            clearInterval(t);
-        }
-        
-        var i = 0;
-        window.t = window.setInterval(function () {
-            console.log(i);                i++;
-        }, 1000);
-    }
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
 
-<html>
-<p id="timer"></p>
+<div class="container">
+  <h3>Popover Example</h3>
+  <a href="#" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">Toggle popover</a>
+</div>
 
+
+</body>
 </html>
