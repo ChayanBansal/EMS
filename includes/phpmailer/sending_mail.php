@@ -36,6 +36,7 @@
             $mail->send();
             $alert=new alert();
             $alert->exec("New operator created and a mail containing the login details has been sent!", "success");
+            mysqli_commit($conn);
         } catch (Exception $e) {
             $alert=new alert();
             $alert->exec("Unable to send e-mail to operator!", "warning");

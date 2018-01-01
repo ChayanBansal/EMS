@@ -534,6 +534,7 @@ $options->unlock_operator($conn);
                <th>Maximum Marks</th>
                </tr>
                <?php
+               
               $get_components_qry = "SELECT * from component";
               $get_components_qry_run = mysqli_query($conn, $get_components_qry);
               if ($get_components_qry_run) {
