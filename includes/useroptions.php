@@ -389,7 +389,7 @@ function getComponent(sub_code)
             echo ('<tr class="success">');
             echo ('<td>' . $check_list["from_year"] . '</td>');
             echo ('<td>' . $check_list["semester"] . '</td>');
-            if ($check_list["atkt_flag"]) {
+            if ($check_list["atkt_flag"]==0) {
                 echo ('<td>MAIN</td>');
             } else {
                 echo ('<td>ATKT</td>');

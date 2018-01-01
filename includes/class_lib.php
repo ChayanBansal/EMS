@@ -521,6 +521,7 @@ class super_user_options
 				$er = new alert();
 				$er->exec("Please enter operator email!", "alert");
 			} else {
+				
 				$get_operator_list_query = "SELECT operator_email from operators";
 				$get_op_list_query_run = mysqli_query($conn, $get_operator_list_query);
 				$permit = 1;
@@ -545,11 +546,14 @@ class super_user_options
 
 					$temp_pass = substr($operator_email, 0, 2) . "" . mt_rand(1000, 9999);
 					$operator_password = md5($temp_pass);
+					mysqli_autocommit($conn,FALSE);
+					mysqli_begin_transaction($conn);
 					$create_operator_query = "INSERT INTO operators(operator_name, operator_email, operator_username, operator_password) 
 								VALUES('$operator_name', '$operator_email', '$operator_username', '$operator_password')";
 					try {
 						$create_query_run = mysqli_query($conn, $create_operator_query);
 					} catch (Exception $e) {
+						mysqli_rollback($conn);
 						$er = new alert();
 						$er->exec("Not able to connect to database!", "danger");
 					}
@@ -1450,4 +1454,15 @@ class view_operators
 		
 	}
 }
+
+/*class csrf_token
+{
+	session_start();
+	$_SESSION['token']=mt_rand(1000000000,9999999999);
+
+	function hidden_input($_SESSION['token'])
+	{
+		echo('<input name="%t%o%k%e%n" type="hidden" value="'.$_SESSION['token'].'"');
+	}
+}*/
 ?>
