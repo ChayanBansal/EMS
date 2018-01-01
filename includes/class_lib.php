@@ -460,7 +460,7 @@ class super_user_options
 								break;
 
 							case 'practical':
-								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . ")";
+								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',1," . $theory_cr . ")";
 								break;
 							case 'both':
 								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . "),('" . $subcode . "',1," . $practical_cr . ")";
