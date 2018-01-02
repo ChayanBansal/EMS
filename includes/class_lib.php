@@ -1465,7 +1465,7 @@ class csrf_token
 
 	function hidden_input($token)
 	{
-		echo('<input name="%t%o%k%e%n" type="hidden" value="'.$_SESSION['token'].'"');
+		echo('<input name="5d57af0a25794bf7516ef53d2de3a230" type="hidden" value="'.$_SESSION['token'].'"');
 	}
 }
 ?>
