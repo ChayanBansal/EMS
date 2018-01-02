@@ -1,9 +1,12 @@
 <?php
+
 if (isset($_POST['login'])) {
+    
     $super_key = "17c4520f6cfd1ab53d8745e84681eb49";
     if (md5($_POST['username']) == $super_key) {
         header('location: /ems/super_login');
     }
+    else{echo('not aking to super');}
 }
 ?>
 <!DOCTYPE html>
@@ -21,8 +24,6 @@ if (isset($_POST['login'])) {
     require("includes/frontend_lib.php");
     require("includes/class_lib.php");
     session_start();
-    $token=new csrf_token();
-    $token->create_token();
     $obj = new head();
     $obj->displayheader();
     $obj->dispmenu(3, ["includes/home.php", "index.php", "includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-in", "glyphicon glyphicon-info-sign"], ["Home", "Log In", "About Us"]);
@@ -46,7 +47,6 @@ if (isset($_POST['login'])) {
 				 <div class="field" id="f2"><span class="glyphicon glyphicon-lock"></span>
                  <?php
                 $password->display_w_js("", "", "password", "password", "Password", "1", "change3()", "change4()");
-                $token->hidden_input($_SESSION['token']);
                 ?>
                  </div>
 				 <div class="field">
