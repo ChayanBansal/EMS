@@ -198,7 +198,7 @@ if ($get_current_sem_qry_run) {
         <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center">
         <div class="col-lg-7 col-md-7 col-sm-6">');
         if($subject_count==$subject_completed){
-            echo('<button class="btn btn-default input-lg" type="submit" name="tab_submit" value="'.$semester.'">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+            echo('<button class="btn btn-default input-lg" type="submit" name="tab_submit" value="'.$sem.'">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
         }
         else{
         echo('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');   
