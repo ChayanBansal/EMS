@@ -203,7 +203,7 @@ class form_receive
 	{
 
 		$alert = new alert();
-		if (isset($_POST['login'])) //check button click
+		if (isset($_POST['login']) AND $_SESSION['token']==$_POST['5d57af0a25794bf7516ef53d2de3a230']) //check button click
 		{
 			if (!isset($_SESSION['remaining_attempts'])) {
 				$_SESSION['remaining_attempts'] = 4;
@@ -261,7 +261,7 @@ class form_receive
 	{
 
 		$alert = new alert();
-		if (isset($_POST['superlogin'])) //check button click
+		if (isset($_POST['superlogin']) AND $_SESSION['token']==$_POST['5d57af0a25794bf7516ef53d2de3a230']) //check button click
 		{
 			require("config.php");
 			$form_input_check = new input_check();
@@ -1459,13 +1459,12 @@ class csrf_token
 {
 	function create_token()
 	{
-		session_start();
-		$_SESSION['token']=mt_rand(1000000000,9999999999);
+		$_SESSION['token']=mt_rand(10000,99999);
 	}
 
 	function hidden_input($token)
 	{
-		echo('<input name="5d57af0a25794bf7516ef53d2de3a230" type="hidden" value="'.$_SESSION['token'].'"');
+		echo('<input name="5d57af0a25794bf7516ef53d2de3a230" type="hidden" value="'.$_SESSION['token'].'">');
 	}
 }
 ?>
