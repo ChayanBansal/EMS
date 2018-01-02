@@ -39,6 +39,7 @@
     }
     function startTimer(){
         window.timeout=setTimeout(function(){
+            stopTimer();
             show_conf_dialog();
             clearTimeout(timeout);
         },1800000);

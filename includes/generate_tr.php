@@ -122,6 +122,7 @@ if ($get_current_sem_qry_run) {
     while ($semester = mysqli_fetch_assoc($get_current_sem_qry_run)) {
         $sem = $semester['current_semester'];
         echo ('
+        <form action="generate_tr_back_end.php" method="POST">
         <table class="table table-responsive table-striped table-bordered">
         <caption><div class="name col-lg-7 col-md-7">' . $_SESSION['course_name'] . '</div>  
         <div class="col-lg-5 col-md-5">
@@ -173,7 +174,7 @@ if ($get_current_sem_qry_run) {
                             $check_auditing_qry = "SELECT check_id FROM auditing WHERE component_id=" . $comp_id['component_id'] . " AND semester=" . $sem . " AND course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND sub_code='" . $sub['sub_code'] . "'";
                             $check_auditing_qry_run = mysqli_query($conn, $check_auditing_qry);
                             $check_id = mysqli_fetch_assoc($check_auditing_qry_run);
-                            if (is_null($check_id)) {
+                            if (is_null($check_id['check_id'])) {
                                 echo (' <td><i class="glyphicon glyphicon-remove" style="color: #CD331D" title="Marks for the component have not been entered!"></i></td>');
                             } else {
                                 echo (' <td><i class="glyphicon glyphicon-ok" style="color:#30A21C" title="Marks for the component have been entered!"></i></td>
@@ -198,7 +199,7 @@ if ($get_current_sem_qry_run) {
         <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center">
         <div class="col-lg-7 col-md-7 col-sm-6">');
         if($subject_count==$subject_completed){
-            echo('<button class="btn btn-default input-lg" type="submit" name="tab_submit" value="'.$semester.'">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+            echo('<button class="btn btn-default input-lg" type="submit" name="tab_submit" value="'.$sem.'">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
         }
         else{
         echo('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');   
@@ -213,6 +214,7 @@ if ($get_current_sem_qry_run) {
     </div>
         </caption>
     </table>
+    </form>
     <hr>');
 
     }

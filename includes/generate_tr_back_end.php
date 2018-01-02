@@ -1,5 +1,6 @@
 <?php
-    
+    session_start();
+    require('config.php');
     $semester=$_POST['tab_submit'];//Button's value which is clicked 
     $from_year=$_SESSION['from_year']; //Selected batch relevant to the tr
     $course_id=$_SESSION['course_id']; //Selected course's id
@@ -7,16 +8,18 @@
     $get_roll_id="SELECT roll_id FROM roll_list WHERE semester=".$semester." AND enrol_no IN 
                 (SELECT enrol_no FROM students WHERE course_id=".$course_id." AND current_sem=".$semester." AND from_year=".$from_year.")"; //CHECK the name of the column current_sem
     $get_roll_id_run=mysqli_query($conn,$get_roll_id);
+ 
     while($roll_id=mysqli_fetch_assoc($get_roll_id_run)) //$roll_id['roll_id']
     {
         $total_credits_earned = 0; 
         $cr = 0;
         $total_earned_gpv = 0;
                 
-        $get_sub_id="SELECT sub_id, practical_flag, credits_alloted FROM sub_distribution WHERE sub_code IN
+        $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code IN
                     (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester.")";
         $get_sub_id_run=mysqli_query($conn,$get_sub_id); 
-        while($sub_id=mysqli_fetch_assoc($get_sub_id_run)) //$sub_id['sub_id'] $sub_id['practical_flag'] $sub_id['credits_alloted']
+        
+        while($sub_id=mysqli_fetch_assoc($get_sub_id_run)) //$sub_id['sub_id'] $sub_id['practical_flag'] $sub_id['credits_allotted']
         {
             if(($sub_id['practical_flag']==0) OR ($sub_id['practical_flag']==1))
             {
@@ -41,6 +44,7 @@
 
                         $get_passing_marks="SELECT passing_marks FROM component_distribution WHERE sub_id=".$sub_id['sub_id']." AND component_id=".$comp_marks['component_id'];
                         $get_passing_marks_run=mysqli_query($conn,$get_passing_marks);
+                        echo($get_passing_marks);
                         $passing_marks=mysqli_fetch_assoc($get_passing_marks_run); //$passing_marks['passing_marks']
                         if($comp_marks['marks'] < $passing_marks['passing_marks'])
                         {
@@ -99,49 +103,49 @@
                 {
 					$grade = 'O';
 					$gp = 10;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 81 and $percentage < 91) 
                 {
 					$grade = 'A+';
 					$gp = 9;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 71 and $percentage < 81) 
                 {
 					$grade = 'A';
 					$gp = 8;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 61 and $percentage < 71) 
                 {
 					$grade = 'B+';
 					$gp = 7;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 51 and $percentage < 61) 
                 {
 					$grade = 'B';
 					$gp = 6;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 41 and $percentage < 51) 
                 {
 					$grade = 'C';
 					$gp = 5;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage == 40) 
                 {
 					$grade = 'P';
 					$gp = 4;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage < 40) 
@@ -195,49 +199,49 @@
                 {
 					$grade = 'O';
 					$gp = 10;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 81 and $percentage < 91) 
                 {
 					$grade = 'A+';
 					$gp = 9;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 71 and $percentage < 81) 
                 {
 					$grade = 'A';
 					$gp = 8;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 61 and $percentage < 71) 
                 {
 					$grade = 'B+';
 					$gp = 7;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 51 and $percentage < 61) 
                 {
 					$grade = 'B';
 					$gp = 6;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage >= 41 and $percentage < 51) 
                 {
 					$grade = 'C';
 					$gp = 5;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage == 40) 
                 {
 					$grade = 'P';
 					$gp = 4;
-					$cr = $sub_id['credits_alloted'];
+					$cr = $sub_id['credits_allotted'];
 					$gpv = $gp * $cr;
                 } 
                 else if ($percentage < 40) 
