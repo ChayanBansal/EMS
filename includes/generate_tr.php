@@ -122,6 +122,7 @@ if ($get_current_sem_qry_run) {
     while ($semester = mysqli_fetch_assoc($get_current_sem_qry_run)) {
         $sem = $semester['current_semester'];
         echo ('
+        <form action="generate_tr_back_end.php" method="POST">
         <table class="table table-responsive table-striped table-bordered">
         <caption><div class="name col-lg-7 col-md-7">' . $_SESSION['course_name'] . '</div>  
         <div class="col-lg-5 col-md-5">
@@ -213,6 +214,7 @@ if ($get_current_sem_qry_run) {
     </div>
         </caption>
     </table>
+    </form>
     <hr>');
 
     }
