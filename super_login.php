@@ -36,7 +36,7 @@
 				 <div class="field" id="f2"><span class="glyphicon glyphicon-lock"></span>
                  <?php
                  $password->display_w_js("","","password","password","Password","1","change3()","change4()");
-                 $token->hidden_input($_SESSION['token']);
+                 $token->hidden_input($_SESSION['token_login']);
                  ?>
                  </div>
 				 <div class="field">

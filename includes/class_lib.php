@@ -203,7 +203,7 @@ class form_receive
 	{
 
 		$alert = new alert();
-		if (isset($_POST['login']) AND $_SESSION['token']==$_POST['5d57af0a25794bf7516ef53d2de3a230']) //check button click
+		if (isset($_POST['login']) AND $_SESSION['token_login']==$_POST['5d57af0a25794bf7516ef53d2de3a230']) //check button click
 		{
 			if (!isset($_SESSION['remaining_attempts'])) {
 				$_SESSION['remaining_attempts'] = 4;
@@ -231,6 +231,8 @@ class form_receive
 						$_SESSION['operator_username'] = $username;
 						$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
 						$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
+						$token_inside = new csrf_token();
+						$token_inside->create_token();
 						header('location: /ems/includes/home');
 						unset($_SESSION['remaining_attempts']);
 					} else {
@@ -261,7 +263,7 @@ class form_receive
 	{
 
 		$alert = new alert();
-		if (isset($_POST['superlogin']) AND $_SESSION['token']==$_POST['5d57af0a25794bf7516ef53d2de3a230']) //check button click
+		if (isset($_POST['superlogin']) AND $_SESSION['token_login']==$_POST['5d57af0a25794bf7516ef53d2de3a230']) //check button click
 		{
 			require("config.php");
 			$form_input_check = new input_check();
@@ -278,6 +280,8 @@ class form_receive
 					$_SESSION['super_admin_id'] = $operator_data['super_admin_id'];
 					$_SESSION['super_admin_name'] = $operator_data['super_admin_name'];
 					$_SESSION['super_admin_username'] = $username;
+					$token_inside = new csrf_token();
+					$token_inside->create_token();
 					header('location: /ems/includes/super_home');
 				} else {
 					$alert->exec("Please check your username or password!", "danger");
@@ -1457,14 +1461,18 @@ class view_operators
 
 class csrf_token
 {
-	function create_token()
+	function create_token_login()
 	{
-		$_SESSION['token']=mt_rand(10000,99999);
+		$_SESSION['token_login']=mt_rand(10000,99999);
 	}
 
 	function hidden_input($token)
 	{
-		echo('<input name="5d57af0a25794bf7516ef53d2de3a230" type="hidden" value="'.$_SESSION['token'].'">');
+		echo('<input name="5d57af0a25794bf7516ef53d2de3a230" type="hidden" value="'.$token.'">');
+	}
+	function create_token()
+	{
+		$_SESSION['token']=mt_rand(10000,99999);
 	}
 }
 ?>
