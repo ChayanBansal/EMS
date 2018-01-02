@@ -178,7 +178,7 @@
                         echo('If else condition satisfied here, then there might be an error in the database (because an IE subject_id can only have one component)');
                     }
 
-                    $get_passing_marks="SELECT passing_marks FROM component_distribution WHERE roll_id=".$roll_id['roll_id']." AND component_id=".$comp_marks['component_id'];
+                    $get_passing_marks="SELECT passing_marks FROM component_distribution WHERE sub_id=".$sub_id['sub_id']." AND component_id=".$comp_marks['component_id'];
                     $get_passing_marks_run=mysqli_query($conn,$get_passing_marks);
                     $passing_marks=mysqli_fetch_assoc($get_passing_marks_run); //$passing_marks['passing_marks']
                     if($comp_marks['marks'] < $passing_marks['passing_marks'])
