@@ -231,8 +231,8 @@ class form_receive
 						$_SESSION['operator_username'] = $username;
 						$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
 						$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
-						$token_inside = new csrf_token();
-						$token_inside->create_token();
+						$token = new csrf_token();
+						$token->create_token();
 						header('location: /ems/includes/home');
 						unset($_SESSION['remaining_attempts']);
 					} else {
@@ -280,8 +280,8 @@ class form_receive
 					$_SESSION['super_admin_id'] = $operator_data['super_admin_id'];
 					$_SESSION['super_admin_name'] = $operator_data['super_admin_name'];
 					$_SESSION['super_admin_username'] = $username;
-					$token_inside = new csrf_token();
-					$token_inside->create_token();
+					$token = new csrf_token();
+					$token->create_token();
 					header('location: /ems/includes/super_home');
 				} else {
 					$alert->exec("Please check your username or password!", "danger");
