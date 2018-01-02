@@ -27,6 +27,19 @@ require("frontend_lib.php");
 require("class_lib.php");
 $validate=new validate();
 $validate->conf_logged_in_super();
+if(isset($_SESSION['tr_generated'])){
+  if($_SESSION['tr_generated']==TRUE){
+    $alert=new alert();
+    $alert->exec("Tabulation Register for ".$_SESSION['course_name']." academic session ".$_SESSION['from_year']." successfully generated!","success");
+    
+  }
+  else{
+    $alert=new alert();
+    $alert->exec("Unable to generate tabulation register!","danger");
+    
+  }
+  unset($_SESSION['tr_generated']);
+}
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/home.php", "/ems/includes/index.php", "/ems/includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);

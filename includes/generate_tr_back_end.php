@@ -275,14 +275,15 @@
                 $_SESSION['tr_generated']=TRUE;
                 //mysqli_commit($conn);
                 //mysqli_close($conn);
-                //header('location: generate_tr.php');
+                header('location: super_home.php');
             }
             else
             {
                 $_SESSION['tr_generated']=FALSE;
                 //mysqli_rollback($conn);
                 //mysqli_close($conn);
-                //header('location: generate_tr.php');
+                
+                header('location: super_home.php');
             }
         }
     }
