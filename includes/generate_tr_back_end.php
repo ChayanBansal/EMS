@@ -5,7 +5,7 @@
     $course_id=$_SESSION['course_id']; //Selected course's id
 
     $get_roll_id="SELECT roll_id FROM roll_list WHERE semester=".$semester." AND enrol_no IN 
-                (SELECT enrol_no FROM students WHERE course_id=".$course_id." current_sem=".$semester." AND from_year=".$from_year.")"; //CHECK the name of the column current_sem
+                (SELECT enrol_no FROM students WHERE course_id=".$course_id." AND current_sem=".$semester." AND from_year=".$from_year.")"; //CHECK the name of the column current_sem
     $get_roll_id_run=mysqli_query($conn,$get_roll_id);
     while($roll_id=mysqli_fetch_assoc($get_roll_id_run)) //$roll_id['roll_id']
     {
@@ -39,7 +39,7 @@
                             echo('If else condition satisfied here, then there might be an error in the database (because a theory subject_id can only have two above mentioned components)');
                         }
 
-                        $get_passing_marks="SELECT passing_marks FROM component_distribution WHERE roll_id=".$roll_id['roll_id']." AND component_id=".$comp_marks['component_id'];
+                        $get_passing_marks="SELECT passing_marks FROM component_distribution WHERE sub_id=".$sub_id['sub_id']." AND component_id=".$comp_marks['component_id'];
                         $get_passing_marks_run=mysqli_query($conn,$get_passing_marks);
                         $passing_marks=mysqli_fetch_assoc($get_passing_marks_run); //$passing_marks['passing_marks']
                         if($comp_marks['marks'] < $passing_marks['passing_marks'])
