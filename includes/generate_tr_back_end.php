@@ -266,5 +266,6 @@
 
         $insert_exam_summary="INSERT INTO exam_summary(roll_id, total_credits_earned, total_gpv_earned, sgpa) 
                                     VALUES(".$roll_id['roll_id'].", ".$total_credits_earned.", ".$total_earned_gpv.", ".$sgpa.")";
+        $insert_exam_summary_run=mysqli_query($conn,$insert_exam_summary);
     }
 ?>
