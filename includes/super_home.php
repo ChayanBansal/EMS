@@ -69,7 +69,7 @@ $options->unlock_operator($conn);
   {
   $.ajax({
 	type: "POST",
-	url: "recent_activity.php",
+	url: "recent_activity",
 	data: 'feed_activity=0',
 	success: function(data){
         $("#check_marks_list").html(data);
@@ -83,7 +83,7 @@ $options->unlock_operator($conn);
   {
   $.ajax({
 	type: "POST",
-	url: "recent_activity.php",
+	url: "recent_activity",
 	data: 'feed_activity=1',
 	success: function(data){
         $("#feed_marks_list").html(data);
