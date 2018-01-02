@@ -1455,14 +1455,17 @@ class view_operators
 	}
 }
 
-/*class csrf_token
+class csrf_token
 {
-	session_start();
-	$_SESSION['token']=mt_rand(1000000000,9999999999);
+	function create_token()
+	{
+		session_start();
+		$_SESSION['token']=mt_rand(1000000000,9999999999);
+	}
 
 	function hidden_input($_SESSION['token'])
 	{
 		echo('<input name="%t%o%k%e%n" type="hidden" value="'.$_SESSION['token'].'"');
 	}
-}*/
+}
 ?>
