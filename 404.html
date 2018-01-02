@@ -29,6 +29,7 @@
             letter-spacing: 10px;
         }
     </style>
+
 </head>
 
 <body>
@@ -37,10 +38,21 @@
         </audio>
     <div class="main">
         <div class="contain">
-            <p class="err">404</p>
-            <p>Section 43 and Section 66 of the Information Technology Act(2000) ensure punishment along with heavy fine for any kind of damage, alteration or copying of data without the permission of the owner.</p>
+            <p class="err" id="err">404</p>
         </div>
     </div>
 </body>
+<script>
+    window.onload = function() {
+        var eveSec = function() {
+            var i = 0;
+            var color = ["red", "#A50000", "#920000", "#952C2C", "#BE1A1A", "majenta"];
+            var x = Math.floor((Math.random() * 5) + 1);
+            document.getElementById("err").style.color = color[x];
+
+        }
+        setInterval(eveSec, 800)
+    };
+</script>
 
 </html>
