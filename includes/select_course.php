@@ -13,7 +13,7 @@
             $_SESSION['current_course_name']=$result['course_name'];
             $_SESSION['current_course_duration']=$result['duration'];
             //echo($_SESSION['current_course_id'].' '.$_SESSION['current_course_name'].' '.$_SESSION['current_course_duration']);
-            header('location: useroptions.php');
+            header('location: useroptions');
             break;
         }
     }

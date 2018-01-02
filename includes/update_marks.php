@@ -23,7 +23,7 @@
         $update_auditing = "UPDATE auditing SET check_id=".$check_id." WHERE transaction_id=" . $_SESSION['check_transaction_id'];
         $update_auditing_run = mysqli_query($conn, $update_auditing);
         mysqli_commit($conn);
-        header('location: useroptions.php');
+        header('location: useroptions');
     } catch (Exception $e) {
         mysqli_rollback($conn);
         $al = new alert();
