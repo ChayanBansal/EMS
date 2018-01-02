@@ -208,7 +208,7 @@ class form_receive
 			if (!isset($_SESSION['remaining_attempts'])) {
 				$_SESSION['remaining_attempts'] = 4;
 			}
-			require("config");
+			require("config.php");
 			$form_input_check = new input_check();
 			$username = $form_input_check->input_safe($conn, $_POST['username']); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn, $_POST['password']));//preventing SQL injection //name of the input field should be password
@@ -263,7 +263,7 @@ class form_receive
 		$alert = new alert();
 		if (isset($_POST['superlogin'])) //check button click
 		{
-			require("config");
+			require("config.php");
 			$form_input_check = new input_check();
 			$username = md5($form_input_check->input_safe($conn, $_POST['username'])); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn, $_POST['password']));//preventing SQL injection //name of the input field should be password
@@ -563,7 +563,7 @@ class super_user_options
 						$username = $operator_username;
 						$name = $operator_name;
 						$send_pass = $temp_pass;
-						require('phpmailer/sending_mail');
+						require('phpmailer/sending_mail.php');
 					} else {
 						$er = new alert();
 						$er->exec("Error while creating new operator!", "danger");
