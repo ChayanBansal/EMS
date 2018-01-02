@@ -17,8 +17,7 @@
                 
         $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code IN
                     (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester.")";
-        $get_sub_id_run=mysqli_query($conn,$get_sub_id); 
-        
+       $get_sub_id_run=mysqli_query($conn,$get_sub_id); 
         while($sub_id=mysqli_fetch_assoc($get_sub_id_run)) //$sub_id['sub_id'] $sub_id['practical_flag'] $sub_id['credits_allotted']
         {
             if(($sub_id['practical_flag']==0) OR ($sub_id['practical_flag']==1))
@@ -35,7 +34,7 @@
                         }
                         else if($comp_marks['component_id']==2)
                         {
-                            $endsem=$comp_marks['marks'];
+                            $end_sem=$comp_marks['marks'];
                         }
                         else
                         {
@@ -69,7 +68,7 @@
                         }
                         else if($comp_marks['component_id']==4)
                         {
-                            $endsem=$comp_marks['marks'];
+                            $end_sem=$comp_marks['marks'];
                         }
                         else if($comp_marks['component_id']==5)
                         {
@@ -95,7 +94,7 @@
                     }
                 }
 
-                $total = $cat_cap_ia + $endsem;
+                $total = $cat_cap_ia + $end_sem;
                 $percentage = (($total*100)/100);
 
                 if ($percentage >= 91 and $percentage <= 100) 
@@ -155,8 +154,8 @@
 					$gpv = $gp * $cr;
 				}
 
-                $insert_tr="INSERT INTO tr (roll_id, sub_id, cat_cap_ia, endsem, total, percent, grade, gp, cr, gpv) 
-                    VALUES(".$roll_id['roll_id'].", ".$sub_id['sub_id'].", ".$cat_cap_ia.", ".$endsem.", ".$total.", ".$percentage.", '".$grade."', ".$gp.", ".$cr.", ".$gpv.")";
+                $insert_tr="INSERT INTO tr (roll_id, sub_id, cat_cap_ia, end_sem, total, percent, grade, gp, cr, gpv) 
+                    VALUES(".$roll_id['roll_id'].", ".$sub_id['sub_id'].", ".$cat_cap_ia.", ".$end_sem.", ".$total.", ".$percentage.", '".$grade."', ".$gp.", ".$cr.", ".$gpv.")";
                 $insert_tr_run=mysqli_query($conn,$insert_tr);
                 //An entry in a practical or theory subject done till here 
 
