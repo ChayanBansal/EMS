@@ -1,7 +1,7 @@
 <?php
     session_start();
     require('config.php');
-    if(iset($_POST['tab_submit']))
+    if(isset($_POST['tab_submit']))
     {
         $semester=$_POST['tab_submit'];//Button's value which is clicked 
         $from_year=$_SESSION['from_year']; //Selected batch relevant to the tr
