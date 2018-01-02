@@ -275,7 +275,7 @@
                 $_SESSION['tr_generated']=TRUE;
                 //mysqli_commit($conn);
                 //mysqli_close($conn);
-                header('location: super_home.php');
+                header('location: super_home');
             }
             else
             {
@@ -283,12 +283,12 @@
                 //mysqli_rollback($conn);
                 //mysqli_close($conn);
                 
-                header('location: super_home.php');
+                header('location: super_home');
             }
         }
     }
     else
     {
-        header('location: t%g%e%n%e%r%t%e%t%r.php');
+        header('location: 404.html');
     }
 ?>

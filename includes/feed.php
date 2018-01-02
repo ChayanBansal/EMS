@@ -15,7 +15,7 @@ if (isset($_POST['proceed_to_feed'])) {
         $count = mysqli_fetch_assoc($check_exists_audit_qry_run);
         if ($count['count'] > 0) {
             $_SESSION['marks_entered_audit'] = true;
-            header('location: /ems/includes/useroptions.php');
+            header('location: /ems/includes/useroptions');
         }
     }
     $get_sub_id_qry = "SELECT cd.sub_id from component_distribution cd,sub_distribution sd where cd.sub_id=sd.sub_id and component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
