@@ -82,11 +82,11 @@ $options->unlock_operator($conn);
   }
 </script>
 <div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion">
-  <h3>Recent Activities</h3>
+  <h3><center>Recent Activities</center></h3>
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#marks_feeding">Marks Feeding</a>
+          <a data-toggle="collapse" data-parent="#accordion" href="#marks_feeding"><center>Marks Feeding</center></a>
         </h4>
       </div>
       <div id="marks_feeding" class="panel-collapse collapse in">
@@ -99,7 +99,7 @@ $options->unlock_operator($conn);
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#marks_checking">Marks Checking</a>
+          <a data-toggle="collapse" data-parent="#accordion" href="#marks_checking"><center>Marks Checking</center></a>
         </h4>
       </div>
       <div id="marks_checking" class="panel-collapse collapse">
