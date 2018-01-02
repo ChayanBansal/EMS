@@ -16,7 +16,7 @@ if (isset($_POST["check_button"])) {
         if(!is_null($check_detail['check_id']))
         {
             $_SESSION['already_checked']=true;
-            header('location: useroptions.php');
+            header('location: useroptions');
         }
     }
     $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "'";
