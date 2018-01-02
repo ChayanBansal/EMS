@@ -50,8 +50,8 @@ if (isset($_POST["check_button"])) {
     <title>Check & Verify</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        .remarks{
-            border: 4px solid #581CA0 !important;
+         .remarks{
+            border: 1px dashed #581CA0 !important;
             border-radius: 7px;
             padding: 20px;
         }
@@ -117,6 +117,8 @@ if (isset($_POST["check_button"])) {
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+$validate=new validate();
+$validate->conf_logged_in();
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(4, ["home.php", "index.php", "useroptions.php", "developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
@@ -186,7 +188,7 @@ $input_btn = new input_button();
 
         ?>
       <span id="controls"><center><?php
-                                    echo('<input type="submit" class="btn btn-primary" name="check_done" value="Submit All">');//$btn->display_btn("", "btn btn-primary", "submit", "check_done", "", "Submit All"); ?></span> <!--($id, $class, $type, $name, $onclick, $value-->
+                                    echo('<button type="submit" class="btn btn-primary" name="check_done">Submit All</button>');//$btn->display_btn("", "btn btn-primary", "submit", "check_done", "", "Submit All"); ?></span> <!--($id, $class, $type, $name, $onclick, $value-->
       </center></div>
       
   </div>

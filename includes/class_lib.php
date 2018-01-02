@@ -208,7 +208,7 @@ class form_receive
 			if (!isset($_SESSION['remaining_attempts'])) {
 				$_SESSION['remaining_attempts'] = 4;
 			}
-			require("config.php");
+			require("config");
 			$form_input_check = new input_check();
 			$username = $form_input_check->input_safe($conn, $_POST['username']); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn, $_POST['password']));//preventing SQL injection //name of the input field should be password
@@ -231,7 +231,7 @@ class form_receive
 						$_SESSION['operator_username'] = $username;
 						$update_operator_active_qry = "UPDATE operators set operator_active=1 where operator_id=" . $_SESSION['operator_id'];
 						$update_operator_active_qry_run = mysqli_query($conn, $update_operator_active_qry);
-						header('location: /ems/includes/home.php');
+						header('location: /ems/includes/home');
 						unset($_SESSION['remaining_attempts']);
 					} else {
 						$_SESSION['remaining_attempts']--;
@@ -263,7 +263,7 @@ class form_receive
 		$alert = new alert();
 		if (isset($_POST['superlogin'])) //check button click
 		{
-			require("config.php");
+			require("config");
 			$form_input_check = new input_check();
 			$username = md5($form_input_check->input_safe($conn, $_POST['username'])); //preventing SQL injection //name of the input field should be username
 			$password = md5($form_input_check->input_safe($conn, $_POST['password']));//preventing SQL injection //name of the input field should be password
@@ -278,7 +278,7 @@ class form_receive
 					$_SESSION['super_admin_id'] = $operator_data['super_admin_id'];
 					$_SESSION['super_admin_name'] = $operator_data['super_admin_name'];
 					$_SESSION['super_admin_username'] = $username;
-					header('location: /ems/includes/super_home.php');
+					header('location: /ems/includes/super_home');
 				} else {
 					$alert->exec("Please check your username or password!", "danger");
 				}
@@ -302,7 +302,7 @@ class course
 	function display($conn)
 	{
 		echo ('<div class="display_courses">
-			<form action="select_course.php" method="post"> 
+			<form action="select_course" method="post"> 
 				<div class="tcaption"> 	COURSE SELECTION <br></div>');
 				//UG list
 		$ug_list_query = "SELECT * FROM courses where level_id=1";
@@ -563,7 +563,7 @@ class super_user_options
 						$username = $operator_username;
 						$name = $operator_name;
 						$send_pass = $temp_pass;
-						require('phpmailer/sending_mail.php');
+						require('phpmailer/sending_mail');
 					} else {
 						$er = new alert();
 						$er->exec("Error while creating new operator!", "danger");
@@ -701,13 +701,13 @@ class useroptions
 	{
 		if (isset($_POST['generate'])) {
 			$_SESSION['selected_semester'] = $_POST['semester'];
-			header('location: generate.php');
+			header('location: generate');
 		} else if (isset($_POST['feed'])) {
 			$_SESSION['selected_semester'] = $_POST['semester'];
-			header('location: feed.php');
+			header('location: feed');
 		} else if (isset($_POST['view'])) {
 			$_SESSION['selected_semester'] = $_POST['semester'];
-			header('location: view.php');
+			header('location: view');
 		}
 	}
 	function insert_marks($conn)
@@ -747,10 +747,10 @@ class useroptions
 				$_SESSION['score_entered_success'] = true;
 				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['from_year'] . "," . $_SESSION['current_course_id'] . "," . $_SESSION['semester'] . ",'" . $_SESSION['sub_code'] . "'," . $transaction_id . ",NULL,$component_id,$atkt_flag)";
 				$audit_qry_run = mysqli_query($conn, $audit_qry);
-				header('location: /ems/includes/useroptions.php');
+				header('location: /ems/includes/useroptions');
 			} else {
 				$_SESSION['score_entered_success'] = false;
-				header('location: /ems/includes/useroptions.php');
+				header('location: /ems/includes/useroptions');
 			}
 		}
 
@@ -838,14 +838,14 @@ class validate
 	function conf_logged_in()
 	{
 		if (!isset($_SESSION['operator_id'])) {
-			header('location: /ems/index.php');
+			header('location: /ems/index');
 		} else {
 			echo ('<script>startTimer();</script>');
 		}
 	}
 	function conf_logged_in_super(){
 		if (!isset($_SESSION['super_admin_id'])) {
-			header('location: /ems/index.php');
+			header('location: /ems/index');
 		} else {
 			echo ('<script>startTimer();</script>');
 		}
@@ -882,7 +882,7 @@ class change_password
 				$update_run = mysqli_query($conn, $update_query);
 				if ($update_run) {
 					session_destroy();
-					echo "<script type='text/javascript'>document.location.href='/ems/index.php';</script>";
+					echo "<script type='text/javascript'>document.location.href='/ems/index';</script>";
 				} else {
 					$alert->exec("Unable to change password! Please try again..", "danger");
 				}
@@ -1042,7 +1042,7 @@ class students
 			</form>
 		</div>
 	</div>
-		<form action="generate.php" method="post">
+		<form action="generate" method="post">
 		<div class="list" style="font-family: "Helvetica Neue", Helvetica, Arial, serif !important">
 			<table class="table table-striped">
 				<thead>
@@ -1096,7 +1096,7 @@ class students
 	{
 		if (isset($_POST['feednow'])) {
 			$_SESSION['view_enroll'] = $_POST['feednow'];
-			header('location: feed.php');
+			header('location: feed');
 		}
 	}
 	function disp_tr($conn)
