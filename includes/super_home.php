@@ -404,10 +404,9 @@ $options->unlock_operator($conn);
             <table class="table table-striped table-bordered" style="width: 100%">
     <thead>
       <tr style="text-align:center">
-        <th>Course ID</th>
         <th>Course Type</th>
         <th>Course Name</th>
-		<th>Duration</th>
+		    <th>Duration</th>
 	  </tr>
     </thead>
     <tbody>
@@ -418,7 +417,6 @@ $options->unlock_operator($conn);
             if ($get_course_qry_run) {
               while ($course = mysqli_fetch_assoc($get_course_qry_run)) {
                 echo ('<tr style="text-align:center">
-                        <td>' . $course['course_id'] . '</td>
                         <td>');
                 if ($course['level_id'] == 1) {
                   echo ("Undergraduate");
