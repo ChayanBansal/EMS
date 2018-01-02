@@ -1463,7 +1463,7 @@ class csrf_token
 		$_SESSION['token']=mt_rand(1000000000,9999999999);
 	}
 
-	function hidden_input($_SESSION['token'])
+	function hidden_input($token)
 	{
 		echo('<input name="%t%o%k%e%n" type="hidden" value="'.$_SESSION['token'].'"');
 	}
