@@ -276,13 +276,19 @@
                 $_SESSION['tr_generated']=TRUE;
                 mysqli_commit($conn);
                 mysqli_close($conn);
+                header('location: generate_tr.php');
             }
             else
             {
                 $_SESSION['tr_generated']=FALSE;
                 mysqli_rollback($conn);
                 mysqli_close($conn);
+                header('location: generate_tr.php');
             }
         }
+    }
+    else
+    {
+        header('location: t%g%e%n%e%r%t%e%t%r.php');
     }
 ?>
