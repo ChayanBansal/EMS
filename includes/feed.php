@@ -98,7 +98,7 @@ require("frontend_lib.php");
 require("class_lib.php");
 $validate=new validate();
 $validate->conf_logged_in();
-$options = new useroptions();
+$options = new useroptions(); //inserting marks
 $options->insert_marks($conn);
 $obj = new head();
 $obj->displayheader();
@@ -136,31 +136,78 @@ $input = new input_field();
     </thead>
     <tbody id="student_table">
     <?php
-    if ($_SESSION['main_atkt'] == "main") {
-        $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,roll_list r where course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
-    } else if ($_SESSION['main_atkt'] == "atkt") {
-        $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,atkt_list r where course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
-    }
-    $get_stud_qry_run = mysqli_query($conn, $get_stud_qry);
-    if ($get_stud_qry_run) {
-        $row_count = 1;
-        while ($row = mysqli_fetch_assoc($get_stud_qry_run)) {
-            echo ('<tr>
-                <td>' . $row['enrol_no'] . '</td>
-                  <td>' . $row['first_name'] . " " . $row['last_name'] . '</td>
-                  <td>' . $row['father_name'] . '</td>
-                  <td>');
-            $input->display_table("enrol", "form-control", "number", "score" . $row_count, "", 1, 0, $_SESSION['max_marks'], 0, $_SESSION['max_marks']);
-            $_SESSION['roll_id' . $row_count] = $row['roll_id'];
-            echo ('</td>
-                </tr>
-                ');
-            $row_count++;
+    $get_elective_flag="SELECT elective_flag FROM subjects WHERE sub_code='".$_SESSION['sub_code']."'";
+    $get_elective_flag_run=mysqli_query($conn,$get_elective_flag);
+    $elective_flag=mysqli_fetch_assoc($get_elective_flag_run);
+    if($elective_flag['elective_flag']==0)
+    {
+        if ($_SESSION['main_atkt'] == "main") {
+            $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,roll_list r where course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
+        } else if ($_SESSION['main_atkt'] == "atkt") {
+            $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,atkt_list r where course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
         }
-        $_SESSION['num_rows'] = mysqli_num_rows($get_stud_qry_run);
-    } else {
-        $alert = new alert();
-        $alert->exec("Unable to fetch roll list!", "warning");
+        $get_stud_qry_run = mysqli_query($conn, $get_stud_qry);
+        if ($get_stud_qry_run) {
+            $row_count = 1;
+            while ($row = mysqli_fetch_assoc($get_stud_qry_run)) {
+                echo ('<tr>
+                    <td>' . $row['enrol_no'] . '</td>
+                    <td>' . $row['first_name'] . " " . $row['last_name'] . '</td>
+                    <td>' . $row['father_name'] . '</td>
+                    <td>');
+                $input->display_table("enrol", "form-control", "number", "score" . $row_count, "", 1, 0, $_SESSION['max_marks'], 0, $_SESSION['max_marks']);
+                $_SESSION['roll_id' . $row_count] = $row['roll_id'];
+                echo ('</td>
+                    </tr>
+                    ');
+                $row_count++;
+            }
+            $_SESSION['num_rows'] = mysqli_num_rows($get_stud_qry_run);
+        } else {
+            $alert = new alert();
+            $alert->exec("Unable to fetch roll list!", "warning");
+        }
+    }
+    else
+    {
+        $sub_code=$_SESSION['sub_code'];
+        if ($_SESSION['main_atkt'] == "main") 
+        {
+            $get_student_list="SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, r.roll_id FROM students st, elective_map em, r.roll_list
+                            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='".$sub_code."' AND r.enrol_id=em.enrol_id 
+                            AND st.from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'];
+        }
+        else
+        {
+            $get_student_list="SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, atkt_r.roll_id FROM students st, elective_map em, atkt_r.roll_list
+            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='".$sub_code."' AND atkt_r.enrol_id=em.enrol_id 
+            AND st.from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'];
+        }
+        $get_student_list_run=mysqli_query($conn,$get_student_list);
+        if ($get_student_list_run==TRUE) 
+        {
+            $row_count = 1;
+            while ($row = mysqli_fetch_assoc($get_stud_qry_run)) 
+            {
+                echo ('<tr>
+                    <td>' . $row['enrol_no'] . '</td>
+                    <td>' . $row['first_name'] . " " . $row['last_name'] . '</td>
+                    <td>' . $row['father_name'] . '</td>
+                    <td>');
+                $input->display_table("enrol", "form-control", "number", "score" . $row_count, "", 1, 0, $_SESSION['max_marks'], 0, $_SESSION['max_marks']);
+                $_SESSION['roll_id' . $row_count] = $row['roll_id'];
+                echo ('</td>
+                    </tr>
+                    ');
+                $row_count++;
+            }
+            $_SESSION['num_rows'] = mysqli_num_rows($get_stud_qry_run);
+        } 
+        else
+        {
+            $alert = new alert();
+            $alert->exec("Unable to fetch roll list!", "warning");
+        }
     }
     ?>  
       
