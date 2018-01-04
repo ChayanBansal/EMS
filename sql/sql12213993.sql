@@ -2,9 +2,9 @@
 -- version 4.7.1
 -- https://www.phpmyadmin.net/
 --
--- Host: sql2.freemysqlhosting.net
--- Generation Time: Dec 23, 2017 at 07:40 AM
--- Server version: 5.5.54-0ubuntu0.12.04.1
+-- Host: sql12.freemysqlhosting.net
+-- Generation Time: Jan 04, 2018 at 10:20 AM
+-- Server version: 5.5.58-0ubuntu0.14.04.1
 -- PHP Version: 7.0.22-0ubuntu0.16.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -19,8 +19,28 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `sql2211945`
+-- Database: `sql12213993`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `academic_sessions`
+--
+
+CREATE TABLE `academic_sessions` (
+  `from_year` year(4) NOT NULL,
+  `course_id` int(5) NOT NULL,
+  `current_semester` int(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `academic_sessions`
+--
+
+INSERT INTO `academic_sessions` (`from_year`, `course_id`, `current_semester`) VALUES
+(2016, 1, 3),
+(2017, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -51,16 +71,18 @@ CREATE TABLE `atkt_subjects` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `audit`
+-- Table structure for table `auditing`
 --
 
-CREATE TABLE `audit` (
+CREATE TABLE `auditing` (
   `from_year` year(4) NOT NULL,
   `course_id` int(3) NOT NULL,
   `semester` int(1) NOT NULL,
-  `sub_id` int(5) NOT NULL,
+  `sub_code` varchar(12) NOT NULL,
   `transaction_id` int(11) NOT NULL,
-  `check_id` int(11) NOT NULL
+  `check_id` int(11) DEFAULT '0',
+  `component_id` int(2) NOT NULL,
+  `atkt_flag` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -86,6 +108,18 @@ CREATE TABLE `component` (
   `component_id` int(2) NOT NULL,
   `component_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `component`
+--
+
+INSERT INTO `component` (`component_id`, `component_name`) VALUES
+(1, 'Continuous Assessment Theory '),
+(2, 'End Semester Theory'),
+(3, 'Continuous Assessment Practical'),
+(4, 'End Semester Practical'),
+(5, 'Industry Assessment'),
+(6, 'Internal Examination');
 
 -- --------------------------------------------------------
 
@@ -124,6 +158,38 @@ CREATE TABLE `course_level` (
   `level_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `course_level`
+--
+
+INSERT INTO `course_level` (`level_id`, `level_name`) VALUES
+(1, 'Undergraduate'),
+(2, 'Postgraduate'),
+(3, 'Test');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `detained_subject`
+--
+
+CREATE TABLE `detained_subject` (
+  `enrol_no` varchar(12) NOT NULL,
+  `semester` int(1) NOT NULL,
+  `detained_sub_id` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `elective_map`
+--
+
+CREATE TABLE `elective_map` (
+  `enrol_no` varchar(12) NOT NULL,
+  `elective_sub_code` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 -- --------------------------------------------------------
 
 --
@@ -138,6 +204,13 @@ CREATE TABLE `exam_summary` (
   `result_withheld` tinyint(1) NOT NULL,
   `remarks` varchar(500) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `exam_summary`
+--
+
+INSERT INTO `exam_summary` (`roll_id`, `total_credits_earned`, `total_gpv_earned`, `sgpa`, `result_withheld`, `remarks`) VALUES
+(3001, 26, 251, '9.6538', 0, '');
 
 -- --------------------------------------------------------
 
@@ -172,19 +245,11 @@ CREATE TABLE `operators` (
 --
 
 INSERT INTO `operators` (`operator_id`, `operator_name`, `operator_email`, `operator_username`, `operator_password`, `operator_active`, `locked`) VALUES
-(101, 'username', 'username@username', '14c4b06b824ec593239362517f538b29', '5f4dcc3b5aa765d61d8327deb882cf99', 0, 0),
-(102, 'Chayan', 'bansalc10@gmail.com', 'asdf', 'pass', 0, 0),
-(103, 'Chayan', 'bansalc10@gmail.com', 'baCh', '167c138724d667719e638176fcb112c2', 0, 0),
-(104, 'Chayan', 'bansalc10@gmail.com', 'baCh', '09aac8b2fb3018fef93ffc0af965c4ed', 0, 0),
-(105, 'Chayan', 'bansalc10@gmail.com', 'baCh', '5019e42e0efe8fb560f761eae0f5c36e', 0, 0),
-(106, 'Chayan', 'bansalc10@gmail.com', 'baCh', 'fce23b741b661e942ae1121d13fc7a3b', 0, 0),
-(107, 'Chayan', 'bansalc10@gmail.com', 'baCh', '7536871939f3085ab4365e1eb115003c', 0, 0),
-(108, 'Chayan', 'bansalc10@gmail.com', 'baCh', '957e274f9d978c3c148e8020eb1cb163', 0, 0),
-(109, 'Chayan', 'bansalc10@gmail.com', 'baCh', 'f34d4a65026f8e6d21324368b5099494', 0, 0),
-(110, 'Chayan', 'bansalc10@gmail.com', 'baCh', '25680993a7094c49d4bbf52b53b57153', 0, 0),
-(111, 'Chayan', 'bansalc10@gmail.com', 'baCh', '4521a2f44fcc4d67c0bada825d577c90', 0, 0),
-(112, 'Chayan', 'bansalc10@gmail.com', 'baCh', '61bf900d3cb39624ca31bc7a7650d96f', 0, 0),
-(113, 'Chayan', 'bansalc10@gmail.com', 'baCh', '3b7b80bc7a9fc09d7015bf872ddcc41b', 0, 0);
+(2, 'operator', 'operator', 'operator', '5f4dcc3b5aa765d61d8327deb882cf99', 0, 0),
+(3, 'raghav', 'raghav.mundhra3011@gmail.com', 'raghav.mundhra3011', '725a87af7097011ecdc3b9863fbdf240', 0, 0),
+(4, 'Samyak', 'captainsamyak@gmail.com', 'captainsamyak', '296a154b460501a3ca3144c9f8a9d1d7', 1, 0),
+(5, 'Samyak Jain', 'jainsamyak330@s.co', 'jainsamyak330', '5e3afa2252e7a70d135dd2447a112b22', 0, 0),
+(6, 'Chayan Bansal', 'bansalc10@gmail.com', 'bansalc10', '8d4e3889471088efdf90a25b548b1eb9', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -229,7 +294,7 @@ CREATE TABLE `students` (
   `mother_name` varchar(255) NOT NULL,
   `address` varchar(500) NOT NULL,
   `stud_mobile` varchar(10) NOT NULL,
-  `guardian_mobile` varchar(10) NOT NULL,
+  `guardian_mobile` varchar(10) DEFAULT NULL,
   `course_id` int(4) NOT NULL,
   `from_year` year(4) NOT NULL,
   `to_year` year(4) NOT NULL,
@@ -249,7 +314,9 @@ CREATE TABLE `subjects` (
   `sub_name` varchar(255) NOT NULL,
   `total_credits` int(2) NOT NULL,
   `semester` int(1) NOT NULL,
-  `ie_flag` int(11) NOT NULL
+  `ie_flag` int(11) NOT NULL,
+  `from_year` year(4) NOT NULL,
+  `elective_flag` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -284,7 +351,7 @@ CREATE TABLE `super_admin` (
 --
 
 INSERT INTO `super_admin` (`super_admin_id`, `super_admin_name`, `super_admin_email`, `super_admin_username`, `super_admin_password`) VALUES
-(1, 'SuperAdmin', 'super@test.com', '17c4520f6cfd1ab53d8745e84681eb49', '5f4dcc3b5aa765d61d8327deb882cf99');
+(1, 'SuperAdmin', 'super@test.com', '17c4520f6cfd1ab53d8745e84681eb49', '6f9dff5af05096ea9f23cc7bedd65683');
 
 -- --------------------------------------------------------
 
@@ -295,9 +362,11 @@ INSERT INTO `super_admin` (`super_admin_id`, `super_admin_name`, `super_admin_em
 CREATE TABLE `tr` (
   `roll_id` int(10) NOT NULL,
   `sub_id` int(5) NOT NULL,
-  `cat_cap_ia` decimal(7,4) NOT NULL,
-  `end_sem` decimal(7,4) NOT NULL,
+  `cat_cap_ia` decimal(7,4) DEFAULT NULL,
+  `end_sem` decimal(7,4) DEFAULT NULL,
+  `ie` decimal(7,4) DEFAULT NULL,
   `total` decimal(7,4) NOT NULL,
+  `percent` decimal(7,4) NOT NULL,
   `grade` char(2) NOT NULL,
   `gp` int(2) NOT NULL,
   `cr` int(2) NOT NULL,
@@ -322,6 +391,13 @@ CREATE TABLE `transactions` (
 --
 
 --
+-- Indexes for table `academic_sessions`
+--
+ALTER TABLE `academic_sessions`
+  ADD PRIMARY KEY (`from_year`,`course_id`),
+  ADD KEY `course_id` (`course_id`);
+
+--
 -- Indexes for table `atkt_list`
 --
 ALTER TABLE `atkt_list`
@@ -337,14 +413,14 @@ ALTER TABLE `atkt_subjects`
   ADD KEY `roll_id` (`roll_id`,`component_id`,`sub_id`);
 
 --
--- Indexes for table `audit`
+-- Indexes for table `auditing`
 --
-ALTER TABLE `audit`
-  ADD PRIMARY KEY (`from_year`,`course_id`,`semester`,`sub_id`),
+ALTER TABLE `auditing`
   ADD KEY `check_id` (`check_id`),
   ADD KEY `course_id` (`course_id`),
-  ADD KEY `sub_id` (`sub_id`),
-  ADD KEY `transaction_id` (`transaction_id`);
+  ADD KEY `transaction_id` (`transaction_id`),
+  ADD KEY `component_id` (`component_id`),
+  ADD KEY `sub_code` (`sub_code`);
 
 --
 -- Indexes for table `checking`
@@ -380,6 +456,20 @@ ALTER TABLE `course_level`
   ADD PRIMARY KEY (`level_id`);
 
 --
+-- Indexes for table `detained_subject`
+--
+ALTER TABLE `detained_subject`
+  ADD PRIMARY KEY (`enrol_no`,`semester`,`detained_sub_id`),
+  ADD KEY `detained_sub_id` (`detained_sub_id`);
+
+--
+-- Indexes for table `elective_map`
+--
+ALTER TABLE `elective_map`
+  ADD PRIMARY KEY (`enrol_no`,`elective_sub_code`),
+  ADD KEY `elective_sub_code` (`elective_sub_code`);
+
+--
 -- Indexes for table `exam_summary`
 --
 ALTER TABLE `exam_summary`
@@ -396,7 +486,8 @@ ALTER TABLE `failure_report`
 -- Indexes for table `operators`
 --
 ALTER TABLE `operators`
-  ADD PRIMARY KEY (`operator_id`);
+  ADD PRIMARY KEY (`operator_id`),
+  ADD UNIQUE KEY `operator_username` (`operator_username`);
 
 --
 -- Indexes for table `roll_list`
@@ -427,7 +518,8 @@ ALTER TABLE `students`
 --
 ALTER TABLE `subjects`
   ADD PRIMARY KEY (`sub_code`),
-  ADD KEY `course_id` (`course_id`);
+  ADD KEY `course_id` (`course_id`),
+  ADD KEY `from_year` (`from_year`);
 
 --
 -- Indexes for table `sub_distribution`
@@ -474,7 +566,7 @@ ALTER TABLE `checking`
 -- AUTO_INCREMENT for table `component`
 --
 ALTER TABLE `component`
-  MODIFY `component_id` int(2) NOT NULL AUTO_INCREMENT;
+  MODIFY `component_id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `courses`
 --
@@ -484,7 +576,7 @@ ALTER TABLE `courses`
 -- AUTO_INCREMENT for table `operators`
 --
 ALTER TABLE `operators`
-  MODIFY `operator_id` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `operator_id` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `sub_distribution`
 --
@@ -512,96 +604,24 @@ ALTER TABLE `atkt_list`
   ADD CONSTRAINT `atkt_list_ibfk_1` FOREIGN KEY (`enrol_no`) REFERENCES `students` (`enrol_no`);
 
 --
--- Constraints for table `atkt_subjects`
+-- Constraints for table `detained_subject`
 --
-ALTER TABLE `atkt_subjects`
-  ADD CONSTRAINT `atkt_subjects_ibfk_1` FOREIGN KEY (`roll_id`,`component_id`,`sub_id`) REFERENCES `failure_report` (`roll_id`, `component_id`, `sub_id`);
+ALTER TABLE `detained_subject`
+  ADD CONSTRAINT `detained_subject_ibfk_2` FOREIGN KEY (`detained_sub_id`) REFERENCES `sub_distribution` (`sub_id`),
+  ADD CONSTRAINT `detained_subject_ibfk_1` FOREIGN KEY (`enrol_no`) REFERENCES `students` (`enrol_no`);
 
 --
--- Constraints for table `audit`
+-- Constraints for table `elective_map`
 --
-ALTER TABLE `audit`
-  ADD CONSTRAINT `audit_ibfk_1` FOREIGN KEY (`check_id`) REFERENCES `checking` (`check_id`),
-  ADD CONSTRAINT `audit_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`),
-  ADD CONSTRAINT `audit_ibfk_3` FOREIGN KEY (`sub_id`) REFERENCES `sub_distribution` (`sub_id`),
-  ADD CONSTRAINT `audit_ibfk_4` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`);
-
---
--- Constraints for table `checking`
---
-ALTER TABLE `checking`
-  ADD CONSTRAINT `checking_ibfk_1` FOREIGN KEY (`operator_id`) REFERENCES `operators` (`operator_id`);
-
---
--- Constraints for table `component_distribution`
---
-ALTER TABLE `component_distribution`
-  ADD CONSTRAINT `component_distribution_ibfk_1` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`),
-  ADD CONSTRAINT `component_distribution_ibfk_2` FOREIGN KEY (`sub_id`) REFERENCES `sub_distribution` (`sub_id`);
-
---
--- Constraints for table `courses`
---
-ALTER TABLE `courses`
-  ADD CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`level_id`) REFERENCES `course_level` (`level_id`);
-
---
--- Constraints for table `exam_summary`
---
-ALTER TABLE `exam_summary`
-  ADD CONSTRAINT `exam_summary_ibfk_1` FOREIGN KEY (`roll_id`) REFERENCES `roll_list` (`roll_id`);
-
---
--- Constraints for table `failure_report`
---
-ALTER TABLE `failure_report`
-  ADD CONSTRAINT `failure_report_ibfk_1` FOREIGN KEY (`roll_id`,`component_id`,`sub_id`) REFERENCES `score` (`roll_id`, `component_id`, `sub_id`);
-
---
--- Constraints for table `roll_list`
---
-ALTER TABLE `roll_list`
-  ADD CONSTRAINT `roll_list_ibfk_1` FOREIGN KEY (`enrol_no`) REFERENCES `students` (`enrol_no`);
-
---
--- Constraints for table `score`
---
-ALTER TABLE `score`
-  ADD CONSTRAINT `score_ibfk_1` FOREIGN KEY (`roll_id`) REFERENCES `roll_list` (`roll_id`),
-  ADD CONSTRAINT `score_ibfk_3` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`),
-  ADD CONSTRAINT `score_ibfk_4` FOREIGN KEY (`check_id`) REFERENCES `checking` (`check_id`),
-  ADD CONSTRAINT `score_ibfk_5` FOREIGN KEY (`component_id`,`sub_id`) REFERENCES `component_distribution` (`component_id`, `sub_id`);
-
---
--- Constraints for table `students`
---
-ALTER TABLE `students`
-  ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`);
+ALTER TABLE `elective_map`
+  ADD CONSTRAINT `elective_map_ibfk_2` FOREIGN KEY (`elective_sub_code`) REFERENCES `subjects` (`sub_code`),
+  ADD CONSTRAINT `elective_map_ibfk_1` FOREIGN KEY (`enrol_no`) REFERENCES `students` (`enrol_no`);
 
 --
 -- Constraints for table `subjects`
 --
 ALTER TABLE `subjects`
-  ADD CONSTRAINT `subjects_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`course_id`);
-
---
--- Constraints for table `sub_distribution`
---
-ALTER TABLE `sub_distribution`
-  ADD CONSTRAINT `sub_distribution_ibfk_1` FOREIGN KEY (`sub_code`) REFERENCES `subjects` (`sub_code`);
-
---
--- Constraints for table `tr`
---
-ALTER TABLE `tr`
-  ADD CONSTRAINT `tr_ibfk_1` FOREIGN KEY (`roll_id`) REFERENCES `roll_list` (`roll_id`),
-  ADD CONSTRAINT `tr_ibfk_2` FOREIGN KEY (`sub_id`) REFERENCES `sub_distribution` (`sub_id`);
-
---
--- Constraints for table `transactions`
---
-ALTER TABLE `transactions`
-  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`operator_id`) REFERENCES `operators` (`operator_id`);
+  ADD CONSTRAINT `subjects_ibfk_1` FOREIGN KEY (`from_year`) REFERENCES `academic_sessions` (`from_year`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
