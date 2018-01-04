@@ -10,10 +10,8 @@
 <body>
     <?php
     session_start();
-    $temp_token=$_SESSION['token_login'];
     session_destroy();
     session_start();
-    $_SESSION['token_login']=$temp_token;
     require_once("includes/config.php");
     require("includes/frontend_lib.php");
     require("includes/class_lib.php");
@@ -40,7 +38,6 @@
 				 <div class="field" id="f2"><span class="glyphicon glyphicon-lock"></span>
                  <?php
                  $password->display_w_js("","","password","password","Password","1","change3()","change4()");
-                 $token->hidden_input($_SESSION['token_login']);
                  ?>
                  </div>
 				 <div class="field">

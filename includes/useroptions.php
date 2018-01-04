@@ -178,7 +178,7 @@ function getType(batch){
 	success: function(data){
         $("#exam_type").html(data);
         $("#sem_list").html("<option value=''>Select Semester</option>");
-        $("#sub_list").html(" <option value=''>Select Subject</option>");
+        $("#sub_list").html("<option value=''>Select Subject</option>");
         $("#sub_component").html("<option value=''>Select Component</option>");
     },
     error: function(e){
@@ -194,7 +194,7 @@ function getSemester(examType) {
 	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch+'&getType=0&getSubject=0&getComponent=0',
 	success: function(data){
         $("#sem_list").html(data);
-        $("#sub_list").html(" <option value=''>Select Subject</option>");
+        $("#sub_list").html("<option value=''>Select Subject</option>");
         $("#sub_component").html("<option value=''>Select Component</option>");
     },
     error: function(e){
