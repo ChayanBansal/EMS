@@ -13,12 +13,12 @@ if($_POST['getType']==1)
         $result=mysqli_fetch_assoc($get_semester_run);
         if($result['current_semester']==1)
         {
-            echo('<option value="">Select Type</option>');
+            echo('<option value="" disabled selected>Select Type</option>');
             echo('<option value="main" >Main</option>');
         }
         else
         {
-            echo('<option value="">Select Type</option>');
+            echo('<option value="" disabled selected>Select Type</option>');
             echo('<option value="main" >Main</option>');
             echo('<option value="atkt" >ATKT</option>');
         }
@@ -28,7 +28,7 @@ if($_POST['getSemester']==1)
 {
     if($_POST['from_year'] AND $_POST['main_atkt'])
     {
-        echo('<option value="">Select Semester</option>');
+        echo('<option value="" disabled selected>Select Semester</option>');
         $from_year=$_POST['from_year'];
         $examType=$_POST['main_atkt'];
         if($examType=='main')
@@ -85,7 +85,7 @@ if($_POST['getSubject']==1)
 //data: 'getSubject=0'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getComponent=1&getSemester=0'+'&sub_code='+sub_code,
 if($_POST['getComponent']) 
 {
-    echo('<option value="">Select Component</option>');
+    echo('<option value="" disabled selected>Select Component</option>');
     if($_POST['from_year'] AND $_POST['main_atkt'] AND $_POST['semester'] AND $_POST['sub_code'])
     {    
         if($_POST['main_atkt']=='main')
