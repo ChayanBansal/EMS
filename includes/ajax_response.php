@@ -110,7 +110,7 @@ if($_POST['getComponent'])
                 }
                 else
                 {
-                    echo('<option value="'.$sub_comp['component_id'].'" disabled>'.$sub_comp['component_name'].' (Already filled)</option>');
+                    echo('<option class="glyphicon" value="'.$sub_comp['component_id'].'" disabled>'.$sub_comp['component_name'].' (Already filled &#xe013;)</option>');
                 }
             }   
         }
