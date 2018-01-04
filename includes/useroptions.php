@@ -346,7 +346,7 @@ function getComponent(sub_code)
     <?php
     $get_check_list = "SELECT A.*, T.operator_id FROM auditing A, transactions T WHERE A.transaction_id=T.transaction_id AND A.course_id=" . $_SESSION['current_course_id'];
     $get_check_list_run = mysqli_query($conn, $get_check_list);
-    echo ('<form action="checking.php" method="post">');
+    echo ('<form action="checking" method="post">');
     while ($check_list = mysqli_fetch_assoc($get_check_list_run)) {
         if ($check_list["check_id"] == null) {
             echo ('<tr class="danger">');

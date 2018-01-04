@@ -71,6 +71,7 @@ input:focus{
     margin-bottom: 20px;
     width: 100%;
     font-size: 30px;
+    text-align: -webkit-center;
     height: 50px;
     font-weight: 800;
     color:whitesmoke;
