@@ -280,6 +280,8 @@ class form_receive
 					$_SESSION['super_admin_id'] = $operator_data['super_admin_id'];
 					$_SESSION['super_admin_name'] = $operator_data['super_admin_name'];
 					$_SESSION['super_admin_username'] = $username;
+					$update_active="UPDATE super_admin SET active_flag=1 WHERE super_admin_id=".$operator_data['super_admin_id'];
+					$update_active=mysqli_query($conn,$update_active);
 					$token = new csrf_token();
 					$token->create_token();
 					header('location: /ems/includes/super_home');

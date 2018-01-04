@@ -17,6 +17,13 @@
       height: 100%;
       margin-bottom: 70px;
     }
+    #accordion2{
+      display: block;
+      padding: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+      margin-bottom: 70px;
+    }
     </style>
 </head>
 <body onload="get_recent_act()">
@@ -64,6 +71,7 @@ $options->unlock_operator($conn);
   {
     get_check_act();
     get_feed_act();
+    chat();
   }
   
   function get_check_act()
@@ -94,9 +102,41 @@ $options->unlock_operator($conn);
     }
 	});
   }
+
+
+  function chat()
+  {
+  $.ajax({
+	type: "POST",
+	url: "chat",
+	data: 'chat=1&ed49c3fed75a513a79cb8bd1d4715d57=1',
+	success: function(data){
+        $("#chat").html(data);
+    },
+    error: function(e){
+      $("#chat").html("Unable to load recent activities");
+    }
+	});
+  }
+
+  function sendMessage(value)
+  {
+    msg=document.getElementById(value).value;
+  $.ajax({
+	type: "POST",
+	url: "chat",
+	data: 'chat=0&sendmsg=1&ed49c3fed75a513a79cb8bd1d4715d57=1&receiver='+value+'&msg='+msg,
+	success: function(data){
+        $("#chat").html(data);
+    },
+    error: function(e){
+      $("#chat").html("Unable to load recent activities");
+    }
+	});
+  }
 </script>
-<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion">
-  <h3><center>Recent Activities</center></h3>
+<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion" >
+   <h3><center>Recent Activities</center></h3>
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
@@ -122,13 +162,23 @@ $options->unlock_operator($conn);
           </ul>
         </div>
       </div>
-    </div>
-    
-    </div>
-   
+    </div>   
+</div>
 
-  </div>
+
     
+
+    <!--ChatBox-->
+    <div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
+   <h3><center>Chat</center></h3>
+    <div id="chat">
+    </div>   
+</div>
+    <!--ChatBoxEnd-->
+
+
+
+
     <div class="main-container col-lg-9 col-md-8 col-sm-12 col-xs-12 ">
     <div class="sub-container col-lg-8 col-md-10 col-sm-12">
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">

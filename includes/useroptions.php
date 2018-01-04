@@ -115,10 +115,17 @@
     th{
         text-align: center;
     }
+    #accordion2{
+      display: block;
+      padding: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+      margin-bottom: 70px;
+    }
 
     </style>
 </head>
-<body>
+<body onload="chat()">
 <?php
 session_start();
 require("config.php");
@@ -238,7 +245,45 @@ function getComponent(sub_code)
     }
 	});
 }
+
+function chat()
+  {
+  $.ajax({
+	type: "POST",
+	url: "chat",
+	data: 'chat=1&ed49c3fed75a513a79cb8bd1d4715d57=0',
+	success: function(data){
+        $("#chat").html(data);
+    },
+    error: function(e){
+      $("#chat").html("Unable to load recent activities");
+    }
+	});
+  }
+
+  function sendMessage(value)
+  {
+    msg=document.getElementById(value).value;
+  $.ajax({
+	type: "POST",
+	url: "chat",
+	data: 'chat=0&sendmsg=1&ed49c3fed75a513a79cb8bd1d4715d57=0&receiver='+value+'&msg='+msg,
+	success: function(data){
+        $("#chat").html(data);
+    },
+    error: function(e){
+      $("#chat").html("Unable to load recent activities");
+    }
+	});
+  }
 </script>
+<!--ChatBox-->
+<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
+   <h3><center>Chat</center></h3>
+    <div id="chat">
+    </div>   
+</div>
+    <!--ChatBoxEnd-->
 
 <div class="main-container col-md-12">
     <div class="sub-container col-lg-5 col-xs-12 col-sm-12 col-md-8">
