@@ -129,7 +129,7 @@ $input = new input_field();
 $input_btn = new input_button();
 ?>
  <div id="err"></div>
- <form action="update_marks.php<?php /*echo($_SESSION['PHP_SELF']);*/?>" method="post">
+ <form action="update_marks" method="post">
      <div class="feed-container">
         <div class="subselected">
         <div class="subtitle">

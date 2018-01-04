@@ -173,7 +173,7 @@ $options->check_opt();*/
 function getType(batch){
     $.ajax({
 	type: "POST",
-	url: "ajax_response.php",
+	url: "ajax_response",
 	data: 'from_year='+batch+'&getType=1&getSemester=0&getSubject=0&getComponent=0',
 	success: function(data){
         $("#exam_type").html(data);
@@ -190,7 +190,7 @@ function getSemester(examType) {
 	var batch=document.getElementById("batch_list").value;
     $.ajax({
 	type: "POST",
-	url: "ajax_response.php",
+	url: "ajax_response",
 	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch+'&getType=0&getSubject=0&getComponent=0',
 	success: function(data){
         $("#sem_list").html(data);
@@ -209,7 +209,7 @@ function getSubject(semester)
     var main_atkt=document.getElementById("exam_type").value;
     $.ajax({
 	type: "POST",
-	url: "ajax_response.php",
+	url: "ajax_response",
 	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getSemester=0&getComponent=0',
 	success: function(data){
         $("#sub_list").html(data);
@@ -228,7 +228,7 @@ function getComponent(sub_code)
     var semester=document.getElementById("sub_list").value;
     $.ajax({
 	type: "POST",
-	url: "ajax_response.php",
+	url: "ajax_response",
 	data: 'getSubject=0'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getComponent=1&getSemester=0'+'&sub_code='+sub_code,
 	success: function(data){
         $("#sub_component").html(data);
@@ -255,7 +255,7 @@ function getComponent(sub_code)
   <div class="modal-dialog">
   
     <!-- Modal content-->
-    <form action="feed.php" method="post">
+    <form action="feed" method="post">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>

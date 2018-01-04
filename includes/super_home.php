@@ -42,7 +42,7 @@ if(isset($_SESSION['tr_generated'])){
 }
 $obj = new head();
 $obj->displayheader();
-$obj->dispmenu(3, ["/ems/includes/super_home.php", "/ems/includes/logout_super.php", "/ems/includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
+$obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "");
 $options = new super_user_options();
@@ -472,7 +472,7 @@ $options->unlock_operator($conn);
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Fill in the following details</h4>
           </div>
-          <form action="generate_tr.php" method="post" onsubmit="return disable_on_submitbtn()">
+          <form action="generate_tr" method="post" onsubmit="return disable_on_submitbtn()">
           <div class="modal-body">
           <?php
           $input = new input_field();
@@ -643,7 +643,7 @@ $options->unlock_operator($conn);
     
       <!-- Modal content-->
       <div class="modal-content">
-        <form action="<?php echo ($_SERVER['PHP_SELF']); ?>" method="post" onsubmit="return disable_on_submitinput()">
+        <form action="" method="post" onsubmit="return disable_on_submitinput()">
 		<div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Fill in the following details to create a new operator</h4>
@@ -683,7 +683,7 @@ $options->unlock_operator($conn);
 
     <!-- Modal content-->
     <div class="modal-content">
-    <form action="<?php echo ($_SERVER['PHP_SELF']); ?>" method="post" onsubmit="return disable_on_submitbtn()">
+    <form action="" method="post" onsubmit="return disable_on_submitbtn()">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Operators</h4>
