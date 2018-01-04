@@ -26,18 +26,17 @@ session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
-$validate=new validate();
+$validate = new validate();
 $validate->conf_logged_in_super();
-if(isset($_SESSION['tr_generated'])){
-  if($_SESSION['tr_generated']==TRUE){
-    $alert=new alert();
-    $alert->exec("Tabulation Register for ".$_SESSION['course_name']." academic session ".$_SESSION['from_year']." successfully generated!","success");
-    
-  }
-  else{
-    $alert=new alert();
-    $alert->exec("Unable to generate tabulation register!","danger");
-    
+if (isset($_SESSION['tr_generated'])) {
+  if ($_SESSION['tr_generated'] == true) {
+    $alert = new alert();
+    $alert->exec("Tabulation Register for " . $_SESSION['course_name'] . " academic session " . $_SESSION['from_year'] . " successfully generated!", "success");
+
+  } else {
+    $alert = new alert();
+    $alert->exec("Unable to generate tabulation register!", "danger");
+
   }
   unset($_SESSION['tr_generated']);
 }
@@ -52,6 +51,7 @@ $options->add_subject($conn);
 $options->create_operator($conn);
 $options->add_session($conn);
 $options->update_session($conn);
+$options->message($conn);
 $options->lock_operator($conn);
 $options->unlock_operator($conn);
 ?>
@@ -224,6 +224,69 @@ $options->unlock_operator($conn);
     
   </div>
   <!--End-->
+
+
+    <!-- Mailing Modal -->
+    <div class="modal fade" id="mailModal" role="dialog">
+      <div class="modal-dialog modal-lg">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Draft a Message</h4>
+          </div>
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
+            <div class="modal-body">
+                <?php
+                $input = new input_field();
+                ?>
+                <div class="form-group">
+               <h4>To</h4>
+              
+                <?php
+                $get_op_qry = "SELECT operator_email,operator_username,operator_name FROM operators";
+                $get_op_qry_run = mysqli_query($conn, $get_op_qry);
+                if ($get_op_qry_run) {
+                  $_SESSION['no_operators'] = 0;
+                  while ($operators = mysqli_fetch_assoc($get_op_qry_run)) {
+                    echo ('<label class="checkbox-inline" style="font-weight: normal !important">
+                    <input id="name' . $_SESSION['no_operators'] . '" type="checkbox" name="op' . $_SESSION['no_operators'] . '" value="' . $operators['operator_email'] . '">' . strtoupper($operators['operator_name']) . '
+                    </label>');
+                    $_SESSION['no_operators']++;
+                  }
+                }
+                ?>
+                 <label class="checkbox-inline" style="font-weight: normal !important">
+                    <input type="checkbox" onselect="" onchange="toggle_all_operators(this,<?= $_SESSION['no_operators'] ?>)"> <b>Select All</b>
+                    </label>
+                </div>
+                <div class="form-group">
+                <label for="type">Subject</label>
+                <?php
+                $input->display_table("", "form-control", "text", "mail_sub", "", 1, 1, 10, 0, 10);
+                ?>
+             </div>
+                <div class="form-group">
+                <label for="duration">Body</label>
+                <?php
+                $input->display_textarea("","form-control","mail_body","",4,30,1);
+                ?>
+                </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Exit</button>
+            <button type="submit" class="btn btn-success" name="send_mail">Send Mail <i class="glyphicon glyphicon-send"></i></button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
 
    <!-- Add Session Modal -->
    <div class="modal fade" id="addsessionModal" role="dialog">
@@ -546,22 +609,22 @@ $options->unlock_operator($conn);
                <th>Maximum Marks</th>
                </tr>
                <?php
-               
+
               $get_components_qry = "SELECT * from component";
               $get_components_qry_run = mysqli_query($conn, $get_components_qry);
               if ($get_components_qry_run) {
-                $i=0;
+                $i = 0;
                 while ($row = mysqli_fetch_assoc($get_components_qry_run)) {
                   echo ('
                        <tr>
                        <td>' . $row['component_name'] . '</td>
                        <td>');
-                 echo('<input type="number" id="pass'.$i.'" class="form-control input-sm" name="pass'.$row['component_id'].'" onkeyup="validate(this,100)" onfocusout="validate_focus(this,100)" onchange="validate(this,100)" required>');
+                  echo ('<input type="number" id="pass' . $i . '" class="form-control input-sm" name="pass' . $row['component_id'] . '" onkeyup="validate(this,100)" onfocusout="validate_focus(this,100)" onchange="validate(this,100)" required>');
                   echo ('
                        </td>
                        <td>');
-                       echo('<input type="number" id="max'.$i.'" class="form-control input-sm" name="max'.$row['component_id'].'" onkeyup="validate(this,100); check_max(this,'.$i.')" onfocusout="validate_focus(this,100)" onchange="validate(this,100); check_max(this,'.$i.')" required>');
-                       echo ('</td>
+                  echo ('<input type="number" id="max' . $i . '" class="form-control input-sm" name="max' . $row['component_id'] . '" onkeyup="validate(this,100); check_max(this,' . $i . ')" onfocusout="validate_focus(this,100)" onchange="validate(this,100); check_max(this,' . $i . ')" required>');
+                  echo ('</td>
                         </tr>
                        ');
                 }
@@ -576,15 +639,15 @@ $options->unlock_operator($conn);
             <select name="myear" id="myear" class="form-control" required>
             <option value="" disabled selected>Select Academic Year</option>
             <?php
-            $get_year_qry="SELECT distinct(from_year) from academic_sessions";
-            $get_year_qry_run=mysqli_query($conn,$get_year_qry);
-            if($get_year_qry_run){
+            $get_year_qry = "SELECT distinct(from_year) from academic_sessions";
+            $get_year_qry_run = mysqli_query($conn, $get_year_qry);
+            if ($get_year_qry_run) {
               while ($row = mysqli_fetch_assoc($get_year_qry_run)) {
                 echo ('
                     <option value="' . $row['from_year'] . '" >' . $row['from_year'] . '</option>   
                     ');
               }
-            }else {
+            } else {
               $alert = new alert();
               $alert->exec("Unable to fetch academic sessions for subjects!", "warning");
             }
@@ -711,12 +774,12 @@ $options->unlock_operator($conn);
       </div>
       <div class="modal-body modal-lg">
         <?php $get_op_query = "SELECT locked,operator_active,operator_name, operator_username, operator_email from operators";
-		$get_op_run = mysqli_query($conn, $get_op_query);
-		if (mysqli_num_rows($get_op_run) == 0) {
-			$al = new alert();
-			$al->exec("No operator exists!", "danger");
-		} else {
-			echo ('
+        $get_op_run = mysqli_query($conn, $get_op_query);
+        if (mysqli_num_rows($get_op_run) == 0) {
+          $al = new alert();
+          $al->exec("No operator exists!", "danger");
+        } else {
+          echo ('
               
   <table class="table table-striped table-bordered" style="width: 100%">
     <thead>
@@ -731,33 +794,33 @@ $options->unlock_operator($conn);
     <tbody> 
    
     ');
-			while ($result = mysqli_fetch_assoc($get_op_run)) {
-				echo ('
+          while ($result = mysqli_fetch_assoc($get_op_run)) {
+            echo ('
 	  <tr style="text-align:center">
     <td>' . $result["operator_name"] . '</td>
         <td>' . $result["operator_username"] . '</td>
 		<td>' . $result["operator_email"] . '</td>
 		<td>');
-				if ($result['operator_active'] == 1) {
-					echo ('Active <i class="glyphicon glyphicon-record" style="color:green"></i>');
-				} else {
-					echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
-				}
-				echo ('</td><td>');
-				if ($result['locked'] == 0) {
-					echo ('<button type="submit" class="btn btn-default" name="lock" value="' . $result['operator_username'] . '"><i class="fa fa-lock" aria-hidden="true"> Lock </i> </button>');
-				} else {
-					echo ('<button type="submit" class="btn btn-default" name="unlock" value="' . $result['operator_username'] . '"><i class="fa fa-unlock"> Unlock</i> </button>');
-				}
-				echo ('</td>
+            if ($result['operator_active'] == 1) {
+              echo ('Active <i class="glyphicon glyphicon-record" style="color:green"></i>');
+            } else {
+              echo ('Inactive <i class="glyphicon glyphicon-record" style="color:red"></i>');
+            }
+            echo ('</td><td>');
+            if ($result['locked'] == 0) {
+              echo ('<button type="submit" class="btn btn-default" name="lock" value="' . $result['operator_username'] . '"><i class="fa fa-lock" aria-hidden="true"> Lock </i> </button>');
+            } else {
+              echo ('<button type="submit" class="btn btn-default" name="unlock" value="' . $result['operator_username'] . '"><i class="fa fa-unlock"> Unlock</i> </button>');
+            }
+            echo ('</td>
       </tr>');
-			}
-			echo ('
+          }
+          echo ('
    </form> </tbody>
   </table>');
 
 
-		} ?>
+        } ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -769,7 +832,7 @@ $options->unlock_operator($conn);
     <?php
     $obj = new footer();
     $obj->disp_footer();
-    $logout_modal=new modals();
+    $logout_modal = new modals();
     $logout_modal->display_logout_modal();
     ?>
 </body>
@@ -779,6 +842,17 @@ $options->unlock_operator($conn);
         document.getElementById("session_course_name").value=el.getAttribute("data-course");
         document.getElementById("session_semester").value=el.getAttribute("data-current-semester");
         document.getElementById("btn_session_update").value=el.getAttribute("data-course-id");
+    }
+    function toggle_all_operators(el,no){
+      
+        if(el.checked){
+          for(var i=0;i<no;i++)
+          document.getElementById("name"+i).checked=true;
+        }
+        else{
+          for(var i=0;i<no;i++)
+          document.getElementById("name"+i).checked=false;   
+        }
     }
 </script>
 </html>

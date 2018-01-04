@@ -58,7 +58,7 @@
             opacity: 1;
         }
     }
-    input[type="checkbox"]{
+    table input[type="checkbox"]{
         zoom: 0.8;
       }
       .disabled:hover{

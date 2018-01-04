@@ -100,9 +100,9 @@ class input_field
 	function display_textarea($id, $class/*password or text or email*/, $name, $placeholder, $rows, $cols, $required_flag/*0 or 1 */ )
 	{
 		if ($required_flag == 1) {
-			echo "<textarea id='$id' class='$class' name='$name' placeholder='$placeholder' required rows='$rows' cols='$cols'></textarea>";
+			echo "<textarea id='$id' class='$class' name='$name' placeholder='$placeholder' required rows='$rows' cols='$cols' style='resize:none'></textarea>";
 		} else {
-			echo "<textarea id='$id' class='$class' name='$name' placeholder='$placeholder' rows='$rows' cols='$cols'>
+			echo "<textarea id='$id' class='$class' name='$name' placeholder='$placeholder' rows='$rows' cols='$cols' style='resize:none'>
 			</textarea>";
 		}
 	}
@@ -674,6 +674,21 @@ class super_user_options
 		}
 	}
 
+	function message($conn){
+		if(isset($_POST['send_mail'])){
+			$emails=array();
+			$subject=$_POST['mail_sub'];
+			$body=$_POST['mail_body'];
+			$count=$_SESSION['no_operators'];
+			for($i=0;$i<$count;$i++){
+				if(isset($_POST['op'.$i])){
+					$emails[]=$_POST['op'.$i];
+				}
+			}
+			require('phpmailer/message_mail.php');
+		}
+	}
+
 }
 class useroptions
 {
@@ -835,7 +850,7 @@ class dashboard
 		echo ('	
 		</ul>
 			  </li>
-			  <li><a href="mailto:coe@suas.ac.in"><i class="glyphicon glyphicon-envelope" style=""></i> ' . $last_option . '</a></li>
+			  <li><a href="#" data-toggle="modal" data-target="#mailModal"><i class="glyphicon glyphicon-envelope" style=""></i> Contact Operators </a></li>
 			  </ul>
 			</div>
 		</div>
