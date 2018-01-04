@@ -16,7 +16,7 @@ if (isset($_POST['tr_submit'])) {
     }
 }
 else{
-    header('location: super_home.php');
+    header('location: super_home');
 }
 ?><!DOCTYPE html>
 <html lang="en">

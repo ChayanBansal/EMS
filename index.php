@@ -1,10 +1,12 @@
 <?php
-session_start();
+
 if (isset($_POST['login'])) {
+    
     $super_key = "17c4520f6cfd1ab53d8745e84681eb49";
     if (md5($_POST['username']) == $super_key) {
-        header('location: /ems/super_login.php');
+        header('location: /ems/super_login');
     }
+    else{echo('not aking to super');}
 }
 ?>
 <!DOCTYPE html>
@@ -21,12 +23,14 @@ if (isset($_POST['login'])) {
     require_once("includes/config.php");
     require("includes/frontend_lib.php");
     require("includes/class_lib.php");
+    session_start();
     $obj = new head();
     $obj->displayheader();
     $obj->dispmenu(3, ["includes/home.php", "index.php", "includes/developers.php"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-in", "glyphicon glyphicon-info-sign"], ["Home", "Log In", "About Us"]);
     $user_name = new input_field();
     $password = new input_field();
     $submit = new input_button();
+    
     ?>
 <form  action='' method='post' onsubmit="return disable_on_submitinput()">
     <div class="form-container">
