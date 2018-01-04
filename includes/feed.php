@@ -173,21 +173,21 @@ $input = new input_field();
         $sub_code=$_SESSION['sub_code'];
         if ($_SESSION['main_atkt'] == "main") 
         {
-            $get_student_list="SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, r.roll_id FROM students st, elective_map em, r.roll_list
-                            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='".$sub_code."' AND r.enrol_id=em.enrol_id 
+            $get_student_list="SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, r.roll_id FROM students st, elective_map em, roll_list r
+                            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='".$sub_code."' AND r.enrol_no=em.enrol_no 
                             AND st.from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'];
         }
         else
         {
-            $get_student_list="SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, atkt_r.roll_id FROM students st, elective_map em, atkt_r.roll_list
-            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='".$sub_code."' AND atkt_r.enrol_id=em.enrol_id 
+            $get_student_list="SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, atkt_r.roll_id FROM students st, elective_map em, roll_list atkt_r
+            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='".$sub_code."' AND atkt_r.enrol_no=em.enrol_no 
             AND st.from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'];
         }
         $get_student_list_run=mysqli_query($conn,$get_student_list);
         if ($get_student_list_run==TRUE) 
         {
             $row_count = 1;
-            while ($row = mysqli_fetch_assoc($get_stud_qry_run)) 
+            while ($row = mysqli_fetch_assoc($get_student_list_run)) 
             {
                 echo ('<tr>
                     <td>' . $row['enrol_no'] . '</td>
@@ -201,7 +201,7 @@ $input = new input_field();
                     ');
                 $row_count++;
             }
-            $_SESSION['num_rows'] = mysqli_num_rows($get_stud_qry_run);
+            $_SESSION['num_rows'] = mysqli_num_rows($get_student_list_run);
         } 
         else
         {
