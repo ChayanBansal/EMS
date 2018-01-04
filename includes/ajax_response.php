@@ -99,17 +99,18 @@ if($_POST['getComponent'])
             $get_sub_comp_run=mysqli_query($conn,$get_sub_comp);
             while($sub_comp=mysqli_fetch_assoc($get_sub_comp_run))
             {
-                $check_filled="SELECT COUNT(*) FROM score WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code='".$_POST['sub_code']."') AND component_id=".$sub_comp['component_id']." AND roll_id IN 
+                $sub_code=$_POST['sub_code'];
+                $check_filled="SELECT COUNT(*) FROM score WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code='".$sub_code."') AND component_id=".$sub_comp['component_id']." AND roll_id IN 
                                 (SELECT roll_id FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE from_year=".$_POST['from_year']." AND course_id=".$_SESSION['current_course_id']."))";
                 $check_filled_run=mysqli_query($conn,$check_filled);
                 $count=mysqli_fetch_assoc($check_filled_run);
-                if($count['COUNT(*)']=0)
+                if($count['COUNT(*)']==0)
                 {
                     echo('<option value="'.$sub_comp['component_id'].'">'.$sub_comp['component_name'].'</option>');
                 }
                 else
                 {
-                    echo('<option value="'.$sub_comp['component_id'].'">'.$sub_comp['component_name'].' (Already filled <span class="glyphicon glyphicon-ok" style="color:green">)</option>');
+                    echo('<option value="'.$sub_comp['component_id'].'" disabled>'.$sub_comp['component_name'].' (Already filled)</option>');
                 }
             }   
         }
