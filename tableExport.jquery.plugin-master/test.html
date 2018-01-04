@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script type="text/javascript" src="jspdf/jspdf.min.js"></script>
+<script src="FileSaver.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/TableExport/4.0.11/js/tableexport.js"></script>
+</head>
+<body>
+        <div class="container">
+                <div class="row">
+                  <div class="col-xs-12">
+              
+              
+                    <div id="content">
+              
+<table id="mytable">
+        <tr><td>Hello</td>
+            <td>1</td>
+            <td>2</td>
+        </tr>
+        <tr><td>Hello</td>
+            <td>1</td>
+            <td>2</td>
+        </tr>
+        <tr><td>Hello</td>
+            <td>1</td>
+            <td>2</td>
+        </tr>
+        <caption>
+               <button id="export">Click to download</button>
+                </caption>
+            
+    </table>
+    <table id="mytable">
+            <tr><td>Hello</td>
+                <td>1</td>
+                <td>2</td>
+            </tr>
+            <tr><td>Hello</td>
+                <td>1</td>
+                <td>2</td>
+            </tr>
+            <tr><td>Hello</td>
+                <td>1</td>
+                <td>2</td>
+            </tr>
+            <caption>
+                   <button id="export">Click to download PDF</button>
+                   
+                    </caption>
+                
+        </table>
+                    </div>
+              
+              
+                  </div>
+                </div>
+              </div>
+              <br>
+              
+</body>
+<script>
+    TableExport(document.getElementsByTagName("table"), {
+    headers: true,                              // (Boolean), display table headers (th or td elements) in the <thead>, (default: true)
+    footers: true,                              // (Boolean), display table footers (th or td elements) in the <tfoot>, (default: false)
+    formats: ['xls'],             // (String[]), filetype(s) for the export, (default: ['xls', 'csv', 'txt'])
+    filename: 'id',                             // (id, String), filename for the downloaded file, (default: 'id')
+    bootstrap: false,                           // (Boolean), style buttons using bootstrap, (default: true)
+    exportButtons: true,                        // (Boolean), automatically generate the built-in export buttons for each of the specified formats (default: true)
+    position: 'bottom',                         // (top, bottom), position of the caption element relative to table, (default: 'bottom')
+    ignoreRows: null,                           // (Number, Number[]), row indices to exclude from the exported file(s) (default: null)
+    ignoreCols: null,                           // (Number, Number[]), column indices to exclude from the exported file(s) (default: null)
+    trimWhitespace: true                        // (Boolean), remove all leading/trailing newlines, spaces, and tabs from cell text in the exported file(s) (default: false)
+});
+        document.getElementById('export').addEventListener('click',
+      exportPDF);
+    
+    var specialElementHandlers = {
+      // element with id of "bypass" - jQuery style selector
+      '.no-export': function(element, renderer) {
+        // true = "handled elsewhere, bypass text extraction"
+        return true;
+      }
+    };
+    
+    function exportPDF() {
+    
+      var doc = new jsPDF('p', 'pt', 'a4');
+      //A4 - 595x842 pts
+      //https://www.gnu.org/software/gv/manual/html_node/Paper-Keywords-and-paper-size-in-points.html
+    
+    
+      //Html source 
+      var source = document.getElementById('content').innerHTML;
+    
+      var margins = {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        width: 1024
+      };
+    
+      doc.fromHTML(
+        source, // HTML string or DOM elem ref.
+        margins.left,
+        margins.top, {
+          'width': margins.width,
+          'elementHandlers': specialElementHandlers
+        },
+    
+        function(dispose) {
+          // dispose: object with X, Y of the last line add to the PDF 
+          //          this allow the insertion of new lines after html
+          doc.save('TR.pdf');
+        }, margins);
+    }
+        </script>
+</html>
