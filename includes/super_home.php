@@ -571,6 +571,25 @@ $options->unlock_operator($conn);
         </div>
     <table class="table table-striped table-responsive table-bordered">
    <caption class="form-inline">
+   <div class="form-group">
+            <select name="myear" id="myear" class="form-control">
+            <option value="" disabled selected>Select Academic Year</option>
+            <?php
+            $get_year_qry="SELECT distinct(from_year) from academic_sessions";
+            $get_year_qry_run=mysqli_query($conn,$get_year_qry);
+            if($get_year_qry_run){
+              while ($row = mysqli_fetch_assoc($get_year_qry_run)) {
+                echo ('
+                    <option value="' . $row['from_year'] . '" >' . $row['from_year'] . '</option>   
+                    ');
+              }
+            }else {
+              $alert = new alert();
+              $alert->exec("Unable to fetch academic sessions for subjects!", "warning");
+            }
+            ?>  
+           </select>
+        </div>
         <div class="form-group">
             <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester()">
             <option value="" disabled selected>Select a course</option>   
@@ -613,6 +632,7 @@ $options->unlock_operator($conn);
        <th>Practical Credits</th>
        <th>Total Credits</th>
        <th>Internal Examination</th>
+       <th>Elective Subject</th>
      </tr>
    </thead>
    <tbody id="subject_area">

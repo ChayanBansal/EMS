@@ -115,7 +115,7 @@ class input_button
 	{
 		echo "<input id='$id' class='$class' type='$type' name='$name' onclick='$onclick' value='$value'>";
 	}
-	function display_btn($id, $class, $type, $name, $onclick, $value) 
+	function display_btn($id, $class, $type, $name, $onclick, $value)
 	{
 		echo "<button id='$id' class='$class' type='$type' name='$name' onclick='$onclick'>$value</button>";
 	}
@@ -365,7 +365,7 @@ class super_user_options
 				$num_rows = mysqli_fetch_assoc($check_course_exists_qry_run);
 				if ($num_rows['count(*)'] > 0) {
 					$alert->exec("Course already exists!", "warning");
-					
+
 					return;
 				}
 			}
@@ -375,7 +375,7 @@ class super_user_options
 				$_SESSION['course_inserted'] = $_POST['cname'];
 				$_SESSION['semester'] = $_POST['cduration'] * 2;
 				$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course <i class="glyphicon glyphicon-circle-arrow-right"></i></a>', "success");
-			
+
 			} else {
 				$alert->exec("Unable to process query! Please try again", "danger");
 			}
@@ -390,6 +390,7 @@ class super_user_options
 			$no_of_sub = $_POST['number_subjects'];
 			$course_id = $_POST['mcourse'];
 			$semester = $_POST['msemester'];
+			$ay = $_POST['myear'];
 			for ($i = 1; $i <= $no_of_sub; $i++) {
 				$subcode = $_POST['subcode' . $i];
 				$check_sub_exists_qry = "SELECT count(*) from subjects where sub_code='" . $subcode . "'";
@@ -426,12 +427,17 @@ class super_user_options
 				$ia_max = $_POST['max5'];
 				$ie_pass = $_POST['pass6'];
 				$ie_max = $_POST['max6'];
+				if (isset($_POST['elective' . $i])) {
+					$elective = 1;
+				} else {
+					$elective = 0;
+				}
 				if (isset($_POST['ie' . $i])) {
 					$ie = 1;
 					$theory_cr = 0;
 					$practical_cr = 0;
 					$total_cr = 0;
-					$add_subject_qry = "INSERT into subjects values('" . $subcode . "'," . $course_id . ",'" . $subname . "'," . $total_cr . "," . $semester . "," . $ie . ")";
+					$add_subject_qry = "INSERT into subjects values('" . $subcode . "'," . $course_id . ",'" . $subname . "'," . $total_cr . "," . $semester . "," . $ie . "," . $ay . "," . $elective . ")";
 					$add_subject_qry_run = mysqli_query($conn, $add_subject_qry);
 					if ($add_subject_qry_run) {
 						$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',2,0)";
@@ -453,7 +459,7 @@ class super_user_options
 					}
 				} else {
 					$ie = 0;
-					$add_subject_qry = "INSERT into subjects values('" . $subcode . "'," . $course_id . ",'" . $subname . "'," . $total_cr . "," . $semester . "," . $ie . ")";
+					$add_subject_qry = "INSERT into subjects values('" . $subcode . "'," . $course_id . ",'" . $subname . "'," . $total_cr . "," . $semester . "," . $ie . "," . $ay . "," . $elective . ")";
 					$add_subject_qry_run = mysqli_query($conn, $add_subject_qry);
 
 					if ($add_subject_qry_run) {
@@ -504,13 +510,14 @@ class super_user_options
 						$alert->exec("Unable to insert subjects! Please try again later...", "danger");
 					}
 				}
+
 			}
 			if ($success) {
 				$alert->exec("Records successfully inserted!", "success");
 			} else {
 				$alert->exec("Unable to insert subjects", "danger");
 			}
-			
+
 		}
 	}
 	function create_operator($conn)
@@ -525,7 +532,7 @@ class super_user_options
 				$er = new alert();
 				$er->exec("Please enter operator email!", "alert");
 			} else {
-				
+
 				$get_operator_list_query = "SELECT operator_email from operators";
 				$get_op_list_query_run = mysqli_query($conn, $get_operator_list_query);
 				$permit = 1;
@@ -550,7 +557,7 @@ class super_user_options
 
 					$temp_pass = substr($operator_email, 0, 2) . "" . mt_rand(1000, 9999);
 					$operator_password = md5($temp_pass);
-					mysqli_autocommit($conn,FALSE);
+					mysqli_autocommit($conn, false);
 					mysqli_begin_transaction($conn);
 					$create_operator_query = "INSERT INTO operators(operator_name, operator_email, operator_username, operator_password) 
 								VALUES('$operator_name', '$operator_email', '$operator_username', '$operator_password')";
@@ -577,14 +584,14 @@ class super_user_options
 					$er->exec("Operator already exists!", "danger");
 				}
 			}
-			
+
 		}
 	}
 
 	function lock_operator($conn)
 	{
 		if (isset($_POST['lock'])) {
-			echo("Locked");
+			echo ("Locked");
 			$alert = new alert();
 			$username = $_POST['lock'];
 			$update_locked_qry = "UPDATE operators set locked=1 where operator_username='" . $username . "'";
@@ -624,22 +631,22 @@ class super_user_options
 			if ($check_session_qry_run) {
 				$result_count = mysqli_fetch_assoc($check_session_qry_run);
 				if ($result_count['count(*)'] == 0) {
-					mysqli_autocommit($conn,FALSE);
+					mysqli_autocommit($conn, false);
 					$add_session_qry = "INSERT into academic_sessions VALUES($from_year,$course_id,$semester)";
 					$add_session_qry_run = mysqli_query($conn, $add_session_qry);
-					if ($add_session_qry_run ) {
+					if ($add_session_qry_run) {
 						mysqli_commit($conn);
-						mysqli_autocommit($conn,TRUE);
+						mysqli_autocommit($conn, true);
 						$alert->exec("Session successfully created!", "success");
 					}
 				} else {
 					mysqli_rollback($conn);
-					mysqli_autocommit($conn,TRUE);
+					mysqli_autocommit($conn, true);
 					$alert->exec("Academic session already exists! Consider updating session..", "warning");
 				}
 			}
 		}
-		
+
 	}
 
 	function update_session($conn)
@@ -649,18 +656,18 @@ class super_user_options
 			$ay = $_POST['session_ay'];
 			$course_id = $_POST['session_update_submit'];
 			$semester = $_POST['session_semester'];
-			mysqli_autocommit($conn,FALSE);
+			mysqli_autocommit($conn, false);
 			$update_session_qry = "UPDATE academic_sessions SET current_semester=$semester WHERE from_year=$ay AND course_id=$course_id";
 			$update_session_qry_run = mysqli_query($conn, $update_session_qry);
 			//$update_student_semester="UPDATE students SET current_sem=$semester WHERE from_year=$from_year AND course_id=$course_id";
 			//$update_student_semester_run=mysqli_query($conn,$update_student_semester);
-			if ($update_session_qry_run /*AND $update_student_semester_run*/) {
+			if ($update_session_qry_run /*AND $update_student_semester_run*/ ) {
 				mysqli_commit($conn);
-				mysqli_autocommit($conn,TRUE);
+				mysqli_autocommit($conn, true);
 				$alert->exec("Academic Session successfully updated!", "success");
 			} else {
 				mysqli_rollback($conn);
-				mysqli_autocommit($conn,TRUE);
+				mysqli_autocommit($conn, true);
 				$alert->exec("Failed to update session!", "danger");
 
 			}
@@ -719,7 +726,7 @@ class useroptions
 		if (isset($_POST['feed_marks'])) {
 			$operator_id = $_SESSION['operator_id'];
 			$form_input_check = new input_check();
-			$remark=$form_input_check->input_safe($conn,$_POST['remark']);
+			$remark = $form_input_check->input_safe($conn, $_POST['remark']);
 			$transaction_qry = "INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
 			$transaction_qry_run = mysqli_query($conn, $transaction_qry);
 			if ($transaction_qry_run) {
@@ -727,11 +734,10 @@ class useroptions
 			} else {
 				die();
 			}
-			if($_SESSION['main_atkt']=="main"){
-				$atkt_flag=0;
-			}
-			else if($_SESSION['main_atkt']=="atkt"){
-				$atkt_flag=1;
+			if ($_SESSION['main_atkt'] == "main") {
+				$atkt_flag = 0;
+			} else if ($_SESSION['main_atkt'] == "atkt") {
+				$atkt_flag = 1;
 			}
 			$component_id = $_SESSION['sub_comp_id'];
 			$sub_id = $_SESSION['sub_id'];
@@ -764,7 +770,7 @@ class dashboard
 {
 	function display($name, $options, $href, $last_option)
 	{
-		echo('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation" style="z-index:200">
+		echo ('<div id="custom-bootstrap-menu" class="navbar navbar-default " role="navigation" style="z-index:200">
 		<div class="container-fluid">
 			<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -847,7 +853,8 @@ class validate
 			echo ('<script>startTimer();</script>');
 		}
 	}
-	function conf_logged_in_super(){
+	function conf_logged_in_super()
+	{
 		if (!isset($_SESSION['super_admin_id'])) {
 			header('location: /ems/index');
 		} else {
@@ -1455,7 +1462,7 @@ class view_operators
 {
 	function execute($conn)
 	{
-		
+
 	}
 }
 
@@ -1463,11 +1470,11 @@ class csrf_token
 {
 	function hidden_input($token)
 	{
-		echo('<input name="5d57af0a25794bf7516ef53d2de3a230" type="hidden" value="'.$token.'">');
+		echo ('<input name="5d57af0a25794bf7516ef53d2de3a230" type="hidden" value="' . $token . '">');
 	}
 	function create_token()
 	{
-		$_SESSION['token']=mt_rand(10000,99999);
+		$_SESSION['token'] = mt_rand(10000, 99999);
 	}
 }
 ?>
