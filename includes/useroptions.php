@@ -268,10 +268,10 @@ function getComponent(sub_code)
                     <select id="batch_list" name="batch" class="form-control" onChange="getType(this.value)" required>
                         <option value="" disabled selected>Select Batch</option>
                         <?php 
-                        $get_batch = "SELECT DISTINCT(from_year), to_year FROM students WHERE course_id=" . $_SESSION['current_course_id'];
+                        $get_batch = "SELECT DISTINCT(from_year) FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'];
                         $get_batch_run = mysqli_query($conn, $get_batch);
                         while ($batches = mysqli_fetch_assoc($get_batch_run)) {
-                            echo ('<option value="' . $batches['from_year'] . '">' . $batches['from_year'] . '-' . $batches['to_year'] . '</option>');
+                            echo ('<option value="' . $batches['from_year'] . '">' . $batches['from_year'] . '</option>');
                         }
                         ?>
                     </select>

@@ -103,7 +103,7 @@ if($_POST['getComponent'])
                                 (SELECT roll_id FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE from_year=".$_POST['from_year']." AND course_id=".$_SESSION['current_course_id']."))";
                 $check_filled_run=mysqli_query($conn,$check_filled);
                 $count=mysqli_fetch_assoc($check_filled_run);
-                if($count['COUNT(*)']=0)
+                if($count['COUNT(*)']==0)
                 {
                     echo('<option value="'.$sub_comp['component_id'].'">'.$sub_comp['component_name'].'</option>');
                 }
