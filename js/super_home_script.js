@@ -51,10 +51,10 @@ function display_subjects(direction) {
                 </td>
                 
                 <td>
-                <input type="number" name="theory`+ i + `" id="theory` + i + `" class="form-control" onkeyup="total(` + i + `)" value=0 required>
+                <input type="number" name="theory`+ i + `" id="theory` + i + `" class="form-control" onkeyup="total(` + i + `)" onchange="total(` + i + `); validate(this,100)" onfocusout="validate_focus(this,100)" value=0 required>
                 </td>
                 <td>
-                <input type="number" name="practical`+ i + `" id="practical` + i + `" class="form-control" onkeyup="total(` + i + `)" value=0 required> 
+                <input type="number" name="practical`+ i + `" id="practical` + i + `" class="form-control" onkeyup="total(` + i + `)" onchange="total(` + i + `); validate(this,100)" onfocusout="validate_focus(this,100)" value=0 required> 
                 </td>
                 <td><input id="total`+ i + `" name="total` + i + `" class="form-control disabled" readonly type="number"></td>
                 <td style="text-align: center">

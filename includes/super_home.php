@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/ems/css/style.css">
     <script src="/ems/js/super_home_script.js"></script>
     <link rel="stylesheet" href="/ems/css/super_home_styles.css">
+    <script src="/ems/js/feed_validation.js"></script>
     <style>
       #accordion{
       display: block;
@@ -526,7 +527,6 @@ $options->unlock_operator($conn);
   <!-- ADD Subject Modal -->
   <div class="modal fade" id="addsubjectModal" role="dialog">
       <div class="modal-dialog modal-lg" style="width: 90%">
-      
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
@@ -536,6 +536,7 @@ $options->unlock_operator($conn);
           <form action="" method="post" onsubmit="return disable_on_submitbtn()">
             <div class="modal-body">
             <div class="modal-container">
+              <div id="err"></div>
         <div class="component">
            <table class="table table-bordered table-responsive">
                <caption>Subject Components</caption>
@@ -549,18 +550,18 @@ $options->unlock_operator($conn);
               $get_components_qry = "SELECT * from component";
               $get_components_qry_run = mysqli_query($conn, $get_components_qry);
               if ($get_components_qry_run) {
+                $i=0;
                 while ($row = mysqli_fetch_assoc($get_components_qry_run)) {
                   echo ('
                        <tr>
                        <td>' . $row['component_name'] . '</td>
                        <td>');
-                  $input->display("", "form-control input-sm", "number", "pass" . $row['component_id'], "", 1);
+                 echo('<input type="number" id="pass'.$i.'" class="form-control input-sm" name="pass'.$row['component_id'].'" onkeyup="validate(this,100)" onfocusout="validate_focus(this,100)" onchange="validate(this,100)" required>');
                   echo ('
                        </td>
                        <td>');
-
-                  $input->display("", "form-control input-sm", "number", "max" . $row['component_id'], "", 1);
-                  echo ('</td>
+                       echo('<input type="number" id="max'.$i.'" class="form-control input-sm" name="max'.$row['component_id'].'" onkeyup="validate(this,100); check_max(this,'.$i.')" onfocusout="validate_focus(this,100)" onchange="validate(this,100); check_max(this,'.$i.')" required>');
+                       echo ('</td>
                         </tr>
                        ');
                 }
@@ -572,7 +573,7 @@ $options->unlock_operator($conn);
     <table class="table table-striped table-responsive table-bordered">
    <caption class="form-inline">
    <div class="form-group">
-            <select name="myear" id="myear" class="form-control">
+            <select name="myear" id="myear" class="form-control" required>
             <option value="" disabled selected>Select Academic Year</option>
             <?php
             $get_year_qry="SELECT distinct(from_year) from academic_sessions";
@@ -591,7 +592,7 @@ $options->unlock_operator($conn);
            </select>
         </div>
         <div class="form-group">
-            <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester()">
+            <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester()" required>
             <option value="" disabled selected>Select a course</option>   
             <?php
             $get_course_qry = "SELECT * from courses";
@@ -610,7 +611,7 @@ $options->unlock_operator($conn);
         </select>
         </div>
         <div class="form-group">
-            <select name="msemester" id="msemester" class="form-control">
+            <select name="msemester" id="msemester" class="form-control" required>
             <option value="" disabled selected>Select semester</option>  
            </select>
         </div>
