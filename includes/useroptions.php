@@ -278,28 +278,28 @@ function getComponent(sub_code)
                 </div>
                 <div class="form-group">
                 <label for="semester">Type :</label>
-                    <select id="exam_type" name="main_atkt" class="form-control" onChange="getSemester(this.value)">
+                    <select id="exam_type" name="main_atkt" class="form-control" onChange="getSemester(this.value)" required>
                     <option value="" disabled selected>Select Type</option>
                     </select>
                 </div>
                         
                 <div class="form-group">
                     <label for="semester">Semeter :</label>
-                    <select id="sem_list" name="semester" class="form-control" onChange="getSubject(this.value)">
+                    <select id="sem_list" name="semester" class="form-control" onChange="getSubject(this.value)" required>
                     <option value="" disabled selected>Select Semester</option>
                     </select>
                 </div>  
                 
                 <div class="form-group">
                     <label for="subject">Subject : </label>
-                    <select id="sub_list" name="subject" class="form-control" onChange="getComponent(this.value)">
+                    <select id="sub_list" name="subject" class="form-control" onChange="getComponent(this.value)" required>
                     <option value="" disabled selected>Select Subject</option>
                     </select>
                 </div>
                           
                 <div class="form-group">
                     <label for="sub_comp">Subject Component :</label>
-                    <select id="sub_component" name="sub_comp" class="form-control">
+                    <select id="sub_component" name="sub_comp" class="form-control" required>
                     <option value="" disabled selected>Select Component</option>
                     </select>
                 </div>            

@@ -6,7 +6,6 @@ if (isset($_POST['login'])) {
     if (md5($_POST['username']) == $super_key) {
         header('location: /ems/super_login');
     }
-    else{echo('not aking to super');}
 }
 ?>
 <!DOCTYPE html>
