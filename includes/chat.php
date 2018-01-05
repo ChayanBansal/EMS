@@ -1,7 +1,7 @@
 <?php
 require('config.php');
 session_start();
-if($_POST['ed49c3fed75a513a79cb8bd1d4715d57']==1) //for super_admin side
+/*if($_POST['ed49c3fed75a513a79cb8bd1d4715d57']==1) //for super_admin side
 {    
     if($_POST['chat']==1) //for displaying to superadmin
     {
@@ -243,5 +243,9 @@ else
         </div>');
         }
     }
-}
+}*/
+
+
+
+
 ?>
