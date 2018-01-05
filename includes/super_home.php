@@ -150,6 +150,7 @@ $options->unlock_operator($conn);
       <div id="marks_feeding" class="panel-collapse collapse in">
         <div class="panel-body">
           <ul id="feed_marks_list" class="list-group" style="overflow:auto; height:300px;">
+          Loading...
           </ul>
         </div>
       </div>
@@ -163,6 +164,7 @@ $options->unlock_operator($conn);
       <div id="marks_checking" class="panel-collapse collapse">
         <div class="panel-body">
           <ul id="check_marks_list" class="list-group" style="overflow:auto; height:300px;">
+          Loading...
           </ul>
         </div>
       </div>
