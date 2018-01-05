@@ -12,26 +12,26 @@
     <script type="text/javascript" src="jspdf/jspdf.min.js"></script>
     <script src="FileSaver.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/TableExport/4.0.11/js/tableexport.js"></script>
-   <style>
-        table{
+    <style>
+        table {
             font-size: 1.6rem;
         }
+        
         th {
             background: #2A458E;
             color: white;
-            
             font-weight: 600;
             text-align: center;
         }
-
+        
         td {
             text-align: center;
         }
-
+        
         .trr {
             width: 100%;
         }
-
+        
         .contain {
             display: flex;
             justify-content: center;
@@ -41,20 +41,22 @@
             height: 100%;
             padding: 20px;
         }
-
+        
         table caption {
             font-size: 1.6rem;
             border: 1px dashed;
         }
-        .caption-container{
+        
+        .caption-container {
             display: flex;
-            width: 2440px;
+            width: 4000px;
             justify-content: space-around;
         }
+        
         .block {
             padding: 10px;
         }
-
+        
         @media print {
             th {
                 font-size: 14px;
@@ -67,7 +69,7 @@
 </head>
 
 <body>
-    <div class="contain" style="width: 2440px; overflow:auto">
+    <div class="contain" style="width: 4000px; overflow:auto">
         <table class="table table-striped table-bordered">
             <caption>
                 <div class="caption-container">
@@ -85,7 +87,7 @@
                     </div>
                     <div class="block">Status: <span class="info">1</span>
                     </div>
-               
+
                 </div>
             </caption>
             <tr>
@@ -104,6 +106,8 @@
                 <th style="vertical-align:middle">GPV.</th>
                 <th style="vertical-align:middle">Total Credits Earned</th>
                 <th style="vertical-align:middle">Total GPV Earned</th>
+                <th style="vertical-align:middle;height:50%" colspan="9">Previous Semester Details</th>
+
             </tr>
             <tr style="vertical-align:middle">
                 <td style="vertical-align:middle" rowspan="2">BT16CS0303</td>
@@ -118,6 +122,15 @@
                 <td>10</td>
                 <td>10</td>
                 <td>10</td>
+                <th style="vertical-align:middle">Semester</th>
+                <th style="vertical-align:middle">I</th>
+                <th style="vertical-align:middle">II</th>
+                <th style="vertical-align:middle">III</th>
+                <th style="vertical-align:middle">IV</th>
+                <th style="vertical-align:middle">V</th>
+                <th style="vertical-align:middle">VI</th>
+                <th style="vertical-align:middle">VII</th>
+                <th style="vertical-align:middle">VIII</th>
             </tr>
             <tr style="vertical-align:middle">
                 <td>P</td>
