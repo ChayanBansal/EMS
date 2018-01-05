@@ -129,3 +129,15 @@ function check_credits(el, no) {
             break;
     }
 }
+function toggle_course_name(){
+    var course=document.getElementById("cname");
+    if(course.hasAttribute("readonly")){
+      course.removeAttribute("readonly");
+    }
+    else{
+        course.setAttribute("readonly",true);
+    }
+  }
+  function set_course(){
+      document.getElementById("cname").value=document.getElementById("prog_name").value+" "+document.getElementById("branch_name").value;
+  }

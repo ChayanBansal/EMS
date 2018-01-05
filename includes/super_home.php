@@ -226,7 +226,7 @@ $options->unlock_operator($conn);
     </div>
     </div>
 
-    <!-- Course Modal -->
+    <!-- Add Course Modal -->
     <div class="modal fade" id="addcourseModal" role="dialog">
       <div class="modal-dialog">
       
@@ -243,11 +243,23 @@ $options->unlock_operator($conn);
                 $input = new input_field();
                 ?>
                 <div class="form-group">
-                <label for="name">Course Name</label>
+                <label for="name">Program Name</label>
                 <?php
-                $input->display("name", "form-control", "text", "cname", "", 1);
+                $input->display("prog_name", "form-control", "text", "prog_name", "", 1);
                 ?>
                 </div>
+
+                <div class="form-group">
+                <label for="name">Branch Name</label>
+                <input type="text" name="branch_name" id="branch_name" class="form-control" onfocusout="set_course()" required>
+                </div>
+                <div class="form-group">
+                <label for="name">Course Name</label>
+                <div class="form-inline">
+                <input type="text" name="cname" id="cname" class="form-control" readonly required>
+                <button id="course_change" class="btn btn-default" type="button" onclick="toggle_course_name()">Change Name</button>  
+              </div>
+              </div>
                 <div class="form-group">
                 <label for="type">Course Type</label>
                 <select name="level" id="type" class="form-control">
@@ -904,5 +916,6 @@ $options->unlock_operator($conn);
           document.getElementById("name"+i).checked=false;   
         }
     }
+    
 </script>
 </html>

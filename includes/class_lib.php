@@ -367,17 +367,24 @@ class super_user_options
 				$num_rows = mysqli_fetch_assoc($check_course_exists_qry_run);
 				if ($num_rows['count(*)'] > 0) {
 					$alert->exec("Course already exists!", "warning");
-
 					return;
 				}
 			}
+			
 			$create_course_qry = "INSERT into courses(level_id,course_name,duration) VALUES($level,'" . $_POST['cname'] . "'," . $_POST['cduration'] . ")";
 			$create_course_qry_run = mysqli_query($conn, $create_course_qry);
 			if ($create_course_qry_run) {
-				$_SESSION['course_inserted'] = $_POST['cname'];
-				$_SESSION['semester'] = $_POST['cduration'] * 2;
-				$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course <i class="glyphicon glyphicon-circle-arrow-right"></i></a>', "success");
-
+				$course_id=mysqli_insert_id($conn);
+				$create_branch_qry="INSERT into branches VALUES($course_id,'".$_POST['prog_name']."','".$_POST['branch_name']."')";
+				$create_branch_qry_run=mysqli_query($conn,$create_branch_qry);
+				if($create_branch_qry_run){
+					$_SESSION['course_inserted'] = $_POST['cname'];
+					$_SESSION['semester'] = $_POST['cduration'] * 2;
+					$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course <i class="glyphicon glyphicon-circle-arrow-right"></i></a>', "success");
+				}
+				else{
+					$alert->exec("Unable to process query! Please try again", "danger");
+				}
 			} else {
 				$alert->exec("Unable to process query! Please try again", "danger");
 			}
