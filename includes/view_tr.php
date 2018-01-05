@@ -1,7 +1,7 @@
 <?php
-$_SESSION['from_year'] = $_POST['batch'];
-$_SESSION['course_id'] = $_POST['course_id'];
-$_SESSION['semester'] = $_POST['semester'];
+$_SESSION['from_year'] = 2016;//$_POST['batch'];
+$_SESSION['course_id'] = //$_POST['course_id'];
+$_SESSION['semester'] = 3;$_POST['semester'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
