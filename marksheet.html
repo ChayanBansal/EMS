@@ -32,7 +32,7 @@
         th,
         table {
             border-collapse: collapse;
-            border: 1px solid black;
+            border: 1px solid blue;
             padding: 10px;
         }
         
@@ -60,6 +60,19 @@
             position: absolute;
         }
         
+        table caption {
+            border: 1px solid blue;
+        }
+        
+        .caption-container {
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .block {
+            padding: 10px;
+        }
+        
         @media print {
             .upper {
                 margin-top: 6.3cm;
@@ -84,6 +97,9 @@
                 margin-top: 0.5cm;
             }
             .t3 td {
+                padding: 5px;
+            }
+            .block {
                 padding: 5px;
             }
         }
@@ -207,9 +223,18 @@
                     <td>4</td>
                     <td>A+</td>
                 </tr>
+                <caption align="bottom">
+                    <div class="caption-container">
+                        <div class="block">Result: <span class="info">Pass</span>
+                        </div>
+                        <div class="block">SGPA: <span class="info">10</span>
+                        </div>
+                        <div class="block">CGPA: <span class="info">10</span>
+                        </div>
+                </caption>
             </table>
+            </div>
         </div>
-    </div>
 </body>
 
 </html>
