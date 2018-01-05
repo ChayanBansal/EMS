@@ -78,11 +78,11 @@ button[type="submit"].disabled{
     cursor: not-allowed !important;
     pointer-events: none;
 }
-a:hover{
+.menu a:hover{
     color: #B1C3F8;  
     text-decoration: none;
 }
-a:focus{
+.menu a:focus{
     color: white;
 }
 .item:hover #menu_span{

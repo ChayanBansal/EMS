@@ -278,15 +278,15 @@ function chat()
   }
 </script>
 <!--ChatBox-->
-<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
+<div class="panel-group col-lg-4 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
    <h3><center>Chat</center></h3>
     <div id="chat">
     </div>   
 </div>
     <!--ChatBoxEnd-->
 
-<div class="main-container col-md-12">
-    <div class="sub-container col-lg-5 col-xs-12 col-sm-12 col-md-8">
+<div class="main-container col-lg-8 col-md-8 col-sm-12 col-xs-12">
+    <div class="sub-container col-lg-8 col-sm-12 col-md-12 col-xs-12">
         <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
         <button class="option blue " data-toggle="modal" data-target=""><div><i class= "glyphicon glyphicon-eye-open" ></i></div> View Marks</button>       
         <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
