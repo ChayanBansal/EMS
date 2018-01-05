@@ -245,7 +245,31 @@ else
     }
 }*/
 
-
-
+$username=$_POST['username'];
+if(isset($_SESSION['super_admin_username']))
+{
+    $self_username=$_SESSION['super_admin_username'];
+}
+else
+{
+    $self_username=$_SESSION['operator_username'];
+}
+$get_chat="SELECT sender, msg, timestamp FROM chat WHERE (sender='".$self_username."' OR sender='".$username."') AND (sender='".$self_username."' OR sender='".$username."')";
+$get_chat_run=mysqli_query($conn,$get_chat);
+while($chat=mysqli_fetch_assoc($get_chat_run))
+{
+    if($chat['sender']!=$self_username)
+    {
+        echo('<li class="list-group-item" style="font-size:1.5rem">'
+                .$chat['sender'].' at '. $chat['timestamp'].' said: <br>'.$chat['msg']);
+        echo('</li>');
+    }
+    else if($chat['sender']==$self_username)
+    {
+        echo('<li class="list-group-item" style="font-size:1.5rem; text-align:right;">'
+                .$chat['sender'].' at '. $chat['timestamp'].' said: <br>'.$chat['msg']);
+        echo('</li>');
+    }
+}
 
 ?>

@@ -71,7 +71,6 @@ $options->unlock_operator($conn);
   {
     get_check_act();
     get_feed_act();
-    chat();
   }
   
   function get_check_act()
@@ -104,17 +103,17 @@ $options->unlock_operator($conn);
   }
 
 
-  function chat()
+  function chat(location,username)
   {
   $.ajax({
 	type: "POST",
 	url: "chat",
-	data: 'chat=1&ed49c3fed75a513a79cb8bd1d4715d57=1',
+	data: 'username='+username,
 	success: function(data){
-        $("#chat").html(data);
+        $("#"+location).html(data);
     },
     error: function(e){
-      $("#chat").html("Unable to load recent activities");
+      $("#"+location).html("Unable to load recent activities");
     }
 	});
   }
@@ -171,6 +170,29 @@ $options->unlock_operator($conn);
     <!--ChatBox-->
     <div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
    <h3><center>Chat</center></h3>
+   <?php 
+    $get_users="SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
+    SELECT CONCAT('o',operator_id) As id, operator_username AS username, operator_name AS name FROM operators";
+    $get_users_run=mysqli_query($conn,$get_users);
+    while($user=mysqli_fetch_assoc($get_users_run))
+    {
+      echo('<div class="panel panel-default">
+      <div class="panel-heading">
+      <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion2" href="#'.$user['id'].'">
+      '.$user['name'].'</a>
+      </h4>
+      </div>
+      <div id="'.$user['id'].'" class="panel-collapse collapse in">
+      <div id="l'.$user['id'].'" class="panel-body">Loading...</div>
+      </div>
+      </div>
+      <script>setInterval(chat("l'.$user['id'].'","'.$user['username'].'"),3000);</script>
+      ');
+    }
+    //echo('<script>setInterval(chat(),3000);</script>');
+
+   ?>
     <div id="chat">
     </div>   
 </div>
