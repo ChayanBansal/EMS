@@ -116,12 +116,16 @@
         text-align: center;
     }
     #accordion2{
-      display: block;
-      padding: 20px;
-      background-color: #f1f1f1;
-      height: 100%;
-      margin-bottom: 70px;
-    }
+        display: block;
+        padding: 20px;
+        background-color: #f1f1f1;
+        height: 100%;
+        margin-bottom: 70px;
+      }
+      .chat_box{
+        height:250px;
+        overflow:auto;
+      }
 
     </style>
 </head>
@@ -246,42 +250,79 @@ function getComponent(sub_code)
 	});
 }
 
-function chat()
+function chat(location,username)
   {
   $.ajax({
 	type: "POST",
 	url: "chat",
-	data: 'chat=1&ed49c3fed75a513a79cb8bd1d4715d57=0',
+	data: 'username='+username,
 	success: function(data){
-        $("#chat").html(data);
+        $(document.getElementById(location)).html(data);
     },
     error: function(e){
-      $("#chat").html("Unable to load recent activities");
+      $(document.getElementById(location)).html("Unable to load recent activities");
     }
 	});
   }
 
-  function sendMessage(value)
+  function sendMessage(username,location)
   {
-    msg=document.getElementById(value).value;
+    var msg=document.getElementById(username).value;
   $.ajax({
 	type: "POST",
 	url: "chat",
-	data: 'chat=0&sendmsg=1&ed49c3fed75a513a79cb8bd1d4715d57=0&receiver='+value+'&msg='+msg,
+	data: 'username='+username+'&msg='+msg,
 	success: function(data){
-        $("#chat").html(data);
+    chat(location,username);
+    document.getElementById(username).value='';
     },
     error: function(e){
-      $("#chat").html("Unable to load recent activities");
+      $(document.getElementById(location)).html("Unable to load recent activities");
     }
 	});
   }
 </script>
 <!--ChatBox-->
-<div class="panel-group col-lg-4 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
+<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
    <h3><center>Chat</center></h3>
-    <div id="chat">
-    </div>   
+   <?php 
+    $get_users="SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
+    SELECT CONCAT('o',operator_id) As id, operator_username AS username, operator_name AS name FROM operators";
+    $get_users_run=mysqli_query($conn,$get_users);
+    while($user=mysqli_fetch_assoc($get_users_run))
+    {
+      $location="l".$user['id'];
+      echo('<div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion2" href="#'.$user['id'].'">
+                    '.$user['name'].'</a>
+                </h4>
+              </div>
+              <div id="'.$user['id'].'" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div id="'.$location.'" class="chat_box">Loading...</div>
+                  <div class="panel-footer">
+                    <input class="form-control" id="'.$user['username'].'" type="text">
+                    <button id="b'.$user['username'].'"class="btn btn-info form-control" value="'.$user['username'].'" onClick="sendMessage(this.value,'.$location.');" >Send</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <script>
+              setInterval(chat("'.$location.'","'.$user['username'].'"),50);
+              document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
+
+              $("#'.$location.'").animate({
+                scrollTop: $("#'.$location.'").offset().top
+             }, "slow");
+             
+            </script>
+           ');
+    }
+    //echo('<script>setInterval(chat(),3000);</script>');
+
+   ?>  
 </div>
     <!--ChatBoxEnd-->
 

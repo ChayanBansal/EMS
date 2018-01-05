@@ -277,20 +277,21 @@ else
     $get_last_record="SELECT chat_id FROM chat WHERE (sender='".$self_username."' AND receiver='".$username."') OR (receiver='".$self_username."' AND sender='".$username."') ORDER BY chat_id DESC LIMIT 1";
     $get_last_record_run=mysqli_query($conn,$get_last_record);
     $last_record=mysqli_fetch_assoc($get_last_record_run);
+    $get_name="SELECT ";
     while($chat=mysqli_fetch_assoc($get_chat_run))
     {
         if($chat['sender']!=$self_username)
         {
             if($last_record['chat_id']==$chat['chat_id'])
             {
-                echo('<li id="last_chat" class="list-group-item" style="font-size:1.5rem">'
-                .$chat['sender'].' at '. $chat['timestamp'].' said: <br>'.$chat['msg']);
+                echo('<li id="last_chat" class="list-group-item" style="font-size:1.5rem;background-color:#FFF4F2">
+                '. $chat['timestamp'].':<br>'.$chat['msg']);
                 echo('</li>');
             }
             else
             {
-                echo('<li class="list-group-item" style="font-size:1.5rem">'
-                    .$chat['sender'].' at '. $chat['timestamp'].' said: <br>'.$chat['msg']);
+                echo('<li class="list-group-item" style="font-size:1.5rem;background-color:#FFF4F2">
+                '. $chat['timestamp'].':<br>'.$chat['msg']);
                 echo('</li>');
             }
             
@@ -299,15 +300,15 @@ else
         {
             if($last_record['chat_id']==$chat['chat_id'])
             {
-                echo('<li id="last_chat" class="list-group-item" style="font-size:1.5rem; text-align:right;">'
-                .$chat['sender'].' at '. $chat['timestamp'].' said: <br>'.$chat['msg']);
+                echo('<li id="last_chat" class="list-group-item" style="font-size:1.5rem; text-align:right; background-color:#E8FAFF">
+                '. $chat['timestamp'].':<br>'.$chat['msg']);
                 echo('</li>');    
             }
             else
             {
                 
-            echo('<li class="list-group-item" style="font-size:1.5rem; text-align:right;">'
-            .$chat['sender'].' at '. $chat['timestamp'].' said: <br>'.$chat['msg']);
+            echo('<li class="list-group-item" style="font-size:1.5rem; text-align:right; background-color:#E8FAFF">
+            '. $chat['timestamp'].':<br>'.$chat['msg']);
             echo('</li>');
             }
         }
