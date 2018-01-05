@@ -1,7 +1,8 @@
 <?php
+session_start();
 $_SESSION['from_year'] = 2016;//$_POST['batch'];
-$_SESSION['course_id'] = //$_POST['course_id'];
-$_SESSION['semester'] = 3;$_POST['semester'];
+$_SESSION['course_id'] = 3;//$_POST['course_id'];
+$_SESSION['semester'] = 3;//$_POST['semester'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,6 +34,10 @@ $_SESSION['semester'] = 3;$_POST['semester'];
         .contain {
             display: flex;
             justify-content: center;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
             padding: 20px;
         }
         
@@ -61,10 +66,8 @@ $_SESSION['semester'] = 3;$_POST['semester'];
         }
     </style>
 </head>
-
 <body>
 <?php
-session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
@@ -75,8 +78,7 @@ $dashboard = new dashboard();
 $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "Contact Super Admin");
 
 ?>
-    <div class="contain" style="width: 4000px; overflow:auto">
-      
+<div class="contain" style="width: 4000px; overflow:auto">
     <?php
     $get_count_semesters = "SELECT duration*2 as 'semcount' from courses where course_id=" . $_SESSION['course_id'];
     $get_count_semesters_run = mysqli_query($conn, $get_count_semesters);
@@ -87,17 +89,25 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
     $get_students_qry_run = mysqli_query($conn, $get_students_qry);
     if ($get_students_qry_run) {
         $stud_count = 1;
+        $total_credits = 0;
+        $total_gpv = 0;
         while ($student = mysqli_fetch_assoc($get_students_qry_run)) {
-            $sgpa = SplFixedArray($semcount);
-            $fail_paper_code = SplFixedArray($semcount);
-            $result_pass_fail = SplFixedArray($semcount);
+            $sgpa = new SplFixedArray($semcount);
+            $fail_paper_code = new SplFixedArray($semcount);
+            $result_pass_fail = new SplFixedArray($semcount);
             $get_roll_id = "SELECT distinct(roll_id) from roll_list WHERE enrol_no='" . $student['enrol_no'] . "' ORDER BY semester";
             $get_roll_id_run = mysqli_query($conn, $get_roll_id);
+            $loopcount = 0;
             while ($roll_id = mysqli_fetch_assoc($get_roll_id_run)) {
                 $get_prev_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $roll_id['roll_id'];
                 $get_prev_sgpa_run = mysqli_query($conn, $get_prev_sgpa);
                 $ressgpa = mysqli_fetch_assoc($get_prev_sgpa_run);
-                $sgpa[] = $ressgpa['sgpa'];
+                $sgpa[$loopcount] = $ressgpa['sgpa'];
+                if ($sgpa[$loopcount] >= 4.0) {
+                    $result_pass_fail[$loopcount] = "PASS";
+                } else {
+                    $result_pass_fail[$loopcount] = "FAIL";
+                }
                 $get_fail_sub = "SELECT distinct(sub_id) FROM failure_report WHERE roll_id=" . $roll_id['roll_id'];
                 $get_fail_sub_run = mysqli_query($conn, $get_fail_sub);
                 $failtext = "";
@@ -113,16 +123,18 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         $failtext = $res['sub_code'] . "[T] ";
                     }
                 }
-                if ($failtext == "") {
-                    $result_pass_fail[] = "PASS";
-                } else {
-                    $result_pass_fail[] = "FAIL";
-                }
-                $fail_paper_code[] = $failtext;
+                $fail_paper_code[$loopcount] = $failtext;
+                $loopcount++;
             }
             $get_cur_rollid = "SELECT roll_id from roll_list WHERE semester=" . $_SESSION['semester'] . " AND enrol_no='" . $student['enrol_no'] . "'";
             $get_cur_rollid_run = mysqli_query($conn, $get_cur_rollid);
             $cur_rollid = mysqli_fetch_assoc($get_cur_rollid_run)['roll_id'];
+            $get_current_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $cur_rollid;
+            $get_current_sgpa_run = mysqli_query($conn, $get_current_sgpa);
+            $cur_sgpa = mysqli_fetch_assoc($get_current_sgpa_run)['sgpa'];
+            $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $student['enrol_no'] . "'";
+            $get_cur_cgpa_run = mysqli_query($conn, $get_cur_cgpa);
+            $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa_run)['cgpa'];
             echo ('<table class="table table-striped table-bordered">
             <td>S.No: <span class="info">' . $stud_count . '</span>
             </td>
@@ -154,7 +166,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             <th style="vertical-align:middle">GPV.</th>
             <th style="vertical-align:middle">Total Credits Earned</th>
             <th style="vertical-align:middle">Total GPV Earned</th>
-            <th style="vertical-align:middle;width:40%" colspan="' . ($semcount - 1) . '">Previous Semester Details</th>
+            <th style="vertical-align:middle;width:40%" colspan="' . ($semcount+1) . '">Previous Semester Details</th>
         </tr>
             ');
             $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
@@ -171,10 +183,10 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                 ');
                 $sub_id_loop = "SELECT sub_id,practical_flag from sub_distribution WHERE sub_code='" . $subject['sub_code'] . "'";
                 $sub_id_loop_run = mysqli_query($conn, $sub_id_loop);
-                $subidcount=1;
+                $subidcount = 1;
                 while ($subid = mysqli_fetch_assoc($sub_id_loop_run)) {
-                    if($subid_count>1){
-                        echo('<tr style="vertical-align:middle">');
+                    if ($subidcount > 1) {
+                        echo ('<tr style="vertical-align:middle">');
                     }
                     if ($subid['practical_flag'] == 1) {
                         echo ('<td>P</td>');
@@ -187,128 +199,104 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                     $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
                     $marks = mysqli_fetch_assoc($get_cap_qry_run);
                     echo ('
-                    <td>' . $marks['end_sem'] . '</td>
-                    <td>' . $marks['cat_cap_ia'] . '</td>
-                    <td>' . $marks['total'] . '</td>
+                    <td>');
+                    if (is_null($marks['end_sem'])) {
+                        echo ('-');
+                    } else {
+                        echo ($marks['end_sem']);
+                    }
+                    echo ('</td>
+                    <td>');
+                    if (is_null($marks['cat_cap_ia'])) {
+                        echo ('-');
+                    } else {
+                        echo ($marks['cat_cap_ia']);
+                    }
+                    echo ('</td>
+                    <td>');
+                    if (is_null($marks['total'])) {
+                        echo ('-');
+                    } else {
+                        echo ($marks['total']);
+                    }
+                    echo ('</td>
                     <td>' . $marks['percent'] . '</td>
                     <td>' . $marks['grade'] . '</td>
                     <td>' . $marks['gp'] . '</td>
                     <td>' . $marks['cr'] . '</td>
                     <td>' . $marks['gpv'] . '</td>
                     ');
-                    if($rowcount==1){
-                        echo('<th style="vertical-align:middle">Semester</th>');
-                        $convert=new conversion();
-                        for($i=1;$i<=$semcount;$i++){
-                            echo('<th>'.$convert->numberToRomanRepresentation($i).'</th>');
-                        }
+                    $total_credits += $marks['cr'];
+                    $total_gpv += $marks['gpv'];
+
+                    switch ($rowcount) {
+                        case 1:
+                            echo ('<td>Total Credits</td>
+                        <td>Total GPV</td>');
+                            echo ('<th style="vertical-align:middle">Semester</th>');
+                            $convert = new conversion();
+                            for ($i = 1; $i <= $semcount; $i++) {
+                                echo ('<th>' . $convert->numberToRomanRepresentation($i) . '</th>');
+                            }
+                            break;
+
+                        case 3:
+                            echo ('<td colspan="2"> Semester ' . $convert->numberToRomanRepresentation($_SESSION['semester']) . '</td>
+                            <td>SGPA</td>
+                            ');
+                            for($i=0;$i<$semcount;$i++) {
+                                if (empty($sgpa[$i])) {
+                                    echo ('<td> - </td>');
+                                } else {
+                                    echo ('<td>'.$sgpa[$i].'</td>');
+                                }
+                            }
+                            break;
+
+                        case 4:
+                            echo ("<td colspan='2'>SGPA: $cur_sgpa</td>");
+                            echo ("<td>Result</td>");
+                            for($i=0;$i<$semcount;$i++) {
+                                if (empty($result_pass_fail[$i])) {
+                                    echo ('<td> - </td>');
+                                } else {
+                                    echo ("<td>".$result_pass_fail[$i]."</td>");
+                                }
+                            }
+                            break;
+
+                        case 5:
+                            echo ("<td colspan='2'>Result: ");
+                            if ($cur_sgpa >= 4.0) {
+                                echo ("PASS");
+                            } else {
+                                echo ("FAIL");
+                            }
+                            echo ('</td>');
+                            echo ("<td>Fail In Paper Code</td>");
+                            foreach ($fail_paper_code as $failure) {
+                                if (empty($result)) {
+                                    echo ('<td> - </td>');
+                                } else {
+                                    echo ("<td>$failure</td>");
+                                }
+                            }
+                            break;
+
+                        case 6:
+                            echo ("<td colspan='2'>CGPA: $cur_cgpa</td>");
+                            break;
                     }
-                    echo('</tr>');
+                    echo ('</tr>');
                     $rowcount++;
                     $subid_count++;
                 }
             }
-
         }
+        $stud_count++;
+        echo ('</table>');
     }
     ?>
-    
-            </tr>
-            <tr style="vertical-align:middle">
-                <td>P</td>
-                <td>60</td>
-                <td>100</td>
-                <td>100</td>
-                <td>A+</td>
-                <td>10</td>
-                <td>2</td>
-                <td>10</td>
-            </tr>
-            <tr style="vertical-align:middle">
-                <td style="vertical-align:middle" rowspan="2">BT16CS0302</td>
-                <td style="vertical-align:middle" rowspan="2">Advance JAVA</td>
-                <td style="vertical-align:middle">T</td>
-                <td>50</td>
-                <td>100</td>
-                <td>100</td>
-                <td>A+</td>
-                <td>10</td>
-                <td>1</td>
-                <td>10</td>
-                <td colspan="2" style="font-weight:800;">Semester-III</td>
-                <td style="font-size:17px;font-weight:600">SGPA</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr style="vertical-align:middle">
-                <td>P</td>
-                <td>60</td>
-                <td>100</td>
-                <td>100</td>
-                <td>A+</td>
-                <td>10</td>
-                <td>2</td>
-                <td>10</td>
-                <td colspan="2" style="font-weight:700;">SGPA: 10</td>
-                <td style="font-size:17px;font-weight:600">Result</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr style="vertical-align:middle">
-                <td style="vertical-align:middle" rowspan="2">BT16CS0303</td>
-                <td style="vertical-align:middle" rowspan="2">Next</td>
-                <td style="vertical-align:middle">T</td>
-                <td>50</td>
-                <td>100</td>
-                <td>100</td>
-                <td>A+</td>
-                <td>10</td>
-                <td>1</td>
-                <td>10</td>
-                <td colspan="2" style="font-weight:700;">Result: Pass</td>
-                <td style="font-size:17px;font-weight:600">Fail In Paper Code</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-            <tr style="vertical-align:middle">
-                <td rowspan="2">P</td>
-                <td>60</td>
-                <td>100</td>
-                <td>100</td>
-                <td>A+</td>
-                <td>10</td>
-                <td>2</td>
-                <td>10</td>
-                <td colspan="2" style="font-weight:700;">Fail in Subject Code: NONE</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </table>
     </div>
 
     <?php
