@@ -30,8 +30,8 @@ if($_POST['ed49c3fed75a513a79cb8bd1d4715d57']==1) //for super_admin side
             }
                 
             echo('</div>
-                <div>
-                <input type="text" id="'.$act_op_uname.'">
+                <div class="form-inline">
+                <input type="text" id="'.$act_op_uname.'" class="form-control">
                 <button class="btn btn-info" type="button" value="'.$act_op_uname.'" onclick="sendMessage(this.value)">Send</button></div>
             </div>
             </div>
@@ -71,8 +71,8 @@ if($_POST['ed49c3fed75a513a79cb8bd1d4715d57']==1) //for super_admin side
             }
                 
             echo('</div>
-                <div>
-                <input type="text" id="'.$act_op_uname.'">
+                <div class="form-inline">
+                <input type="text" id="'.$act_op_uname.'" class="form-control">
                 <button class="btn btn-info" type="button" value="'.$act_op_uname.'" onclick="sendMessage(this.value)">Send</button></div>
             </div>
             </div>
@@ -117,8 +117,8 @@ else
             }
                 
             echo('</div>
-                <div>
-                <input type="text" id="'.$sup_uname.'">
+                <div class="form-inline">
+                <input type="text" id="'.$sup_uname.'" class="form-control">
                 <button class="btn btn-info" type="button" value="'.$sup_uname.'" onclick="sendMessage(this.value)">Send</button></div>
             </div>
             </div>
@@ -152,8 +152,8 @@ else
             }
                 
             echo('</div>
-                <div>
-                <input type="text" id="'.$act_op_uname.'">
+                <div class="form-inline">
+                <input type="text" id="'.$act_op_uname.'" class="form-control">
                 <button class="btn btn-info" type="button" value="'.$act_op_uname.'" onclick="sendMessage(this.value)">Send</button></div>
             </div>
             </div>
@@ -202,8 +202,8 @@ else
              }
                  
              echo('</div>
-                 <div>
-                 <input type="text" id="'.$sup_uname.'">
+                 <div class="form-inline">
+                 <input type="text" id="'.$sup_uname.'" class="form-control">
                  <button class="btn btn-info" type="button" value="'.$sup_uname.'" onclick="sendMessage(this.value)">Send</button></div>
              </div>
              </div>
@@ -235,8 +235,8 @@ else
             }
                 
             echo('</div>
-                <div>
-                <input type="text" id="'.$act_op_uname.'">
+                <div class="form-inline">
+                <input type="text" id="'.$act_op_uname.'" class="form-control">
                 <button class="btn btn-info" type="button" value="'.$act_op_uname.'" onclick="sendMessage(this.value)">Send</button></div>
             </div>
             </div>
