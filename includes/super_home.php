@@ -24,6 +24,10 @@
       height: 100%;
       margin-bottom: 70px;
     }
+    .chat_box{
+      height:250px;
+      overflow:auto;
+    }
     </style>
 </head>
 <body onload="get_recent_act()">
@@ -110,26 +114,27 @@ $options->unlock_operator($conn);
 	url: "chat",
 	data: 'username='+username,
 	success: function(data){
-        $("#"+location).html(data);
+        $(document.getElementById(location)).html(data);
     },
     error: function(e){
-      $("#"+location).html("Unable to load recent activities");
+      $(document.getElementById(location)).html("Unable to load recent activities");
     }
 	});
   }
 
-  function sendMessage(value)
+  function sendMessage(username,location)
   {
-    msg=document.getElementById(value).value;
+    var msg=document.getElementById(username).value;
   $.ajax({
 	type: "POST",
 	url: "chat",
-	data: 'chat=0&sendmsg=1&ed49c3fed75a513a79cb8bd1d4715d57=1&receiver='+value+'&msg='+msg,
+	data: 'username='+username+'&msg='+msg,
 	success: function(data){
-        $("#chat").html(data);
+    chat(location,username);
+    document.getElementById(username).value='';
     },
     error: function(e){
-      $("#chat").html("Unable to load recent activities");
+      $(document.getElementById(location)).html("Unable to load recent activities");
     }
 	});
   }
@@ -168,7 +173,7 @@ $options->unlock_operator($conn);
     
 
     <!--ChatBox-->
-    <div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
+<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
    <h3><center>Chat</center></h3>
    <?php 
     $get_users="SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
@@ -176,29 +181,89 @@ $options->unlock_operator($conn);
     $get_users_run=mysqli_query($conn,$get_users);
     while($user=mysqli_fetch_assoc($get_users_run))
     {
+      $location="l".$user['id'];
       echo('<div class="panel panel-default">
-      <div class="panel-heading">
-      <h4 class="panel-title">
-      <a data-toggle="collapse" data-parent="#accordion2" href="#'.$user['id'].'">
-      '.$user['name'].'</a>
-      </h4>
-      </div>
-      <div id="'.$user['id'].'" class="panel-collapse collapse in">
-      <div id="l'.$user['id'].'" class="panel-body">Loading...</div>
-      </div>
-      </div>
-      <script>setInterval(chat("l'.$user['id'].'","'.$user['username'].'"),3000);</script>
-      ');
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion2" href="#'.$user['id'].'">
+                    '.$user['name'].'</a>
+                </h4>
+              </div>
+              <div id="'.$user['id'].'" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div id="'.$location.'" class="chat_box">Loading...</div>
+                  <div class="panel-footer">
+                    <input class="form-control" id="'.$user['username'].'" type="text">
+                    <button id="b'.$user['username'].'"class="btn btn-info form-control" value="'.$user['username'].'" onClick="sendMessage(this.value,'.$location.');" >Send</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <script>
+              setInterval(chat("'.$location.'","'.$user['username'].'"),50);
+              document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
+
+              $("#'.$location.'").animate({
+                scrollTop: $("#'.$location.'").offset().top
+             }, "slow");
+             
+            </script>
+           ');
     }
     //echo('<script>setInterval(chat(),3000);</script>');
 
-   ?>
-    <div id="chat">
-    </div>   
+   ?>  
 </div>
     <!--ChatBoxEnd-->
 
+<!-- View TR Modal Start-->
 
+<!-- Modal -->
+<div id="view_tr" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">View TR</h4>
+      </div>
+      <div class="modal-body">
+                <div class="form-group">
+                    <label for="course">Course :</label>
+                    <select id="course_list" name="course" class="form-control" onChange="getFromYear(this.value)" required>
+                        <option value="" disabled selected>Select Batch</option>
+                        <?php 
+                        $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
+                        $get_course_run = mysqli_query($conn, $get_course);
+                        while ($course = mysqli_fetch_assoc($get_course_run)) {
+                            echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="batch">Batch (Starting Year) :</label>
+                    <select id="batch_list" name="batch" class="form-control" onChange="getType(this.value)" required>
+                        <option value="" disabled selected>Select Batch</option>
+                        <?php 
+                        $get_batch = "SELECT from_year FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'];
+                        $get_batch_run = mysqli_query($conn, $get_batch);
+                        while ($batches = mysqli_fetch_assoc($get_batch_run)) {
+                            echo ('<option value="' . $batches['from_year'] . '">' . $batches['from_year'] . '</option>');
+                        }
+                        ?>
+                    </select>
+                </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- View TR Modal Close-->
 
 
     <div class="main-container col-lg-9 col-md-8 col-sm-12 col-xs-12 ">
@@ -224,7 +289,7 @@ $options->unlock_operator($conn);
             <div>Marks Processing</div>
             <div class="sub-option" id="subopt3">
                 <button data-toggle="modal" data-target="#trSelectiondialog"><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
-                <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+                <button data-toggle="modal" data-target="#view_tr"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
             <div class="option pink" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
