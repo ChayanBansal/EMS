@@ -138,8 +138,24 @@ $options->unlock_operator($conn);
     }
 	});
   }
+
+  function tr_getFromYear(course_id)
+  {
+    $.ajax({
+	type: "POST",
+	url: "select_tr",
+	data: 'getFromYear=1&course_id='+course_id,
+	success: function(data){
+        $("#feed_marks_list").html(data);
+    },
+    error: function(e){
+      $("#feed_marks_list").html("Unable to load recent activities");
+    }
+	});
+  }
 </script>
-<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion" >
+<div class="col-lg-3 col-md-4 col-sm-12 col-xs-12" style="display:flex; flex-direction:column;">
+<div class="panel-group" id="accordion" >
    <h3><center>Recent Activities</center></h3>
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -175,7 +191,7 @@ $options->unlock_operator($conn);
     
 
     <!--ChatBox-->
-<div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
+<div class="panel-group" id="accordion2" >
    <h3><center>Chat</center></h3>
    <?php 
     $get_users="SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
@@ -217,7 +233,7 @@ $options->unlock_operator($conn);
    ?>  
 </div>
     <!--ChatBoxEnd-->
-
+</div>
 <!-- View TR Modal Start-->
 
 <!-- Modal -->
@@ -233,7 +249,7 @@ $options->unlock_operator($conn);
       <div class="modal-body">
                 <div class="form-group">
                     <label for="course">Course :</label>
-                    <select id="course_list" name="course" class="form-control" onChange="getFromYear(this.value)" required>
+                    <select id="course_list" name="course" class="form-control" onChange="tr_getFromYear(this.value)" required>
                         <option value="" disabled selected>Select Batch</option>
                         <?php 
                         $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
@@ -269,7 +285,9 @@ $options->unlock_operator($conn);
 
 
     <div class="main-container col-lg-9 col-md-8 col-sm-12 col-xs-12 ">
+    
     <div class="sub-container col-lg-8 col-md-10 col-sm-12">
+    <h2 class="tcaption">Choose Operations: </h2>
         <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
