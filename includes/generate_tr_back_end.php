@@ -9,11 +9,11 @@
 
         /*mysqli_autocommit($conn,FALSE);
         mysqli_begin_transaction($conn);*/
-        $get_roll_id="SELECT roll_id FROM roll_list WHERE semester=".$semester." AND enrol_no IN 
+        $get_roll_id="SELECT roll_id, enrol_no FROM roll_list WHERE semester=".$semester." AND enrol_no IN 
                     (SELECT enrol_no FROM students WHERE course_id=".$course_id." AND current_sem=".$semester." AND from_year=".$from_year.")"; //CHECK the name of the column current_sem
         $get_roll_id_run=mysqli_query($conn,$get_roll_id);
     
-        while($roll_id=mysqli_fetch_assoc($get_roll_id_run)) //$roll_id['roll_id']
+        while($roll_id=mysqli_fetch_assoc($get_roll_id_run)) //$roll_id['roll_id'] $roll_id['enrol_no']
         {
             $total_credits_earned = 0; 
             $cr = 0;
@@ -270,6 +270,8 @@
             $insert_exam_summary="INSERT INTO exam_summary(roll_id, total_credits_earned, total_gpv_earned, sgpa) 
                                         VALUES(".$roll_id['roll_id'].", ".$total_credits_earned.", ".$total_earned_gpv.", ".$sgpa.")";
             $insert_exam_summary_run=mysqli_query($conn,$insert_exam_summary);
+
+            $get_cur_cgpa="SELECT cgpa FROM students WHERE enrol_no=";
             if($insert_exam_summary_run==TRUE)
             {
                 $_SESSION['tr_generated']=TRUE;
