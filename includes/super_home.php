@@ -374,7 +374,7 @@ $options->unlock_operator($conn);
               </div>
                 <div class="form-group">
                 <label for="type">Course Type</label>
-                <select name="level" id="type" class="form-control">
+                <select name="level" id="type" class="form-control" required>
                     <option value="ug">Undergraduate</option>
                     <option value="pg">Postgraduate</option>
                 </select>
@@ -479,7 +479,7 @@ $options->unlock_operator($conn);
             ?>
             <div class="form-group">
                 <label for="name">Academic Year</label>
-                <select name="session_year" id="type" class="form-control">
+                <select name="session_year" id="type" class="form-control" required>
                     <?php
                     $input = new input_field();
                     $get_details_qry = "SELECT distinct(from_year) as acad_year from students";
@@ -499,7 +499,7 @@ $options->unlock_operator($conn);
                 </div>
                 <div class="form-group">
                 <label for="type">Course Name</label>
-                <select name="session_course" id="type" class="form-control">
+                <select name="session_course" id="type" class="form-control" required>
                 <?php
                 $get_details_qry = "SELECT distinct s.course_id,course_name from students s, courses c where s.course_id=c.course_id";
                 $get_details_qry_run = mysqli_query($conn, $get_details_qry);
@@ -717,7 +717,7 @@ $options->unlock_operator($conn);
           ?>
           <div class="form-group">
               <label for="name">Academic Year</label>
-                <select name="tr_from_year" id="" class="form-control">
+                <select name="tr_from_year" id="" class="form-control" required>
                   <?php
                   $get_ay_qry = "SELECT distinct(from_year) from academic_sessions";
                   $get_ay_qry_run = mysqli_query($conn, $get_ay_qry);
@@ -733,7 +733,7 @@ $options->unlock_operator($conn);
               </div>
               <div class="form-group">
               <label for="type">Select Course</label>
-              <select name="tr_course" id="" class="form-control">
+              <select name="tr_course" id="" class="form-control" required>
                   <?php
                   $get_course_qry = "SELECT course_id,course_name from courses";
                   $get_course_qry_run = mysqli_query($conn, $get_course_qry);
