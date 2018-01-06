@@ -115,6 +115,7 @@ $options->unlock_operator($conn);
 	data: 'username='+username,
 	success: function(data){
         $(document.getElementById(location)).html(data);
+        chat(location,username);
     },
     error: function(e){
       $(document.getElementById(location)).html("Unable to load recent activities");
@@ -218,15 +219,17 @@ $options->unlock_operator($conn);
               </div>
             </div>
             <script>
-              setInterval(chat("'.$location.'","'.$user['username'].'"),50);
-              document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
+            document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
+           chat("'.$location.'","'.$user['username'].'");
+              
 
               $("#'.$location.'").animate({
                 scrollTop: $("#'.$location.'").offset().top
              }, "slow");
              
             </script>
-           ');
+           ');/*document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
+           chat("'.$location.'","'.$user['username'].'");*/
     }
     //echo('<script>setInterval(chat(),3000);</script>');
 
