@@ -106,23 +106,24 @@ $options->unlock_operator($conn);
 	});
   }
 
-
-  function chat(location,username)
-  {
-  $.ajax({
-	type: "POST",
-	url: "chat",
-	data: 'username='+username,
-	success: function(data){
-        $(document.getElementById(location)).html(data);
-        chat(location,username);
-    },
-    error: function(e){
-      $(document.getElementById(location)).html("Unable to load recent activities");
+  window.onload = function() {
+    var chat = function(location,username)
+    {
+    $.ajax({
+    type: "POST",
+    url: "chat",
+    data: 'username='+username,
+    success: function(data){
+          $(document.getElementById(location)).html(data);
+          chat(location,username);
+      },
+      error: function(e){
+        $(document.getElementById(location)).html("Unable to load recent activities");
+      }
+    });
     }
-	});
-  }
-
+    setInterval(chat, 3000)
+    };
   function sendMessage(username,location)
   {
     var msg=document.getElementById(username).value;
