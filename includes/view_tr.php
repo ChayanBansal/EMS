@@ -48,10 +48,6 @@ $_SESSION['main_atkt']="main";
         .contain {
             display: flex;
             justify-content: center;
-            align-items: center;
-            position: absolute;
-            width: 100%;
-            height: 100%;
             padding: 20px;
         }
         

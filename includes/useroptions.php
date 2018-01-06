@@ -258,6 +258,7 @@ function chat(location,username)
 	data: 'username='+username,
 	success: function(data){
         $(document.getElementById(location)).html(data);
+        chat(location,username);
     },
     error: function(e){
       $(document.getElementById(location)).html("Unable to load recent activities");
@@ -292,7 +293,7 @@ function chat(location,username)
     while($user=mysqli_fetch_assoc($get_users_run))
     {
       $location="l".$user['id'];
-      echo('<div class="panel panel-default">
+      echo('<div class="panel panel-default" >
               <div class="panel-heading">
                 <h4 class="panel-title">
                   <a data-toggle="collapse" data-parent="#accordion2" href="#'.$user['id'].'">
@@ -310,15 +311,17 @@ function chat(location,username)
               </div>
             </div>
             <script>
-              setInterval(chat("'.$location.'","'.$user['username'].'"),50);
-              document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
+            document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
+            chat("'.$location.'","'.$user['username'].'");
+              
 
               $("#'.$location.'").animate({
                 scrollTop: $("#'.$location.'").offset().top
              }, "slow");
              
             </script>
-           ');
+           ');/*document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
+           chat("'.$location.'","'.$user['username'].'");*/
     }
     //echo('<script>setInterval(chat(),3000);</script>');
 
@@ -334,7 +337,6 @@ function chat(location,username)
         <button class="option pink " data-toggle="modal" data-target="#view_op_modal"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
     </div>
 </div> 
- 
 
 <!-- Modal -->
 <div id="feed_marks_modal" class="modal fade" role="dialog">
