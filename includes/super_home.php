@@ -237,6 +237,57 @@ $options->unlock_operator($conn);
 </div>
     <!--ChatBoxEnd-->
 </div>
+
+
+    <div class="main-container col-lg-9 col-md-8 col-sm-12 col-xs-12 ">
+    
+    <div class="sub-container col-lg-8 col-md-10 col-sm-12 col-xs-12">
+    <h2 class="tcaption">Choose Operations: </h2>
+        <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
+            <div><i class="glyphicon glyphicon-user"></i></div>
+            <div>Operators</div>
+            <div class="sub-option" id="subopt1">
+            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add</button>
+                <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Lock/Delete</button>
+            </div>
+            </div>
+        <div class="option blue" onmouseover="show('subopt2')" onmouseout="hide('subopt2')">
+            <div><i class="glyphicon glyphicon-file"></i></div>
+            <div>Courses</div>
+            <div class="sub-option" id="subopt2">
+                <button data-toggle="modal" data-target="#addcourseModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
+                <button data-toggle="modal" data-target="#viewcourseModal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+            </div>
+            </div>
+            <div class="option green" onmouseover="show('subopt3')" onmouseout="hide('subopt3')">
+            <div><i class="glyphicon glyphicon-retweet"></i></div>
+            <div>Marks Processing</div>
+            <div class="sub-option" id="subopt3">
+                <button data-toggle="modal" data-target="#trSelectiondialog"><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
+                <button data-toggle="modal" data-target="#view_tr"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+            </div>
+            </div>
+            <div class="option pink" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
+            <div><i class="glyphicon glyphicon-list-alt"></i></div>
+            <div>Subjects</div>
+            <div class="sub-option" id="subopt4">
+                <button data-toggle="modal" data-target="#addsubjectModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
+                <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+            </div>
+            </div>
+            <div class="option yellow" onmouseover="show('subopt5')" onmouseout="hide('subopt5')">
+            <div><i class="glyphicon glyphicon-th-list"></i></div>
+            <div>Sessions</div>
+            <div class="sub-option" id="subopt5">
+            <button data-toggle="modal" data-target="#addsessionModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
+            <button data-toggle="modal" data-target="#viewsessionModal"><i class="glyphicon glyphicon-pencil"></i> Update Session</button>
+            </div>
+            </div>
+
+
+    </div>
+    </div>
+
 <!-- View TR Modal Start-->
 
 <!-- Modal -->
@@ -285,56 +336,6 @@ $options->unlock_operator($conn);
   </div>
 </div>
 <!-- View TR Modal Close-->
-
-
-    <div class="main-container col-lg-9 col-md-8 col-sm-12 col-xs-12 ">
-    
-    <div class="sub-container col-lg-8 col-md-10 col-sm-12">
-    <h2 class="tcaption">Choose Operations: </h2>
-        <div class="option red" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
-            <div><i class="glyphicon glyphicon-user"></i></div>
-            <div>Operators</div>
-            <div class="sub-option" id="subopt1">
-            <button data-toggle="modal" data-target="#cr_op_modal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-                <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Lock/Delete</button>
-            </div>
-            </div>
-        <div class="option blue" onmouseover="show('subopt2')" onmouseout="hide('subopt2')">
-            <div><i class="glyphicon glyphicon-file"></i></div>
-            <div>Courses</div>
-            <div class="sub-option" id="subopt2">
-                <button data-toggle="modal" data-target="#addcourseModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-                <button data-toggle="modal" data-target="#viewcourseModal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
-            </div>
-            </div>
-            <div class="option green" onmouseover="show('subopt3')" onmouseout="hide('subopt3')">
-            <div><i class="glyphicon glyphicon-retweet"></i></div>
-            <div>Marks Processing</div>
-            <div class="sub-option" id="subopt3">
-                <button data-toggle="modal" data-target="#trSelectiondialog"><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
-                <button data-toggle="modal" data-target="#view_tr"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
-            </div>
-            </div>
-            <div class="option pink" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
-            <div><i class="glyphicon glyphicon-list-alt"></i></div>
-            <div>Subjects</div>
-            <div class="sub-option" id="subopt4">
-                <button data-toggle="modal" data-target="#addsubjectModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-                <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
-            </div>
-            </div>
-            <div class="option yellow" onmouseover="show('subopt5')" onmouseout="hide('subopt5')">
-            <div><i class="glyphicon glyphicon-th-list"></i></div>
-            <div>Sessions</div>
-            <div class="sub-option" id="subopt5">
-            <button data-toggle="modal" data-target="#addsessionModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-            <button data-toggle="modal" data-target="#viewsessionModal"><i class="glyphicon glyphicon-pencil"></i> Update Session</button>
-            </div>
-            </div>
-
-
-    </div>
-    </div>
 
     <!-- Add Course Modal -->
     <div class="modal fade" id="addcourseModal" role="dialog">

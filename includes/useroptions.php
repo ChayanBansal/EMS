@@ -337,7 +337,6 @@ function chat(location,username)
         <button class="option pink " data-toggle="modal" data-target="#view_op_modal"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
     </div>
 </div> 
- 
 
 <!-- Modal -->
 <div id="feed_marks_modal" class="modal fade" role="dialog">

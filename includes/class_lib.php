@@ -280,8 +280,8 @@ class form_receive
 					$_SESSION['super_admin_id'] = $operator_data['super_admin_id'];
 					$_SESSION['super_admin_name'] = $operator_data['super_admin_name'];
 					$_SESSION['super_admin_username'] = $username;
-					$update_active="UPDATE super_admin SET active_flag=1 WHERE super_admin_id=".$operator_data['super_admin_id'];
-					$update_active=mysqli_query($conn,$update_active);
+					$update_active = "UPDATE super_admin SET active_flag=1 WHERE super_admin_id=" . $operator_data['super_admin_id'];
+					$update_active = mysqli_query($conn, $update_active);
 					$token = new csrf_token();
 					$token->create_token();
 					header('location: /ems/includes/super_home');
@@ -370,19 +370,18 @@ class super_user_options
 					return;
 				}
 			}
-			
+
 			$create_course_qry = "INSERT into courses(level_id,course_name,duration) VALUES($level,'" . $_POST['cname'] . "'," . $_POST['cduration'] . ")";
 			$create_course_qry_run = mysqli_query($conn, $create_course_qry);
 			if ($create_course_qry_run) {
-				$course_id=mysqli_insert_id($conn);
-				$create_branch_qry="INSERT into branches VALUES($course_id,'".$_POST['prog_name']."','".$_POST['branch_name']."')";
-				$create_branch_qry_run=mysqli_query($conn,$create_branch_qry);
-				if($create_branch_qry_run){
+				$course_id = mysqli_insert_id($conn);
+				$create_branch_qry = "INSERT into branches VALUES($course_id,'" . $_POST['prog_name'] . "','" . $_POST['branch_name'] . "')";
+				$create_branch_qry_run = mysqli_query($conn, $create_branch_qry);
+				if ($create_branch_qry_run) {
 					$_SESSION['course_inserted'] = $_POST['cname'];
 					$_SESSION['semester'] = $_POST['cduration'] * 2;
 					$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course <i class="glyphicon glyphicon-circle-arrow-right"></i></a>', "success");
-				}
-				else{
+				} else {
 					$alert->exec("Unable to process query! Please try again", "danger");
 				}
 			} else {
@@ -668,30 +667,36 @@ class super_user_options
 			mysqli_autocommit($conn, false);
 			$update_session_qry = "UPDATE academic_sessions SET current_semester=$semester WHERE from_year=$ay AND course_id=$course_id";
 			$update_session_qry_run = mysqli_query($conn, $update_session_qry);
-			//$update_student_semester="UPDATE students SET current_sem=$semester WHERE from_year=$from_year AND course_id=$course_id";
-			//$update_student_semester_run=mysqli_query($conn,$update_student_semester);
-			if ($update_session_qry_run /*AND $update_student_semester_run*/ ) {
-				mysqli_commit($conn);
-				mysqli_autocommit($conn, true);
-				$alert->exec("Academic Session successfully updated!", "success");
-			} else {
-				mysqli_rollback($conn);
-				mysqli_autocommit($conn, true);
-				$alert->exec("Failed to update session!", "danger");
-
+			if ($update_session_qry_run) {
+				$update_student_semester = "UPDATE students SET current_sem=$semester WHERE from_year=$ay AND course_id=$course_id";
+				$update_student_semester_run = mysqli_query($conn, $update_student_semester);
+				if ($update_student_semester_run) {
+					mysqli_commit($conn);
+					mysqli_autocommit($conn, true);
+					$alert->exec("Academic Session successfully updated!", "success");
+				} else {
+					mysqli_rollback($conn);
+					mysqli_autocommit($conn, true);
+					$alert->exec("Failed to update session!", "danger");
+				}
 			}
+			else{
+				$alert->exec("Failed to update session!", "danger");	
+			}
+
 		}
 	}
 
-	function message($conn){
-		if(isset($_POST['send_mail'])){
-			$emails=array();
-			$subject=$_POST['mail_sub'];
-			$body=$_POST['mail_body'];
-			$count=$_SESSION['no_operators'];
-			for($i=0;$i<$count;$i++){
-				if(isset($_POST['op'.$i])){
-					$emails[]=$_POST['op'.$i];
+	function message($conn)
+	{
+		if (isset($_POST['send_mail'])) {
+			$emails = array();
+			$subject = $_POST['mail_sub'];
+			$body = $_POST['mail_body'];
+			$count = $_SESSION['no_operators'];
+			for ($i = 0; $i < $count; $i++) {
+				if (isset($_POST['op' . $i])) {
+					$emails[] = $_POST['op' . $i];
 				}
 			}
 			require('phpmailer/message_mail.php');
@@ -867,13 +872,15 @@ class dashboard
 	}
 
 }
-class conversion{
-	function numberToRomanRepresentation($number) {
+class conversion
+{
+	function numberToRomanRepresentation($number)
+	{
 		$map = array('M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
 		$returnValue = '';
 		while ($number > 0) {
 			foreach ($map as $roman => $int) {
-				if($number >= $int) {
+				if ($number >= $int) {
 					$number -= $int;
 					$returnValue .= $roman;
 					break;
