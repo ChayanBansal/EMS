@@ -93,7 +93,7 @@ $dashboard = new dashboard();
 $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "Contact Super Admin");
 
 ?>
-<div class="contain" style="width: 4096px; overflow:auto">
+<div class="contain">
     <?php
     $get_count_semesters = "SELECT duration*2 as 'semcount' from courses where course_id=" . $_SESSION['course_id'];
     $get_count_semesters_run = mysqli_query($conn, $get_count_semesters);
@@ -151,7 +151,8 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $student['enrol_no'] . "'";
             $get_cur_cgpa_run = mysqli_query($conn, $get_cur_cgpa);
             $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa_run)['cgpa'];
-            echo ('<table class="table table-striped table-bordered">
+            echo ('<div class="tr_container" style="width: 100%; overflow:auto">
+            <table class="table table-striped table-bordered">
             <caption>
             <div class="caption-container">
             <span class="block">S.No: ' . $stud_count . '</span>
@@ -174,7 +175,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             <tr>
             <th style="vertical-align:middle">Paper Code</th>
             <th style="vertical-align:middle">Paper Name</th>
-            <th style="vertical-align:middle">Maximum Marks
+            <th style="vertical-align:middle" colspan="2">Maximum Marks
                 <br>(Th;Pr)</th>
             <th>Th;Pr<br>50:40</th>
             <th style="vertical-align:middle">CAT;CAP;IA<br>
@@ -213,7 +214,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                     $get_comp_id = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid['sub_id'] . " ORDER BY component_id";
                     $get_comp_id_run = mysqli_query($conn, $get_comp_id);
                     if ($subid['practical_flag'] == 1) {
-                        echo ('<td>P</td>');
+                        echo ('<td>P</td><td>100</td>');
                         while ($pass_marks = mysqli_fetch_assoc($get_comp_id_run)) {
                             $practical_pass[] = $pass_marks['passing_marks'];
                         }
@@ -224,7 +225,10 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         if (is_null($marks['end_sem'])) {
                             echo ('<td> - </td>');
                         } else {
-                            if ($marks['end_sem'] < $practical_pass[1]) {
+                            $get_ia_marks="SELECT marks FROM score WHERE roll_id=".$cur_rollid." AND sub_id=".$subid['sub_id']." AND component_id=5";
+                            $get_ia_marks_run=mysqli_query($conn,$get_ia_marks);
+                            $ia_marks=mysqli_fetch_assoc($get_ia_marks_run)['marks'];
+                            if ($ia_marks < $practical_pass[2]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
                                 $fail = true;
                             } else {
@@ -252,7 +256,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         }
 
                     } else if ($subid['practical_flag'] == 2) {
-                        echo ('<td>IE</td>');
+                        echo ('<td>IE</td><td>100</td>');
                         $ie_pass = mysqli_fetch_assoc($get_comp_id_run)['passing_marks'];
                         $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
                         $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
@@ -289,7 +293,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         }
 
                     } else {
-                        echo ('<td>T</td>');
+                        echo ('<td>T</td><td>100</td>');
                         while ($pass_marks = mysqli_fetch_assoc($get_comp_id_run)) {
                             $theory_pass[] = $pass_marks['passing_marks'];
                         }
@@ -411,7 +415,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
         </script>');
         echo('<script>set_rem_tr_values('.$stud_count.')</script>');            
         $stud_count++;
-        echo ('</table>');
+        echo ('</table></div>');
     }
     ?>
     </div>
