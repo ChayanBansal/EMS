@@ -3,6 +3,7 @@ session_start();
 $_SESSION['from_year'] = 2016;//$_POST['batch'];
 $_SESSION['course_id'] = 3;//$_POST['course_id'];
 $_SESSION['semester'] = 3;//$_POST['semester'];
+$_SESSION['main_atkt']="main";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,8 +11,21 @@ $_SESSION['semester'] = 3;//$_POST['semester'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>View TR</title>
+    <script>
+        var total_cr=0.0;
+        var total_gpv=0.0;
+        var failure_report="";
+    function set_rem_tr_values(no){
+        document.getElementById("cr"+no).innerHTML=total_cr;
+        document.getElementById("gpv"+no).innerHTML=total_gpv;
+        document.getElementById("fail"+no).innerHTML=failure_report;
+    }
+</script>
     <style>
+        body{
+            background: white !important;
+        }
         table {
             font-size: 1.6rem;
         }
@@ -19,8 +33,8 @@ $_SESSION['semester'] = 3;//$_POST['semester'];
         th {
             background: #2A458E;
             color: white;
-            font-weight: 600;
-            text-align: center;
+            font-weight: 500;
+            text-align: center !important;
         }
         
         td {
@@ -42,13 +56,14 @@ $_SESSION['semester'] = 3;//$_POST['semester'];
         }
         
         table caption {
-            font-size: 1.6rem;
-            border: 1px dashed;
+            font-size: 1.8rem;
+            border-top: 1px solid;
+            font-family: 'Lato', sans-serif;
         }
         
         .caption-container {
             display: flex;
-            width: 4000px;
+            width: 4096px;
             justify-content: space-around;
         }
         
@@ -78,7 +93,7 @@ $dashboard = new dashboard();
 $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "Contact Super Admin");
 
 ?>
-<div class="contain" style="width: 4000px; overflow:auto">
+<div class="contain" style="width: 4096px; overflow:auto">
     <?php
     $get_count_semesters = "SELECT duration*2 as 'semcount' from courses where course_id=" . $_SESSION['course_id'];
     $get_count_semesters_run = mysqli_query($conn, $get_count_semesters);
@@ -95,6 +110,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             $sgpa = new SplFixedArray($semcount);
             $fail_paper_code = new SplFixedArray($semcount);
             $result_pass_fail = new SplFixedArray($semcount);
+            $cur_failure_report = "";
             $get_roll_id = "SELECT distinct(roll_id) from roll_list WHERE enrol_no='" . $student['enrol_no'] . "' ORDER BY semester";
             $get_roll_id_run = mysqli_query($conn, $get_roll_id);
             $loopcount = 0;
@@ -136,19 +152,25 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             $get_cur_cgpa_run = mysqli_query($conn, $get_cur_cgpa);
             $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa_run)['cgpa'];
             echo ('<table class="table table-striped table-bordered">
-            <td>S.No: <span class="info">' . $stud_count . '</span>
-            </td>
-            <td>Enrollment Number: <span class="info">' . $student['enrol_no'] . '</span>
-            <td>Student Name: <span class="info">' . $student['first_name'] . " " . $student['middle_name'] . " " . $student['last_name'] . '</span>
-            </td>
-            <td class="block">Father\'s Name: <span class="info">' . $student['father_name'] . '</span>
-            </td>
-            <td class="block">Mother\'s Name: <span class="info">' . $student['mother_name'] . '</span>
-            </td>
-            <td class="block">Gender: <span class="info">' . $student['gender'] . '</span>
-            </td>
-            <td class="block">Status: <span class="info">' . $student['status'] . '</span>
-            </td>
+            <caption>
+            <div class="caption-container">
+            <span class="block">S.No: ' . $stud_count . '</span>
+            <span class="block">Enrollment Number: ' . $student['enrol_no'] . '</span>
+            <span class="block">Student Name: ' . $student['first_name'] . " " . $student['middle_name'] . " " . $student['last_name'] . '</span>
+            </span>
+            <span class="block">Father\'s Name: ' . $student['father_name'] . '</span>
+
+            <span class="block">Mother\'s Name: ' . $student['mother_name'] . '</span>
+            <span class="block">Gender: ' . $student['gender'] . '</span>
+            <span class="block">Status:');
+            if($_SESSION['main_atkt']=="main"){
+                echo("Regular");
+            }
+            else{
+                echo("EX");
+            }
+            echo('</span> </div>
+            </caption>
             <tr>
             <th style="vertical-align:middle">Paper Code</th>
             <th style="vertical-align:middle">Paper Name</th>
@@ -166,7 +188,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             <th style="vertical-align:middle">GPV.</th>
             <th style="vertical-align:middle">Total Credits Earned</th>
             <th style="vertical-align:middle">Total GPV Earned</th>
-            <th style="vertical-align:middle;width:40%" colspan="' . ($semcount+1) . '">Previous Semester Details</th>
+            <th style="vertical-align:middle;width:40%" colspan="' . ($semcount + 1) . '">Previous Semester Details</th>
         </tr>
             ');
             $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
@@ -188,39 +210,125 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                     if ($subidcount > 1) {
                         echo ('<tr style="vertical-align:middle">');
                     }
+                    $get_comp_id = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid['sub_id'] . " ORDER BY component_id";
+                    $get_comp_id_run = mysqli_query($conn, $get_comp_id);
                     if ($subid['practical_flag'] == 1) {
                         echo ('<td>P</td>');
+                        while ($pass_marks = mysqli_fetch_assoc($get_comp_id_run)) {
+                            $practical_pass[] = $pass_marks['passing_marks'];
+                        }
+                        $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
+                        $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
+                        $marks = mysqli_fetch_assoc($get_cap_qry_run);
+                        $fail = false;
+                        if (is_null($marks['end_sem'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            if ($marks['end_sem'] < $practical_pass[1]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
+                                $fail = true;
+                            } else {
+                                echo ("<td>" . $marks['end_sem'] . "</td>");
+                            }
+                        }
+
+                        if (is_null($marks['cat_cap_ia'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            if ($marks['cat_cap_ia'] < $practical_pass[0]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                                $fail = true;
+                            } else {
+                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                            }
+                        }
+                        if (is_null($marks['total'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            echo ("<td>" . $marks['total'] . "</td>");
+                        }
+                        if ($fail) {
+                            $cur_failure_report .= $subject['sub_code'] . "[P] ";
+                        }
+
                     } else if ($subid['practical_flag'] == 2) {
                         echo ('<td>IE</td>');
+                        $ie_pass = mysqli_fetch_assoc($get_comp_id_run)['passing_marks'];
+                        $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
+                        $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
+                        $marks = mysqli_fetch_assoc($get_cap_qry_run);
+                        $fail = false;
+                        if (is_null($marks['end_sem'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            if ($marks['end_sem'] < $practical_pass[1]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
+                                $fail = true;
+                            } else {
+                                echo ("<td>" . $marks['end_sem'] . "</td>");
+                            }
+                        }
+                        if (is_null($marks['cat_cap_ia'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            if ($marks['cat_cap_ia'] < $practical_pass[0]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                                $fail = true;
+                            } else {
+                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                            }
+                        }
+                        if (is_null($marks['total'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            if ($marks['total'] < $ie_pass) {
+                                echo ("<td style='background: #EF6545'>" . $marks['total'] . "</td>");
+                            } else {
+                                echo ("<td>" . $marks['total'] . "</td>");
+                            }
+                        }
+
                     } else {
                         echo ('<td>T</td>');
+                        while ($pass_marks = mysqli_fetch_assoc($get_comp_id_run)) {
+                            $theory_pass[] = $pass_marks['passing_marks'];
+                        }
+                        $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
+                        $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
+                        $marks = mysqli_fetch_assoc($get_cap_qry_run);
+                        $fail = false;
+                        if (is_null($marks['end_sem'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            if ($marks['end_sem'] < $theory_pass[1]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
+                                $fail = true;
+                            } else {
+                                echo ("<td>" . $marks['end_sem'] . "</td>");
+                            }
+                        }
+
+                        if (is_null($marks['cat_cap_ia'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            if ($marks['cat_cap_ia'] < $theory_pass[0]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                                $fail = true;
+                            } else {
+                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                            }
+                        }
+                        if (is_null($marks['total'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            echo ("<td>" . $marks['total'] . "</td>");
+                        }
+                        if ($fail) {
+                            $cur_failure_report.= $subject['sub_code'] . "[T] ";
+                        }
+
                     }
-                    $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
-                    $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
-                    $marks = mysqli_fetch_assoc($get_cap_qry_run);
-                    echo ('
-                    <td>');
-                    if (is_null($marks['end_sem'])) {
-                        echo ('-');
-                    } else {
-                        echo ($marks['end_sem']);
-                    }
-                    echo ('</td>
-                    <td>');
-                    if (is_null($marks['cat_cap_ia'])) {
-                        echo ('-');
-                    } else {
-                        echo ($marks['cat_cap_ia']);
-                    }
-                    echo ('</td>
-                    <td>');
-                    if (is_null($marks['total'])) {
-                        echo ('-');
-                    } else {
-                        echo ($marks['total']);
-                    }
-                    echo ('</td>
-                    <td>' . $marks['percent'] . '</td>
+                    echo ('<td>' . $marks['percent'] . '</td>
                     <td>' . $marks['grade'] . '</td>
                     <td>' . $marks['gp'] . '</td>
                     <td>' . $marks['cr'] . '</td>
@@ -228,11 +336,11 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                     ');
                     $total_credits += $marks['cr'];
                     $total_gpv += $marks['gpv'];
-
+                   
                     switch ($rowcount) {
                         case 1:
-                            echo ('<td>Total Credits</td>
-                        <td>Total GPV</td>');
+                            echo ('<td id="cr'.$stud_count.'">Total Credits</td>
+                        <td id="gpv'.$stud_count.'">Total GPV</td>');
                             echo ('<th style="vertical-align:middle">Semester</th>');
                             $convert = new conversion();
                             for ($i = 1; $i <= $semcount; $i++) {
@@ -241,32 +349,32 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             break;
 
                         case 3:
-                            echo ('<td colspan="2"> Semester ' . $convert->numberToRomanRepresentation($_SESSION['semester']) . '</td>
+                            echo ('<td colspan="2" style="font-weight:700;"> Semester ' . $convert->numberToRomanRepresentation($_SESSION['semester']) . '</td>
                             <td>SGPA</td>
                             ');
-                            for($i=0;$i<$semcount;$i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($sgpa[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ('<td>'.$sgpa[$i].'</td>');
+                                    echo ('<td>' . $sgpa[$i] . '</td>');
                                 }
                             }
                             break;
 
                         case 4:
-                            echo ("<td colspan='2'>SGPA: $cur_sgpa</td>");
+                            echo ("<td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
                             echo ("<td>Result</td>");
-                            for($i=0;$i<$semcount;$i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($result_pass_fail[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>".$result_pass_fail[$i]."</td>");
+                                    echo ("<td>" . $result_pass_fail[$i] . "</td>");
                                 }
                             }
                             break;
 
                         case 5:
-                            echo ("<td colspan='2'>Result: ");
+                            echo ("<td colspan='2' style='font-weight:700;'>Result : ");
                             if ($cur_sgpa >= 4.0) {
                                 echo ("PASS");
                             } else {
@@ -284,7 +392,10 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             break;
 
                         case 6:
-                            echo ("<td colspan='2'>CGPA: $cur_cgpa</td>");
+                            echo ('<td colspan="2" id="fail'.$stud_count.'" style="font-weight:700;">Fail In Subject Code :</td>');
+                            break;
+                        case 7:
+                            echo ("<td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
                             break;
                     }
                     echo ('</tr>');
@@ -293,6 +404,12 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                 }
             }
         }
+        echo('<script>
+        total_cr='.$total_credits.';
+        total_gpv='.$total_gpv.';
+        failure_report="Fail In Subject Code: '.$cur_failure_report.'";
+        </script>');
+        echo('<script>set_rem_tr_values('.$stud_count.')</script>');            
         $stud_count++;
         echo ('</table>');
     }
@@ -306,4 +423,5 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
     $logout_modal->display_logout_modal();
     ?>
 </body>
+
 </html>

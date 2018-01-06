@@ -3,7 +3,7 @@
 <script src="/ems/bootstrap/js/bootstrap.min.js"></script>
 <script src="/ems/js/global_script.js"></script>
 <link rel="stylesheet" href="/ems/css/front_styles.css">
-<link href="https://fonts.googleapis.com/css?family=Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|Work+Sans" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|Work+Sans|Lato:300" rel="stylesheet">
 <link rel="stylesheet" href="/ems/font-awesome/css/font-awesome.css">
 <script src="/ems/js/pace.min.js"></script>
     <link rel="stylesheet" href="/ems/css/pace.css">
