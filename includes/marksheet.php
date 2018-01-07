@@ -30,7 +30,7 @@
         $stud=mysqli_fetch_assoc($get_stud_detail_run);
         //$stud['enrol_no'] $stud['first_name'] $stud['middle_name'] $stud['last_name'] $stud['father_name'] $stud['mother_name'] $stud['course_id'] $stud['from_year'] $stud['current_sem'] $stud['cgpa']
 
-        $get_prog_br="SELECT progam, branch FROM branches WHERE course_id=$course_id";
+        $get_prog_br="SELECT program, branch FROM branches WHERE course_id=$course_id";
         $get_prog_br_run=mysqli_query($conn,$get_prog_br);
         $prog_br=mysqli_fetch_assoc($get_prog_br_run);
         //$prog_br['progam'] $prog_br['branch']
@@ -257,7 +257,7 @@
                         <th>EARNED</th>
                     </tr>");
 
-    $get_subjects_opted="SELECT sub_code, sub_name, ie_flag FROM subjects WHERE (course_id=$course_id AND semester=$semester) AND ((elective_flag=0) OR (elective_flag=1 AND sub_code IN (SELECT sub_code FROM elective_map WHERE enrol_no=$enrol_no))";
+    $get_subjects_opted="SELECT sub_code, sub_name, ie_flag FROM subjects WHERE (course_id=$course_id AND semester=$semester) AND ((elective_flag=0) OR (elective_flag=1 AND sub_code IN (SELECT sub_code FROM elective_map WHERE enrol_no='$enrol_no'))";
     $get_subjects_opted_run=mysqli_query($conn,$get_subjects_opted);
     while($sub=mysqli_fetch_assoc($get_subjects_opted_run)) //$sub['sub_code'] $sub['sub_name'] $sub['ie_flag']
     {
