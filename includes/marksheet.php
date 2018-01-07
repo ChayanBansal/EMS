@@ -46,7 +46,7 @@ require('config.php');
         //Updating no_prints in roll_list
         $update_prints="UPDATE no_prints set no_prints=(no_prints+1) WHERE roll_id=$roll_id";
         $update_prints_run=mysqli_query($conn,$update_prints);
-        $_POST=array();
+       
     }
 //the output starts here
 ?>
@@ -182,7 +182,7 @@ require('config.php');
     </style>
 </head>
 
-<body onload="window.print(); window.history.back()"><!--window.print(); window.history.back()-->
+<body onload=""><!--window.print(); window.history.back()-->
     <div class="main">
         <div class="upper">
             <div class="t1">
