@@ -1,4 +1,5 @@
 <?php
+    require('config.php');
     if($_POST['tr_getFromYear']==1 AND isset($_POST['course_id']))
     {
         $get_from_year="SELECT DISTINCT(from_year) FROM students WHERE course_id=".$_POST['course_id']." AND enrol_no IN 
@@ -8,7 +9,7 @@
         echo('<option value="" disabled selected>Select Batch</option>');
         while($from_year=mysqli_fetch_assoc($get_from_year_run))
         {
-            echo('<option value="'.$from_year['from_year'].'">"'.$from_year['from_year'].'"</option>');
+            echo('<option value="'.$from_year['from_year'].'">'.$from_year['from_year'].'</option>');
         }
     }
     //tr_getSemester=1&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type
@@ -18,7 +19,7 @@
         $get_semester_run=mysqli_query($conn,$get_semester);
         while($semester=mysqli_fetch_assoc($get_semester_run))
         {
-            echo('<option value="'.$semester['semester'].'">"'.$semester['semester'].'"</option>');
+            echo('<option value="'.$semester['semester'].'">'.$semester['semester'].'</option>');
         }
     }
 ?>
