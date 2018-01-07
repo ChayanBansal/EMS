@@ -332,7 +332,6 @@ function chat(location,username)
 <div class="main-container col-lg-8 col-md-8 col-sm-12 col-xs-12">
     <div class="sub-container col-lg-8 col-sm-12 col-md-12 col-xs-12">
         <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
-        <button class="option blue " data-toggle="modal" data-target=""><div><i class= "glyphicon glyphicon-eye-open" ></i></div> View Marks</button>       
         <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
         <button class="option pink " data-toggle="modal" data-target="#gen_marksheet"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
     </div>

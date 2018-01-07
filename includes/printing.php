@@ -8,7 +8,7 @@ if(isset($_POST['print_proceed'])){
     $_SESSION['main_atkt']=$_POST['print_type'];   
 }
 else{
-    header('location: /ems/includes/404.html');
+   // header('location: /ems/includes/404.html');
 }
 ?>
 <!DOCTYPE html>
@@ -76,8 +76,9 @@ else{
     </thead>
     <tbody>
         <?php
-        $get_students_qry = "SELECT * FROM students s,roll_list rl WHERE s.course_id=" . $_SESSION['course_id'] . " AND s.from_year=" . $_SESSION['from_year'] . " AND rl.semester=" . $_SESSION['semester'];
+        $get_students_qry = "SELECT * FROM students s,roll_list rl WHERE s.course_id=" . $_SESSION['course_id'] . " AND s.from_year=" . $_SESSION['from_year'] . " AND rl.semester=" . $_SESSION['semester']." AND s.enrol_no=rl.enrol_no";
         $get_students_qry_run = mysqli_query($conn, $get_students_qry);
+
         if ($get_students_qry_run) {
             while ($student = mysqli_fetch_assoc($get_students_qry_run)) {
                 echo('<tr>');

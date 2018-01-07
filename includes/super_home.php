@@ -78,6 +78,7 @@ $options->add_subject($conn);
 $options->create_operator($conn);
 $options->add_session($conn);
 $options->update_session($conn);
+$options->create_exam_month_year($conn);
 $options->message($conn);
 $options->lock_operator($conn);
 $options->unlock_operator($conn);
