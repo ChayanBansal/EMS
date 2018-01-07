@@ -316,6 +316,7 @@ function tr_getSemester(tr_type)
             <div class="sub-option" id="subopt5">
             <button data-toggle="modal" data-target="#addsessionModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
             <button data-toggle="modal" data-target="#viewsessionModal"><i class="glyphicon glyphicon-pencil"></i> Update Session</button>
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#select_month">Set Examination Month</button>
             </div>
             </div>
 
@@ -978,6 +979,50 @@ function tr_getSemester(tr_type)
   </div>
 
   <!--End-->
+  
+  <!-- Selecting Exam Month -->
+
+<!-- Modal -->
+<div id="select_month" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+    <form action='' post=''>
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Select Examination Month</h4>
+      </div>
+      <div class="modal-body">
+      <div class="form-group">
+        <div class="checkbox">
+          <?php $get_sessions="SELECT * FROM academic_sessions";
+                $get_sessions_run=mysqli_query($conn,$get_sessions);
+                while($session=mysqli_fetch_assoc($get_sessions_run))
+                {
+                  $get_course_name="SELECT course_name FROM courses WHERE course_id=".$session['ac_session_id'];
+                  $get_course_name=mysqli_query($conn,$get_course_name);
+                  $course_name=mysqli_fetch_assoc($get_course_name);
+                  echo('<label><input type="checkbox" name="ac_session_id[]" value="'.$session['ac_session_id'].'">'.$course_name['course_name'].'-'.$session['from_year'].'-'.$session['current_semester'].' </label>');
+                }
+          ?>
+          </div>
+            <div clas="form-group">
+              <label for="month" class="form-control">Select Month:</label>
+              <input type="month" name="month" >
+            </div
+        </div>
+      </div>
+      <div class="modal-footer">
+      <button type="submit" class="btn btn-info">Set Examination Month</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+<!-- selecting exam month close-->
   
   <!-- Modal Box for viewing operators-->
   <div id="view_op_modal" class="modal fade" role="dialog">
