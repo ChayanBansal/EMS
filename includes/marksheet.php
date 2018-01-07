@@ -292,7 +292,7 @@ require('config.php');
             <td rowspan="2" class="'.$sub['sub_code'].'" >'.$sub['sub_code'].'</td>  
             <td rowspan="2" class="'.$sub['sub_code'].'" >'.$sub['sub_name'].'</td>'); //These two have same class, i.e, sub_code
             
-            $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code=".$sub['sub_code'];
+            $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
             $get_sub_id_run=mysqli_query($conn,$get_sub_id);
 
             echo('<script> var rowspan_'.$sub['sub_code'].'=0; </script>'); //JS variable for rowspan
