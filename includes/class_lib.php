@@ -390,29 +390,31 @@ class super_user_options
 		}
 
 	}
-	function create_exam_month_year($conn){
-		$ac_sess_id=$_POST['id'];
-		$month=$_POST['month'];
-		$year=$_POST['year'];
-		$check_details_exist="SELECT count(*) FROM exam_month_year WHERE ac_session_id=".$ac_sess_id;
-		$check_details_exist_run=mysqli_query($conn,$check_details_exist);
-		$rows=mysqli_fetch_assoc($check_details_exist_run)['count(*)'];
-		$alert=new alert();
-		if($rows>0){
-			$alert->exec("Exam Session already created!","info");
-			return;
-		}
-		else{
-			$insert_exam_details="INSERT INTO exam_month_year VALUES($ac_sess_id,'".$month.", ".$year."')";
-			$insert_exam_details_run=mysqli_query($conn,$insert_exam_details);
-			if($insert_exam_details_run){
-				$alert->exec("New Exam Session created....","success");
+	function create_exam_month_year($conn)
+	{
+		if (isset($_POST['set_exam_month'])) {
+			$ac_sess_id = $_POST['id'];
+			$month = $_POST['month'];
+			$year=$_POST['year'];
+			
+			$check_details_exist = "SELECT count(*) FROM exam_month_year WHERE ac_session_id=" . $ac_sess_id;
+			$check_details_exist_run = mysqli_query($conn, $check_details_exist);
+			$rows = mysqli_fetch_assoc($check_details_exist_run)['count(*)'];
+			$alert = new alert();
+			if ($rows > 0) {
+				$alert->exec("Exam Session already created!", "info");
+				return;
+			} else {
+				$insert_exam_details = "INSERT INTO exam_month_year VALUES($ac_sess_id,'" . $month . ", " . $year . "')";
+				$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
+				if ($insert_exam_details_run) {
+					$alert->exec("New Exam Session created....", "success");
+				} else {
+					$alert->exec("There was an error while creating the exam session!", "danger");
+				}
 			}
-			else{
-				$alert->exec("There was an error while creating the exam session!","danger");
-			}
+			echo($_POST['month']."odifhwoudifhaioufyuiafyuaify");
 		}
-		
 	}
 	function add_subject($conn)
 	{
@@ -703,9 +705,8 @@ class super_user_options
 					mysqli_autocommit($conn, true);
 					$alert->exec("Failed to update session!", "danger");
 				}
-			}
-			else{
-				$alert->exec("Failed to update session!", "danger");	
+			} else {
+				$alert->exec("Failed to update session!", "danger");
 			}
 
 		}
