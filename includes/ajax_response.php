@@ -123,7 +123,17 @@ if($_POST['getComponent'])
         }
     }
 }
-
+if($_POST['get_ay']){
+    $get_course_years="SELECT distinct(from_year) FROM students WHERE course_id=".$_POST['get_ay'];
+    $get_course_years_run=mysqli_query($conn,$get_course_years);
+    if($get_course_years_run){
+        while ($row=mysqli_fetch_assoc($get_course_years_run)) {
+            echo ('
+                    <option value="' . $row['from_year'] . '" >' . $row['from_year'] . '</option>   
+                    ');
+        }
+    }
+}
 
 
 ?>

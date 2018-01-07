@@ -196,45 +196,44 @@ $options->unlock_operator($conn);
 <div class="panel-group" id="accordion2" >
    <h3><center>Chat</center></h3>
    <?php 
-    $get_users="SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
+  $get_users = "SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
     SELECT CONCAT('o',operator_id) As id, operator_username AS username, operator_name AS name FROM operators";
-    $get_users_run=mysqli_query($conn,$get_users);
-    while($user=mysqli_fetch_assoc($get_users_run))
-    {
-      $location="l".$user['id'];
-      echo('<div class="panel panel-default">
+  $get_users_run = mysqli_query($conn, $get_users);
+  while ($user = mysqli_fetch_assoc($get_users_run)) {
+    $location = "l" . $user['id'];
+    echo ('<div class="panel panel-default">
               <div class="panel-heading">
                 <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion2" href="#'.$user['id'].'">
-                    '.$user['name'].'</a>
+                  <a data-toggle="collapse" data-parent="#accordion2" href="#' . $user['id'] . '">
+                    ' . $user['name'] . '</a>
                 </h4>
               </div>
-              <div id="'.$user['id'].'" class="panel-collapse collapse">
+              <div id="' . $user['id'] . '" class="panel-collapse collapse">
                 <div class="panel-body">
-                  <div id="'.$location.'" class="chat_box">Loading...</div>
+                  <div id="' . $location . '" class="chat_box">Loading...</div>
                   <div class="panel-footer">
-                    <input class="form-control" id="'.$user['username'].'" type="text">
-                    <button id="b'.$user['username'].'"class="btn btn-info form-control" value="'.$user['username'].'" onClick="sendMessage(this.value,'.$location.');" >Send</button>
+                    <input class="form-control" id="' . $user['username'] . '" type="text">
+                    <button id="b' . $user['username'] . '"class="btn btn-info form-control" value="' . $user['username'] . '" onClick="sendMessage(this.value,' . $location . ');" >Send</button>
                   </div>
                 </div>
               </div>
             </div>
             <script>
-            document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
-           chat("'.$location.'","'.$user['username'].'");
+            document.getElementById("b' . $user['username'] . '").addEventListener("click", function(){ chat("' . $location . '","' . $user['username'] . '"); });
+           chat("' . $location . '","' . $user['username'] . '");
               
 
-              $("#'.$location.'").animate({
-                scrollTop: $("#'.$location.'").offset().top
+              $("#' . $location . '").animate({
+                scrollTop: $("#' . $location . '").offset().top
              }, "slow");
              
             </script>
            ');/*document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
            chat("'.$location.'","'.$user['username'].'");*/
-    }
+  }
     //echo('<script>setInterval(chat(),3000);</script>');
 
-   ?>  
+  ?>  
 </div>
     <!--ChatBoxEnd-->
 </div>
@@ -310,7 +309,7 @@ $options->unlock_operator($conn);
                         $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
                         $get_course_run = mysqli_query($conn, $get_course);
                         while ($course = mysqli_fetch_assoc($get_course_run)) {
-                            echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
+                          echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
                         }
                         ?>
                     </select>
@@ -323,7 +322,7 @@ $options->unlock_operator($conn);
                         $get_batch = "SELECT from_year FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'];
                         $get_batch_run = mysqli_query($conn, $get_batch);
                         while ($batches = mysqli_fetch_assoc($get_batch_run)) {
-                            echo ('<option value="' . $batches['from_year'] . '">' . $batches['from_year'] . '</option>');
+                          echo ('<option value="' . $batches['from_year'] . '">' . $batches['from_year'] . '</option>');
                         }
                         ?>
                     </select>
@@ -444,7 +443,7 @@ $options->unlock_operator($conn);
                 <div class="form-group">
                 <label for="duration">Body</label>
                 <?php
-                $input->display_textarea("","form-control","mail_body","",4,30,1);
+                $input->display_textarea("", "form-control", "mail_body", "", 4, 30, 1);
                 ?>
                 </div>
             </div>
@@ -809,6 +808,26 @@ $options->unlock_operator($conn);
         </div>
     <table class="table table-striped table-responsive table-bordered">
    <caption class="form-inline">
+
+   <div class="form-group">
+            <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester(); show_ay()" required>
+            <option value="" disabled selected>Select a course</option>   
+            <?php
+            $get_course_qry = "SELECT * from courses";
+            $get_course_qry_run = mysqli_query($conn, $get_course_qry);
+            if ($get_course_qry_run) {
+              while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
+                echo ('
+                    <option value="' . $row['course_id'] . '" data-course-duration=' . $row['duration'] . '>' . $row['course_name'] . '</option>   
+                    ');
+              }
+            } else {
+              $alert = new alert();
+              $alert->exec("Unable to fetch courses!", "warning");
+            }
+            ?>
+        </select>
+        </div>
    <div class="form-group">
             <select name="myear" id="myear" class="form-control" required>
             <option value="" disabled selected>Select Academic Year</option>
@@ -827,25 +846,6 @@ $options->unlock_operator($conn);
             }
             ?>  
            </select>
-        </div>
-        <div class="form-group">
-            <select name="mcourse" id="mcourse" class="form-control" onchange="show_semester()" required>
-            <option value="" disabled selected>Select a course</option>   
-            <?php
-            $get_course_qry = "SELECT * from courses";
-            $get_course_qry_run = mysqli_query($conn, $get_course_qry);
-            if ($get_course_qry_run) {
-              while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
-                echo ('
-                    <option value="' . $row['course_id'] . '" data-course-duration=' . $row['duration'] . '>' . $row['course_name'] . '</option>   
-                    ');
-              }
-            } else {
-              $alert = new alert();
-              $alert->exec("Unable to fetch courses!", "warning");
-            }
-            ?>
-        </select>
         </div>
         <div class="form-group">
             <select name="msemester" id="msemester" class="form-control" required>
@@ -1027,6 +1027,20 @@ $options->unlock_operator($conn);
           for(var i=0;i<no;i++)
           document.getElementById("name"+i).checked=false;   
         }
+    }
+    function show_ay(){
+      var course=document.getElementById("mcourse").value;
+      $.ajax({
+	type: "POST",
+	url: "ajax_response",
+	data: 'get_ay='+course;
+	success: function(data){
+        $("#myear").html(data);
+    },
+    error: function(e){
+        alert('Unable to load course years!');
+    }
+	});
     }
     
 </script>
