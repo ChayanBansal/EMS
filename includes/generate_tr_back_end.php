@@ -18,11 +18,20 @@
             $total_credits_earned = 0; 
             $cr = 0;
             $total_earned_gpv = 0;
-            $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code IN (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester.")";
+                    
+            $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code IN 
+                        (
+                            (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester." AND from_year=$from_year AND elective_flag=0 AND enrol_no='".$roll_id['enrol_no']."') 
+                            UNION 
+                            (SELECT sub_code FROM elective_map WHERE enrol_no='".$roll_id['enrol_no']."' sub_code IN
+                                (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester." AND from_year=$from_year AND elective_flag=1)
+                            )
+                        )";
             $get_sub_id_run=mysqli_query($conn,$get_sub_id); 
-            
+            $total_credits_allotted=0;
             while($sub_id=mysqli_fetch_assoc($get_sub_id_run)) //$sub_id['sub_id'] $sub_id['practical_flag'] $sub_id['credits_allotted']
             {
+                $total_credits_allotted = $total_credits_allotted + $sub_id['credits_allotted'];
                 if(($sub_id['practical_flag']==0) OR ($sub_id['practical_flag']==1))
                 {
                     if($sub_id['practical_flag']==0) //for theory sub_id
@@ -261,8 +270,9 @@
                 }
             }
 
+            
             // exam summary
-            $sgpa = $total_earned_gpv / $total_credits_earned;
+            $sgpa = $total_earned_gpv / $total_credits_allotted;
 
             $insert_exam_summary="INSERT INTO exam_summary(roll_id, total_credits_earned, total_gpv_earned, sgpa) 
                                         VALUES(".$roll_id['roll_id'].", ".$total_credits_earned.", ".$total_earned_gpv.", ".$sgpa.")";
@@ -273,7 +283,12 @@
             $get_cur_cgpa=mysqli_query($conn,$get_cur_cgpa);
             $cur_cgpa=mysqli_fetch_assoc($get_cur_cgpa);//$cur_cgpa['cgpa']
             $new_cgpa = ($cur_cgpa['cgpa'] + $sgpa)/2;
+<<<<<<< HEAD
             $update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no=".$roll_id['enrol_no'];
+=======
+
+            $update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no='".$roll_id['enrol_no']."'";
+>>>>>>> 19f1f95ee9d523013489dbb3295b1e1470025486
             $update_cgpa_run=mysqli_query($conn,$update_cgpa);
             echo($insert_exam_summary);
             if($insert_exam_summary_run==TRUE)
