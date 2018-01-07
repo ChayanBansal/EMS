@@ -363,9 +363,9 @@ function tr_getSemester(tr_type)
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="tr_semester">Semester: </label>
+                    <label for="tr_semester">Semester :</label>
                     <select id="tr_semester" name="tr_semester" class="form-control" required>
-                        <option value="" disabled selected>Semester</option>                       
+                        <option value="" disabled selected>Select Semester</option>                       
                     </select>
                 </div>
       </div>
