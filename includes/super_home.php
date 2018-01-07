@@ -141,20 +141,36 @@ $options->unlock_operator($conn);
 	});
   }
 
-  function tr_getFromYear(course_id)
+  function tr_getFromYear(tr_course_id)
   {
     $.ajax({
 	type: "POST",
 	url: "select_tr",
-	data: 'getFromYear=1&course_id='+course_id,
+	data: 'tr_getFromYear=1&course_id='+tr_course_id,
 	success: function(data){
-        $("#feed_marks_list").html(data);
+        $("#tr_batch_list").html(data);
     },
     error: function(e){
-      $("#feed_marks_list").html("Unable to load recent activities");
+      $("#tr_batch_list").html("Unable to load recent activities");
     }
 	});
   }
+
+function tr_getSemester(tr_type)
+{
+  tr_from_year=document.getElementById("tr_batch_list").value;
+  tr_course_id=document.getElementById("tr_course_list").value;
+  $.(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: 'tr_getSemester=1&tr_getFromYear=0&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type,
+    }
+  )
+}
+  
+
+
 </script>
 <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12" style="display:flex; flex-direction:column;">
 <div class="panel-group" id="accordion" >
@@ -296,14 +312,15 @@ $options->unlock_operator($conn);
 
     <!-- Modal content-->
     <div class="modal-content">
+      <form action="view_tr" method="post">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="close" data-dismiss="modal"><span style="color:black">&times;</span></button>
         <h4 class="modal-title">View TR</h4>
       </div>
       <div class="modal-body">
                 <div class="form-group">
-                    <label for="course">Course :</label>
-                    <select id="course_list" name="course" class="form-control" onChange="tr_getFromYear(this.value)" required>
+                    <label for="tr_course">Course :</label>
+                    <select id="tr_course_list" name="tr_course" class="form-control" onChange="tr_getFromYear(this.value)" required>
                         <option value="" disabled selected>Select Batch</option>
                         <?php 
                         $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
@@ -315,8 +332,8 @@ $options->unlock_operator($conn);
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="batch">Batch (Starting Year) :</label>
-                    <select id="batch_list" name="batch" class="form-control" onChange="getType(this.value)" required>
+                    <label for="tr_batch">Batch (Starting Year) :</label>
+                    <select id="tr_batch_list" name="tr_batch" class="form-control" onChange="tr_getType(this.value)" required>
                         <option value="" disabled selected>Select Batch</option>
                         <?php 
                         $get_batch = "SELECT from_year FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'];
@@ -330,7 +347,9 @@ $options->unlock_operator($conn);
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-success" >Proceed</button>
       </div>
+                      </form>
     </div>
 
   </div>
@@ -344,7 +363,7 @@ $options->unlock_operator($conn);
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <button type="button" class="close" data-dismiss="modal"><span style="color:black">&times;</span></button>
             <h4 class="modal-title">Add New Course</h4>
           </div>
           <form action="" method="post" onsubmit="return disable_on_submitbtn()">
