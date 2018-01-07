@@ -408,14 +408,16 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                     $subid_count++;
                 }
             }
-        }
-        echo('<script>
+            $stud_count++;
+            echo('<script>
         total_cr='.$total_credits.';
         total_gpv='.$total_gpv.';
         failure_report="Fail In Subject Code: '.$cur_failure_report.'";
         </script>');
+        }
+        
         echo('<script>set_rem_tr_values('.$stud_count.')</script>');            
-        $stud_count++;
+        
         echo ('</table></div>');
     }
     ?>
