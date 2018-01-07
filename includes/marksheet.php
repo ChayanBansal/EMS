@@ -1,4 +1,6 @@
 <?php 
+session_start();
+require('config.php');
 /* Note: In the following code, ****Status is considered as Regular**** */
 /* Requirements:
         1) roll_id
@@ -179,7 +181,7 @@
     </style>
 </head>
 
-<body onload="window.print(); window.history.back()">
+<body onload=""><!--window.print(); window.history.back()-->
     <div class="main">
         <div class="upper">
             <div class="t1">

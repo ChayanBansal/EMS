@@ -16,7 +16,8 @@ else{
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Print Tabulation Register</title>
+    <title>Print Gradesheet</title>
+    <link rel="stylesheet" href="/ems/css/style.css">
     <style>
     .subtitle{
         padding: 10px;
@@ -24,6 +25,13 @@ else{
         text-transform: uppercase;
         border-bottom: 1px dotted black;
         
+    }
+    table tr td,table tr th{
+        text-align: center;
+        font-size: 1.6rem;
+    }
+    table.table-bordered > tbody > tr >td{
+       
     }
     </style>
 </head>
@@ -44,11 +52,18 @@ else{
     ?>
      <div class="subselected">
         <div class="subtitle">
-           Showing results for: <?php 
-                                echo ($_SESSION['current_course_name'] . " | " . $_SESSION['from_year'] . " | " . $_SESSION['main_atkt'] . " | Semster " . $_SESSION['semester']);
-                                ?>
+           Print Marksheet For:  <?=$_SESSION['current_course_name']?>
             </div>
+
+        <div class="subtitle">
+    Batch: <?=$_SESSION['from_year']?>       
+    </div>
+
+    <div class="subtitle">
+    Semester: <?=$_SESSION['semester']?>       
+    </div>
         </div>
+        <form action="marksheet" method="post">
         <table class="table table-striped table-responsive table-bordered">
          <caption> <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students.."></caption>
     <thead>
@@ -65,6 +80,7 @@ else{
         $get_students_qry_run = mysqli_query($conn, $get_students_qry);
         if ($get_students_qry_run) {
             while ($student = mysqli_fetch_assoc($get_students_qry_run)) {
+                echo('<tr>');
                 echo ('<td>' . $student['enrol_no'] . '</td>
                 <td>' . $student['first_name'] . " " . $student['last_name'] . '</td>
                 <td>' . $student['father_name'] . '</td>');
@@ -73,20 +89,26 @@ else{
                 $prints = mysqli_fetch_assoc($get_no_of_prints_run)['no_prints'];
                 if ($prints == 0) {
                     echo ('<td>');
-                    $print_btn = new input_button();
-                    $print_btn->display_btn("", "btn btn-default", "submit", "print_roll_id", "", 'Print Now <i class="glyphicon glyphicon-print"></i>');
-                    echo ('</td>');
+                    echo('<button class="btn btn-default" type="submit" name="print_roll_id" value="'.$student['roll_id'].'">Print Now <i class="glyphicon glyphicon-print"></i> </button>');
+                   echo ('</td>');
                 } else {
                     echo ('<td>');
-                    $print_btn = new input_button();
-                    $print_btn->display_btn("", "btn btn-success", "submit", "print_roll_id", "", 'Print Again <i class="glyphicon glyphicon-print"></i>');
+                    echo('<button class="btn btn-success" type="submit" name="print_roll_id" value="'.$student['roll_id'].'"> Print Again <i class="glyphicon glyphicon-print"></i> </button>');
                     echo ('</td>');
                 }
+                echo('</tr>');
             }
         }
         ?>
     </tbody>
 </table>
+</form>
+<?php
+$obj = new footer();
+$obj->disp_footer();
+$logout_modal=new modals();
+$logout_modal->display_logout_modal();
+?>
 </body>
 <script>
 $(document).ready(function(){

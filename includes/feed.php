@@ -89,7 +89,6 @@ if (isset($_POST['proceed_to_feed'])) {
         
     }
     </style>
-    <script src="../js/feed_validation.js"></script>
 </head>
 <body>
 <?php
@@ -124,6 +123,7 @@ $input = new input_field();
             Maximum Marks: <?= $_SESSION['max_marks'] ?>
             </div>
         </div>
+        
      <table class="table table-striped table-responsive table-bordered">
          <caption> <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students.."></caption>
     <thead>
