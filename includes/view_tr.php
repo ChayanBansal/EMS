@@ -21,10 +21,10 @@ else{
         var total_cr=0.0;
         var total_gpv=0.0;
         var failure_report="";
-    function set_rem_tr_values(no){
-        document.getElementById("cr"+no).innerHTML=total_cr;
-        document.getElementById("gpv"+no).innerHTML=total_gpv;
-        document.getElementById("fail"+no).innerHTML=failure_report;
+    function set_rem_tr_values(no,credits,gpv,failures){
+        document.getElementById("cr"+no).innerHTML=credits;
+        document.getElementById("gpv"+no).innerHTML=gpv;
+        document.getElementById("fail"+no).innerHTML=failures;
     }
 </script>
     <style>
@@ -345,8 +345,8 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                    
                     switch ($rowcount) {
                         case 1:
-                            echo ('<td id="cr'.$stud_count.'">Total Credits</td>
-                        <td id="gpv'.$stud_count.'">Total GPV</td>');
+                            echo ('<td id="cr'.$stud_count.'"></td>
+                        <td id="gpv'.$stud_count.'"></td>');
                             echo ('<th style="vertical-align:middle">Semester</th>');
                             $convert = new conversion();
                             for ($i = 1; $i <= $semcount; $i++) {
@@ -409,14 +409,10 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                     $subid_count++;
                 }
             }
-            $stud_count++;
             echo('<script>
-            total_cr='.$total_credits.';
-            total_gpv='.$total_gpv.';
-            failure_report="Fail In Subject Code: '.$cur_failure_report.'";
-            </script>');
-            echo('<script>set_rem_tr_values('.$stud_count.')</script>');            
+            window.setTimeout(function(){set_rem_tr_values('.$stud_count.','.$total_credits.','.$total_gpv.',"Fail In Subject Code '.$cur_failure_report.'")},1000);</script>');            
             echo ('</table></div>');
+            $stud_count++;
         }
         
     }
