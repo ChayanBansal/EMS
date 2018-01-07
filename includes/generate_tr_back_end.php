@@ -286,7 +286,6 @@
                 $_SESSION['tr_generated']=TRUE;
                 //mysqli_commit($conn);
                 //mysqli_close($conn);
-                header('location: super_home');
             }
             else
             {
