@@ -1,5 +1,6 @@
 <?php
 require('config.php');
+session_start();
 if(isset($_POST['print_proceed'])){
     $_SESSION['from_year'] = $_POST['print_batch'];
     $_SESSION['semester'] = $_POST['print_semester'];
@@ -37,7 +38,6 @@ else{
 </head>
 <body>
     <?php
-    session_start();
     require("config.php");
     require("frontend_lib.php");
     require("class_lib.php");

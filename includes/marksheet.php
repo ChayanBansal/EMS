@@ -268,7 +268,7 @@ require('config.php');
         {
             $audit_code=$sub['sub_code'];
             $audit_name=$sub['sub_name'];
-            $get_sub_id="SELECT sub_id, practical_flag FROM sub_distribution WHERE sub_code=".$sub['sub_code'];
+            $get_sub_id="SELECT sub_id, practical_flag FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
             $get_sub_id_run=mysqli_query($conn,$get_sub_id);
             $sub_id=mysqli_fetch_assoc($get_sub_id_run); //$sub['sub_id']
 
