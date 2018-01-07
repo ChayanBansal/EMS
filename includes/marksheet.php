@@ -260,7 +260,7 @@ require('config.php');
                         <th>EARNED</th>
                     </tr>");
 
-    $get_subjects_opted="SELECT sub_code, sub_name, ie_flag FROM subjects WHERE (course_id=$course_id AND semester=$semester) AND ((elective_flag=0) OR (elective_flag=1 AND sub_code IN (SELECT sub_code FROM elective_map WHERE enrol_no='".$stud['enrol_no']."'))";
+    $get_subjects_opted="SELECT sub_code, sub_name, ie_flag FROM subjects WHERE (course_id=$course_id AND semester=$semester) AND ((elective_flag=0) OR (elective_flag=1 AND sub_code IN (SELECT sub_code FROM elective_map WHERE enrol_no='".$stud['enrol_no']."')))";
     $get_subjects_opted_run=mysqli_query($conn,$get_subjects_opted);
     while($sub=mysqli_fetch_assoc($get_subjects_opted_run)) //$sub['sub_code'] $sub['sub_name'] $sub['ie_flag']
     {
