@@ -15,7 +15,7 @@
     //tr_getSemester=1&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type
     if($_POST['tr_getSemester']==1 AND isset($_POST['course_id']) AND isset($_POST['from_year']) AND isset($_POST['type']))
     {
-        $get_semester="SELECT semester FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE course_id=".$_POST['course_id']." AND from_year=".$_POST['from_year'].")";
+        $get_semester="SELECT DISTINCT(semester) FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE course_id=".$_POST['course_id']." AND from_year=".$_POST['from_year'].")";
         $get_semester_run=mysqli_query($conn,$get_semester);
         while($semester=mysqli_fetch_assoc($get_semester_run))
         {
