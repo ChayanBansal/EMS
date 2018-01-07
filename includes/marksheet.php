@@ -37,10 +37,10 @@ require('config.php');
         $prog_br=mysqli_fetch_assoc($get_prog_br_run);
         //$prog_br['progam'] $prog_br['branch']
 
-        $get_prog_br="SELECT month_year FROM exam_month_year WHERE ac_session_id =
+        $get_exam_month="SELECT month_year FROM exam_month_year WHERE ac_session_id =
                     (SELECT ac_session_id FROM academic_sessions WHERE course_id=$course_id AND from_year=".$stud['from_year']." AND current_semester=$semester)";
-        $get_prog_br_run=mysqli_query($conn,$get_prog_br);
-        $prog_br=mysqli_fetch_assoc($get_prog_br_run);//$prog_br['month_year']
+        $get_exam_month_run=mysqli_query($conn,$get_exam_month);
+        $exam_month=mysqli_fetch_assoc($get_exam_month_run);//$exam_month['month_year']
         
 
         //Updating no_prints in roll_list
@@ -224,11 +224,11 @@ require('config.php');
                 <table>
                     <tr>
                         <td>Program:</td>
-                        <td>".$prog_br['progam']."</td>
+                        <td>".$prog_br['program']."</td>
                     </tr>
                     <tr>
                         <td>Branch:</td>
-                        <td>".$prog_br['progam']."</td>
+                        <td>".$prog_br['branch']."</td>
                     </tr>
                     <tr>
                         <td>Semester:</td>
@@ -236,7 +236,7 @@ require('config.php');
                     </tr>
                     <tr>
                         <td>Examination:</td>
-                        <td>".$prog_br['month_year']."</td>
+                        <td>".$exam_month['month_year']."</td>
                     </tr>
                     <tr>
                         <td>Status:</td>
