@@ -297,6 +297,7 @@
                 //header('location: super_home');
             }
         }
+        header('location: super_home.php');
     }
     else
     {
