@@ -897,7 +897,7 @@ class validate
 		if (!isset($_SESSION['operator_id'])) {
 			header('location: /ems/index');
 		} else {
-			echo ('<script>startTimer();</script>');
+			//echo ('<script>startTimer();</script>');
 		}
 	}
 	function conf_logged_in_super()
@@ -905,7 +905,7 @@ class validate
 		if (!isset($_SESSION['super_admin_id'])) {
 			header('location: /ems/index');
 		} else {
-			echo ('<script>startTimer();</script>');
+			//echo ('<script>startTimer();</script>');
 		}
 	}
 }
