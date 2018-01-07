@@ -122,8 +122,7 @@ $options->unlock_operator($conn);
 	});
   }
 
-  window.onload = function() {
-    var chat = function(location,username)
+    function chat(location,username)
     {
     $.ajax({
     type: "POST",
@@ -138,8 +137,6 @@ $options->unlock_operator($conn);
       }
     });
     }
-    setInterval(chat, 3000)
-    };
   function sendMessage(username,location)
   {
     var msg=document.getElementById(username).value;
