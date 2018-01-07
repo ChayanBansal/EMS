@@ -272,13 +272,13 @@
             $insert_exam_summary_run=mysqli_query($conn,$insert_exam_summary);
 
             //Updating CGPA
-            $get_cur_cgpa="SELECT cgpa FROM students WHERE enrol_no=".$roll_id['enrol_no'];
+            $get_cur_cgpa="SELECT cgpa FROM students WHERE enrol_no='".$roll_id['enrol_no']."'";
             $get_cur_cgpa=mysqli_query($conn,$get_cur_cgpa);
             $cur_cgpa=mysqli_fetch_assoc($get_cur_cgpa);//$cur_cgpa['cgpa']
 
             $new_cgpa = ($cur_cgpa['cgpa'] + $sgpa)/2;
 
-            $update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no=".$roll_id['enrol_no'];
+            $update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no='".$roll_id['enrol_no']."'";
             $update_cgpa_run=mysqli_query($conn,$update_cgpa);
 
             if($insert_exam_summary_run==TRUE)
