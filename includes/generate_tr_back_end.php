@@ -21,12 +21,8 @@
                     
             $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code IN 
                         (
-                            (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester." AND from_year=$from_year AND elective_flag=0 AND enrol_no='".$roll_id['enrol_no']."') 
-                            UNION 
-                            (SELECT sub_code FROM elective_map WHERE enrol_no='".$roll_id['enrol_no']."' sub_code IN
-                                (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester." AND from_year=$from_year AND elective_flag=1)
-                            )
-                        )";
+                            (SELECT sub_code FROM subjects WHERE course_id=".$course_id." AND semester=".$semester." AND from_year=".$from_year." AND ((elective_flag=0) OR (elective_flag=1 AND sub_code IN 
+                                    (SELECT sub_code FROM elective_map WHERE enrol_no='".$roll_id['enrol_no']."')))))";   
             $get_sub_id_run=mysqli_query($conn,$get_sub_id); 
             $total_credits_allotted=0;
             while($sub_id=mysqli_fetch_assoc($get_sub_id_run)) //$sub_id['sub_id'] $sub_id['practical_flag'] $sub_id['credits_allotted']
