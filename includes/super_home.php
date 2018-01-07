@@ -339,7 +339,7 @@ function tr_getSemester(tr_type)
                 <div class="form-group">
                     <label for="tr_course">Course :</label>
                     <select id="tr_course_list" name="tr_course" class="form-control" onChange="tr_getFromYear(this.value)" required>
-                        <option value="" disabled selected>Select Batch</option>
+                        <option value="" disabled selected>Select Course</option>
                         <?php 
                         $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
                         $get_course_run = mysqli_query($conn, $get_course);
@@ -363,7 +363,7 @@ function tr_getSemester(tr_type)
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="tr_semester">Type :</label>
+                    <label for="tr_semester">Semester: </label>
                     <select id="tr_semester" name="tr_semester" class="form-control" required>
                         <option value="" disabled selected>Semester</option>                       
                     </select>
@@ -371,7 +371,7 @@ function tr_getSemester(tr_type)
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-success" >Proceed</button>
+        <button type="submit" class="btn btn-success" name="view_tr_submit">Proceed</button>
       </div>
                       </form>
     </div>

@@ -1,10 +1,14 @@
 <?php
-//session,semester,course
 require('config.php');
-$_SESSION['from_year'] = $_POST['batch'];
-$_SESSION['semester'] = $_POST['semester'];
-$_SESSION['course_id'] = $_POST['course_id'];
-$_SESSION['main_atkt']="main";
+if(isset($_POST['print_proceed'])){
+    $_SESSION['from_year'] = $_POST['print_batch'];
+    $_SESSION['semester'] = $_POST['print_semester'];
+    $_SESSION['course_id'] = $_POST['print_course'];
+    $_SESSION['main_atkt']=$_POST['print_type'];   
+}
+else{
+    header('location: /ems/includes/404.html');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,12 +74,12 @@ $_SESSION['main_atkt']="main";
                 if ($prints == 0) {
                     echo ('<td>');
                     $print_btn = new input_button();
-                    $print_btn->display_btn("", "btn btn-default", "submit", "", "", 'Print Now <i class="glyphicon glyphicon-print"></i>');
+                    $print_btn->display_btn("", "btn btn-default", "submit", "print_roll_id", "", 'Print Now <i class="glyphicon glyphicon-print"></i>');
                     echo ('</td>');
                 } else {
                     echo ('<td>');
                     $print_btn = new input_button();
-                    $print_btn->display_btn("", "btn btn-success", "submit", "", "", 'Print Again <i class="glyphicon glyphicon-print"></i>');
+                    $print_btn->display_btn("", "btn btn-success", "submit", "print_roll_id", "", 'Print Again <i class="glyphicon glyphicon-print"></i>');
                     echo ('</td>');
                 }
             }

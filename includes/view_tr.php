@@ -1,9 +1,14 @@
 <?php
 session_start();
-$_SESSION['from_year'] = 2016;//$_POST['batch'];
-$_SESSION['course_id'] = 3;//$_POST['course_id'];
-$_SESSION['semester'] = 3;//$_POST['semester'];
-$_SESSION['main_atkt']="main";
+if(isset($_POST['view_tr_submit'])){
+    $_SESSION['from_year'] = $_POST['tr_batch'];
+    $_SESSION['course_id'] = $_POST['tr_course'];
+    $_SESSION['semester'] = $_POST['tr_semester'];
+    $_SESSION['main_atkt']=$_POST['tr_type'];    
+}
+else{
+    header('location: /ems/includes/404.html');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
