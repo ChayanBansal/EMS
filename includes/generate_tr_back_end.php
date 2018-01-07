@@ -165,7 +165,6 @@
                     $insert_tr="INSERT INTO tr (roll_id, sub_id, cat_cap_ia, end_sem, total, percent, grade, gp, cr, gpv) 
                         VALUES(".$roll_id['roll_id'].", ".$sub_id['sub_id'].", ".$cat_cap_ia.", ".$end_sem.", ".$total.", ".$percentage.", '".$grade."', ".$gp.", ".$cr.", ".$gpv.")";
                     $insert_tr_run=mysqli_query($conn,$insert_tr);
-                    echo($insert_tr);
                     //An entry in a practical or theory subject done till here 
                     $total_credits_earned = $total_credits_earned + $cr;
                     $total_earned_gpv = $total_earned_gpv + $gpv;
@@ -200,7 +199,6 @@
                     }    
                         $total = $ie;
                         $percentage = (($total*100)/100);
-                    
                     if ($percentage >= 91 and $percentage <= 100) 
                     {
                         $grade = 'O';
@@ -280,12 +278,11 @@
             $get_cur_cgpa="SELECT cgpa FROM students WHERE enrol_no='".$roll_id['enrol_no']."'";
             $get_cur_cgpa=mysqli_query($conn,$get_cur_cgpa);
             $cur_cgpa=mysqli_fetch_assoc($get_cur_cgpa);//$cur_cgpa['cgpa']
-
             $new_cgpa = ($cur_cgpa['cgpa'] + $sgpa)/2;
 
             $update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no='".$roll_id['enrol_no']."'";
             $update_cgpa_run=mysqli_query($conn,$update_cgpa);
-
+            echo($insert_exam_summary);
             if($insert_exam_summary_run==TRUE)
             {
                 $_SESSION['tr_generated']=TRUE;
@@ -297,8 +294,7 @@
                 $_SESSION['tr_generated']=FALSE;
                 //mysqli_rollback($conn);
                 //mysqli_close($conn);
-                
-                header('location: super_home');
+                //header('location: super_home');
             }
         }
     }

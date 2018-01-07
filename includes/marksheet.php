@@ -39,6 +39,11 @@
                     (SELECT ac_session_id FROM academic_sessions WHERE course_id=$course_id AND from_year=".$stud['from_year']." AND current_semester=$semester)";
         $get_prog_br_run=mysqli_query($conn,$get_prog_br);
         $prog_br=mysqli_fetch_assoc($get_prog_br_run);//$prog_br['month_year']
+        
+
+        //Updating no_prints in roll_list
+        $update_prints="UPDATE no_prints set no_prints=(no_prints+1) WHERE roll_id=$roll_id";
+        $update_prints_run=mysqli_query($conn,$update_prints);
     }
 //the output starts here
 ?>
@@ -174,7 +179,7 @@
     </style>
 </head>
 
-<body>
+<body onload="window.print(); window.history.back()">
     <div class="main">
         <div class="upper">
             <div class="t1">
@@ -248,7 +253,7 @@
                         <th rowspan='2'>GRADE</th>
                     </tr>
                     <tr>
-                        <th>ALLOTED</th>
+                        <th>ALLOTTED</th>
                         <th>EARNED</th>
                     </tr>");
 
