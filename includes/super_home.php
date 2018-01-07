@@ -29,6 +29,22 @@
       overflow:auto;
     }
     </style>
+    <script>
+     function show_ay(){
+      var course=document.getElementById("mcourse").value;
+      $.ajax({
+            type: "POST",
+          url: "ajax_response",
+          data: 'get_ay='+course,
+          success: function(data){
+                $("#myear").html(data);
+            },
+            error: function(e){
+                alert('Unable to load course years!');
+            }
+          });
+    }
+    </script>
 </head>
 <body onload="get_recent_act()">
 
@@ -1047,20 +1063,7 @@ function tr_getSemester(tr_type)
           document.getElementById("name"+i).checked=false;   
         }
     }
-    function show_ay(){
-      var course=document.getElementById("mcourse").value;
-      $.ajax({
-	type: "POST",
-	url: "ajax_response",
-	data: 'get_ay='+course;
-	success: function(data){
-        $("#myear").html(data);
-    },
-    error: function(e){
-        alert('Unable to load course years!');
-    }
-	});
-    }
+   
     
 </script>
 </html>
