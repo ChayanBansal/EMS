@@ -173,14 +173,19 @@ function tr_getSemester(tr_type)
 {
   tr_from_year=document.getElementById("tr_batch_list").value;
   tr_course_id=document.getElementById("tr_course_list").value;
-  $.(
+  $.ajax(
     {
       type: "POST",
       url: "select_tr",
       data: 'tr_getSemester=1&tr_getFromYear=0&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type,
+      success: function(data){
+        $("#tr_semester").html(data);
+    },
+    error: function(e){
+      $("#tr_semester").html("Unable to load recent activities");
     }
-  )
-}
+	});
+  }
   
 
 
@@ -346,15 +351,21 @@ function tr_getSemester(tr_type)
                 </div>
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :</label>
-                    <select id="tr_batch_list" name="tr_batch" class="form-control" onChange="tr_getType(this.value)" required>
+                    <select id="tr_batch_list" name="tr_batch" class="form-control" required>
                         <option value="" disabled selected>Select Batch</option>
-                        <?php 
-                        $get_batch = "SELECT from_year FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'];
-                        $get_batch_run = mysqli_query($conn, $get_batch);
-                        while ($batches = mysqli_fetch_assoc($get_batch_run)) {
-                          echo ('<option value="' . $batches['from_year'] . '">' . $batches['from_year'] . '</option>');
-                        }
-                        ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tr_type">Type :</label>
+                    <select id="tr_type" name="tr_type" class="form-control" required onChange="tr_getSemester(this.value)">
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="main">Main</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tr_semester">Type :</label>
+                    <select id="tr_semester" name="tr_semester" class="form-control" required>
+                        <option value="" disabled selected>Semester</option>                       
                     </select>
                 </div>
       </div>
