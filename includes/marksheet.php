@@ -18,26 +18,28 @@
 
     Point to be noted: javaScript variables having name (rowspan_+'SUBJECT CODE') is used for changing the rowspan of the subjects which only have one component(Theory/Practical).
 */
-    $roll_id = $_SESSION['roll_id'];
-    $semester = $_SESSION['semester'];
-    $course_id = $_SESSION['course_id'];
+    if(isset($_POST['print_roll_id']))
+    {
+        $roll_id = $_POST['print_roll_id'];
+        $semester = $_SESSION['semester'];
+        $course_id = $_SESSION['course_id'];
 
-    $get_stud_detail="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `course_id`, `from_year`, `current_sem`, `cgpa` FROM students WHERE enrol_no = 
-                    (SELECT enrol_no FROM roll_list WHERE roll_id = $roll_id)";
-    $get_stud_detail_run=mysqli_query($conn,$get_stud_detail);
-    $stud=mysqli_fetch_assoc($get_stud_detail_run);
-    //$stud['enrol_no'] $stud['first_name'] $stud['middle_name'] $stud['last_name'] $stud['father_name'] $stud['mother_name'] $stud['course_id'] $stud['from_year'] $stud['current_sem'] $stud['cgpa']
+        $get_stud_detail="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `course_id`, `from_year`, `current_sem`, `cgpa` FROM students WHERE enrol_no = 
+                        (SELECT enrol_no FROM roll_list WHERE roll_id = $roll_id)";
+        $get_stud_detail_run=mysqli_query($conn,$get_stud_detail);
+        $stud=mysqli_fetch_assoc($get_stud_detail_run);
+        //$stud['enrol_no'] $stud['first_name'] $stud['middle_name'] $stud['last_name'] $stud['father_name'] $stud['mother_name'] $stud['course_id'] $stud['from_year'] $stud['current_sem'] $stud['cgpa']
 
-    $get_prog_br="SELECT progam, branch FROM branches WHERE course_id=$course_id";
-    $get_prog_br_run=mysqli_query($conn,$get_prog_br);
-    $prog_br=mysqli_fetch_assoc($get_prog_br_run);
-    //$prog_br['progam'] $prog_br['branch']
+        $get_prog_br="SELECT progam, branch FROM branches WHERE course_id=$course_id";
+        $get_prog_br_run=mysqli_query($conn,$get_prog_br);
+        $prog_br=mysqli_fetch_assoc($get_prog_br_run);
+        //$prog_br['progam'] $prog_br['branch']
 
-    $get_prog_br="SELECT month_year FROM exam_month_year WHERE ac_session_id =
-                (SELECT ac_session_id FROM academic_sessions WHERE course_id=$course_id AND from_year=".$stud['from_year']." AND current_semester=$semester)";
-    $get_prog_br_run=mysqli_query($conn,$get_prog_br);
-    $prog_br=mysqli_fetch_assoc($get_prog_br_run);//$prog_br['month_year']
-
+        $get_prog_br="SELECT month_year FROM exam_month_year WHERE ac_session_id =
+                    (SELECT ac_session_id FROM academic_sessions WHERE course_id=$course_id AND from_year=".$stud['from_year']." AND current_semester=$semester)";
+        $get_prog_br_run=mysqli_query($conn,$get_prog_br);
+        $prog_br=mysqli_fetch_assoc($get_prog_br_run);//$prog_br['month_year']
+    }
 //the output starts here
 ?>
 
