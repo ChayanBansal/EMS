@@ -393,27 +393,42 @@ class super_user_options
 	function create_exam_month_year($conn)
 	{
 		if (isset($_POST['set_exam_month'])) {
-			$ac_sess_id = $_POST['id'];
 			$month = $_POST['month'];
-			$year=$_POST['year'];
-			
-			$check_details_exist = "SELECT count(*) FROM exam_month_year WHERE ac_session_id=" . $ac_sess_id;
-			$check_details_exist_run = mysqli_query($conn, $check_details_exist);
-			$rows = mysqli_fetch_assoc($check_details_exist_run)['count(*)'];
-			$alert = new alert();
-			if ($rows > 0) {
-				$alert->exec("Exam Session already created!", "info");
-				return;
-			} else {
-				$insert_exam_details = "INSERT INTO exam_month_year VALUES($ac_sess_id,'" . $month . ", " . $year . "')";
+			$year = $_POST['year'];
+			$get_sessions = "SELECT * FROM academic_sessions";
+			$get_sessions_run = mysqli_query($conn, $get_sessions);
+			$session_rows = mysqli_affected_rows($conn);
+			$i = 1;
+			$insert_exam_details = "INSERT INTO exam_month_year VALUES";
+			while ($session = mysqli_fetch_assoc($get_sessions_run)) {
+				$get_course_name = "SELECT course_id FROM courses WHERE course_id=" . $session['course_id'];
+				$get_course_name = mysqli_query($conn, $get_course_name);
+				$course_id = mysqli_fetch_assoc($get_course_name)['course_id'];
+				if ($i == $session_rows) {
+					if (isset($_POST['session' . $course_id])) {
+						$check_details_exist = "SELECT count(*) FROM exam_month_year WHERE ac_session_id=" . $_POST['session' . $course_id];
+						$check_details_exist_run = mysqli_query($conn, $check_details_exist);
+						$rows = mysqli_fetch_assoc($check_details_exist_run)['count(*)'];
+						$alert = new alert();
+						if ($rows > 0) {
+							$alert->exec("Exam Session already created!", "info");
+							continue;
+						}
+						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . "),";
+					}
+				} else {
+					if (isset($_POST['session' . $course_id])) {
+						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . ")";
+					}
+				}
+
+			}
 				$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
 				if ($insert_exam_details_run) {
-					$alert->exec("New Exam Session created....", "success");
+					$alert->exec("New Exam Sessions created....", "success");
 				} else {
-					$alert->exec("There was an error while creating the exam session!", "danger");
+					$alert->exec("There was an error while creating the exam sessions!", "danger");
 				}
-			}
-			echo($_POST['month']."odifhwoudifhaioufyuiafyuaify");
 		}
 	}
 	function add_subject($conn)

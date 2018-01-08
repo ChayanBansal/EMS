@@ -59,7 +59,7 @@ if($_POST['getSubject']==1)
         echo('<option value="">Select Subject</option>');
         if($_POST['main_atkt']=='main')
         {
-            $get_sub_main="SELECT sub_code, sub_name FROM subjects WHERE course_id=".$_SESSION['current_course_id']." AND semester=".$_POST['semester'];
+            $get_sub_main="SELECT sub_code, sub_name FROM subjects WHERE course_id=".$_SESSION['current_course_id']." AND semester=".$_POST['semester']." AND from_year=".$_POST['from_year'];
             $get_sub_main_run=mysqli_query($conn,$get_sub_main);
             while($main_sub=mysqli_fetch_assoc($get_sub_main_run))
             {

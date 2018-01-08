@@ -1000,7 +1000,7 @@ function tr_getSemester(tr_type)
                 $get_sessions_run=mysqli_query($conn,$get_sessions);
                 while($session=mysqli_fetch_assoc($get_sessions_run))
                 {
-                  $get_course_name="SELECT course_id,course_name FROM courses WHERE course_id=".$session['ac_session_id'];
+                  $get_course_name="SELECT course_id,course_name FROM courses WHERE course_id=".$session['course_id'];
                   $get_course_name=mysqli_query($conn,$get_course_name);
                   $course_name=mysqli_fetch_assoc($get_course_name);
                   echo('<label><input type="checkbox" name="session'.$session['course_id'].'" value="'.$session['ac_session_id'].'">'.$course_name['course_name'].'-'.$session['from_year'].'-'.$session['current_semester'].' </label>');
@@ -1008,8 +1008,8 @@ function tr_getSemester(tr_type)
           ?>
           </div>
           <div clas="form-group">
-              <label for="month">Select Month:</label>
-                <input type="number" name="year" id="" min="2016">
+              <label for="month">Select Year: </label>
+                <input type="number" name="year" id="" min="2016" class="form-control">
             </div>
             <div clas="form-group">
               <label for="month">Select Month:</label>

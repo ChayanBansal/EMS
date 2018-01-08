@@ -152,7 +152,7 @@ if ($get_current_sem_qry_run) {
         <tbody>');
         $subject_count = 0;
         $subject_completed = 0;
-        $get_sub_qry = "SELECT * from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND semester=" . $sem;
+        $get_sub_qry = "SELECT * from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND semester=" . $sem." AND from_year=".$_SESSION['from_year'];
         $get_sub_qry_run = mysqli_query($conn, $get_sub_qry);
         if ($get_sub_qry_run) {
             while ($sub = mysqli_fetch_assoc($get_sub_qry_run)) {
