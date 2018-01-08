@@ -399,6 +399,7 @@ class super_user_options
 			$get_sessions_run = mysqli_query($conn, $get_sessions);
 			$session_rows = mysqli_affected_rows($conn);
 			$i = 1;
+			$alert=new alert();
 			$insert_exam_details = "INSERT INTO exam_month_year VALUES";
 			while ($session = mysqli_fetch_assoc($get_sessions_run)) {
 				$get_course_name = "SELECT course_id FROM courses WHERE course_id=" . $session['course_id'];
@@ -421,6 +422,7 @@ class super_user_options
 						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . "'),";
 					}
 				}
+				$i++;
 
 			}
 			$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
@@ -681,12 +683,15 @@ class super_user_options
 				$result_count = mysqli_fetch_assoc($check_session_qry_run);
 				if ($result_count['count(*)'] == 0) {
 					mysqli_autocommit($conn, false);
-					$add_session_qry = "INSERT into academic_sessions VALUES($from_year,$course_id,$semester)";
+					$add_session_qry = "INSERT into academic_sessions(from_year,course_id,current_semester) VALUES($from_year,$course_id,$semester)";
 					$add_session_qry_run = mysqli_query($conn, $add_session_qry);
 					if ($add_session_qry_run) {
 						mysqli_commit($conn);
 						mysqli_autocommit($conn, true);
 						$alert->exec("Session successfully created!", "success");
+					}
+					else{
+						$alert->exec("Unable to create session!", "danger");		
 					}
 				} else {
 					mysqli_rollback($conn);
