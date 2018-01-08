@@ -414,16 +414,16 @@ class super_user_options
 							$alert->exec("Exam Session already created!", "info");
 							continue;
 						}
-						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . "),";
+						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . "')";
 					}
 				} else {
 					if (isset($_POST['session' . $course_id])) {
-						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . ")";
+						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . "'),";
 					}
 				}
 
 			}
-				$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
+			$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
 				if ($insert_exam_details_run) {
 					$alert->exec("New Exam Sessions created....", "success");
 				} else {
