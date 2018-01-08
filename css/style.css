@@ -63,15 +63,11 @@ input:focus{
     outline-width: 0;
 }
 .main input[type=submit]{
-    display: flex;
-    transition: all 400ms;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
     background: #09337B;
     margin-bottom: 20px;
     width: 100%;
     font-size: 30px;
-    text-align: -webkit-center;
     height: 50px;
     font-weight: 800;
     color:whitesmoke;
