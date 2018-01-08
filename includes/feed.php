@@ -42,6 +42,7 @@ if (isset($_POST['proceed_to_feed'])) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Feed Marks</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="/ems/js/feed_validation.js"></script>
     <style>
         .remarks{
             border: 1px dashed #581CA0 !important;
