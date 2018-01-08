@@ -127,12 +127,15 @@ require('config.php');
         }
         
         @media print {
-            .main {
+            body {
+                margin: 0;
+            }
+            .main1 {
                 height: 16.5cm;
             }
             .upper {
                 position: absolute;
-                top: 6cm;
+                top: 5.3cm;
                 width: 85%;
                 left: 1.8cm;
             }
@@ -147,34 +150,42 @@ require('config.php');
             }
             .t1 td {
                 vertical-align: top;
+                padding: 2px;
+                padding-right: 3px;
+                padding-left: 3px;
+                width: 30%;
             }
             .t2 td {
                 vertical-align: top;
+                padding: 2px;
+                padding-right: 3px;
+                padding-left: 3px;
+                width: 30%;
             }
             .lower {
                 position: absolute;
-                top: 10.2cm;
+                top: 9.7cm;
             }
             .t3 {
                 position: relative;
-                width: 83%;
+                width: 86%;
                 max-height: 10cm;
             }
             .t3 table {
                 width: 100%;
             }
             .t3 th {
-                padding: 2px;
+                padding: 0px;
                 color: black;
                 font-weight: 700;
                 font-size: 12px;
             }
             .t3 td {
-                padding: 2px;
+                padding: 0px;
                 font-size: 12px;
             }
             .block {
-                padding: 2px;
+                padding: 0px;
                 font-size: 12px;
                 font-weight: 600;
             }
@@ -183,10 +194,10 @@ require('config.php');
 </head>
 
 <body onload='history.replaceState("", "", "printing");window.print();window.history.back();'><!--window.print(); window.history.back(); history.replaceState("", "", "printing"); window.history.back()-->
-    <div class="main">
+    <div class="main1">
         <div class="upper">
             <div class="t1">
-                <table>
+                <table class="marksheet">
                     <tr>
                         <td style="">Enrollment No.:</td>
                         <td><?php echo($stud['enrol_no']); ?></td>
