@@ -371,7 +371,7 @@ function chat(location,username)
                 </div>
                         
                 <div class="form-group">
-                    <label for="semester">Semeter :</label>
+                    <label for="semester">Semester :</label>
                     <select id="sem_list" name="semester" class="form-control" onChange="getSubject(this.value)" required>
                     <option value="" disabled selected>Select Semester</option>
                     </select>
