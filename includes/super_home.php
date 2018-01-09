@@ -131,7 +131,7 @@ $options->unlock_operator($conn);
     data: 'username='+username,
     success: function(data){
           $(document.getElementById(location)).html(data);
-          setTimeout(function{chat(location,username);},1000);
+          setInterval(function{chat(location,username);},1000);
       },
       error: function(e){
         $(document.getElementById(location)).html("Unable to load recent activities");
