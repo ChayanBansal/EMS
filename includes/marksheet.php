@@ -379,7 +379,6 @@ require('config.php');
                      <div class="block">
                          <?php
                             echo($audit_pf.' in '.$audit_code.' ('.$audit_name.') <span class="info"></span>');
-                            mysqli_close($conn);
                          ?> 
                         </div>
                  </div>

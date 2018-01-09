@@ -36,7 +36,6 @@
         $obj->disp_footer();
         $logout_modal=new modals();
     $logout_modal->display_logout_modal();
-    mysqli_close($conn);
     ?>
           
 </body>

@@ -47,7 +47,6 @@
                 echo('</li>');
             }
         }
-        mysqli_close($conn);
     }
     if($_POST['feed_activity']==0)
     {
@@ -96,6 +95,5 @@
                 echo('</li>');
             }
         }
-        mysqli_close($conn);
     }
 ?>

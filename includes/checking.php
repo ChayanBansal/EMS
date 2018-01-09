@@ -173,7 +173,6 @@ $input_btn = new input_button();
                 echo('<td><button class="btn btn-default form-control" type="button" value="'.$fed_marks['enrol_no'].'" onClick="remove_readonly(this.value)" >Change</button></td>');
             echo('</tr>');
         }
-        mysqli_close($conn);
      ?>
     </tbody>
   </table>
