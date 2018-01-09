@@ -131,6 +131,8 @@ $options->unlock_operator($conn);
     data: 'username='+username,
     success: function(data){
           $(document.getElementById(location)).html(data);
+          var divi=document.getElementById(location);
+        divi.scrollTop=divi.scrollHeight;
           chat(location,username);
       },
       error: function(e){

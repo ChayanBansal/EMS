@@ -159,8 +159,7 @@ if (isset($_SESSION['marks_entered_audit'])) {
     }
     unset($_SESSION['marks_entered_audit']);
 }
-if(isset($_SESSION['already_checked']))
-{
+if (isset($_SESSION['already_checked'])) {
     $alert = new alert();
     if ($_SESSION['already_checked'] == true) {
         $alert->exec("Checking for this component has already been done!", "warning");
@@ -258,6 +257,8 @@ function chat(location,username)
 	data: 'username='+username,
 	success: function(data){
         $(document.getElementById(location)).html(data);
+        var divi=document.getElementById(location);
+        divi.scrollTop=divi.scrollHeight;
         chat(location,username);
     },
     error: function(e){
@@ -286,37 +287,37 @@ function chat(location,username)
 <div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
    <h3><center>Chat</center></h3>
    <?php 
-    $get_users="SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
+    $get_users = "SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
     SELECT CONCAT('o',operator_id) As id, operator_username AS username, operator_name AS name FROM operators";
-    $get_users_run=mysqli_query($conn,$get_users);
-    while($user=mysqli_fetch_assoc($get_users_run))
-    {
-      $location="l".$user['id'];
-      echo('<div class="panel panel-default" >
+    $get_users_run = mysqli_query($conn, $get_users);
+    while ($user = mysqli_fetch_assoc($get_users_run)) {
+        $location = "l" . $user['id'];
+        echo ('<div class="panel panel-default" >
               <div class="panel-heading">
                 <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion2" href="#'.$user['id'].'">
-                    '.$user['name'].'</a>
+                  <a data-toggle="collapse" data-parent="#accordion2" href="#' . $user['id'] . '">
+                    ' . $user['name'] . '</a>
                 </h4>
               </div>
-              <div id="'.$user['id'].'" class="panel-collapse collapse">
+              <div id="' . $user['id'] . '" class="panel-collapse collapse">
                 <div class="panel-body">
-                  <div id="'.$location.'" class="chat_box">Loading...</div>
+                  <div id="' . $location . '" class="chat_box">Loading...</div>
                   <div class="panel-footer">
-                    <input class="form-control" id="'.$user['username'].'" type="text">
-                    <button id="b'.$user['username'].'"class="btn btn-info form-control" value="'.$user['username'].'" onClick="sendMessage(this.value,'.$location.');" >Send</button>
+                    <input class="form-control" id="' . $user['username'] . '" type="text">
+                    <button id="b' . $user['username'] . '"class="btn btn-info form-control" value="' . $user['username'] . '" onClick="sendMessage(this.value,' . $location . ');" >Send</button>
                   </div>
                 </div>
               </div>
             </div>
             <script>
-            document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
-            chat("'.$location.'","'.$user['username'].'");
+            document.getElementById("b' . $user['username'] . '").addEventListener("click", function(){ chat("' . $location . '","' . $user['username'] . '"); });
+            chat("' . $location . '","' . $user['username'] . '");
               
 
-              $("#'.$location.'").animate({
-                scrollTop: $("#'.$location.'").offset().top
-             }, "slow");
+              /*$("#' . $location . '").animate({
+                scrollTop: $("#' . $location . '").offset().top
+             }, "slow");*/
+            
              
             </script>
            ');/*document.getElementById("b'.$user['username'].'").addEventListener("click", function(){ chat("'.$location.'","'.$user['username'].'"); });
@@ -324,7 +325,7 @@ function chat(location,username)
     }
     //echo('<script>setInterval(chat(),3000);</script>');
 
-   ?>  
+    ?>  
 </div>
     <!--ChatBoxEnd-->
 
@@ -424,7 +425,7 @@ function chat(location,username)
                         $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
                         $get_course_run = mysqli_query($conn, $get_course);
                         while ($course = mysqli_fetch_assoc($get_course_run)) {
-                          echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
+                            echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
                         }
                         ?>
                     </select>
@@ -535,7 +536,7 @@ function chat(location,username)
             echo ('<tr class="success">');
             echo ('<td>' . $check_list["from_year"] . '</td>');
             echo ('<td>' . $check_list["semester"] . '</td>');
-            if ($check_list["atkt_flag"]==0) {
+            if ($check_list["atkt_flag"] == 0) {
                 echo ('<td>MAIN</td>');
             } else {
                 echo ('<td>ATKT</td>');
