@@ -1,13 +1,12 @@
 <?php
 require('config.php');
 session_start();
-if(isset($_POST['print_proceed'])){
+if (isset($_POST['print_proceed'])) {
     $_SESSION['from_year'] = $_POST['print_batch'];
     $_SESSION['semester'] = $_POST['print_semester'];
     $_SESSION['course_id'] = $_POST['print_course'];
-    $_SESSION['main_atkt']=$_POST['print_type'];   
-}
-else{
+    $_SESSION['main_atkt'] = $_POST['print_type'];
+} else {
    // header('location: /ems/includes/404.html');
 }
 ?>
@@ -45,22 +44,22 @@ else{
     $valid->conf_logged_in();
     $obj = new head();
     $obj->displayheader();
-    $obj->dispmenu(3, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
+    $obj->dispmenu(4, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/useroptions", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
     $dashboard = new dashboard();
     $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "Contact Super Admin");
 
     ?>
      <div class="subselected">
         <div class="subtitle">
-           Print Marksheet For:  <?=$_SESSION['current_course_name']?>
+           Print Marksheet For:  <?= $_SESSION['current_course_name'] ?>
             </div>
 
         <div class="subtitle">
-    Batch: <?=$_SESSION['from_year']?>       
+    Batch: <?= $_SESSION['from_year'] ?>       
     </div>
 
     <div class="subtitle">
-    Semester: <?=$_SESSION['semester']?>       
+    Semester: <?= $_SESSION['semester'] ?>       
     </div>
         </div>
         <form action="marksheet" method="post">
@@ -74,14 +73,14 @@ else{
         <th>Print Gradesheet</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="print"
         <?php
-        $get_students_qry = "SELECT * FROM students s,roll_list rl WHERE s.course_id=" . $_SESSION['course_id'] . " AND s.from_year=" . $_SESSION['from_year'] . " AND rl.semester=" . $_SESSION['semester']." AND s.enrol_no=rl.enrol_no";
+        $get_students_qry = "SELECT * FROM students s,roll_list rl WHERE s.course_id=" . $_SESSION['course_id'] . " AND s.from_year=" . $_SESSION['from_year'] . " AND rl.semester=" . $_SESSION['semester'] . " AND s.enrol_no=rl.enrol_no";
         $get_students_qry_run = mysqli_query($conn, $get_students_qry);
 
         if ($get_students_qry_run) {
             while ($student = mysqli_fetch_assoc($get_students_qry_run)) {
-                echo('<tr>');
+                echo ('<tr>');
                 echo ('<td>' . $student['enrol_no'] . '</td>
                 <td>' . $student['first_name'] . " " . $student['last_name'] . '</td>
                 <td>' . $student['father_name'] . '</td>');
@@ -90,14 +89,14 @@ else{
                 $prints = mysqli_fetch_assoc($get_no_of_prints_run)['no_prints'];
                 if ($prints == 0) {
                     echo ('<td>');
-                    echo('<button class="btn btn-default" type="submit" name="print_roll_id" value="'.$student['roll_id'].'">Print Now <i class="glyphicon glyphicon-print"></i> </button>');
-                   echo ('</td>');
+                    echo ('<button class="btn btn-default" type="submit" name="print_roll_id" value="' . $student['roll_id'] . '">Print Now <i class="glyphicon glyphicon-print"></i> </button>');
+                    echo ('</td>');
                 } else {
                     echo ('<td>');
-                    echo('<button class="btn btn-success" type="submit" name="print_roll_id" value="'.$student['roll_id'].'"> Print Again <i class="glyphicon glyphicon-print"></i> </button>');
+                    echo ('<button class="btn btn-success" type="submit" name="print_roll_id" value="' . $student['roll_id'] . '"> Print Again <i class="glyphicon glyphicon-print"></i> </button>');
                     echo ('</td>');
                 }
-                echo('</tr>');
+                echo ('</tr>');
             }
         }
         ?>
@@ -107,7 +106,7 @@ else{
 <?php
 $obj = new footer();
 $obj->disp_footer();
-$logout_modal=new modals();
+$logout_modal = new modals();
 $logout_modal->display_logout_modal();
 mysqli_close($conn);
 ?>
@@ -116,7 +115,7 @@ mysqli_close($conn);
 $(document).ready(function(){
   $("#searchbar").on("keyup", function() {
     var value = $(this).val().toLowerCase();
-    $("#student_table tr").filter(function() {
+    $("#print tr").filter(function() {
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
   });

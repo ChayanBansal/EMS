@@ -274,7 +274,6 @@ function chat(location,username)
 	url: "chat",
 	data: 'username='+username+'&msg='+msg,
 	success: function(data){
-    chat(location,username);
     document.getElementById(username).value='';
     },
     error: function(e){
