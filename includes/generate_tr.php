@@ -3,7 +3,7 @@ session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
-$validate=new validate();
+$validate = new validate();
 $validate->conf_logged_in_super();
 if (isset($_POST['tr_submit'])) {
     $_SESSION['from_year'] = $_POST['tr_from_year'];
@@ -14,8 +14,7 @@ if (isset($_POST['tr_submit'])) {
         $res = mysqli_fetch_assoc($get_course_name_qry_run);
         $_SESSION['course_name'] = $res['course_name'];
     }
-}
-else{
+} else {
     header('location: super_home');
 }
 ?><!DOCTYPE html>
@@ -152,7 +151,7 @@ if ($get_current_sem_qry_run) {
         <tbody>');
         $subject_count = 0;
         $subject_completed = 0;
-        $get_sub_qry = "SELECT * from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND semester=" . $sem." AND from_year=".$_SESSION['from_year'];
+        $get_sub_qry = "SELECT * from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND semester=" . $sem . " AND from_year=" . $_SESSION['from_year'];
         $get_sub_qry_run = mysqli_query($conn, $get_sub_qry);
         if ($get_sub_qry_run) {
             while ($sub = mysqli_fetch_assoc($get_sub_qry_run)) {
@@ -198,11 +197,19 @@ if ($get_current_sem_qry_run) {
         <caption align="bottom">
         <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center">
         <div class="col-lg-7 col-md-7 col-sm-6">');
-        if($subject_count==$subject_completed){
-            echo('<button class="btn btn-default input-lg" type="submit" name="tab_submit" value="'.$sem.'">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
-        }
-        else{
-        echo('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');   
+        if ($subject_count == $subject_completed) {
+            $check_tr_generated = "SELECT count(*) FROM tr WHERE roll_id IN(SELECT roll_id FROM roll_list WHERE enrol_no IN(SELECT enrol_no FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . ") AND semester=" . $sem . ")";
+            $check_tr_generated_run = mysqli_query($conn, $check_tr_generated);
+            $check_tr_gen = mysqli_fetch_assoc($check_tr_generated_run)['count(*)'];
+            if ($check_tr_gen > 0) {
+                echo ('<button class="btn btn-info input-lg" disabled>TR Already Generated <i class="glyphicon glyphicon-ok"></i></button>');
+       
+            } else {
+                echo ('<button class="btn btn-default input-lg" type="submit" name="tab_submit" value="' . $sem . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+
+            }
+        } else {
+            echo ('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
         }
         echo ('</div>
         <div class="col-sm-6 col-xs-12" style="vertical-align: middle;">
@@ -225,9 +232,9 @@ if ($get_current_sem_qry_run) {
 <?php
 $obj = new footer();
 $obj->disp_footer();
-$logout_modal=new modals();
-    $logout_modal->display_logout_modal();
-    mysqli_close($conn);
+$logout_modal = new modals();
+$logout_modal->display_logout_modal();
+mysqli_close($conn);
 ?>
 </body>
 <script>
