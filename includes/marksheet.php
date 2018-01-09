@@ -85,7 +85,7 @@ require('config.php');
         th,
         table {
             border-collapse: collapse;
-            border: 1px solid blue;
+            border: 1px solid #00076C;
             padding: 10px;
         }
         
@@ -95,7 +95,7 @@ require('config.php');
         }
         
         th {
-            background: navy;
+            background: #00076C;
             color: white;
         }
         
@@ -114,7 +114,7 @@ require('config.php');
         }
         
         table caption {
-            border: 1px solid blue;
+            border: 1px solid #00076C;
         }
         
         .caption-container {
@@ -158,9 +158,8 @@ require('config.php');
             .t2 td {
                 vertical-align: top;
                 padding: 2px;
-                padding-right: 3px;
-                padding-left: 3px;
-                width: 30%;
+                padding-right: 10px;
+                padding-left: 20px;
             }
             .lower {
                 position: absolute;
