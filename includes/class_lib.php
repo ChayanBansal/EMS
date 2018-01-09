@@ -256,8 +256,9 @@ class form_receive
 					$alert->exec("Unable to connect to the server!", "danger");
 				}
 			}
-
+			mysqli_close($conn);
 		}
+		
 	}
 	function super_login()
 	{

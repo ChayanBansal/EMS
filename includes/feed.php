@@ -34,7 +34,9 @@ if (isset($_POST['proceed_to_feed'])) {
     $get_max_marks_qry_run = mysqli_query($conn, $get_max_marks_qry);
     $max_result = mysqli_fetch_assoc($get_max_marks_qry_run);
     $_SESSION['max_marks'] = round($max_result['max_marks']);
-} ?>
+} 
+mysqli_close($conn);
+?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -210,6 +212,7 @@ $input = new input_field();
             $alert->exec("Unable to fetch roll list!", "warning");
         }
     }
+    mysqli_close($conn);
     ?>  
       
       

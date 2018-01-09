@@ -121,6 +121,7 @@ $change_pass->execute($conn);
 <?php
 $obj = new footer();
 $obj->disp_footer();
+mysqli_close($conn);
 ?>
 </body>
 </html>
