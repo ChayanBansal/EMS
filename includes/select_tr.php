@@ -22,5 +22,4 @@
             echo('<option value="'.$semester['semester'].'">'.$semester['semester'].'</option>');
         }
     }
-    mysqli_close($conn);
 ?>
