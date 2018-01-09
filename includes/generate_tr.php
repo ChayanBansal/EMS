@@ -112,7 +112,7 @@ $input_btn = new input_button();
             Academic Session: <?= $_SESSION['from_year'] ?>
             </div>
             <div class="subtitle">
-           Course:  <?= $_SESSION['course_name'] ?>
+            Course:  <?= $_SESSION['course_name'] ?>
             </div>
 
 <?php
