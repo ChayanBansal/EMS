@@ -55,6 +55,7 @@ else{
             flex-direction: column;
             justify-content: center;
             padding: 20px;
+            margin-bottom: 100px;
         }
         
         table caption {
