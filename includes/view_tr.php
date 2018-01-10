@@ -1,12 +1,11 @@
 <?php
 session_start();
-if(isset($_POST['view_tr_submit'])){
+if (isset($_POST['view_tr_submit'])) {
     $_SESSION['from_year'] = $_POST['tr_batch'];
     $_SESSION['course_id'] = $_POST['tr_course'];
     $_SESSION['semester'] = $_POST['tr_semester'];
-    $_SESSION['main_atkt']=$_POST['tr_type'];    
-}
-else{
+    $_SESSION['main_atkt'] = $_POST['tr_type'];
+} else {
     header('location: /ems/includes/404.html');
 }
 ?>
@@ -114,7 +113,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             $fail_paper_code = new SplFixedArray($semcount);
             $result_pass_fail = new SplFixedArray($semcount);
             $cur_failure_report = "";
-            $get_roll_id = "SELECT distinct(roll_id) from roll_list WHERE enrol_no='" . $student['enrol_no'] . "' ORDER BY semester";
+            $get_roll_id = "SELECT distinct(roll_id),semester from roll_list WHERE enrol_no='" . $student['enrol_no'] . "' ORDER BY semester";
             $get_roll_id_run = mysqli_query($conn, $get_roll_id);
             $loopcount = 0;
             while ($roll_id = mysqli_fetch_assoc($get_roll_id_run)) {
@@ -122,13 +121,18 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                 $get_prev_sgpa_run = mysqli_query($conn, $get_prev_sgpa);
                 $ressgpa = mysqli_fetch_assoc($get_prev_sgpa_run);
                 $sgpa[$loopcount] = $ressgpa['sgpa'];
-                if ($sgpa[$loopcount] >= 4.0) {
+                /*if ($sgpa[$loopcount] >= 4.0) {
+                    $result_pass_fail[$loopcount] = "PASS";
+                } else {
+                    $result_pass_fail[$loopcount] = "FAIL";
+                }Doubtful Code*/
+                $get_fail_sub = "SELECT distinct(sub_id) FROM failure_report WHERE roll_id=" . $roll_id['roll_id'];
+                $get_fail_sub_run = mysqli_query($conn, $get_fail_sub);
+                if (mysqli_affected_rows($conn) == 0) {
                     $result_pass_fail[$loopcount] = "PASS";
                 } else {
                     $result_pass_fail[$loopcount] = "FAIL";
                 }
-                $get_fail_sub = "SELECT distinct(sub_id) FROM failure_report WHERE roll_id=" . $roll_id['roll_id'];
-                $get_fail_sub_run = mysqli_query($conn, $get_fail_sub);
                 $failtext = "";
                 while ($failsubid = mysqli_fetch_assoc($get_fail_sub_run)) {
                     $get_subflag = "SELECT sub_code,practical_flag FROM sub_distribution WHERE sub_id=" . $failsubid['sub_id'];
@@ -137,9 +141,9 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                     if ($res['practical_flag'] == 1) {
                         $failtext .= $res['sub_code'] . "[P] ";
                     } else if ($res['practical_flag'] == 2) {
-                        $failtext = $res['sub_code'] . "[IE] ";
+                        $failtext .= $res['sub_code'] . "[IE] ";
                     } else {
-                        $failtext = $res['sub_code'] . "[T] ";
+                        $failtext .= $res['sub_code'] . "[T] ";
                     }
                 }
                 $fail_paper_code[$loopcount] = $failtext;
@@ -167,13 +171,12 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             <span class="block">Mother\'s Name: ' . $student['mother_name'] . '</span>
             <span class="block">Gender: ' . $student['gender'] . '</span>
             <span class="block">Status:');
-            if($_SESSION['main_atkt']=="main"){
-                echo("Regular");
+            if ($_SESSION['main_atkt'] == "main") {
+                echo ("Regular");
+            } else {
+                echo ("EX");
             }
-            else{
-                echo("EX");
-            }
-            echo('</span> </div>
+            echo ('</span> </div>
             </caption>
             <tr>
             <th style="vertical-align:middle">Paper Code</th>
@@ -198,6 +201,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
             $get_subjects_qry_run = mysqli_query($conn, $get_subjects_qry);
             $rowcount = 1;
+            $fail_flag = false;
             while ($subject = mysqli_fetch_assoc($get_subjects_qry_run)) {
                 echo ('<tr style="vertical-align:middle">');
                 $get_subid_count = "SELECT count(*) from sub_distribution WHERE sub_code='" . $subject['sub_code'] . "'";
@@ -228,12 +232,13 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                         if (is_null($marks['end_sem'])) {
                             echo ('<td> - </td>');
                         } else {
-                            $get_ia_marks="SELECT marks FROM score WHERE roll_id=".$cur_rollid." AND sub_id=".$subid['sub_id']." AND component_id=5";
-                            $get_ia_marks_run=mysqli_query($conn,$get_ia_marks);
-                            $ia_marks=mysqli_fetch_assoc($get_ia_marks_run)['marks'];
+                            $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
+                            $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
+                            $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
                             if ($ia_marks < $practical_pass[2]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
                                 $fail = true;
+                                $fail_flag = true;
                             } else {
                                 echo ("<td>" . $marks['end_sem'] . "</td>");
                             }
@@ -245,6 +250,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             if ($marks['cat_cap_ia'] < $practical_pass[0]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
                                 $fail = true;
+                                $fail_flag = true;
                             } else {
                                 echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
                             }
@@ -271,6 +277,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             if ($marks['end_sem'] < $practical_pass[1]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
                                 $fail = true;
+                                $fail_flag = true;
                             } else {
                                 echo ("<td>" . $marks['end_sem'] . "</td>");
                             }
@@ -281,6 +288,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             if ($marks['cat_cap_ia'] < $practical_pass[0]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
                                 $fail = true;
+                                $fail_flag = true;
                             } else {
                                 echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
                             }
@@ -310,6 +318,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             if ($marks['end_sem'] < $theory_pass[1]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
                                 $fail = true;
+                                $fail_flag = true;
                             } else {
                                 echo ("<td>" . $marks['end_sem'] . "</td>");
                             }
@@ -321,6 +330,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             if ($marks['cat_cap_ia'] < $theory_pass[0]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
                                 $fail = true;
+                                $fail_flag = true;
                             } else {
                                 echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
                             }
@@ -331,7 +341,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             echo ("<td>" . $marks['total'] . "</td>");
                         }
                         if ($fail) {
-                            $cur_failure_report.= $subject['sub_code'] . "[T] ";
+                            $cur_failure_report .= $subject['sub_code'] . "[T] ";
                         }
 
                     }
@@ -343,11 +353,11 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                     ');
                     $total_credits += $marks['cr'];
                     $total_gpv += $marks['gpv'];
-                   
+
                     switch ($rowcount) {
                         case 1:
-                            echo ('<td id="cr'.$stud_count.'"></td>
-                        <td id="gpv'.$stud_count.'"></td>');
+                            echo ('<td id="cr' . $stud_count . '"></td>
+                        <td id="gpv' . $stud_count . '"></td>');
                             echo ('<th style="vertical-align:middle">Semester</th>');
                             $convert = new conversion();
                             for ($i = 1; $i <= $semcount; $i++) {
@@ -375,31 +385,34 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                                 if (empty($result_pass_fail[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>" . $result_pass_fail[$i] . "</td>");
+                                    if ($result_pass_fail[$i] == "PASS") {
+                                        echo ("<td style='color: #1AC124'>" . $result_pass_fail[$i] . "</td>");
+                                    } else {
+                                        echo ("<td style='color: #DF3611'>" . $result_pass_fail[$i] . "</td>");
+
+                                    }
                                 }
                             }
                             break;
 
                         case 5:
-                            echo ("<td colspan='2' style='font-weight:700;'>Result : ");
-                            if ($cur_sgpa >= 4.0) {
-                                echo ("PASS");
+                            if ($fail_flag) {
+                                echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
                             } else {
-                                echo ("FAIL");
+                                echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
                             }
-                            echo ('</td>');
                             echo ("<td>Fail In Paper Code</td>");
-                            foreach ($fail_paper_code as $failure) {
-                                if (empty($result)) {
+                            for($i=0;$i<$semcount;$i++) {
+                                if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>$failure</td>");
+                                    echo ("<td>".$fail_paper_code[$i]."</td>");
                                 }
                             }
                             break;
 
                         case 6:
-                            echo ('<td colspan="2" id="fail'.$stud_count.'" style="font-weight:700;">Fail In Subject Code :</td>');
+                            echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
                             break;
                         case 7:
                             echo ("<td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
@@ -410,12 +423,77 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                     $subid_count++;
                 }
             }
-            echo('<script>
-            window.setTimeout(function(){set_rem_tr_values('.$stud_count.','.$total_credits.','.$total_gpv.',"Fail In Subject Code '.$cur_failure_report.'")},1000);</script>');            
+            if ($rowcount < 7) {
+                while ($rowcount != 8) {
+                    switch ($rowcount) {
+                        case 3:
+
+                            echo ('<tr><td colspan="12"></td>
+                            <td colspan="2" style="font-weight:700;"> Semester ' . $convert->numberToRomanRepresentation($_SESSION['semester']) . '</td>
+                            <td>SGPA</td>
+                            ');
+                            for ($i = 0; $i < $semcount; $i++) {
+                                if (empty($sgpa[$i])) {
+                                    echo ('<td> - </td>');
+                                } else {
+                                    echo ('<td>' . $sgpa[$i] . '</td>');
+                                }
+                            }
+                            echo ("</tr>");
+                            break;
+
+                        case 4:
+                            echo ("<tr><td colspan='12'></td><td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
+                            echo ("<td>Result</td>");
+                            for ($i = 0; $i < $semcount; $i++) {
+                                if (empty($result_pass_fail[$i])) {
+                                    echo ('<td> - </td>');
+                                } else {
+                                    echo ("<td>" . $result_pass_fail[$i] . "</td>");
+                                }
+                            }
+                            echo ("</tr>");
+                            break;
+
+                        case 5:
+                            echo ("<tr><td colspan='12'></td>");
+                            if ($fail_flag) {
+                                echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
+                            } else {
+                                echo ("<td colspan='2' style='font-weight:700; color: #1AC124' >Result : PASS</td>");
+                            }
+
+                            echo ("<td>Fail In Paper Code</td>");
+                            for($i=0;$i<$semcount;$i++) {
+                                if (empty($fail_paper_code[$i])) {
+                                    echo ('<td> - </td>');
+                                } else {
+                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                                }
+                            }
+                            echo ("</tr>");
+                            break;
+
+                        case 6:
+                            echo ('<tr><td colspan="12"></td>
+                            <td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
+                            echo ("</tr>");
+                            break;
+                        case 7:
+                            echo ("<tr><td colspan='12'></td>
+                            <td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
+                            echo ("</tr>");
+                            break;
+                    }
+                    $rowcount++;
+                }
+            }
+            echo ('<script>
+            window.setTimeout(function(){set_rem_tr_values(' . $stud_count . ',' . $total_credits . ',' . $total_gpv . ',"Fail In Subject Code ' . $cur_failure_report . '")},1000);</script>');
             echo ('</table></div>');
             $stud_count++;
         }
-        
+
     }
     ?>
     </div>

@@ -819,7 +819,7 @@ function tr_getSemester(tr_type)
           <form action="" method="post" onsubmit="return disable_on_submitbtn()">
             <div class="modal-body">
             <div class="modal-container">
-              <div id="err"></div>
+              <div id="err" style="z-index: 1000"></div>
         <div class="component">
            <table class="table table-bordered table-responsive">
                <caption>Subject Components</caption>
