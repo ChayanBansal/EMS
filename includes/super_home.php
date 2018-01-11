@@ -302,6 +302,7 @@ function tr_getSemester(tr_type)
             <div class="sub-option" id="subopt3">
                 <button data-toggle="modal" data-target="#trSelectiondialog"><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
                 <button data-toggle="modal" data-target="#view_tr"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+                <button data-toggle="modal" data-target="#edit_tr_request"><i class="glyphicon glyphicon-check"></i> Edit TR Requests</button>
             </div>
             </div>
             <div class="option pink" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
@@ -745,6 +746,62 @@ function tr_getSemester(tr_type)
     
   </div>
   <!--End-->
+
+
+  <!-- EDIT TR REQUEST MODAL -->
+
+<div id="edit_tr_request" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit TR Requests</h4>
+      </div>
+      <div class="modal-body">
+      <table class="table">
+    <thead>
+      <tr>
+        <th>Requested At</th>
+        <th>Requester</th>
+        <th>Enrollment Number</th>
+        <th>Student Name</th>
+        <th>Subject Code</th>
+        <th>Subject Name</th>
+        <th>Component Requested For Change</th>
+        <th>Approval</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+    </tbody>
+  </table>
+
+
+        <?php
+          $fetch_request="SELECT * FROM edit_tr_request WHERE action!=0";
+          $fetch_request_run=mysqli_query($conn,$fetch_request);
+          if($fetch_request_run)
+          {
+            while($request=mysqli_fetch_assoc($fetch_request_run))
+            /* $request['request_id'], $request['requester'], $request['roll_id'], $request['sub_code'], $request['cat_flag'], $request['end_theory_flag'], 
+              $request['cap_flag'], $request['end_practical_flag'], $request['ia_flag'], $request['ie_flag'], $request['fed_by_id'], $request['checked_by_id'], 
+              $request['remarks'], $request['timestamp']
+            */
+            {
+              
+            }
+          }
+        ?>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
   <!--TR Selection Modal-->
   <div class="modal fade" id="trSelectiondialog" role="dialog">

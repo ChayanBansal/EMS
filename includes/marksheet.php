@@ -71,10 +71,12 @@ require('config.php');
         
         .t1 table {
             border: none;
+            color: rgb(0, 6, 83);
         }
         
         .t2 table {
             border: none;
+            color: rgb(0, 6, 83);
         }
         
         .t3 {
@@ -85,7 +87,7 @@ require('config.php');
         th,
         table {
             border-collapse: collapse;
-            border: 1px solid #00076C;
+            border: 1px solid rgb(22, 31, 160);
             padding: 10px;
         }
         
@@ -95,8 +97,7 @@ require('config.php');
         }
         
         th {
-            background: #00076C;
-            color: white;
+            color: #A42116;
         }
         
         .upper {
@@ -114,16 +115,21 @@ require('config.php');
         }
         
         table caption {
-            border: 1px solid #00076C;
+            border: 1px solid rgb(22, 31, 160);
+            border-top: none !important;
         }
         
         .caption-container {
             display: flex;
             justify-content: space-around;
+            font-weight: 600;
         }
         
         .block {
             padding: 10px;
+        }
+        #blue {
+            color: rgb(0, 6, 83);
         }
         
         @media print {
@@ -143,10 +149,12 @@ require('config.php');
                 width: 40%;
                 float: left;
                 font-size: 12px;
+                color: rgb(0, 6, 83);
             }
             .t2 {
                 width: 40%;
                 font-size: 12px;
+                color: rgb(0, 6, 83);
             }
             .t1 td {
                 vertical-align: top;
@@ -175,7 +183,7 @@ require('config.php');
             }
             .t3 th {
                 padding: 0px;
-                color: black;
+                color: #A42116;
                 font-weight: 700;
                 font-size: 12px;
             }
@@ -184,8 +192,8 @@ require('config.php');
                 font-size: 12px;
             }
             .block {
-                padding: 0px;
-                font-size: 12px;
+                padding: 1px;
+                font-size: 14px;
                 font-weight: 600;
             }
         }
@@ -299,8 +307,8 @@ require('config.php');
         {
             $rowspan;
             echo('<tr>
-            <td rowspan="2" class="'.$sub['sub_code'].'" >'.$sub['sub_code'].'</td>  
-            <td rowspan="2" class="'.$sub['sub_code'].'" >'.$sub['sub_name'].'</td>'); //These two have same class, i.e, sub_code
+            <td rowspan="2" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_code'].'</td>  
+            <td rowspan="2" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_name'].'</td>'); //These two have same class, i.e, sub_code
             
             $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
             $get_sub_id_run=mysqli_query($conn,$get_sub_id);
@@ -317,12 +325,12 @@ require('config.php');
                 if($sub_id['practical_flag']==1)
                 {
                     echo('<script> rowspan_'.$sub['sub_code'].'++; </script>');
-                    echo('<td>P</td>'); //Practical P
+                    echo('<td id="blue">P</td>'); //Practical P
                 }
                 else if($sub_id['practical_flag']==0)
                 {
                     echo('<script> rowspan_'.$sub['sub_code'].'++; </script>');
-                    echo('<td>T</td>');//Theory T
+                    echo('<td id="blue">T</td>');//Theory T
                 }
                 echo('<script> 
                         if(rowspan_'.$sub['sub_code'].'==1)        
@@ -342,7 +350,7 @@ require('config.php');
                  <caption align="bottom">
                  <div class="caption-container">
                      <div class="block">Result: 
-                         <span class="info">
+                         <span class="info" id="info" style="font-weight:700;">
                              <?php 
                                 $get_sgpa="SELECT sgpa FROM exam_summary WHERE roll_id=$roll_id";
                                 $get_sgpa_run=mysqli_query($conn,$get_sgpa);
@@ -350,10 +358,12 @@ require('config.php');
                                 if($sgpa['sgpa']<4)
                                 {
                                     echo('FAIL');
+                                    echo("<script>document.getElementById('info').style.color = 'red';</script>");
                                 }
                                 else
                                 {
                                     echo('PASS');
+                                    echo("<script>document.getElementById('info').style.color = 'green';</script>");
                                 }
                              ?>
                          </span>
