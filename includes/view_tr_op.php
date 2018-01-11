@@ -1,12 +1,12 @@
 <?php
 session_start();
 if (isset($_POST['view_tr_submit'])) {
-    $_SESSION['from_year'] = $_POST['tr_batch'];
-    $_SESSION['course_id'] = $_POST['tr_course'];
-    $_SESSION['semester'] = $_POST['tr_semester'];
-    $_SESSION['main_atkt'] = $_POST['tr_type'];
+    $_SESSION['from_year'] = 2016;//$_POST['tr_batch'];
+    $_SESSION['course_id'] = 1;//$_POST['tr_course'];
+    $_SESSION['semester'] = 1;//$_POST['tr_semester'];
+    $_SESSION['main_atkt'] = "main";//$_POST['tr_type'];
 } else {
-    header('location: /ems/includes/404.html');
+   // header('location: /ems/includes/404.html');
 }
 ?>
 <!DOCTYPE html>
@@ -24,6 +24,22 @@ if (isset($_POST['view_tr_submit'])) {
         document.getElementById("cr"+no).innerHTML=credits;
         document.getElementById("gpv"+no).innerHTML=gpv;
         document.getElementById("fail"+no).innerHTML=failures;
+    }
+    function fetch_enrol(id){
+        document.getElementById("tr_roll_id").value=id;
+    }
+    function getTrComponents(subcode){
+        $.ajax({
+	type: "POST",
+	url: "update_tr_ajax",
+	data: 'tr_subcode='+subcode,
+	success: function(data){
+        $("#tr_components").html(data);
+      },
+    error: function(e){
+        alert('Come back again');
+    }
+	});
     }
 </script>
     <style>
@@ -94,7 +110,6 @@ $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "");
-
 ?>
 <div class="contain">
     <?php
@@ -177,7 +192,9 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             } else {
                 echo ("EX");
             }
-            echo ('</td> </div>
+            echo ('</td> 
+            <td><button type="button" class="btn btn-danger" data-target="#updateTrdialog" data-toggle="modal" onclick="fetch_enrol(this.value)" value="' . $cur_rollid . '">Update TR Marks</button></td>
+            </div>
             </caption>
             <tr>
             <th style="vertical-align:middle">Paper Code</th>
@@ -403,11 +420,11 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                                 echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
                             }
                             echo ("<td>Fail In Paper Code</td>");
-                            for($i=0;$i<$semcount;$i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                                    echo ("<td>" . $fail_paper_code[$i] . "</td>");
                                 }
                             }
                             break;
@@ -465,11 +482,11 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             }
 
                             echo ("<td>Fail In Paper Code</td>");
-                            for($i=0;$i<$semcount;$i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                                    echo ("<td>" . $fail_paper_code[$i] . "</td>");
                                 }
                             }
                             echo ("</tr>");
@@ -498,6 +515,59 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
     }
     ?>
     </div>
+
+ <!-- Update TR Modal -->
+ <div class="modal fade" id="updateTrdialog" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Select from below</h4>
+          </div>
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
+          <div class="modal-body">
+          <?php
+            $input = new input_field();
+            ?>
+          <div class="form-group">
+              <label for="name">Roll ID</label>
+                <?php
+                $input->display_table_readonly("tr_roll_id", "form-control", "text", "tr_req_roll_id", "", 1, 0, 0, 1, 0);
+                ?>
+              </div>
+              <div class="form-group">
+              <label for="type">Select Subject</label>
+              <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)">
+                  <option disabled selected>Select a Subject</option>
+                  <?php
+                    $get_subjects_list = "SELECT sub_name,sub_code FROM subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
+                    $get_subjects_list_run = mysqli_query($conn, $get_subjects_list);
+                    while ($sub = mysqli_fetch_assoc($get_subjects_list_run)) {
+                        echo ('<option value="' . $sub['sub_code'] . '">' . $sub['sub_code'] . "-" . $sub['sub_name'] . '</option>');
+                    }
+                    ?>
+              </select>
+              </div>
+              <div class="form-group">
+              <label for="semester">Select Components</label>
+                <div id="tr_components">
+                </div>  
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
+            <button type="submit" class="btn btn-success" name="session_update_submit" value="" id="btn_session_update">Update Session<i class="glyphicon glyphicon-chevron-right"></i></button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
 
     <?php
     $obj = new footer();

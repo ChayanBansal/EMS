@@ -282,6 +282,42 @@ function chat(location,username)
     }
 	});
   }
+
+  function tr_getFromYear(tr_course_id)
+  {
+    $.ajax({
+	type: "POST",
+	url: "select_tr",
+	data: 'tr_getFromYear=1&course_id='+tr_course_id,
+	success: function(data){
+        $("#tr_batch_list").html(data);
+    },
+    error: function(e){
+      $("#tr_batch_list").html("Unable to load recent activities");
+    }
+	});
+  }
+
+function tr_getSemester(tr_type)
+{
+  tr_from_year=document.getElementById("tr_batch_list").value;
+  tr_course_id=document.getElementById("tr_course_list").value;
+  $.ajax(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: 'tr_getSemester=1&tr_getFromYear=0&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type,
+      success: function(data){
+        $("#tr_semester").html(data);
+    },
+    error: function(e){
+      $("#tr_semester").html("Unable to load recent activities");
+    }
+	});
+  }
+  
+
+
 </script>
 <!--ChatBox-->
 <div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
@@ -333,6 +369,8 @@ function chat(location,username)
     <div class="sub-container col-lg-8 col-sm-12 col-md-12 col-xs-12">
         <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
         <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
+        <button class="option blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-pencil"></i></div> View TR</button>
+        <button class="option yellow" data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Print TR</button>
         <button class="option pink " data-toggle="modal" data-target="#gen_marksheet"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
     </div>
 </div> 
@@ -460,6 +498,65 @@ function chat(location,username)
   </div>
 </div>
 <!-- Generate Marksheet Close-->
+
+
+<!-- View TR Modal Start-->
+
+<!-- Modal -->
+<div id="view_tr" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <form action="view_tr_op" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span style="color:black">&times;</span></button>
+        <h4 class="modal-title">View TR</h4>
+      </div>
+      <div class="modal-body">
+                <div class="form-group">
+                    <label for="tr_course">Course :</label>
+                    <select id="tr_course_list" name="tr_course" class="form-control" onChange="tr_getFromYear(this.value)" required>
+                        <option value="" disabled selected>Select Course</option>
+                        <?php 
+                        $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
+                        $get_course_run = mysqli_query($conn, $get_course);
+                        while ($course = mysqli_fetch_assoc($get_course_run)) {
+                          echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tr_batch">Batch (Starting Year) :</label>
+                    <select id="tr_batch_list" name="tr_batch" class="form-control" required>
+                        <option value="" disabled selected>Select Batch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tr_type">Type :</label>
+                    <select id="tr_type" name="tr_type" class="form-control" required onChange="tr_getSemester(this.value)">
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="main">Main</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tr_semester">Semester :</label>
+                    <select id="tr_semester" name="tr_semester" class="form-control" required>
+                        <option value="" disabled selected>Select Semester</option>                       
+                    </select>
+                </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-success" name="view_tr_submit">Proceed</button>
+      </div>
+                      </form>
+    </div>
+
+  </div>
+</div>
+<!-- View TR Modal Close-->
 
 
 

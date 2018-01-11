@@ -839,6 +839,16 @@ class useroptions
 		}
 
 	}
+	function request_tr_update(){
+		if(isset($_POST['req_update'])){
+			$rollid=$_POST['tr_req_roll_id'];
+			$subcode=$_POST['tr_req_subject'];
+			$insert_request="INSERT into update_tr() VALUES(";
+			if(isset($_POST['tr_update_check1'])){
+				$insert_request.="";
+			}
+		}
+	}
 }
 class dashboard
 {
