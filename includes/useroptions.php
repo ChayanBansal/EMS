@@ -285,40 +285,6 @@ function chat(location,username)
 	});
   }
 
-  function tr_getFromYear(tr_course_id)
-  {
-    $.ajax({
-	type: "POST",
-	url: "select_tr",
-	data: 'tr_getFromYear=1&course_id='+tr_course_id,
-	success: function(data){
-        $("#tr_batch_list").html(data);
-    },
-    error: function(e){
-      $("#tr_batch_list").html("Unable to load recent activities");
-    }
-	});
-  }
-
-function tr_getSemester(tr_type)
-{
-  tr_from_year=document.getElementById("tr_batch_list").value;
-  tr_course_id=document.getElementById("tr_course_list").value;
-  $.ajax(
-    {
-      type: "POST",
-      url: "select_tr",
-      data: 'tr_getSemester=1&tr_getFromYear=0&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type,
-      success: function(data){
-        $("#tr_semester").html(data);
-    },
-    error: function(e){
-      $("#tr_semester").html("Unable to load recent activities");
-    }
-	});
-  }
-  
-
 
 </script>
 <!--ChatBox-->
@@ -371,8 +337,8 @@ function tr_getSemester(tr_type)
     <div class="sub-container col-lg-8 col-sm-12 col-md-12 col-xs-12">
         <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
         <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
-        <button class="option blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-pencil"></i></div> View TR</button>
-        <button class="option yellow" data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Print TR</button>
+        <button class="option blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-eye-open"></i></div> View TR</button>
+        <button class="option yellow" data-toggle="modal" data-target="#print_tr"><div><i class="glyphicon glyphicon-print"></i></div> Print TR</button>
         <button class="option pink " data-toggle="modal" data-target="#gen_marksheet"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
     </div>
 </div> 
@@ -458,27 +424,23 @@ function tr_getSemester(tr_type)
       </div>
       <div class="modal-body">
                 <div class="form-group">
-                    <label for="tr_course">Course :</label>
-                    <select id="tr_course_list" name="print_course" class="form-control" onChange="tr_getFromYear(this.value)" required>
-                        <option value="" disabled selected>Select Course</option>
-                        <?php 
-                        $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
-                        $get_course_run = mysqli_query($conn, $get_course);
-                        while ($course = mysqli_fetch_assoc($get_course_run)) {
-                            echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :</label>
                     <select id="tr_batch_list" name="print_batch" class="form-control" required>
                         <option value="" disabled selected>Select Batch</option>
+                        <?php
+                    $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
+                    (SELECT enrol_no FROM roll_list WHERE roll_id IN
+                    (SELECT DISTINCT(roll_id) FROM tr))";
+                    $get_from_year_run = mysqli_query($conn, $get_from_year);
+                    while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
+                        echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
+                    }
+                    ?>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="tr_type">Type :</label>
-                    <select id="tr_type" name="print_type" class="form-control" required onChange="tr_getSemester(this.value)">
+                    <select id="tr_type" name="print_type" class="form-control" required onChange="tr_getSemester('tr_batch_list','tr_semester',this.value)">
                         <option value="" disabled selected>Select Type</option>
                         <option value="main">Main</option>
                     </select>
@@ -502,7 +464,61 @@ function tr_getSemester(tr_type)
 <!-- Generate Marksheet Close-->
 
 
-<!-- View TR Modal Start-->
+<!-- Print TR Start-->
+
+<!-- Modal -->
+<div id="print_tr" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <form action="print_tr" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span style="color:black">&times;</span></button>
+        <h4 class="modal-title">Print TR</h4>
+      </div>
+      <div class="modal-body">
+                <div class="form-group">
+                    <label for="tr_batch">Batch (Starting Year) :</label>
+                    <select id="tr_batch_list_view" name="tr_print_batch" class="form-control" required>
+                        <option value="" disabled selected>Select Batch</option>
+                        <?php
+                    $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
+                    (SELECT enrol_no FROM roll_list WHERE roll_id IN
+                    (SELECT DISTINCT(roll_id) FROM tr))";
+                    $get_from_year_run = mysqli_query($conn, $get_from_year);
+                    while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
+                        echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
+                    }
+                    ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tr_type">Type :</label>
+                    <select id="tr_type" name="tr_print_type" class="form-control" required onChange="tr_getSemester('tr_batch_list_view','tr_semester_view',this.value)">
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="main">Main</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tr_semester">Semester: </label>
+                    <select id="tr_semester_view" name="tr_print_semester" class="form-control" required>
+                        <option value="" disabled selected>Semester</option>                       
+                    </select>
+                </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-success" name="tr_print_proceed">Proceed</button>
+      </div>
+         </form>
+    </div>
+
+  </div>
+</div>
+<!-- Print TR Close-->
+
+<!-- View TR Start-->
 
 <!-- Modal -->
 <div id="view_tr" class="modal fade" role="dialog">
@@ -517,49 +533,44 @@ function tr_getSemester(tr_type)
       </div>
       <div class="modal-body">
                 <div class="form-group">
-                    <label for="tr_course">Course :</label>
-                    <select id="tr_course_list" name="tr_course" class="form-control" onChange="tr_getFromYear(this.value)" required>
-                        <option value="" disabled selected>Select Course</option>
-                        <?php 
-                        $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM academic_sessions ac, courses c WHERE c.course_id=ac.course_id";
-                        $get_course_run = mysqli_query($conn, $get_course);
-                        while ($course = mysqli_fetch_assoc($get_course_run)) {
-                          echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :</label>
-                    <select id="tr_batch_list" name="tr_batch" class="form-control" required>
+                    <select id="tr_batch_list_view" name="tr_view_batch" class="form-control" required>
                         <option value="" disabled selected>Select Batch</option>
+                        <?php
+                    $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
+                    (SELECT enrol_no FROM roll_list WHERE roll_id IN
+                    (SELECT DISTINCT(roll_id) FROM tr))";
+                    $get_from_year_run = mysqli_query($conn, $get_from_year);
+                    while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
+                        echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
+                    }
+                    ?>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="tr_type">Type :</label>
-                    <select id="tr_type" name="tr_type" class="form-control" required onChange="tr_getSemester(this.value)">
+                    <select id="tr_type" name="tr_view_type" class="form-control" required onChange="tr_getSemester('tr_batch_list_view','tr_semester_view',this.value)">
                         <option value="" disabled selected>Select Type</option>
                         <option value="main">Main</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="tr_semester">Semester :</label>
-                    <select id="tr_semester" name="tr_semester" class="form-control" required>
-                        <option value="" disabled selected>Select Semester</option>                       
+                    <label for="tr_semester">Semester: </label>
+                    <select id="tr_semester_view" name="tr_view_semester" class="form-control" required>
+                        <option value="" disabled selected>Semester</option>                       
                     </select>
                 </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-success" name="view_tr_submit">Proceed</button>
+        <button type="submit" class="btn btn-success" name="tr_view_proceed">Proceed</button>
       </div>
-                      </form>
+         </form>
     </div>
 
   </div>
 </div>
-<!-- View TR Modal Close-->
-
+<!-- View TR Close-->
 
 
 <!-- Check Marks Modal Box -->
@@ -673,11 +684,6 @@ function tr_getSemester(tr_type)
     ?>
     </tbody>
   </table>
-
-
-
-
-        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -706,39 +712,23 @@ $logout_modal->display_logout_modal();
     });
   });
 });
-function tr_getFromYear(tr_course_id)
-  {
-    $.ajax({
-	type: "POST",
-	url: "select_tr",
-	data: 'tr_getFromYear=1&course_id='+tr_course_id,
-	success: function(data){
-        $("#tr_batch_list").html(data);
-    },
-    error: function(e){
-      $("#tr_batch_list").html("Unable to load recent activities");
-    }
-	});
-  }
-
-function tr_getSemester(tr_type)
+function tr_getSemester(id,id2,tr_type)
 {
-  tr_from_year=document.getElementById("tr_batch_list").value;
-  tr_course_id=document.getElementById("tr_course_list").value;
+  tr_from_year=document.getElementById(id).value;
+  tr_course_id=<?=$_SESSION['current_course_id']?>;
   $.ajax(
     {
       type: "POST",
       url: "select_tr",
       data: 'tr_getSemester=1&tr_getFromYear=0&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type,
       success: function(data){
-        $("#tr_semester").html(data);
+        $("#"+id2).html(data);
     },
     error: function(e){
       $("#tr_semester").html("Unable to load recent activities");
     }
 	});
   }
-  
 
 </script>
 </html>

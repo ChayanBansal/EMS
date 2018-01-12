@@ -1,16 +1,12 @@
 <?php
 session_start();
-$_SESSION['from_year'] = 2016;//$_POST['tr_batch'];
-$_SESSION['course_id'] = 1;//$_POST['tr_course'];
-$_SESSION['semester'] = 1;//$_POST['tr_semester'];
-$_SESSION['main_atkt'] = "main";//$_POST['tr_type'];
-if (isset($_POST['view_tr_submit'])) {
-    $_SESSION['from_year'] = $_POST['tr_batch'];
-    $_SESSION['course_id'] = $_POST['tr_course'];
-    $_SESSION['semester'] = $_POST['tr_semester'];
-    $_SESSION['main_atkt'] = $_POST['tr_type'];
+if (isset($_POST['tr_print_proceed'])) {
+    $_SESSION['from_year'] = $_POST['tr_print_batch'];
+    $_SESSION['course_id'] = $_SESSION['current_course_id'];
+    $_SESSION['semester'] = $_POST['tr_print_semester'];
+    $_SESSION['main_atkt'] = $_POST['tr_print_type'];
 } else {
-    //header('location: /ems/includes/404.html');
+   header('location: /ems/includes/404.html');
 }
 ?>
 <!DOCTYPE html>
@@ -20,16 +16,6 @@ if (isset($_POST['view_tr_submit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Print TR</title>
-    <script>
-        var total_cr=0.0;
-        var total_gpv=0.0;
-        var failure_report="";
-    function set_rem_tr_values(no,credits,gpv,failures){
-        document.getElementById("cr"+no).innerHTML=credits;
-        document.getElementById("gpv"+no).innerHTML=gpv;
-        document.getElementById("fail"+no).innerHTML=failures;
-    }
-</script>
     <style>
         body{
             background: white !important;
