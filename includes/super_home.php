@@ -790,6 +790,7 @@ function tr_getSemester(tr_type)
         <th style="vertical-align:middle;">Subject Code</th>
         <th style="vertical-align:middle;">Subject Name</th>
         <th style="vertical-align:middle;">Component Requested For Change</th>
+        <th style="vertical-align:middle;">Remark</th>
         <th style="vertical-align:middle;">Approve</th>
       </tr>
       </thead>
@@ -972,7 +973,7 @@ function tr_getSemester(tr_type)
               }
 
               echo("</td>");
-
+              echo("<td>".$request['remarks']."</td>");
               echo("<td>");
               echo("<form action='' method='post'><button class='btn btn-success' type='submit' name='approve_edit_tr' value=".$request['request_id']."><i class='fa fa-thumbs-up' aria-hidden='true'>Approve</i></button>");
               echo("<button class='btn btn-danger' type='submit' name='disapprove_edit_tr' value=".$request['request_id']."><i class='fa fa-thumbs-down' aria-hidden='true'>Disapprove</i></button></form>");
