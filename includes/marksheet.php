@@ -136,6 +136,19 @@ require('config.php');
             body {
                 margin: 0;
             }
+            .first1 {
+                position: absolute;
+                top: 1.5cm;
+                right: 1.5cm;
+            }
+            .s_image {
+                max-height: 2.4cm;
+                max-width: 2.4cm;
+            }
+            .stud_img {
+                height: 2.4cm;
+                width: 2.3cm;
+            }
             .main1 {
                 height: 16.5cm;
             }
@@ -201,6 +214,9 @@ require('config.php');
 </head>
 
 <body onload='history.replaceState("", "", "printing");window.print();window.history.back();'><!--window.print(); window.history.back(); history.replaceState("", "", "printing"); window.history.back()-->
+    <div class="first1">
+        <div class="s_image"><img src="../stud_img/2016AB001021.jpg" alt="" class="stud_img"></div>
+    </div>
     <div class="main1">
         <div class="upper">
             <div class="t1">
