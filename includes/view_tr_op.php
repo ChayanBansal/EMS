@@ -545,7 +545,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
               </div>
               <div class="form-group">
               <label for="type">Select Subject</label>
-              <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)">
+              <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)" required>
                   <option disabled selected>Select a Subject</option>
                   <?php
                     $get_subjects_list = "SELECT sub_name,sub_code FROM subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
@@ -560,6 +560,12 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
               <label for="semester">Select Components</label>
                 <div id="tr_components">
                 </div>  
+            </div>
+            <div class="form-group">
+              <label for="semester">Reason/Remarks</label>
+            <?php
+            $input->display("","form-control","text","tr_req_remark","Enter remarks",1);
+            ?>  
             </div>
           </div>
           <div class="modal-footer">
