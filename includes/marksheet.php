@@ -138,8 +138,8 @@ require('config.php');
             }
             .first1 {
                 position: absolute;
-                top: 1.5cm;
-                right: 1.5cm;
+                top: 1.65cm;
+                right: 1.8cm;
             }
             .s_image {
                 max-height: 2.4cm;
