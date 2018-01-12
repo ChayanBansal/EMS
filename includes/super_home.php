@@ -75,6 +75,7 @@ if(isset($_POST['approve_edit_tr']))
   {
     $a = new alert();
     $a->exec("Request Approved","success");
+    unset($_POST['approve_edit_tr']);
   }
 }
 else if(isset($_POST['disapprove_edit_tr']))
@@ -85,6 +86,7 @@ else if(isset($_POST['disapprove_edit_tr']))
   {
     $a = new alert();
     $a->exec("Request Disapproved","danger");
+    unset($_POST['disapprove_edit_tr']);
   }
 }
 $obj = new head();
@@ -794,7 +796,7 @@ function tr_getSemester(tr_type)
         <th style="vertical-align:middle;">Approve</th>
       </tr>
       </thead>
-    <tbody>
+    <tbody style="overflow: auto;">
 
         <?php
           $fetch_request="SELECT * FROM edit_tr_request WHERE status=0";
