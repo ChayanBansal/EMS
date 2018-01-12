@@ -9,7 +9,7 @@ if (isset($_POST['tr_subcode'])) {
         while ($comp = mysqli_fetch_assoc($get_comp_run)) {
             echo ('<label class="checkbox-inline" style="font-weight: normal !important">
                   ');
-            $check_box->display_w_value("", "", "checkbox","tr_update_check".$comp['component_id'],"",$comp['component_id'],1);
+            $check_box->display_w_value("", "", "checkbox","tr_update_check".$comp['component_id'],"",$comp['component_id'],0);
                 echo ($comp['component_name'].'</label>');
         }
     }

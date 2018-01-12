@@ -1,5 +1,9 @@
 <?php
 session_start();
+$_SESSION['from_year'] = 2016;//$_POST['tr_batch'];
+$_SESSION['course_id'] = 1;//$_POST['tr_course'];
+$_SESSION['semester'] = 1;//$_POST['tr_semester'];
+$_SESSION['main_atkt'] = "main";//$_POST['tr_type'];
 if (isset($_POST['view_tr_submit'])) {
     $_SESSION['from_year'] = 2016;//$_POST['tr_batch'];
     $_SESSION['course_id'] = 1;//$_POST['tr_course'];
@@ -107,6 +111,8 @@ require("frontend_lib.php");
 require("class_lib.php");
 $obj = new head();
 $obj->displayheader();
+$options=new useroptions();
+$options->request_tr_update($conn);
 $obj->dispmenu(3, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "");
@@ -539,7 +545,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
               </div>
               <div class="form-group">
               <label for="type">Select Subject</label>
-              <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)">
+              <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)" required>
                   <option disabled selected>Select a Subject</option>
                   <?php
                     $get_subjects_list = "SELECT sub_name,sub_code FROM subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
@@ -555,10 +561,16 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                 <div id="tr_components">
                 </div>  
             </div>
+            <div class="form-group">
+              <label for="semester">Reason/Remarks</label>
+            <?php
+            $input->display("","form-control","text","tr_req_remark","Enter remarks",1);
+            ?>  
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
-            <button type="submit" class="btn btn-success" name="session_update_submit" value="" id="btn_session_update">Update Session<i class="glyphicon glyphicon-chevron-right"></i></button>
+            <button type="submit" class="btn btn-success" name="update_tr_submit" value="" id="btn_session_update">Update Session<i class="glyphicon glyphicon-chevron-right"></i></button>
         </div>
         </form> 
         </div>

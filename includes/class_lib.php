@@ -399,7 +399,7 @@ class super_user_options
 			$get_sessions_run = mysqli_query($conn, $get_sessions);
 			$session_rows = mysqli_affected_rows($conn);
 			$i = 1;
-			$alert=new alert();
+			$alert = new alert();
 			$insert_exam_details = "INSERT INTO exam_month_year VALUES";
 			while ($session = mysqli_fetch_assoc($get_sessions_run)) {
 				$get_course_name = "SELECT course_id FROM courses WHERE course_id=" . $session['course_id'];
@@ -426,11 +426,11 @@ class super_user_options
 
 			}
 			$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
-				if ($insert_exam_details_run) {
-					$alert->exec("New Exam Sessions created....", "success");
-				} else {
-					$alert->exec("There was an error while creating the exam sessions!", "danger");
-				}
+			if ($insert_exam_details_run) {
+				$alert->exec("New Exam Sessions created....", "success");
+			} else {
+				$alert->exec("There was an error while creating the exam sessions!", "danger");
+			}
 		}
 	}
 	function add_subject($conn)
@@ -689,9 +689,8 @@ class super_user_options
 						mysqli_commit($conn);
 						mysqli_autocommit($conn, true);
 						$alert->exec("Session successfully created!", "success");
-					}
-					else{
-						$alert->exec("Unable to create session!", "danger");		
+					} else {
+						$alert->exec("Unable to create session!", "danger");
 					}
 				} else {
 					mysqli_rollback($conn);
@@ -839,13 +838,29 @@ class useroptions
 		}
 
 	}
-	function request_tr_update(){
-		if(isset($_POST['req_update'])){
-			$rollid=$_POST['tr_req_roll_id'];
-			$subcode=$_POST['tr_req_subject'];
-			$insert_request="INSERT into update_tr() VALUES(";
-			if(isset($_POST['tr_update_check1'])){
-				$insert_request.="";
+	function request_tr_update($conn)
+	{
+		if (isset($_POST['update_tr_submit'])) {
+			$rollid = $_POST['tr_req_roll_id'];
+			$requester = $_SESSION['operator_id'];
+			$remark=$_POST['tr_req_remark'];
+			$subcode = $_POST['tr_req_subject'];
+			$insert_request = "INSERT into edit_tr_request(requester,roll_id,sub_code,cat_flag,end_theory_flag,cap_flag,end_practical_flag,ia_flag,ie_flag,remarks) VALUES($requester,$rollid,'$subcode',";
+			for ($comp = 1; $comp <= 6; $comp++) {
+				if (isset($_POST['tr_update_check' . $comp])) {
+					$insert_request .= "1,";
+				} else {
+					$insert_request .= "0,";
+				}
+			}
+			$insert_request.="'$remark')";
+			$insert_request_run = mysqli_query($conn, $insert_request);
+			$alert = new alert();
+			
+			if ($insert_request_run) {
+				$alert->exec("Request for change of marks submitted successfully!", "success");
+			} else {
+				$alert->exec("Unable to proceed with request! Please try again....", "danger");
 			}
 		}
 	}
