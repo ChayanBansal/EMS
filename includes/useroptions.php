@@ -480,7 +480,7 @@ function chat(location,username)
       <div class="modal-body">
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :</label>
-                    <select id="tr_batch_list_view" name="tr_print_batch" class="form-control" required>
+                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required>
                         <option value="" disabled selected>Select Batch</option>
                         <?php
                     $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
@@ -495,14 +495,14 @@ function chat(location,username)
                 </div>
                 <div class="form-group">
                     <label for="tr_type">Type :</label>
-                    <select id="tr_type" name="tr_print_type" class="form-control" required onChange="tr_getSemester('tr_batch_list_view','tr_semester_view',this.value)">
+                    <select id="tr_type" name="tr_print_type" class="form-control" required onChange="tr_getSemester('tr_batch_list_print','tr_semester_print',this.value)">
                         <option value="" disabled selected>Select Type</option>
                         <option value="main">Main</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="tr_semester">Semester: </label>
-                    <select id="tr_semester_view" name="tr_print_semester" class="form-control" required>
+                    <label for="tr_semester_print">Semester: </label>
+                    <select id="tr_semester_print" name="tr_print_semester" class="form-control" required>
                         <option value="" disabled selected>Semester</option>                       
                     </select>
                 </div>
