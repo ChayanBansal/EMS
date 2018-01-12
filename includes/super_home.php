@@ -67,6 +67,26 @@ if (isset($_SESSION['tr_generated'])) {
   }
   unset($_SESSION['tr_generated']);
 }
+if(isset($_POST['approve_edit_tr']))
+{
+  $update_edit_tr="UPDATE edit_tr_request SET status=1 WHERE request_id=".$_POST['approve_edit_tr'];
+  $update_edit_tr_run=mysqli_query($conn,$update_edit_tr);
+  if($update_edit_tr_run==TRUE)
+  {
+    $a = new alert();
+    $a->exec("Request Approved","success");
+  }
+}
+else if(isset($_POST['disapprove_edit_tr']))
+{
+  $update_edit_tr="UPDATE edit_tr_request SET status=2 WHERE request_id=".$_POST['disapprove_edit_tr'];
+  $update_edit_tr_run=mysqli_query($conn,$update_edit_tr);
+  if($update_edit_tr_run==TRUE)
+  {
+    $a = new alert();
+    $a->exec("Request Disapproved","danger");
+  }
+}
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
@@ -774,13 +794,16 @@ function tr_getSemester(tr_type)
       </tr>
       </thead>
     <tbody>
-      
-    
 
         <?php
           $fetch_request="SELECT * FROM edit_tr_request WHERE status=0";
           $fetch_request_run=mysqli_query($conn,$fetch_request);
-          if($fetch_request_run)
+          if(mysqli_num_rows($fetch_request_run)==0)
+          {
+            $a = new alert();
+            $a->exec("No requests to show","info");
+          }
+          else if($fetch_request_run)
           {
             while($request=mysqli_fetch_assoc($fetch_request_run))
             /* $request['request_id'], $request['requester'], $request['roll_id'], $request['sub_code'], $request['cat_flag'], $request['end_theory_flag'], 
@@ -951,8 +974,8 @@ function tr_getSemester(tr_type)
               echo("</td>");
 
               echo("<td>");
-              echo("<button class='btn btn-danger'><i class='fa fa-thumbs-up' aria-hidden='true'>Approve</i></button>");
-              echo("<button class='btn btn-success'><i class='fa fa-thumbs-down' aria-hidden='true'>Disapprove</i></button");
+              echo("<form action='' method='post'><button class='btn btn-success' type='submit' name='approve_edit_tr' value=".$request['request_id']."><i class='fa fa-thumbs-up' aria-hidden='true'>Approve</i></button>");
+              echo("<button class='btn btn-danger' type='submit' name='disapprove_edit_tr' value=".$request['request_id']."><i class='fa fa-thumbs-down' aria-hidden='true'>Disapprove</i></button></form>");
               echo("</td>");
               
             }
