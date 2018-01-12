@@ -839,13 +839,43 @@ class useroptions
 		}
 
 	}
-	function request_tr_update(){
-		if(isset($_POST['req_update'])){
+	function request_tr_update($conn){
+		if(isset($_POST['update_tr_submit'])){
 			$rollid=$_POST['tr_req_roll_id'];
+			$requester=$_SESSION['operator_id'];
 			$subcode=$_POST['tr_req_subject'];
-			$insert_request="INSERT into update_tr() VALUES(";
-			if(isset($_POST['tr_update_check1'])){
-				$insert_request.="";
+			$insert_request="INSERT into edit_tr_request(requester,roll_id,sub_code,cat_flag,end_theory_flag,cap_flag,end_practical_flag,ia_flag,ie_flag,remarks) VALUES($requester,$rollid,'$subcode',";
+			$get_comp = "SELECT component_id,component_name FROM component WHERE component_id IN(SELECT component_id FROM component_distribution WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code IN(SELECT sub_code FROM subjects WHERE sub_code='" . $subcode . "')))";
+			$get_comp_run = mysqli_query($conn, $get_comp);
+			$rows=mysqli_affected_rows($conn);
+			$i=1;
+			while ($comp=mysqli_fetch_assoc($get_comp_run)) {
+				if($i==$rows){
+					if(isset($_POST['tr_update_check'.$i])){
+						$insert_request.="1)";
+					}							
+					else{
+						$insert_request.="0)";					
+					}
+				}
+				else{
+					if(isset($_POST['tr_update_check'.$i])){
+						$insert_request.="1,";
+					}							
+					else{
+						$insert_request.="0,";					
+					}
+				}
+				$i++;
+			}
+			$insert_request_run=mysqli_query($conn,$insert_request);
+			$alert=new alert();
+			echo($insert_request);
+			if($insert_request_run){
+				$alert->exec("Request for change of marks submitted successfully!","success");
+			}
+			else{
+				$alert->exec("Unable to proceed with request! Please try again....","danger");		
 			}
 		}
 	}

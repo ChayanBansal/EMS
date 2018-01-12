@@ -751,7 +751,7 @@ function tr_getSemester(tr_type)
   <!-- EDIT TR REQUEST MODAL -->
 
 <div id="edit_tr_request" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg" style="width:95%">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -763,37 +763,206 @@ function tr_getSemester(tr_type)
       <table class="table">
     <thead>
       <tr>
-        <th>Requested At</th>
-        <th>Requester</th>
-        <th>Enrollment Number</th>
-        <th>Student Name</th>
-        <th>Subject Code</th>
-        <th>Subject Name</th>
-        <th>Component Requested For Change</th>
-        <th>Approval</th>
+        <th style="vertical-align:middle;">Requested At</th>
+        <th style="vertical-align:middle;">Requester</th>
+        <th style="vertical-align:middle;">Enrollment Number</th>
+        <th style="vertical-align:middle;">Student Name</th>
+        <th style="vertical-align:middle;">Subject Code</th>
+        <th style="vertical-align:middle;">Subject Name</th>
+        <th style="vertical-align:middle;">Component Requested For Change</th>
+        <th style="vertical-align:middle;">Approve</th>
       </tr>
-    </thead>
+      </thead>
     <tbody>
       
-    </tbody>
-  </table>
-
+    
 
         <?php
-          $fetch_request="SELECT * FROM edit_tr_request WHERE action!=0";
+          $fetch_request="SELECT * FROM edit_tr_request WHERE status=0";
           $fetch_request_run=mysqli_query($conn,$fetch_request);
           if($fetch_request_run)
           {
             while($request=mysqli_fetch_assoc($fetch_request_run))
             /* $request['request_id'], $request['requester'], $request['roll_id'], $request['sub_code'], $request['cat_flag'], $request['end_theory_flag'], 
-              $request['cap_flag'], $request['end_practical_flag'], $request['ia_flag'], $request['ie_flag'], $request['fed_by_id'], $request['checked_by_id'], 
-              $request['remarks'], $request['timestamp']
+              $request['cap_flag'], $request['end_practical_flag'], $request['ia_flag'], $request['ie_flag'],  
+              $request['remarks'], $request['timestamp'], $request['status']
             */
             {
+              echo("<tr>");
+              echo("<td>".$request['timestamp']."</td>");
+              $get_requester_name="SELECT operator_name FROM operators WHERE operator_id=".$request['requester'];
+              $get_requester_name=mysqli_query($conn,$get_requester_name);
+              $requester=mysqli_fetch_assoc($get_requester_name);
+              //$requester['operator_name']
+              echo("<td>".$requester['operator_name']."</td>");
+              
+              $get_stud_detail="SELECT enrol_no, first_name, middle_name, last_name FROM students WHERE enrol_no IN
+              (SELECT enrol_no FROM roll_list WHERE roll_id=".$request['roll_id'].")";
+              $get_stud_detail=mysqli_query($conn,$get_stud_detail);
+              $stud_detail=mysqli_fetch_assoc($get_stud_detail);
+              //$stud_detail['enrol_no'] $stud_detail['first_name'] $stud_detail['middle_name'] $stud_detail['last_name']
+              echo("<td>".$stud_detail['enrol_no']."</td>");
+              echo("<td>".$stud_detail['first_name']);
+              if($stud_detail['middle_name']=="")
+              {
+                echo(" ".$stud_detail['last_name']."</td>");
+              }
+              else
+              {
+                echo(" ".$stud_detail['middle_name']." ".$stud_detail['last_name']."</td>");
+              }
+              
+
+              $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code='".$request['sub_code']."'";
+              $get_sub_name_run=mysqli_query($conn,$get_sub_name);
+              $sub_name=mysqli_fetch_assoc($get_sub_name_run);
+              //$sub_name['sub_name']
+
+              echo("<td>".$request['sub_code']."</td>");
+              echo("<td>".$sub_name['sub_name']."</td>");
+
+              echo("<td><ul>");
+              if($request['cat_flag']==1)
+              {
+                echo("<li>");
+                echo("CAT");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=1))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=1))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              } 
+
+              if($request['end_theory_flag']==1)
+              {
+                echo("<li>");
+                echo("End Sem Theory");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=2))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=2))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+              
+              if($request['cap_flag']==1)
+              {
+                echo("<li>");
+                echo("CAP");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=3))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=3))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+              
+              if($request['end_practical_flag']==1)
+              {
+                echo("<li>");
+                echo("End Sem Practical");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=4))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=4))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+
+              if($request['ia_flag']==1)
+              {
+                echo("<li>");
+                echo("IA");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=5))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=5))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+
+              if($request['ie_flag']==1)
+              {
+                echo("<li>");
+                echo("IE");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=6))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=6))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+
+              echo("</td>");
+
+              echo("<td>");
+              echo("<button class='btn btn-danger'><i class='fa fa-thumbs-up' aria-hidden='true'>Approve</i></button>");
+              echo("<button class='btn btn-success'><i class='fa fa-thumbs-down' aria-hidden='true'>Disapprove</i></button");
+              echo("</td>");
               
             }
+            
           }
         ?>
+        
+    </tbody>
+  </table>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -802,6 +971,7 @@ function tr_getSemester(tr_type)
 
   </div>
 </div>
+
 
   <!--TR Selection Modal-->
   <div class="modal fade" id="trSelectiondialog" role="dialog">

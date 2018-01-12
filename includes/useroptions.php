@@ -139,9 +139,11 @@ $valid = new validate();
 $valid->conf_logged_in();
 $obj = new head();
 $obj->displayheader();
+
 $obj->dispmenu(3, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password.php", "index.php"], "Contact Super Admin");
+
 /*Alert while coming from feed*/
 if (isset($_SESSION['score_entered_success'])) {
     $alert = new alert();

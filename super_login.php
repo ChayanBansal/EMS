@@ -9,8 +9,8 @@
 </head>
 <body>
     <?php
-    session_start();
-    session_destroy();
+    //session_start();
+    //session_destroy();
     session_start();
     require_once("includes/config.php");
     require("includes/frontend_lib.php");
