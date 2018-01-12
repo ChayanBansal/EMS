@@ -751,7 +751,7 @@ function tr_getSemester(tr_type)
   <!-- EDIT TR REQUEST MODAL -->
 
 <div id="edit_tr_request" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-lg" style="width:90%">
+  <div class="modal-dialog modal-lg" style="width:95%">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -760,7 +760,7 @@ function tr_getSemester(tr_type)
         <h4 class="modal-title">Edit TR Requests</h4>
       </div>
       <div class="modal-body">
-      <table class="table table-bordered">
+      <table class="table">
     <thead>
       <tr>
         <th style="vertical-align:middle;">Requested At</th>
@@ -769,16 +769,13 @@ function tr_getSemester(tr_type)
         <th style="vertical-align:middle;">Student Name</th>
         <th style="vertical-align:middle;">Subject Code</th>
         <th style="vertical-align:middle;">Subject Name</th>
-        <th >Component Requested For Change</th>
-        <th style="vertical-align:middle;">Approval</th>
+        <th style="vertical-align:middle;">Component Requested For Change</th>
+        <th style="vertical-align:middle;">Approve</th>
       </tr>
-      
-    </thead>
+      </thead>
     <tbody>
       
-    </tbody>
-  </table>
-
+    
 
         <?php
           $fetch_request="SELECT * FROM edit_tr_request WHERE status=0";
@@ -793,17 +790,28 @@ function tr_getSemester(tr_type)
             {
               echo("<tr>");
               echo("<td>".$request['timestamp']."</td>");
-              $get_stud_detail="SELECT enrol_no FROM students WHERE enrol_no=(SELECT enrol_no FROM roll_list WHERE roll_id=".$request['roll_id'].")";
-              $get_stud_detail_run=mysqli_query($conn,$get_stud_detail);
-              $st_enrol_no=mysqli_fetch_assoc($get_stud_detail_run);
-              //$st_enrol_no['enrol_no']
-              echo("<td>".$st_enrol_no['enrol_no']."</td>");
-
               $get_requester_name="SELECT operator_name FROM operators WHERE operator_id=".$request['requester'];
-              $get_requester_name=myslqi_query($get_requester_name);
+              $get_requester_name=mysqli_query($conn,$get_requester_name);
               $requester=mysqli_fetch_assoc($get_requester_name);
               //$requester['operator_name']
               echo("<td>".$requester['operator_name']."</td>");
+              
+              $get_stud_detail="SELECT enrol_no, first_name, middle_name, last_name FROM students WHERE enrol_no IN
+              (SELECT enrol_no FROM roll_list WHERE roll_id=".$request['roll_id'].")";
+              $get_stud_detail=mysqli_query($conn,$get_stud_detail);
+              $stud_detail=mysqli_fetch_assoc($get_stud_detail);
+              //$stud_detail['enrol_no'] $stud_detail['first_name'] $stud_detail['middle_name'] $stud_detail['last_name']
+              echo("<td>".$stud_detail['enrol_no']."</td>");
+              echo("<td>".$stud_detail['first_name']);
+              if($stud_detail['middle_name']=="")
+              {
+                echo(" ".$stud_detail['last_name']."</td>");
+              }
+              else
+              {
+                echo(" ".$stud_detail['middle_name']." ".$stud_detail['last_name']."</td>");
+              }
+              
 
               $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code='".$request['sub_code']."'";
               $get_sub_name_run=mysqli_query($conn,$get_sub_name);
@@ -813,11 +821,6 @@ function tr_getSemester(tr_type)
               echo("<td>".$request['sub_code']."</td>");
               echo("<td>".$sub_name['sub_name']."</td>");
 
-              $get_stud_detail="SELECT enrol_no, student_name FROM students WHERE enrol_no IN
-                              (SELECT enrol_no FROM roll_list WHERE roll_id=".$request['roll_id'].")";
-              $get_stud_detail=mysqli_query($get_stud_detail);
-              $stud_detail=mysqli_fetch_assoc($get_stud_detail);
-              //$stud_detail['enrol_no'] $stud_detail['student_name']
               echo("<td><ul>");
               if($request['cat_flag']==1)
               {
@@ -948,12 +951,18 @@ function tr_getSemester(tr_type)
               echo("</td>");
 
               echo("<td>");
-              echo("<button><i class='fa fa-thumbs-up' aria-hidden='true'></i></button>");
-              echo("</button><i class='fa fa-thumbs-down' aria-hidden='true'></i></button");
+              echo("<button class='btn btn-danger'><i class='fa fa-thumbs-up' aria-hidden='true'>Approve</i></button>");
+              echo("<button class='btn btn-success'><i class='fa fa-thumbs-down' aria-hidden='true'>Disapprove</i></button");
+              echo("</td>");
               
             }
+            
           }
         ?>
+        
+    </tbody>
+  </table>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
