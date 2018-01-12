@@ -215,7 +215,7 @@ require('config.php');
 
 <body onload='history.replaceState("", "", "printing");window.print();window.history.back();'><!--window.print(); window.history.back(); history.replaceState("", "", "printing"); window.history.back()-->
     <div class="first1">
-        <div class="s_image"><img src="../stud_img/2016AB001021.jpg" alt="" class="stud_img"></div>
+        <div class="s_image"><img src="/ems/stud_img/<?=$stud['enrol_no']?>.jpg" alt="" class="stud_img"></div>
     </div>
     <div class="main1">
         <div class="upper">
