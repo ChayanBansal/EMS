@@ -5,12 +5,12 @@ $_SESSION['course_id'] = 1;//$_POST['tr_course'];
 $_SESSION['semester'] = 1;//$_POST['tr_semester'];
 $_SESSION['main_atkt'] = "main";//$_POST['tr_type'];
 if (isset($_POST['view_tr_submit'])) {
-    $_SESSION['from_year'] = 2016;//$_POST['tr_batch'];
-    $_SESSION['course_id'] = 1;//$_POST['tr_course'];
-    $_SESSION['semester'] = 1;//$_POST['tr_semester'];
-    $_SESSION['main_atkt'] = "main";//$_POST['tr_type'];
+    $_SESSION['from_year'] = $_POST['tr_batch'];
+    $_SESSION['course_id'] = $_POST['tr_course'];
+    $_SESSION['semester'] = $_POST['tr_semester'];
+    $_SESSION['main_atkt'] = $_POST['tr_type'];
 } else {
-   // header('location: /ems/includes/404.html');
+    //header('location: /ems/includes/404.html');
 }
 ?>
 <!DOCTYPE html>
@@ -19,8 +19,7 @@ if (isset($_POST['view_tr_submit'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>View TR</title>
-<link rel="stylesheet" href="/ems/css/style.css">
+    <title>Print TR</title>
     <script>
         var total_cr=0.0;
         var total_gpv=0.0;
@@ -29,22 +28,6 @@ if (isset($_POST['view_tr_submit'])) {
         document.getElementById("cr"+no).innerHTML=credits;
         document.getElementById("gpv"+no).innerHTML=gpv;
         document.getElementById("fail"+no).innerHTML=failures;
-    }
-    function fetch_enrol(id){
-        document.getElementById("tr_roll_id").value=id;
-    }
-    function getTrComponents(subcode){
-        $.ajax({
-	type: "POST",
-	url: "update_tr_ajax",
-	data: 'tr_subcode='+subcode,
-	success: function(data){
-        $("#tr_components").html(data);
-      },
-    error: function(e){
-        alert('Come back again');
-    }
-	});
     }
 </script>
     <style>
@@ -110,13 +93,6 @@ if (isset($_POST['view_tr_submit'])) {
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
-$obj = new head();
-$obj->displayheader();
-$options=new useroptions();
-$options->request_tr_update($conn);
-$obj->dispmenu(4, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/useroptions", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
-$dashboard = new dashboard();
-$dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "Contact Super Admin");
 ?>
 <div class="contain">
     <?php
@@ -129,8 +105,6 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
     $get_students_qry_run = mysqli_query($conn, $get_students_qry);
     if ($get_students_qry_run) {
         $stud_count = 1;
-        $total_credits = 0;
-        $total_gpv = 0;
         while ($student = mysqli_fetch_assoc($get_students_qry_run)) {
             $sgpa = new SplFixedArray($semcount);
             $fail_paper_code = new SplFixedArray($semcount);
@@ -181,6 +155,11 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $student['enrol_no'] . "'";
             $get_cur_cgpa_run = mysqli_query($conn, $get_cur_cgpa);
             $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa_run)['cgpa'];
+            $get_total_gpv_cr="SELECT sum(gpv),sum(cr) FROM tr WHERE roll_id=".$cur_rollid;
+            $get_total_gpv_cr_run=mysqli_query($conn,$get_total_gpv_cr);
+            $result=mysqli_fetch_assoc($get_total_gpv_cr_run);
+            $total_gpv=$result['sum(gpv)'];
+            $total_cr=$result['sum(cr)'];
             echo ('<div class="tr_container" style="width: 100%; overflow:auto">
             <table class="table table-striped table-bordered">
             <caption>
@@ -199,9 +178,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             } else {
                 echo ("EX");
             }
-            echo ('</td> 
-            <td><button type="button" class="btn btn-danger" data-target="#updateTrdialog" data-toggle="modal" onclick="fetch_enrol(this.value)" value="' . $cur_rollid . '">Update TR Marks</button></td>
-            </div>
+            echo ('</td> </div>
             </caption>
             <tr>
             <th style="vertical-align:middle">Paper Code</th>
@@ -376,13 +353,10 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                     <td>' . $marks['cr'] . '</td>
                     <td>' . $marks['gpv'] . '</td>
                     ');
-                    $total_credits += $marks['cr'];
-                    $total_gpv += $marks['gpv'];
-
                     switch ($rowcount) {
                         case 1:
-                            echo ('<td id="cr' . $stud_count . '"></td>
-                        <td id="gpv' . $stud_count . '"></td>');
+                            echo ('<td>'.$total_cr.'</td>
+                        <td>'.$total_gpv.'</td>');
                             echo ('<th style="vertical-align:middle">Semester</th>');
                             $convert = new conversion();
                             for ($i = 1; $i <= $semcount; $i++) {
@@ -427,11 +401,11 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                                 echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
                             }
                             echo ("<td>Fail In Paper Code</td>");
-                            for ($i = 0; $i < $semcount; $i++) {
+                            for($i=0;$i<$semcount;$i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>" . $fail_paper_code[$i] . "</td>");
+                                    echo ("<td>".$fail_paper_code[$i]."</td>");
                                 }
                             }
                             break;
@@ -489,11 +463,11 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             }
 
                             echo ("<td>Fail In Paper Code</td>");
-                            for ($i = 0; $i < $semcount; $i++) {
+                            for($i=0;$i<$semcount;$i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>" . $fail_paper_code[$i] . "</td>");
+                                    echo ("<td>".$fail_paper_code[$i]."</td>");
                                 }
                             }
                             echo ("</tr>");
@@ -513,9 +487,6 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                     $rowcount++;
                 }
             }
-            echo ('<script>
-            window.setTimeout(function(){set_rem_tr_values(' . $stud_count . ',' . $total_credits . ',' . $total_gpv . ',"Fail In Subject Code ' . $cur_failure_report . '")},1000);</script>');
-            echo ('</table></div>');
             $stud_count++;
         }
 
@@ -523,71 +494,6 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
     ?>
     </div>
 
- <!-- Update TR Modal -->
- <div class="modal fade" id="updateTrdialog" role="dialog">
-      <div class="modal-dialog">
-      
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Select from below</h4>
-          </div>
-          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
-          <div class="modal-body">
-          <?php
-            $input = new input_field();
-            ?>
-          <div class="form-group">
-              <label for="name">Roll ID</label>
-                <?php
-                $input->display_table_readonly("tr_roll_id", "form-control", "text", "tr_req_roll_id", "", 1, 0, 0, 1, 0);
-                ?>
-              </div>
-              <div class="form-group">
-              <label for="type">Select Subject</label>
-              <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)" required>
-                  <option disabled selected>Select a Subject</option>
-                  <?php
-                    $get_subjects_list = "SELECT sub_name,sub_code FROM subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
-                    $get_subjects_list_run = mysqli_query($conn, $get_subjects_list);
-                    while ($sub = mysqli_fetch_assoc($get_subjects_list_run)) {
-                        echo ('<option value="' . $sub['sub_code'] . '">' . $sub['sub_code'] . "-" . $sub['sub_name'] . '</option>');
-                    }
-                    ?>
-              </select>
-              </div>
-              <div class="form-group">
-              <label for="semester">Select Components</label>
-                <div id="tr_components">
-                </div>  
-            </div>
-            <div class="form-group">
-              <label for="semester">Reason/Remarks</label>
-            <?php
-            $input->display("","form-control","text","tr_req_remark","Enter remarks",1);
-            ?>  
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
-            <button type="submit" class="btn btn-success" name="update_tr_submit" value="" id="btn_session_update">Update Session<i class="glyphicon glyphicon-chevron-right"></i></button>
-        </div>
-        </form> 
-        </div>
-        
-      </div>
-    </div>
-    
-  </div>
-  <!--End-->
-
-    <?php
-    $obj = new footer();
-    $obj->disp_footer();
-    $logout_modal = new modals();
-    $logout_modal->display_logout_modal();
-    ?>
 </body>
 
 </html>

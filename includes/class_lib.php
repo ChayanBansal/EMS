@@ -862,6 +862,7 @@ class useroptions
 			} else {
 				$alert->exec("Unable to proceed with request! Please try again....", "danger");
 			}
+			unset($_POST['update_tr_submit']);
 		}
 	}
 }

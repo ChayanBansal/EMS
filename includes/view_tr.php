@@ -16,6 +16,7 @@ if (isset($_POST['view_tr_submit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>View TR</title>
+    <link rel="stylesheet" href="/ems/css/style.css">
     <script>
         var total_cr=0.0;
         var total_gpv=0.0;
