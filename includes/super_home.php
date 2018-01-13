@@ -97,6 +97,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
 $options = new super_user_options();
 $options->create_course($conn);
 $options->add_subject($conn);
+$options->update_subject($conn);
 $options->create_operator($conn);
 $options->add_session($conn);
 $options->update_session($conn);
@@ -155,7 +156,7 @@ $options->unlock_operator($conn);
           $(document.getElementById(location)).html(data);
           var divi=document.getElementById(location);
         divi.scrollTop=divi.scrollHeight;
-          chat(location,username);
+      
       },
       error: function(e){
         $(document.getElementById(location)).html("Unable to load recent activities");
@@ -332,7 +333,7 @@ function tr_getSemester(tr_type)
             <div>Subjects</div>
             <div class="sub-option" id="subopt4">
                 <button data-toggle="modal" data-target="#addsubjectModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-                <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+                <button data-toggle="modal" data-target="#viewsubjectsModal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
             <div class="option yellow" onmouseover="show('subopt5')" onmouseout="hide('subopt5')">
@@ -759,6 +760,121 @@ function tr_getSemester(tr_type)
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <!--<button type="submit" class="btn btn-primary" name="course_submit">Submit</button>-->
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
+
+  <!--View Subjects Modal-->
+  <div class="modal fade" id="viewsubjectsModal" role="dialog">
+      <div class="modal-dialog modal-lg">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">List of Subjects</h4>
+          </div>
+         <div class="modal-body">
+            <table class="table table-striped table-bordered" style="width: 100%">
+            <caption class="form-inline">
+
+<div class="form-group">
+         <select name="sub_view_course" id="sub_view_course" class="form-control" onchange="show_sub_year(this.value)" required>
+         <option value="" disabled selected>Select a course</option>   
+         <?php
+         $get_course_qry = "SELECT * from courses";
+         $get_course_qry_run = mysqli_query($conn, $get_course_qry);
+         if ($get_course_qry_run) {
+           while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
+             echo ('
+                 <option value="' . $row['course_id'] . '" data-course-duration=' . $row['duration'] . '>' . $row['course_name'] . '</option>   
+                 ');
+           }
+         } else {
+           $alert = new alert();
+           $alert->exec("Unable to fetch courses!", "warning");
+         }
+         ?>
+     </select>
+     </div>
+<div class="form-group">
+         <select name="sub_view_year" id="sub_view_year" class="form-control" onchange="show_sub_semester(this.value)" required>
+         <option value="" disabled selected>Select Academic Year</option>
+        </select>
+     </div>
+     <div class="form-group">
+         <select name="sub_view_semester" id="sub_view_semester" class="form-control" required onchange="display_sub_view(this.value)">
+         <option value="" disabled selected>Select semester</option>  
+        </select>
+     </div>
+ </caption>
+    <thead>
+      <tr style="text-align:center">
+        <th>Subject Code</th>
+        <th>Subject Name</th>
+		    <th>Theory Credits</th>
+		    <th>Practical Credits</th>
+		    <th>Internal Examination</th>
+        <th>Elective Subject</th>
+        <th>Edit</th>
+	  </tr>
+    </thead>
+    <tbody id="sub_view_details">
+        
+    </tbody>
+    </table>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <!--<button type="submit" class="btn btn-primary" name="course_submit">Submit</button>-->
+        </div>
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
+
+ <!-- Update Subject Modal -->
+ <div class="modal fade" id="updatesubjectdialog" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Update Subject Particulars</h4>
+          </div>
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
+          <div class="modal-body">
+          <?php
+          $input = new input_field();
+          ?>
+          <div class="form-group">
+              <label for="name">Subject Code</label>
+                <?php
+                $input->display_table_readonly("update_sub_code", "form-control", "text", "update_sub_code", "", 1, 0, 0, 1, 0);
+                ?>
+              </div>
+              <div class="form-group">
+              <label for="type">Subject Name</label>
+              <?php
+              $input->display_w_value("update_sub_name","form-control","text","update_sub_name","","",1);
+              ?>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
+            <button type="submit" class="btn btn-success" name="update_sub_submit" value="">Update Subject<i class="glyphicon glyphicon-chevron-right"></i></button>
         </div>
         </form> 
         </div>
@@ -1389,7 +1505,57 @@ function tr_getSemester(tr_type)
           document.getElementById("name"+i).checked=false;   
         }
     }
-   
+    function show_sub_year(cid){
+    $.ajax(
+    {
+      type: "POST",
+      url: "update_tr_ajax",
+      data: 'sub_view=1&course_id='+cid,
+      success: function(data){
+        $("#sub_view_year").html(data);
+    },
+    error: function(e){
+      $("#sub_view_year").html("Unable to load..");
+    }
+	});
     
+  }
+  function show_sub_semester(year){
+    var cid=document.getElementById("sub_view_course").value;
+    $.ajax(
+    {
+      type: "POST",
+      url: "update_tr_ajax",
+      data: 'sub_view_sem=1&course_id='+cid+'&year='+year,
+      success: function(data){
+        $("#sub_view_semester").html(data);
+    },
+    error: function(e){
+      $("#sub_view_semester").html("Unable to load..");
+    }
+	});
+    
+  }
+  function display_sub_view(sem){
+    var cid=document.getElementById("sub_view_course").value;
+    var year=document.getElementById("sub_view_year").value;
+    $.ajax(
+    {
+      type: "POST",
+      url: "update_tr_ajax",
+      data: 'sub_view_disp=1&course_id='+cid+'&year='+year+'&sem='+sem,
+      success: function(data){
+        console.log(data);
+        $("#sub_view_details").html(data);
+    },
+    error: function(e){
+      $("#sub_view_details").html("Unable to load..");
+    }
+	});
+  }
+  function show_update_sub(el){
+    document.getElementById("update_sub_code").value=el.getAttribute("data-sub-code");
+    document.getElementById("update_sub_name").value=el.getAttribute("data-sub-name");
+  }
 </script>
 </html>
