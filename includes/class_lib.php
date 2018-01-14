@@ -867,15 +867,20 @@ class useroptions
 	function request_tr_update($conn)
 	{
 		if (isset($_POST['update_tr_submit'])) {
-			$rollid = $_POST['tr_req_roll_id'];
+			$alert=new alert();
+			$input_chk=new input_check();
+			$rollid = $input_chk->input_safe($conn,$_POST['tr_req_roll_id']);
 			$requester = $_SESSION['operator_id'];
-			$remark = $_POST['tr_req_remark'];
-			$subcode = $_POST['tr_req_subject'];
-			if(empty($roll_id) OR empty($remark) OR empty($subcode)){
+			$remark = $input_chk->input_safe($conn,$_POST['tr_req_remark']);
+			$subcode = $input_chk->input_safe($conn,$_POST['tr_req_subject']);
+			if(empty($rollid) OR empty($remark) OR empty($subcode)){
 				$alert->exec("All fields are compulsary!","warning");
 				return;
 			}
-			if(is_nan())
+			if(is_nan($rollid)){
+				$alert->exec("Roll ID must be a number!","info");
+				return;
+			}
 			$insert_request = "INSERT into edit_tr_request(requester,roll_id,sub_code,cat_flag,end_theory_flag,cap_flag,end_practical_flag,ia_flag,ie_flag,remarks) VALUES($requester,$rollid,'$subcode',";
 			for ($comp = 1; $comp <= 6; $comp++) {
 				if (isset($_POST['tr_update_check' . $comp])) {
@@ -893,7 +898,6 @@ class useroptions
 			} else {
 				$alert->exec("Unable to proceed with request! Please try again....", "danger");
 			}
-			unset($_POST['update_tr_submit']);
 		}
 	}
 }

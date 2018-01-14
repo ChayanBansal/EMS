@@ -1,10 +1,20 @@
 <?php
 session_start();
+require("class_lib.php");
+    require("config.php");
+    require("frontend_lib.php");
 if (isset($_POST['tr_view_proceed'])) {
-    $_SESSION['from_year'] = $_POST['tr_view_batch'];
+    
+    $input_chk = new input_check();
+    $_SESSION['from_year']= $input_chk->input_safe($conn,$_POST['tr_view_batch']);
     $_SESSION['course_id'] = $_SESSION['current_course_id'];
-    $_SESSION['semester'] = $_POST['tr_view_semester'];
-    $_SESSION['main_atkt'] = $_POST['tr_view_type'];
+    $_SESSION['semester'] = $input_chk->input_safe($conn,$_POST['tr_view_semester']);
+    $_SESSION['main_atkt'] = $input_chk->input_safe($conn,$_POST['tr_view_type']);
+    if(empty($_SESSION['from_year']) OR empty($_SESSION['semester']) OR empty($_SESSION['main_atkt'])){
+        $alert=new alert();
+        $alert->exec("Please verify all fields!","warning");
+        die();
+    }
 } else {
    //header('location: /ems/includes/404.html');
 }
@@ -103,12 +113,11 @@ if (isset($_POST['tr_view_proceed'])) {
 </head>
 <body>
 <?php
-require("config.php");
-require("frontend_lib.php");
-require("class_lib.php");
+
+
 $obj = new head();
 $obj->displayheader();
-$options=new useroptions();
+$options = new useroptions();
 $options->request_tr_update($conn);
 $obj->dispmenu(4, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/useroptions", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
 $dashboard = new dashboard();
@@ -561,7 +570,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             <div class="form-group">
               <label for="semester">Reason/Remarks</label>
             <?php
-            $input->display("","form-control","text","tr_req_remark","Enter remarks",1);
+            $input->display("", "form-control", "text", "tr_req_remark", "Enter remarks", 1);
             ?>  
             </div>
           </div>
