@@ -6,6 +6,10 @@
 <link href="https://fonts.googleapis.com/css?family=Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|Work+Sans|Lato:300" rel="stylesheet">
 <link rel="stylesheet" href="/ems/font-awesome/css/font-awesome.css">
 <script src="/ems/js/pace.min.js"></script>
+<script>
+  document.oncontextmenu=RightMouseDown;
+function RightMouseDown() { return false;}
+</script>
     <link rel="stylesheet" href="/ems/css/pace.css">
 <?php
 class head

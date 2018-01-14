@@ -16,6 +16,15 @@ if (isset($_POST['tr_print_proceed'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Print TR</title>
+    <link rel="stylesheet" href="/ems/bootstrap/css/bootstrap.css">
+<script src="/ems/js/jquery.js"></script>
+<script src="/ems/bootstrap/js/bootstrap.min.js"></script>
+<script src="/ems/js/global_script.js"></script>
+<link rel="stylesheet" href="/ems/css/front_styles.css">
+<link href="https://fonts.googleapis.com/css?family=Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|Work+Sans|Lato:300" rel="stylesheet">
+<link rel="stylesheet" href="/ems/font-awesome/css/font-awesome.css">
+<script src="/ems/js/pace.min.js"></script>
+<link rel="stylesheet" href="/ems/css/pace.css">
     <style>
         body{
             background: white !important;
@@ -77,7 +86,6 @@ if (isset($_POST['tr_print_proceed'])) {
 <body>
 <?php
 require("config.php");
-require("frontend_lib.php");
 require("class_lib.php");
 $valid = new validate();
 $valid->conf_logged_in();
