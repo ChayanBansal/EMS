@@ -10,7 +10,19 @@
   document.oncontextmenu=RightMouseDown;
 function RightMouseDown() { return false;}
 </script>
+<noscript>
+<div class="noscript">
+    This application requires Javascript!
+</div>
+<style>
+    body div{
+        display: none;
+    }
+</style>
+</noscript>
+
     <link rel="stylesheet" href="/ems/css/pace.css">
+
 <?php
 class head
 {

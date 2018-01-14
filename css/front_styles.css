@@ -192,6 +192,20 @@ a{
     transition: 300ms;
     font-size: 2.1rem;
 }
+.noscript{
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-size: 3rem;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+}
 @media (max-width:1000px){
     :root{
         font-size: 8px;
