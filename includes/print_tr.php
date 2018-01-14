@@ -79,6 +79,8 @@ if (isset($_POST['tr_print_proceed'])) {
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+$valid = new validate();
+$valid->conf_logged_in();
 ?>
 <div class="contain">
     <?php

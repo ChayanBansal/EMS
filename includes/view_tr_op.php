@@ -118,6 +118,8 @@ if (isset($_POST['tr_view_proceed'])) {
 $obj = new head();
 $obj->displayheader();
 $options = new useroptions();
+$valid = new validate();
+$valid->conf_logged_in();
 $options->request_tr_update($conn);
 $obj->dispmenu(4, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/useroptions", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
 $dashboard = new dashboard();
