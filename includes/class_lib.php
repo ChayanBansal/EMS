@@ -126,7 +126,7 @@ class input_check
 	private $value;
 	public function input_safe($conn, $post_input)
 	{
-		$this->value = (mysqli_real_escape_string($conn, htmlspecialchars(strip_tags($post_input))));
+		$this->value = (mysqli_real_escape_string($conn, htmlentities(strip_tags($post_input))));
 
 		return $this->value;
 	}
