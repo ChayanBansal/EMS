@@ -157,13 +157,9 @@ $options->unlock_operator($conn);
           $(document.getElementById(location)).html(data);
           var divi=document.getElementById(location);
         divi.scrollTop=divi.scrollHeight;
-<<<<<<< HEAD
         window.setTimeout(function(){
             chat(location,username)
             },5000);
-=======
-      
->>>>>>> 6bb930203cdeb225acc6e80a6f6eb637a8cb0ded
       },
       error: function(e){
         $(document.getElementById(location)).html("Unable to load recent activities");
