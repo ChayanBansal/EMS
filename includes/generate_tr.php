@@ -25,7 +25,7 @@ if (isset($_POST['tr_submit'])) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Generate TR</title>
     <link rel="stylesheet" href="/ems/css/progress-bar.css">
-    <link rel="stylesheet" href="/ems/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
      <style>
          body{
              background: white !important;

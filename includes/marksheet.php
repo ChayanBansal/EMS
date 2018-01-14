@@ -111,7 +111,6 @@ require('config.php');
             display: flex;
             justify-content: center;
             align-items: center;
-            position: absolute;
         }
         
         table caption {
@@ -134,12 +133,14 @@ require('config.php');
         
         @media print {
             body {
-                margin: 0;
+                margin: 0.1cm;
+                margin-top: 0.25cm !important;
+                margin-right: 0.3cm !important;
             }
             .first1 {
                 position: absolute;
-                top: 1.65cm;
-                right: 1.8cm;
+                top: 1.72cm;
+                right: 1.8cm !important;
             }
             .s_image {
                 max-height: 2.4cm;
@@ -154,19 +155,19 @@ require('config.php');
             }
             .upper {
                 position: absolute;
-                top: 5.3cm;
+                top: 6.3cm;
                 width: 85%;
                 left: 1.8cm;
             }
             .t1 {
                 width: 40%;
                 float: left;
-                font-size: 12px;
+                font-size: 13px;
                 color: rgb(0, 6, 83);
             }
             .t2 {
                 width: 40%;
-                font-size: 12px;
+                font-size: 13px;
                 color: rgb(0, 6, 83);
             }
             .t1 td {
@@ -184,7 +185,7 @@ require('config.php');
             }
             .lower {
                 position: absolute;
-                top: 9.7cm;
+                top: 10.1cm;
             }
             .t3 {
                 position: relative;
@@ -201,7 +202,7 @@ require('config.php');
                 font-size: 12px;
             }
             .t3 td {
-                padding: 0px;
+                padding: 1px;
                 font-size: 12px;
             }
             .block {
@@ -270,7 +271,7 @@ require('config.php');
                     </tr>
                     <tr>
                         <td>Examination:</td>
-                        <td>".$exam_month['month_year']."</td>
+                        <td>".strtoupper($exam_month['month_year'])."</td>
                     </tr>
                     <tr>
                         <td>Status:</td>
@@ -322,9 +323,12 @@ require('config.php');
         else if($sub['ie_flag']==0)
         {
             $rowspan;
+            $get_sub_id_count="SELECT COUNT(sub_id) as count FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
+            $get_sub_id_count_run=mysqli_query($conn,$get_sub_id_count);
+            $sub_id_count=mysqli_fetch_assoc($get_sub_id_count_run);
             echo('<tr>
-            <td rowspan="2" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_code'].'</td>  
-            <td rowspan="2" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_name'].'</td>'); //These two have same class, i.e, sub_code
+            <td rowspan="'.$sub_id_count['count'].'" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_code'].'</td>  
+            <td rowspan="'.$sub_id_count['count'].'" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_name'].'</td>'); //These two have same class, i.e, sub_code
             
             $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
             $get_sub_id_run=mysqli_query($conn,$get_sub_id);
@@ -357,8 +361,7 @@ require('config.php');
                 echo('<td>'.$sub_id['credits_allotted'].'</td>'); //Alloted Credits {**We have spelling mistake in the database of alloted: Remember**}
                 echo('<td>'.$cr_grade['cr'].'</td>'); //Credits earned
                 echo('<td>'.$cr_grade['grade'].'</td>'); //Grade
-                echo('   
-                </tr>');
+                echo('</tr>');
             }
         }
     }

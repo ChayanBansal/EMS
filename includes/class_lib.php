@@ -884,6 +884,20 @@ class dashboard
 			<ul class="nav navbar-nav">
 			
 			<li id="refresh" onclick="window.location.reload(false)"><a href="#">Refresh <i class="glyphicon glyphicon-refresh"></i></a></li>
+			<li id="" ><a>');
+			require("config.php");
+			if(isset($_SESSION['current_course_id']))
+			{
+				$get_course_name="SELECT course_name FROM courses WHERE course_id=".$_SESSION['current_course_id'];
+				$get_course_name_run=mysqli_query($conn,$get_course_name);
+				if($get_course_name_run)
+				{
+					$course_name=mysqli_fetch_assoc($get_course_name_run);
+					echo($course_name['course_name']);
+				}
+			}
+			mysqli_close($conn);
+			echo('</a></li>
 		  </ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>

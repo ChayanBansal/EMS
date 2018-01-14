@@ -110,6 +110,7 @@ $options->unlock_operator($conn);
   <!--<div id="sidenav" class="col-lg-2 col-md-4 col-sm-4 col-xs-4">
    <h2><center>Recent Activities</center></h2>-->
 <script>
+
   function get_recent_act()
   {
     get_check_act();
@@ -155,7 +156,9 @@ $options->unlock_operator($conn);
           $(document.getElementById(location)).html(data);
           var divi=document.getElementById(location);
         divi.scrollTop=divi.scrollHeight;
-          chat(location,username);
+        window.setTimeout(function(){
+            chat(location,username)
+            },5000);
       },
       error: function(e){
         $(document.getElementById(location)).html("Unable to load recent activities");

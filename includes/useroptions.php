@@ -261,7 +261,9 @@ function chat(location,username)
         $(document.getElementById(location)).html(data);
         var divi=document.getElementById(location);
         divi.scrollTop=divi.scrollHeight;
-        chat(location,username);
+        window.setTimeout(function(){
+            chat(location,username)
+            },5000);
     },
     error: function(e){
       $(document.getElementById(location)).html("Unable to load recent activities");

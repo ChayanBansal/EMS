@@ -6,7 +6,7 @@ if (isset($_POST['tr_view_proceed'])) {
     $_SESSION['semester'] = $_POST['tr_view_semester'];
     $_SESSION['main_atkt'] = $_POST['tr_view_type'];
 } else {
-   header('location: /ems/includes/404.html');
+   //header('location: /ems/includes/404.html');
 }
 ?>
 <!DOCTYPE html>
@@ -567,7 +567,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
-            <button type="submit" class="btn btn-success" name="update_tr_submit" value="" id="btn_session_update">Update Session<i class="glyphicon glyphicon-chevron-right"></i></button>
+            <button type="submit" class="btn btn-success" name="update_tr_submit" value="" id="btn_session_update">Request for Update<i class="glyphicon glyphicon-chevron-right"></i></button>
         </div>
         </form> 
         </div>

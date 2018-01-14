@@ -45,8 +45,9 @@ class footer
                     © ' . date("Y") . '
                 </div>
                 <div class="developers col-md-6" style="text-align:center"> 
-                Designed & Developed By <a href="/ems/includes/developers.php">Team Techknowplore</a>    
-                
+                Designed & Developed By <a href="/ems/includes/developers.php">Team Techknowplore 
+                <img src="/ems/images/techknowplore.png" height="80" alt="">
+                </a>    
                 </div>
             </div>');
     }
