@@ -21,7 +21,6 @@
     $user_name = new input_field();
     $password = new input_field();
     $submit = new input_button();
-    $token = new csrf_token();
     ?>
 <form action='' method='post' onsubmit="return disable_on_submitinput()">
     <div class="form-container">
@@ -32,7 +31,7 @@
 				 </div>
 				 <div class="field" id="f1"> <span class="glyphicon glyphicon-user"></span>
                  <?php
-                 $user_name->display_w_js("","","text","username","Username","1","change()","change2()");
+                 $user_name->display_w_js("username","","text","username","Username","1","change()","change2()");
                  ?>
 				 </div>
 				 <div class="field" id="f2"><span class="glyphicon glyphicon-lock"></span>

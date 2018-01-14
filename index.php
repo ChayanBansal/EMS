@@ -29,6 +29,7 @@ if (isset($_POST['login'])) {
     $password = new input_field();
     $submit = new input_button();
     ?>
+    <div id="err"></div>
 <form  action='' method='post' onsubmit="return disable_on_submitinput()">
     <div class="form-container">
 		<div class="main">
@@ -38,12 +39,12 @@ if (isset($_POST['login'])) {
 				 </div>
 				 <div class="field" id="f1"> <span class="glyphicon glyphicon-user"></span>
                  <?php
-                $user_name->display_w_js("", "", "text", "username", "Username", "1", "change()", "change2()");
+                $user_name->display_w_js("username", "", "text", "username", "Username", "1", "change()", "change2()");
                 ?>
 				 </div>
 				 <div class="field" id="f2"><span class="glyphicon glyphicon-lock"></span>
                  <?php
-                $password->display_w_js("", "", "password", "password", "Password", "1", "change3()", "change4()");
+                $password->display_w_js("password", "", "password", "password", "Password", "1", "change3()", "change4()");
                 ?>
                  </div>
 				 <div class="field">
