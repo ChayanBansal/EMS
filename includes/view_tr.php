@@ -1,10 +1,21 @@
 <?php
 session_start();
 if (isset($_POST['view_tr_submit'])) {
-    $_SESSION['from_year'] = $_POST['tr_batch'];
-    $_SESSION['course_id'] = $_POST['tr_course'];
-    $_SESSION['semester'] = $_POST['tr_semester'];
-    $_SESSION['main_atkt'] = $_POST['tr_type'];
+    
+    $safety = new input_check();
+    $safety->input_safe($conn, $post_input);
+    if(!(is_nan($_POST['tr_batch']) AND is_nan($_POST['tr_course']) AND is_nan($_POST['tr_semester'])) AND is_nan($_POST['tr_type']) AND $_SESSION['token']==$_POST['5d57af0a25794bf7516ef53d2de3a230'])
+    {
+        $_SESSION['from_year'] = $safety->input_safe($conn, $_POST['tr_batch']); 
+        $_SESSION['course_id'] = $safety->input_safe($conn, $_POST['tr_course']); 
+        $_SESSION['semester'] = $safety->input_safe($conn, $_POST['tr_semester']); 
+        $_SESSION['main_atkt'] = $safety->input_safe($conn, $_POST['tr_type']); 
+    }
+    else
+    {
+        $er = new alert();
+        $er->exec("Some error occured during your selection of input","danger");
+    }
 } else {
     header('location: /ems/includes/404.html');
 }
@@ -99,6 +110,9 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
 ?>
 <div class="contain">
     <?php
+    mysqli_autocommit($conn,FALSE);
+    mysqli_begin_transaction($conn);
+    try{
     $get_count_semesters = "SELECT duration*2 as 'semcount' from courses where course_id=" . $_SESSION['course_id'];
     $get_count_semesters_run = mysqli_query($conn, $get_count_semesters);
     if ($get_count_semesters_run) {
@@ -496,6 +510,12 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             $stud_count++;
         }
 
+    }
+    mysqli_commit($conn);
+}
+    catch($Exception $e)
+    {
+        mysqli_rollback($conn);
     }
     ?>
     </div>

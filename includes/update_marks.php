@@ -28,6 +28,7 @@
         mysqli_rollback($conn);
         $al = new alert();
         $al->exec("Not able to execute the updation. Please try again!", "danger");
+        header('location: useroptions');
     }
 }
 

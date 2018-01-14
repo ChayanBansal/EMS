@@ -21,7 +21,6 @@
     $user_name = new input_field();
     $password = new input_field();
     $submit = new input_button();
-    $token = new csrf_token();
     ?>
 <form action='' method='post' onsubmit="return disable_on_submitinput()">
     <div class="form-container">
