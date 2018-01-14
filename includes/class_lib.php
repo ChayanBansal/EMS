@@ -571,6 +571,23 @@ class super_user_options
 
 		}
 	}
+	function update_subject($conn)
+	{
+		if (isset($_POST['update_sub_submit'])) {
+			$input_chk = new input_check();
+			$subname = $input_chk->input_safe($conn, $_POST['update_sub_name']);
+			$subcode = $input_chk->input_safe($conn, $_POST['update_sub_code']);
+			$update_sub = "UPDATE subjects set sub_name='$subname' WHERE sub_code='$subcode'";
+			$update_sub_run = mysqli_query($conn, $update_sub);
+			$alert = new alert();
+			if ($update_sub_run and mysqli_affected_rows($conn) > 0) {
+				$alert->exec("Subject details updated successfully!", "success");
+			} else {
+				$alert->exec("Unable to update subject!", "danger");
+
+			}
+		}
+	}
 	function create_operator($conn)
 	{
 		if (isset($_POST['create'])) {
@@ -843,7 +860,7 @@ class useroptions
 		if (isset($_POST['update_tr_submit'])) {
 			$rollid = $_POST['tr_req_roll_id'];
 			$requester = $_SESSION['operator_id'];
-			$remark=$_POST['tr_req_remark'];
+			$remark = $_POST['tr_req_remark'];
 			$subcode = $_POST['tr_req_subject'];
 			$insert_request = "INSERT into edit_tr_request(requester,roll_id,sub_code,cat_flag,end_theory_flag,cap_flag,end_practical_flag,ia_flag,ie_flag,remarks) VALUES($requester,$rollid,'$subcode',";
 			for ($comp = 1; $comp <= 6; $comp++) {
@@ -853,10 +870,10 @@ class useroptions
 					$insert_request .= "0,";
 				}
 			}
-			$insert_request.="'$remark')";
+			$insert_request .= "'$remark')";
 			$insert_request_run = mysqli_query($conn, $insert_request);
 			$alert = new alert();
-			
+
 			if ($insert_request_run) {
 				$alert->exec("Request for change of marks submitted successfully!", "success");
 			} else {
