@@ -374,7 +374,13 @@ require('config.php');
                                 $get_sgpa="SELECT sgpa FROM exam_summary WHERE roll_id=$roll_id";
                                 $get_sgpa_run=mysqli_query($conn,$get_sgpa);
                                 $sgpa=mysqli_fetch_assoc($get_sgpa_run);//$sgpa['sgpa']
-                                if($sgpa['sgpa']<4)
+
+                                $get_fail_count="SELECT COUNT(component_id) AS fail_count FROM failure_report WHERE roll_id=$roll_id";
+                                $get_fail_count_run=mysqli_query($conn,$get_fail_count);
+                                $fail_count=mysqli_fetch_assoc($get_fail_count_run);
+                                //$fail_count['fail_count']
+
+                                if($fail_count['fail_count']!=0)
                                 {
                                     echo('FAIL');
                                     echo("<script>document.getElementById('info').style.color = 'red';</script>");
@@ -384,6 +390,12 @@ require('config.php');
                                     echo('PASS');
                                     echo("<script>document.getElementById('info').style.color = 'green';</script>");
                                 }
+
+                                /*
+                                $get_fail_count="SELECT COUNT(component_id) AS fail_count FROM failure_report WHERE roll_id=$roll_id";
+                                $get_fail_count_run=mysqli_query($conn,$get_fail_count);
+                                $fail_count=mysqli_fetch_assoc($get_fail_count_run);
+                                */
                              ?>
                          </span>
                      </div>
