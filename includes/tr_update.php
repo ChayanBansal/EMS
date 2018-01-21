@@ -1,6 +1,11 @@
 <?php
 require('config.php');
 session_start();
+if(isset($_POST['tr_edit_close']))
+{
+    $close_request="UPDATE edit_tr_request SET status=3 WHERE request_id=".$_POST['tr_edit_close'];
+    $close_request_run=mysqli_query($conn,$close_request);
+}
 if(isset($_POST['tr_edit_submit'])){
     $request_id=$_POST['tr_edit_submit'];
     $get_request_details="SELECT * FROM edit_tr_request WHERE request_id=".$request_id;
