@@ -312,6 +312,13 @@ table td{
     cursor: pointer;
     background: #98148E;
 }
+.dark_red{
+    background: red;
+}
+.dark_red:hover{
+    cursor: pointer;
+    background: rgb(185, 4, 4);
+}
 a{
     color: inherit;
     text-decoration: none;
