@@ -341,6 +341,7 @@ function chat(location,username)
         <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
         <button class="option blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-eye-open"></i></div> View TR</button>
         <button class="option yellow" data-toggle="modal" data-target="#print_tr"><div><i class="glyphicon glyphicon-print"></i></div> Print TR</button>
+        <button class="option dark_red " data-toggle="modal" data-target="#edit_tr_request"><div><i class= "glyphicon glyphicon-ok-circle" ></i></div> Edit TR Requests</button> 
         <button class="option pink " data-toggle="modal" data-target="#gen_marksheet"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
     </div>
 </div> 
@@ -573,6 +574,73 @@ function chat(location,username)
   </div>
 </div>
 <!-- View TR Close-->
+
+<!-- Edit TR Request Status Modal -->
+<div id="edit_tr_request" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+      <?php
+        $get_requests="SELECT `request_id`, `requester`, `roll_id`, `sub_code`, `remarks`, `status` FROM edit_tr_request WHERE requester=".$_SESSION['operator_id']." AND status!=3";
+        $get_requests_run=mysqli_query($conn,$get_requests);
+        echo('<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Enrollment No</th>
+        <th>Subject Code</th>
+        <th>Remark</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>');
+        while($edit_tr_requests=mysqli_fetch_assoc($get_requests_run))
+        {
+        //$edit_tr_requests['request_id'] $edit_tr_requests['requester'] $edit_tr_requests['roll_id'] $edit_tr_requests['sub_code'] $edit_tr_requests['remarks'] $edit_tr_requests['status']
+        $get_edit_enrol="SELECT enrol_no FROM roll_list WHERE roll_id=".$edit_tr_requests['roll_id'];
+        $get_edit_enrol_run=mysqli_query($conn,$get_edit_enrol);
+        $edit_enrol_no=mysqli_fetch_assoc($get_edit_enrol_run);
+        //$edit_enrol_no['enrol_no']
+        
+    echo('
+      <tr>
+        <td>'.$edit_enrol_no["enrol_no"].'</td>
+        <td>'.$edit_tr_requests['sub_code'].'</td>
+        <td>'.$edit_tr_requests['remarks'].'</td>');
+        
+        switch($edit_tr_requests['status'])
+        {
+            case 0:
+                echo('<td>Pending</td>');
+                break;
+            case 1:
+                echo('<td>Approved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_submit" value="'.$edit_tr_requests['request_id'].'">Click here to process</button></form></td>');
+                break;
+            case 2:
+                echo('<td>Disapproved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_close" value="'.$edit_tr_requests['request_id'].'">Click here to close</button></form></td>');
+                break;
+        }
+
+      echo('</tr>');
+    }
+      echo('
+    </tbody>
+  </table>');
+      ?>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- Edit TR Request Status Modal Close -->
 
 
 <!-- Check Marks Modal Box -->
