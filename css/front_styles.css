@@ -206,6 +206,18 @@ a{
     width: 100%;
     z-index: 1000;
 }
+.alert-styled{
+    animation: drop 500ms ease-in-out 1;
+}
+@keyframes drop{
+    from{
+        transform: translateY(-100px);
+    }
+    to{
+        transform: translateY(0px);
+    }
+}
+
 @media (max-width:1000px){
     :root{
         font-size: 8px;
