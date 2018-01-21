@@ -6,7 +6,23 @@
 <link href="https://fonts.googleapis.com/css?family=Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|Work+Sans|Lato:300" rel="stylesheet">
 <link rel="stylesheet" href="/ems/font-awesome/css/font-awesome.css">
 <script src="/ems/js/pace.min.js"></script>
+<script>
+  document.oncontextmenu=RightMouseDown;
+function RightMouseDown() { return false;}
+</script>
+<noscript>
+<div class="noscript">
+    This application requires Javascript!
+</div>
+<style>
+    body div{
+        display: none;
+    }
+</style>
+</noscript>
+
     <link rel="stylesheet" href="/ems/css/pace.css">
+
 <?php
 class head
 {
@@ -45,8 +61,9 @@ class footer
                     © ' . date("Y") . '
                 </div>
                 <div class="developers col-md-6" style="text-align:center"> 
-                Designed & Developed By <a href="/ems/includes/developers.php">Team Techknowplore</a>    
-                
+                Designed & Developed By <a href="/ems/includes/developers.php">Team Techknowplore 
+                <img src="/ems/images/techknowplore.png" height="80" alt="">
+                </a>    
                 </div>
             </div>');
     }

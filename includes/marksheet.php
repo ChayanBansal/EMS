@@ -71,10 +71,12 @@ require('config.php');
         
         .t1 table {
             border: none;
+            color: rgb(0, 6, 83);
         }
         
         .t2 table {
             border: none;
+            color: rgb(0, 6, 83);
         }
         
         .t3 {
@@ -85,7 +87,7 @@ require('config.php');
         th,
         table {
             border-collapse: collapse;
-            border: 1px solid #00076C;
+            border: 1px solid rgb(22, 31, 160);
             padding: 10px;
         }
         
@@ -95,8 +97,7 @@ require('config.php');
         }
         
         th {
-            background: #00076C;
-            color: white;
+            color: #A42116;
         }
         
         .upper {
@@ -110,43 +111,64 @@ require('config.php');
             display: flex;
             justify-content: center;
             align-items: center;
-            position: absolute;
         }
         
         table caption {
-            border: 1px solid #00076C;
+            border: 1px solid rgb(22, 31, 160);
+            border-top: none !important;
         }
         
         .caption-container {
             display: flex;
             justify-content: space-around;
+            font-weight: 600;
         }
         
         .block {
             padding: 10px;
         }
+        #blue {
+            color: rgb(0, 6, 83);
+        }
         
         @media print {
             body {
-                margin: 0;
+                margin: 0.1cm;
+                margin-top: 0.25cm !important;
+                margin-right: 0.3cm !important;
+            }
+            .first1 {
+                position: absolute;
+                top: 1.72cm;
+                right: 1.8cm !important;
+            }
+            .s_image {
+                max-height: 2.4cm;
+                max-width: 2.4cm;
+            }
+            .stud_img {
+                height: 2.4cm;
+                width: 2.3cm;
             }
             .main1 {
                 height: 16.5cm;
             }
             .upper {
                 position: absolute;
-                top: 5.3cm;
+                top: 6.3cm;
                 width: 85%;
                 left: 1.8cm;
             }
             .t1 {
                 width: 40%;
                 float: left;
-                font-size: 12px;
+                font-size: 13px;
+                color: rgb(0, 6, 83);
             }
             .t2 {
                 width: 40%;
-                font-size: 12px;
+                font-size: 13px;
+                color: rgb(0, 6, 83);
             }
             .t1 td {
                 vertical-align: top;
@@ -163,7 +185,7 @@ require('config.php');
             }
             .lower {
                 position: absolute;
-                top: 9.7cm;
+                top: 10.1cm;
             }
             .t3 {
                 position: relative;
@@ -175,17 +197,17 @@ require('config.php');
             }
             .t3 th {
                 padding: 0px;
-                color: black;
+                color: #A42116;
                 font-weight: 700;
                 font-size: 12px;
             }
             .t3 td {
-                padding: 0px;
+                padding: 1px;
                 font-size: 12px;
             }
             .block {
-                padding: 0px;
-                font-size: 12px;
+                padding: 1px;
+                font-size: 14px;
                 font-weight: 600;
             }
         }
@@ -193,6 +215,9 @@ require('config.php');
 </head>
 
 <body onload='history.replaceState("", "", "printing");window.print();window.history.back();'><!--window.print(); window.history.back(); history.replaceState("", "", "printing"); window.history.back()-->
+    <div class="first1">
+        <div class="s_image"><img src="/ems/stud_img/<?=$stud['enrol_no']?>.jpg" alt="" class="stud_img"></div>
+    </div>
     <div class="main1">
         <div class="upper">
             <div class="t1">
@@ -246,7 +271,7 @@ require('config.php');
                     </tr>
                     <tr>
                         <td>Examination:</td>
-                        <td>".$exam_month['month_year']."</td>
+                        <td>".strtoupper($exam_month['month_year'])."</td>
                     </tr>
                     <tr>
                         <td>Status:</td>
@@ -298,9 +323,12 @@ require('config.php');
         else if($sub['ie_flag']==0)
         {
             $rowspan;
+            $get_sub_id_count="SELECT COUNT(sub_id) as count FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
+            $get_sub_id_count_run=mysqli_query($conn,$get_sub_id_count);
+            $sub_id_count=mysqli_fetch_assoc($get_sub_id_count_run);
             echo('<tr>
-            <td rowspan="2" class="'.$sub['sub_code'].'" >'.$sub['sub_code'].'</td>  
-            <td rowspan="2" class="'.$sub['sub_code'].'" >'.$sub['sub_name'].'</td>'); //These two have same class, i.e, sub_code
+            <td rowspan="'.$sub_id_count['count'].'" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_code'].'</td>  
+            <td rowspan="'.$sub_id_count['count'].'" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_name'].'</td>'); //These two have same class, i.e, sub_code
             
             $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
             $get_sub_id_run=mysqli_query($conn,$get_sub_id);
@@ -317,12 +345,12 @@ require('config.php');
                 if($sub_id['practical_flag']==1)
                 {
                     echo('<script> rowspan_'.$sub['sub_code'].'++; </script>');
-                    echo('<td>P</td>'); //Practical P
+                    echo('<td id="blue">P</td>'); //Practical P
                 }
                 else if($sub_id['practical_flag']==0)
                 {
                     echo('<script> rowspan_'.$sub['sub_code'].'++; </script>');
-                    echo('<td>T</td>');//Theory T
+                    echo('<td id="blue">T</td>');//Theory T
                 }
                 echo('<script> 
                         if(rowspan_'.$sub['sub_code'].'==1)        
@@ -333,8 +361,7 @@ require('config.php');
                 echo('<td>'.$sub_id['credits_allotted'].'</td>'); //Alloted Credits {**We have spelling mistake in the database of alloted: Remember**}
                 echo('<td>'.$cr_grade['cr'].'</td>'); //Credits earned
                 echo('<td>'.$cr_grade['grade'].'</td>'); //Grade
-                echo('   
-                </tr>');
+                echo('</tr>');
             }
         }
     }
@@ -342,19 +369,33 @@ require('config.php');
                  <caption align="bottom">
                  <div class="caption-container">
                      <div class="block">Result: 
-                         <span class="info">
+                         <span class="info" id="info" style="font-weight:700;">
                              <?php 
                                 $get_sgpa="SELECT sgpa FROM exam_summary WHERE roll_id=$roll_id";
                                 $get_sgpa_run=mysqli_query($conn,$get_sgpa);
                                 $sgpa=mysqli_fetch_assoc($get_sgpa_run);//$sgpa['sgpa']
-                                if($sgpa['sgpa']<4)
+
+                                $get_fail_count="SELECT COUNT(component_id) AS fail_count FROM failure_report WHERE roll_id=$roll_id";
+                                $get_fail_count_run=mysqli_query($conn,$get_fail_count);
+                                $fail_count=mysqli_fetch_assoc($get_fail_count_run);
+                                //$fail_count['fail_count']
+
+                                if($fail_count['fail_count']!=0)
                                 {
                                     echo('FAIL');
+                                    echo("<script>document.getElementById('info').style.color = 'red';</script>");
                                 }
                                 else
                                 {
                                     echo('PASS');
+                                    echo("<script>document.getElementById('info').style.color = 'green';</script>");
                                 }
+
+                                /*
+                                $get_fail_count="SELECT COUNT(component_id) AS fail_count FROM failure_report WHERE roll_id=$roll_id";
+                                $get_fail_count_run=mysqli_query($conn,$get_fail_count);
+                                $fail_count=mysqli_fetch_assoc($get_fail_count_run);
+                                */
                              ?>
                          </span>
                      </div>

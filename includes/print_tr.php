@@ -1,23 +1,12 @@
 <?php
 session_start();
-if (isset($_POST['view_tr_submit'])) {
-    
-    $safety = new input_check();
-    $safety->input_safe($conn, $post_input);
-    if(!(is_nan($_POST['tr_batch']) AND is_nan($_POST['tr_course']) AND is_nan($_POST['tr_semester'])) AND is_nan($_POST['tr_type']) AND $_SESSION['token']==$_POST['5d57af0a25794bf7516ef53d2de3a230'])
-    {
-        $_SESSION['from_year'] = $safety->input_safe($conn, $_POST['tr_batch']); 
-        $_SESSION['course_id'] = $safety->input_safe($conn, $_POST['tr_course']); 
-        $_SESSION['semester'] = $safety->input_safe($conn, $_POST['tr_semester']); 
-        $_SESSION['main_atkt'] = $safety->input_safe($conn, $_POST['tr_type']); 
-    }
-    else
-    {
-        $er = new alert();
-        $er->exec("Some error occured during your selection of input","danger");
-    }
+if (isset($_POST['tr_print_proceed'])) {
+    $_SESSION['from_year'] = $_POST['tr_print_batch'];
+    $_SESSION['course_id'] = $_SESSION['current_course_id'];
+    $_SESSION['semester'] = $_POST['tr_print_semester'];
+    $_SESSION['main_atkt'] = $_POST['tr_print_type'];
 } else {
-    header('location: /ems/includes/404.html');
+   header('location: /ems/includes/404.html');
 }
 ?>
 <!DOCTYPE html>
@@ -26,18 +15,16 @@ if (isset($_POST['view_tr_submit'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>View TR</title>
-    <link rel="stylesheet" href="/ems/css/style.css">
-    <script>
-        var total_cr=0.0;
-        var total_gpv=0.0;
-        var failure_report="";
-    function set_rem_tr_values(no,credits,gpv,failures){
-        document.getElementById("cr"+no).innerHTML=credits;
-        document.getElementById("gpv"+no).innerHTML=gpv;
-        document.getElementById("fail"+no).innerHTML=failures;
-    }
-</script>
+    <title>Print TR</title>
+    <link rel="stylesheet" href="/ems/bootstrap/css/bootstrap.css">
+<script src="/ems/js/jquery.js"></script>
+<script src="/ems/bootstrap/js/bootstrap.min.js"></script>
+<script src="/ems/js/global_script.js"></script>
+<link rel="stylesheet" href="/ems/css/front_styles.css">
+<link href="https://fonts.googleapis.com/css?family=Exo+2|Kanit|Muli|Open+Sans|Raleway|Roboto|Work+Sans|Lato:300" rel="stylesheet">
+<link rel="stylesheet" href="/ems/font-awesome/css/font-awesome.css">
+<script src="/ems/js/pace.min.js"></script>
+<link rel="stylesheet" href="/ems/css/pace.css">
     <style>
         body{
             background: white !important;
@@ -99,20 +86,12 @@ if (isset($_POST['view_tr_submit'])) {
 <body>
 <?php
 require("config.php");
-require("frontend_lib.php");
 require("class_lib.php");
-$obj = new head();
-$obj->displayheader();
-$obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
-$dashboard = new dashboard();
-$dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "");
-
+$valid = new validate();
+$valid->conf_logged_in();
 ?>
 <div class="contain">
     <?php
-    mysqli_autocommit($conn,FALSE);
-    mysqli_begin_transaction($conn);
-    try{
     $get_count_semesters = "SELECT duration*2 as 'semcount' from courses where course_id=" . $_SESSION['course_id'];
     $get_count_semesters_run = mysqli_query($conn, $get_count_semesters);
     if ($get_count_semesters_run) {
@@ -122,8 +101,6 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
     $get_students_qry_run = mysqli_query($conn, $get_students_qry);
     if ($get_students_qry_run) {
         $stud_count = 1;
-        $total_credits = 0;
-        $total_gpv = 0;
         while ($student = mysqli_fetch_assoc($get_students_qry_run)) {
             $sgpa = new SplFixedArray($semcount);
             $fail_paper_code = new SplFixedArray($semcount);
@@ -174,6 +151,11 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $student['enrol_no'] . "'";
             $get_cur_cgpa_run = mysqli_query($conn, $get_cur_cgpa);
             $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa_run)['cgpa'];
+            $get_total_gpv_cr="SELECT sum(gpv),sum(cr) FROM tr WHERE roll_id=".$cur_rollid;
+            $get_total_gpv_cr_run=mysqli_query($conn,$get_total_gpv_cr);
+            $result=mysqli_fetch_assoc($get_total_gpv_cr_run);
+            $total_gpv=$result['sum(gpv)'];
+            $total_cr=$result['sum(cr)'];
             echo ('<div class="tr_container" style="width: 100%; overflow:auto">
             <table class="table table-striped table-bordered">
             <caption>
@@ -367,13 +349,10 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                     <td>' . $marks['cr'] . '</td>
                     <td>' . $marks['gpv'] . '</td>
                     ');
-                    $total_credits += $marks['cr'];
-                    $total_gpv += $marks['gpv'];
-
                     switch ($rowcount) {
                         case 1:
-                            echo ('<td id="cr' . $stud_count . '"></td>
-                        <td id="gpv' . $stud_count . '"></td>');
+                            echo ('<td>'.$total_cr.'</td>
+                        <td>'.$total_gpv.'</td>');
                             echo ('<th style="vertical-align:middle">Semester</th>');
                             $convert = new conversion();
                             for ($i = 1; $i <= $semcount; $i++) {
@@ -504,28 +483,13 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                     $rowcount++;
                 }
             }
-            echo ('<script>
-            window.setTimeout(function(){set_rem_tr_values(' . $stud_count . ',' . $total_credits . ',' . $total_gpv . ',"Fail In Subject Code ' . $cur_failure_report . '")},1000);</script>');
-            echo ('</table></div>');
             $stud_count++;
         }
 
     }
-    mysqli_commit($conn);
-}
-    catch($Exception $e)
-    {
-        mysqli_rollback($conn);
-    }
     ?>
     </div>
 
-    <?php
-    $obj = new footer();
-    $obj->disp_footer();
-    $logout_modal = new modals();
-    $logout_modal->display_logout_modal();
-    ?>
 </body>
 
 </html>

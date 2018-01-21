@@ -126,7 +126,7 @@ class input_check
 	private $value;
 	public function input_safe($conn, $post_input)
 	{
-		$this->value = (mysqli_real_escape_string($conn, htmlspecialchars(strip_tags($post_input))));
+		$this->value = (mysqli_real_escape_string($conn, htmlentities(strip_tags($post_input))));
 
 		return $this->value;
 	}
@@ -348,12 +348,20 @@ class course
 }
 class super_user_options
 {
+	public function __construct(){
+	
+	}
 	function create_course($conn)
 	{
+		$input_chk=new input_check();
 		$alert = new alert();
 		if (isset($_POST['course_submit'])) {
+			$post_lvl=$input_chk->input_safe($conn, $_POST['level']);	
+			if(empty($post_lvl)){
+				return;
+			}
 			$level = 0;
-			switch ($_POST['level']) {
+			switch ($post_lvl) {
 				case 'ug':
 					$level = 1;
 					break;
@@ -361,7 +369,14 @@ class super_user_options
 					$level = 2;
 					break;
 			}
-			$check_course_exists_qry = "SELECT count(*) from courses WHERE level_id=$level AND course_name='" . $_POST['cname'] . "' AND duration=" . $_POST['cduration'];
+			$course_name=$input_chk->input_safe($conn,$_POST['cname'] );	
+			$course_duration=$input_chk->input_safe($conn,$_POST['cduration']);
+			$prog_name=$input_chk->input_safe($conn,$_POST['prog_name']);
+			$branch_name=$input_chk->input_safe($conn,$_POST['branch_name']);
+			if(empty($branch_name) OR empty($prog_name) OR empty($course_duration) OR is_nan($course_duration)){
+				return;
+			}
+			$check_course_exists_qry = "SELECT count(*) from courses WHERE level_id=$level AND course_name='" . $course_name . "' AND duration=" . $course_duration;
 			$check_course_exists_qry_run = mysqli_query($conn, $check_course_exists_qry);
 			if ($check_course_exists_qry_run) {
 				$num_rows = mysqli_fetch_assoc($check_course_exists_qry_run);
@@ -371,15 +386,15 @@ class super_user_options
 				}
 			}
 
-			$create_course_qry = "INSERT into courses(level_id,course_name,duration) VALUES($level,'" . $_POST['cname'] . "'," . $_POST['cduration'] . ")";
+			$create_course_qry = "INSERT into courses(level_id,course_name,duration) VALUES($level,'" . $course_name . "'," . $course_duration . ")";
 			$create_course_qry_run = mysqli_query($conn, $create_course_qry);
 			if ($create_course_qry_run) {
 				$course_id = mysqli_insert_id($conn);
-				$create_branch_qry = "INSERT into branches VALUES($course_id,'" . $_POST['prog_name'] . "','" . $_POST['branch_name'] . "')";
+				$create_branch_qry = "INSERT into branches VALUES($course_id,'" . $prog_name . "','" . $branch_name . "')";
 				$create_branch_qry_run = mysqli_query($conn, $create_branch_qry);
 				if ($create_branch_qry_run) {
-					$_SESSION['course_inserted'] = $_POST['cname'];
-					$_SESSION['semester'] = $_POST['cduration'] * 2;
+					$_SESSION['course_inserted'] = $course_name;
+					$_SESSION['semester'] = $course_duration * 2;
 					$alert->exec('Course successfully added! <a data-toggle="modal" data-target="#addcourseModal">Add another course <i class="glyphicon glyphicon-circle-arrow-right"></i></a>', "success");
 				} else {
 					$alert->exec("Unable to process query! Please try again", "danger");
@@ -393,13 +408,14 @@ class super_user_options
 	function create_exam_month_year($conn)
 	{
 		if (isset($_POST['set_exam_month'])) {
-			$month = $_POST['month'];
-			$year = $_POST['year'];
+			$input_chk=new input_check();
+			$month = $input_chk->input_safe($conn,$_POST['month']);
+			$year = $input_chk->input_safe($conn,$_POST['year']);
 			$get_sessions = "SELECT * FROM academic_sessions";
 			$get_sessions_run = mysqli_query($conn, $get_sessions);
 			$session_rows = mysqli_affected_rows($conn);
 			$i = 1;
-			$alert=new alert();
+			$alert = new alert();
 			$insert_exam_details = "INSERT INTO exam_month_year VALUES";
 			while ($session = mysqli_fetch_assoc($get_sessions_run)) {
 				$get_course_name = "SELECT course_id FROM courses WHERE course_id=" . $session['course_id'];
@@ -426,24 +442,28 @@ class super_user_options
 
 			}
 			$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
-				if ($insert_exam_details_run) {
-					$alert->exec("New Exam Sessions created....", "success");
-				} else {
-					$alert->exec("There was an error while creating the exam sessions!", "danger");
-				}
+			if ($insert_exam_details_run) {
+				$alert->exec("New Exam Sessions created....", "success");
+			} else {
+				$alert->exec("There was an error while creating the exam sessions!", "danger");
+			}
 		}
 	}
 	function add_subject($conn)
 	{
 		if (isset($_POST['add_sub_submit'])) {
+			$input_chk=new input_check();
 			$alert = new alert();
 			$success = false;
-			$no_of_sub = $_POST['number_subjects'];
-			$course_id = $_POST['mcourse'];
-			$semester = $_POST['msemester'];
-			$ay = $_POST['myear'];
+			$no_of_sub = $input_chk->input_safe($conn,$_POST['number_subjects']);
+			$course_id = $input_chk->input_safe($conn,$_POST['mcourse']);
+			$semester = $input_chk->input_safe($conn,$_POST['msemester']);
+			$ay = $input_chk->input_safe($conn,$_POST['myear']);
+			if(empty($no_of_sub) OR empty($course_id) OR empty($semester) OR is_nan($semester) OR is_nan($no_of_sub)){
+				return;
+			} 
 			for ($i = 1; $i <= $no_of_sub; $i++) {
-				$subcode = $_POST['subcode' . $i];
+				$subcode = $input_chk->input_safe($conn,$_POST['subcode' . $i]);
 				$check_sub_exists_qry = "SELECT count(*) from subjects where sub_code='" . $subcode . "'";
 				$check_sub_exists_qry_run = mysqli_query($conn, $check_sub_exists_qry);
 				if ($check_sub_exists_qry_run) {
@@ -453,7 +473,7 @@ class super_user_options
 						continue;
 					}
 				}
-				$subname = $_POST['subname' . $i];
+				$subname = $input_chk->input_safe($conn,$_POST['subname' . $i]);
 				$type = $_POST['type' . $i];
 				if (isset($_POST['theory' . $i])) {
 					$theory_cr = $_POST['theory' . $i];
@@ -465,19 +485,22 @@ class super_user_options
 				} else {
 					$practical_cr = 0;
 				}
-				$total_cr = $_POST['total' . $i];
-				$cat_pass = $_POST['pass1'];
-				$cat_max = $_POST['max1'];
-				$end_theory_pass = $_POST['pass2'];
-				$end_theory_max = $_POST['max2'];
-				$cap_pass = $_POST['pass3'];
-				$cap_max = $_POST['max3'];
-				$end_practical_pass = $_POST['pass4'];
-				$end_practical_max = $_POST['max4'];
-				$ia_pass = $_POST['pass5'];
-				$ia_max = $_POST['max5'];
-				$ie_pass = $_POST['pass6'];
-				$ie_max = $_POST['max6'];
+				$total_cr =  $input_chk->input_safe($conn,$_POST['total' . $i]);
+				$cat_pass =  $input_chk->input_safe($conn,$_POST['pass1']);
+				$cat_max =  $input_chk->input_safe($conn,$_POST['max1']);
+				$end_theory_pass =  $input_chk->input_safe($conn,$_POST['pass2']);
+				$end_theory_max =  $input_chk->input_safe($conn,$_POST['max2']);
+				$cap_pass =  $input_chk->input_safe($conn,$_POST['pass3']);
+				$cap_max =  $input_chk->input_safe($conn,$_POST['max3']);
+				$end_practical_pass =  $input_chk->input_safe($conn,$_POST['pass4']);
+				$end_practical_max =  $input_chk->input_safe($conn,$_POST['max4']);
+				$ia_pass =  $input_chk->input_safe($conn,$_POST['pass5']);
+				$ia_max =  $input_chk->input_safe($conn,$_POST['max5']);
+				$ie_pass =  $input_chk->input_safe($conn,$_POST['pass6']);
+				$ie_max =  $input_chk->input_safe($conn,$_POST['max6']);
+				if(empty($total_cr) OR empty($cat_pass) OR empty($cat_max) OR empty($end_theory_pass) OR empty($end_theory_max) OR empty($cap_pass) OR empty($cap_max) OR empty($end_practical_pass) OR empty($end_practical_max) OR empty($ia_pass) OR empty($ia_max) OR empty($ie_pass) OR empty($ie_max)){
+					return;
+				}
 				if (isset($_POST['elective' . $i])) {
 					$elective = 1;
 				} else {
@@ -569,6 +592,23 @@ class super_user_options
 				$alert->exec("Unable to insert subjects", "danger");
 			}
 
+		}
+	}
+	function update_subject($conn)
+	{
+		if (isset($_POST['update_sub_submit'])) {
+			$input_chk = new input_check();
+			$subname = $input_chk->input_safe($conn, $_POST['update_sub_name']);
+			$subcode = $input_chk->input_safe($conn, $_POST['update_sub_code']);
+			$update_sub = "UPDATE subjects set sub_name='$subname' WHERE sub_code='$subcode'";
+			$update_sub_run = mysqli_query($conn, $update_sub);
+			$alert = new alert();
+			if ($update_sub_run and mysqli_affected_rows($conn) > 0) {
+				$alert->exec("Subject details updated successfully!", "success");
+			} else {
+				$alert->exec("Unable to update subject!", "danger");
+
+			}
 		}
 	}
 	function create_operator($conn)
@@ -689,9 +729,8 @@ class super_user_options
 						mysqli_commit($conn);
 						mysqli_autocommit($conn, true);
 						$alert->exec("Session successfully created!", "success");
-					}
-					else{
-						$alert->exec("Unable to create session!", "danger");		
+					} else {
+						$alert->exec("Unable to create session!", "danger");
 					}
 				} else {
 					mysqli_rollback($conn);
@@ -707,9 +746,9 @@ class super_user_options
 	{
 		if (isset($_POST['session_update_submit'])) {
 			$alert = new alert();
-			$ay = $_POST['session_ay'];
-			$course_id = $_POST['session_update_submit'];
-			$semester = $_POST['session_semester'];
+			$ay = $input_chk->input_safe($conn, $_POST['session_ay']);
+			$course_id = $input_chk->input_safe($conn, $_POST['session_update_submit']);
+			$semester = $input_chk->input_safe($conn,$_POST['session_semester']);
 			mysqli_autocommit($conn, false);
 			$update_session_qry = "UPDATE academic_sessions SET current_semester=$semester WHERE from_year=$ay AND course_id=$course_id";
 			$update_session_qry_run = mysqli_query($conn, $update_session_qry);
@@ -736,8 +775,8 @@ class super_user_options
 	{
 		if (isset($_POST['send_mail'])) {
 			$emails = array();
-			$subject = $_POST['mail_sub'];
-			$body = $_POST['mail_body'];
+			$subject = $input_chk->input_safe($conn, $_POST['mail_sub']);			
+			$body = $input_chk->input_safe($conn, $_POST['mail_body']);
 			$count = $_SESSION['no_operators'];
 			for ($i = 0; $i < $count; $i++) {
 				if (isset($_POST['op' . $i])) {
@@ -798,15 +837,20 @@ class useroptions
 	function insert_marks($conn)
 	{
 		if (isset($_POST['feed_marks'])) {
+			$alert = new alert();
 			$operator_id = $_SESSION['operator_id'];
 			$form_input_check = new input_check();
 			$remark = $form_input_check->input_safe($conn, $_POST['remark']);
+			if(empty($remark)){
+				$alert->exec("Please enter a remark!","warning");
+				return;
+			}
 			$transaction_qry = "INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
 			$transaction_qry_run = mysqli_query($conn, $transaction_qry);
 			if ($transaction_qry_run) {
 				$transaction_id = mysqli_insert_id($conn);
 			} else {
-				die();
+				return;
 			}
 			if ($_SESSION['main_atkt'] == "main") {
 				$atkt_flag = 0;
@@ -815,11 +859,15 @@ class useroptions
 			}
 			$component_id = $_SESSION['sub_comp_id'];
 			$sub_id = $_SESSION['sub_id'];
-			$alert = new alert();
+			
 			$insert_score_qry = "INSERT INTO score VALUES ";
 			for ($i = 1; $i <= $_SESSION['num_rows']; $i++) {
 				$roll_id = $_SESSION['roll_id' . $i];
 				$marks = $_POST['score' . $i];
+				if(empty($marks) OR is_nan($marks)){
+					$alert->exec("Please enter a correct value for marks!","warning");
+					return;
+				}
 				if ($i == $_SESSION['num_rows']) {
 					$insert_score_qry .= "($roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL)";
 				} else {
@@ -838,6 +886,42 @@ class useroptions
 			}
 		}
 
+	}
+	function request_tr_update($conn)
+	{
+		if (isset($_POST['update_tr_submit'])) {
+			$alert=new alert();
+			$input_chk=new input_check();
+			$rollid = $input_chk->input_safe($conn,$_POST['tr_req_roll_id']);
+			$requester = $_SESSION['operator_id'];
+			$remark = $input_chk->input_safe($conn,$_POST['tr_req_remark']);
+			$subcode = $input_chk->input_safe($conn,$_POST['tr_req_subject']);
+			if(empty($rollid) OR empty($remark) OR empty($subcode)){
+				$alert->exec("All fields are compulsary!","warning");
+				return;
+			}
+			if(is_nan($rollid)){
+				$alert->exec("Roll ID must be a number!","info");
+				return;
+			}
+			$insert_request = "INSERT into edit_tr_request(requester,roll_id,sub_code,cat_flag,end_theory_flag,cap_flag,end_practical_flag,ia_flag,ie_flag,remarks) VALUES($requester,$rollid,'$subcode',";
+			for ($comp = 1; $comp <= 6; $comp++) {
+				if (isset($_POST['tr_update_check' . $comp])) {
+					$insert_request .= "1,";
+				} else {
+					$insert_request .= "0,";
+				}
+			}
+			$insert_request .= "'$remark')";
+			$insert_request_run = mysqli_query($conn, $insert_request);
+			$alert = new alert();
+
+			if ($insert_request_run) {
+				$alert->exec("Request for change of marks submitted successfully!", "success");
+			} else {
+				$alert->exec("Unable to proceed with request! Please try again....", "danger");
+			}
+		}
 	}
 }
 class dashboard
@@ -858,6 +942,20 @@ class dashboard
 			<ul class="nav navbar-nav">
 			
 			<li id="refresh" onclick="window.location.reload(false)"><a href="#">Refresh <i class="glyphicon glyphicon-refresh"></i></a></li>
+			<li id="" ><a>');
+			require("config.php");
+			if(isset($_SESSION['current_course_id']))
+			{
+				$get_course_name="SELECT course_name FROM courses WHERE course_id=".$_SESSION['current_course_id'];
+				$get_course_name_run=mysqli_query($conn,$get_course_name);
+				if($get_course_name_run)
+				{
+					$course_name=mysqli_fetch_assoc($get_course_name_run);
+					echo($course_name['course_name']);
+				}
+			}
+			mysqli_close($conn);
+			echo('</a></li>
 		  </ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>

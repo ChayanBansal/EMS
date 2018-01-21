@@ -1,23 +1,22 @@
 <?php
 session_start();
-if (isset($_POST['view_tr_submit'])) {
+require("class_lib.php");
+    require("config.php");
+    require("frontend_lib.php");
+if (isset($_POST['tr_view_proceed'])) {
     
-    $safety = new input_check();
-    $safety->input_safe($conn, $post_input);
-    if(!(is_nan($_POST['tr_batch']) AND is_nan($_POST['tr_course']) AND is_nan($_POST['tr_semester'])) AND is_nan($_POST['tr_type']) AND $_SESSION['token']==$_POST['5d57af0a25794bf7516ef53d2de3a230'])
-    {
-        $_SESSION['from_year'] = $safety->input_safe($conn, $_POST['tr_batch']); 
-        $_SESSION['course_id'] = $safety->input_safe($conn, $_POST['tr_course']); 
-        $_SESSION['semester'] = $safety->input_safe($conn, $_POST['tr_semester']); 
-        $_SESSION['main_atkt'] = $safety->input_safe($conn, $_POST['tr_type']); 
-    }
-    else
-    {
-        $er = new alert();
-        $er->exec("Some error occured during your selection of input","danger");
+    $input_chk = new input_check();
+    $_SESSION['from_year']= $input_chk->input_safe($conn,$_POST['tr_view_batch']);
+    $_SESSION['course_id'] = $_SESSION['current_course_id'];
+    $_SESSION['semester'] = $input_chk->input_safe($conn,$_POST['tr_view_semester']);
+    $_SESSION['main_atkt'] = $input_chk->input_safe($conn,$_POST['tr_view_type']);
+    if(empty($_SESSION['from_year']) OR empty($_SESSION['semester']) OR empty($_SESSION['main_atkt'])){
+        $alert=new alert();
+        $alert->exec("Please verify all fields!","warning");
+        die();
     }
 } else {
-    header('location: /ems/includes/404.html');
+   //header('location: /ems/includes/404.html');
 }
 ?>
 <!DOCTYPE html>
@@ -27,7 +26,7 @@ if (isset($_POST['view_tr_submit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>View TR</title>
-    <link rel="stylesheet" href="/ems/css/style.css">
+<link rel="stylesheet" href="/ems/css/style.css">
     <script>
         var total_cr=0.0;
         var total_gpv=0.0;
@@ -36,6 +35,22 @@ if (isset($_POST['view_tr_submit'])) {
         document.getElementById("cr"+no).innerHTML=credits;
         document.getElementById("gpv"+no).innerHTML=gpv;
         document.getElementById("fail"+no).innerHTML=failures;
+    }
+    function fetch_enrol(id){
+        document.getElementById("tr_roll_id").value=id;
+    }
+    function getTrComponents(subcode){
+        $.ajax({
+	type: "POST",
+	url: "update_tr_ajax",
+	data: 'tr_subcode='+subcode,
+	success: function(data){
+        $("#tr_components").html(data);
+      },
+    error: function(e){
+        alert('Come back again');
+    }
+	});
     }
 </script>
     <style>
@@ -98,21 +113,20 @@ if (isset($_POST['view_tr_submit'])) {
 </head>
 <body>
 <?php
-require("config.php");
-require("frontend_lib.php");
-require("class_lib.php");
+
+
 $obj = new head();
 $obj->displayheader();
-$obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
+$options = new useroptions();
+$valid = new validate();
+$valid->conf_logged_in();
+$options->request_tr_update($conn);
+$obj->dispmenu(4, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/useroptions", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
 $dashboard = new dashboard();
-$dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "");
-
+$dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "Contact Super Admin");
 ?>
 <div class="contain">
     <?php
-    mysqli_autocommit($conn,FALSE);
-    mysqli_begin_transaction($conn);
-    try{
     $get_count_semesters = "SELECT duration*2 as 'semcount' from courses where course_id=" . $_SESSION['course_id'];
     $get_count_semesters_run = mysqli_query($conn, $get_count_semesters);
     if ($get_count_semesters_run) {
@@ -192,7 +206,9 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             } else {
                 echo ("EX");
             }
-            echo ('</td> </div>
+            echo ('</td> 
+            <td><button type="button" class="btn btn-danger" data-target="#updateTrdialog" data-toggle="modal" onclick="fetch_enrol(this.value)" value="' . $cur_rollid . '">Update TR Marks</button></td>
+            </div>
             </caption>
             <tr>
             <th style="vertical-align:middle">Paper Code</th>
@@ -418,11 +434,11 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                                 echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
                             }
                             echo ("<td>Fail In Paper Code</td>");
-                            for($i=0;$i<$semcount;$i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                                    echo ("<td>" . $fail_paper_code[$i] . "</td>");
                                 }
                             }
                             break;
@@ -480,11 +496,11 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             }
 
                             echo ("<td>Fail In Paper Code</td>");
-                            for($i=0;$i<$semcount;$i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                                    echo ("<td>" . $fail_paper_code[$i] . "</td>");
                                 }
                             }
                             echo ("</tr>");
@@ -511,14 +527,67 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
         }
 
     }
-    mysqli_commit($conn);
-}
-    catch($Exception $e)
-    {
-        mysqli_rollback($conn);
-    }
     ?>
     </div>
+
+ <!-- Update TR Modal -->
+ <div class="modal fade" id="updateTrdialog" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Select from below</h4>
+          </div>
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
+          <div class="modal-body">
+          <?php
+            $input = new input_field();
+            ?>
+          <div class="form-group">
+              <label for="name">Roll ID</label>
+                <?php
+                $input->display_table_readonly("tr_roll_id", "form-control", "text", "tr_req_roll_id", "", 1, 0, 0, 1, 0);
+                ?>
+              </div>
+              <div class="form-group">
+              <label for="type">Select Subject</label>
+              <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)" required>
+                  <option disabled selected>Select a Subject</option>
+                  <?php
+                    $get_subjects_list = "SELECT sub_name,sub_code FROM subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
+                    $get_subjects_list_run = mysqli_query($conn, $get_subjects_list);
+                    while ($sub = mysqli_fetch_assoc($get_subjects_list_run)) {
+                        echo ('<option value="' . $sub['sub_code'] . '">' . $sub['sub_code'] . "-" . $sub['sub_name'] . '</option>');
+                    }
+                    ?>
+              </select>
+              </div>
+              <div class="form-group">
+              <label for="semester">Select Components</label>
+                <div id="tr_components">
+                </div>  
+            </div>
+            <div class="form-group">
+              <label for="semester">Reason/Remarks</label>
+            <?php
+            $input->display("", "form-control", "text", "tr_req_remark", "Enter remarks", 1);
+            ?>  
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
+            <button type="submit" class="btn btn-success" name="update_tr_submit" value="" id="btn_session_update">Request for Update<i class="glyphicon glyphicon-chevron-right"></i></button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
 
     <?php
     $obj = new footer();

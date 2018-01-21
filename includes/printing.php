@@ -4,7 +4,7 @@ session_start();
 if (isset($_POST['print_proceed'])) {
     $_SESSION['from_year'] = $_POST['print_batch'];
     $_SESSION['semester'] = $_POST['print_semester'];
-    $_SESSION['course_id'] = $_POST['print_course'];
+    $_SESSION['course_id'] = $_SESSION['current_course_id'];
     $_SESSION['main_atkt'] = $_POST['print_type'];
 } else {
    // header('location: /ems/includes/404.html');

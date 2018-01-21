@@ -67,6 +67,28 @@ if (isset($_SESSION['tr_generated'])) {
   }
   unset($_SESSION['tr_generated']);
 }
+if(isset($_POST['approve_edit_tr']))
+{
+  $update_edit_tr="UPDATE edit_tr_request SET status=1 WHERE request_id=".$_POST['approve_edit_tr'];
+  $update_edit_tr_run=mysqli_query($conn,$update_edit_tr);
+  if($update_edit_tr_run==TRUE)
+  {
+    $a = new alert();
+    $a->exec("Request Approved","success");
+    unset($_POST['approve_edit_tr']);
+  }
+}
+else if(isset($_POST['disapprove_edit_tr']))
+{
+  $update_edit_tr="UPDATE edit_tr_request SET status=2 WHERE request_id=".$_POST['disapprove_edit_tr'];
+  $update_edit_tr_run=mysqli_query($conn,$update_edit_tr);
+  if($update_edit_tr_run==TRUE)
+  {
+    $a = new alert();
+    $a->exec("Request Disapproved","danger");
+    unset($_POST['disapprove_edit_tr']);
+  }
+}
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
@@ -75,6 +97,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
 $options = new super_user_options();
 $options->create_course($conn);
 $options->add_subject($conn);
+$options->update_subject($conn);
 $options->create_operator($conn);
 $options->add_session($conn);
 $options->update_session($conn);
@@ -88,6 +111,7 @@ $options->unlock_operator($conn);
   <!--<div id="sidenav" class="col-lg-2 col-md-4 col-sm-4 col-xs-4">
    <h2><center>Recent Activities</center></h2>-->
 <script>
+
   function get_recent_act()
   {
     get_check_act();
@@ -133,7 +157,9 @@ $options->unlock_operator($conn);
           $(document.getElementById(location)).html(data);
           var divi=document.getElementById(location);
         divi.scrollTop=divi.scrollHeight;
-          chat(location,username);
+        window.setTimeout(function(){
+            chat(location,username)
+            },5000);
       },
       error: function(e){
         $(document.getElementById(location)).html("Unable to load recent activities");
@@ -302,6 +328,7 @@ function tr_getSemester(tr_type)
             <div class="sub-option" id="subopt3">
                 <button data-toggle="modal" data-target="#trSelectiondialog"><i class="glyphicon glyphicon-copy"></i> Generate TR</button>
                 <button data-toggle="modal" data-target="#view_tr"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+                <button data-toggle="modal" data-target="#edit_tr_request"><i class="glyphicon glyphicon-check"></i> Edit TR Requests</button>
             </div>
             </div>
             <div class="option pink" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
@@ -309,7 +336,7 @@ function tr_getSemester(tr_type)
             <div>Subjects</div>
             <div class="sub-option" id="subopt4">
                 <button data-toggle="modal" data-target="#addsubjectModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-                <button><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
+                <button data-toggle="modal" data-target="#viewsubjectsModal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
             <div class="option yellow" onmouseover="show('subopt5')" onmouseout="hide('subopt5')">
@@ -374,6 +401,10 @@ function tr_getSemester(tr_type)
                 </div>
       </div>
       <div class="modal-footer">
+      <?php 
+        $token = new csrf_token();
+        $token->hidden_input($_SESSION['token']);
+        ?>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success" name="view_tr_submit">Proceed</button>
       </div>
@@ -746,6 +777,351 @@ function tr_getSemester(tr_type)
   </div>
   <!--End-->
 
+
+  <!--View Subjects Modal-->
+  <div class="modal fade" id="viewsubjectsModal" role="dialog">
+      <div class="modal-dialog modal-lg">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">List of Subjects</h4>
+          </div>
+         <div class="modal-body">
+            <table class="table table-striped table-bordered" style="width: 100%">
+            <caption class="form-inline">
+
+<div class="form-group">
+         <select name="sub_view_course" id="sub_view_course" class="form-control" onchange="show_sub_year(this.value)" required>
+         <option value="" disabled selected>Select a course</option>   
+         <?php
+         $get_course_qry = "SELECT * from courses";
+         $get_course_qry_run = mysqli_query($conn, $get_course_qry);
+         if ($get_course_qry_run) {
+           while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
+             echo ('
+                 <option value="' . $row['course_id'] . '" data-course-duration=' . $row['duration'] . '>' . $row['course_name'] . '</option>   
+                 ');
+           }
+         } else {
+           $alert = new alert();
+           $alert->exec("Unable to fetch courses!", "warning");
+         }
+         ?>
+     </select>
+     </div>
+<div class="form-group">
+         <select name="sub_view_year" id="sub_view_year" class="form-control" onchange="show_sub_semester(this.value)" required>
+         <option value="" disabled selected>Select Academic Year</option>
+        </select>
+     </div>
+     <div class="form-group">
+         <select name="sub_view_semester" id="sub_view_semester" class="form-control" required onchange="display_sub_view(this.value)">
+         <option value="" disabled selected>Select semester</option>  
+        </select>
+     </div>
+ </caption>
+    <thead>
+      <tr style="text-align:center">
+        <th>Subject Code</th>
+        <th>Subject Name</th>
+		    <th>Theory Credits</th>
+		    <th>Practical Credits</th>
+		    <th>Internal Examination</th>
+        <th>Elective Subject</th>
+        <th>Edit</th>
+	  </tr>
+    </thead>
+    <tbody id="sub_view_details">
+        
+    </tbody>
+    </table>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <!--<button type="submit" class="btn btn-primary" name="course_submit">Submit</button>-->
+        </div>
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
+
+ <!-- Update Subject Modal -->
+ <div class="modal fade" id="updatesubjectdialog" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Update Subject Particulars</h4>
+          </div>
+          <form action="" method="post" onsubmit="return disable_on_submitbtn()">
+          <div class="modal-body">
+          <?php
+          $input = new input_field();
+          ?>
+          <div class="form-group">
+              <label for="name">Subject Code</label>
+                <?php
+                $input->display_table_readonly("update_sub_code", "form-control", "text", "update_sub_code", "", 1, 0, 0, 1, 0);
+                ?>
+              </div>
+              <div class="form-group">
+              <label for="type">Subject Name</label>
+              <?php
+              $input->display_w_value("update_sub_name","form-control","text","update_sub_name","","",1);
+              ?>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
+            <button type="submit" class="btn btn-success" name="update_sub_submit" value="">Update Subject<i class="glyphicon glyphicon-chevron-right"></i></button>
+        </div>
+        </form> 
+        </div>
+        
+      </div>
+    </div>
+    
+  </div>
+  <!--End-->
+
+
+  <!-- EDIT TR REQUEST MODAL -->
+
+<div id="edit_tr_request" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg" style="width:95%">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit TR Requests</h4>
+      </div>
+      <div class="modal-body">
+      <table class="table">
+    <thead>
+      <tr>
+        <th style="vertical-align:middle;">Requested At</th>
+        <th style="vertical-align:middle;">Requester</th>
+        <th style="vertical-align:middle;">Enrollment Number</th>
+        <th style="vertical-align:middle;">Student Name</th>
+        <th style="vertical-align:middle;">Subject Code</th>
+        <th style="vertical-align:middle;">Subject Name</th>
+        <th style="vertical-align:middle;">Component Requested For Change</th>
+        <th style="vertical-align:middle;">Remark</th>
+        <th style="vertical-align:middle;">Approve</th>
+      </tr>
+      </thead>
+    <tbody style="overflow: auto;">
+
+        <?php
+          $fetch_request="SELECT * FROM edit_tr_request WHERE status=0";
+          $fetch_request_run=mysqli_query($conn,$fetch_request);
+          if(mysqli_num_rows($fetch_request_run)==0)
+          {
+            $a = new alert();
+            $a->exec("No requests to show","info");
+          }
+          else if($fetch_request_run)
+          {
+            while($request=mysqli_fetch_assoc($fetch_request_run))
+            /* $request['request_id'], $request['requester'], $request['roll_id'], $request['sub_code'], $request['cat_flag'], $request['end_theory_flag'], 
+              $request['cap_flag'], $request['end_practical_flag'], $request['ia_flag'], $request['ie_flag'],  
+              $request['remarks'], $request['timestamp'], $request['status']
+            */
+            {
+              echo("<tr>");
+              echo("<td>".$request['timestamp']."</td>");
+              $get_requester_name="SELECT operator_name FROM operators WHERE operator_id=".$request['requester'];
+              $get_requester_name=mysqli_query($conn,$get_requester_name);
+              $requester=mysqli_fetch_assoc($get_requester_name);
+              //$requester['operator_name']
+              echo("<td>".$requester['operator_name']."</td>");
+              
+              $get_stud_detail="SELECT enrol_no, first_name, middle_name, last_name FROM students WHERE enrol_no IN
+              (SELECT enrol_no FROM roll_list WHERE roll_id=".$request['roll_id'].")";
+              $get_stud_detail=mysqli_query($conn,$get_stud_detail);
+              $stud_detail=mysqli_fetch_assoc($get_stud_detail);
+              //$stud_detail['enrol_no'] $stud_detail['first_name'] $stud_detail['middle_name'] $stud_detail['last_name']
+              echo("<td>".$stud_detail['enrol_no']."</td>");
+              echo("<td>".$stud_detail['first_name']);
+              if($stud_detail['middle_name']=="")
+              {
+                echo(" ".$stud_detail['last_name']."</td>");
+              }
+              else
+              {
+                echo(" ".$stud_detail['middle_name']." ".$stud_detail['last_name']."</td>");
+              }
+              
+
+              $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code='".$request['sub_code']."'";
+              $get_sub_name_run=mysqli_query($conn,$get_sub_name);
+              $sub_name=mysqli_fetch_assoc($get_sub_name_run);
+              //$sub_name['sub_name']
+
+              echo("<td>".$request['sub_code']."</td>");
+              echo("<td>".$sub_name['sub_name']."</td>");
+
+              echo("<td><ul>");
+              if($request['cat_flag']==1)
+              {
+                echo("<li>");
+                echo("CAT");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=1))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=1))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              } 
+
+              if($request['end_theory_flag']==1)
+              {
+                echo("<li>");
+                echo("End Sem Theory");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=2))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=2))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+              
+              if($request['cap_flag']==1)
+              {
+                echo("<li>");
+                echo("CAP");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=3))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=3))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+              
+              if($request['end_practical_flag']==1)
+              {
+                echo("<li>");
+                echo("End Sem Practical");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=4))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=4))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+
+              if($request['ia_flag']==1)
+              {
+                echo("<li>");
+                echo("IA");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=5))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=5))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+
+              if($request['ie_flag']==1)
+              {
+                echo("<li>");
+                echo("IE");
+                $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM transactions WHERE transaction_id IN
+                            (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=6))";
+                $get_fed_by_run=mysqli_query($conn,$get_fed_by);
+                $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                //$fed_by['operator_name']
+                echo(" / ".$fed_by['operator_name']." / ");
+                $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                            (SELECT operator_id FROM checking WHERE check_id IN
+                            (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=6))";
+                $get_checked_by_run=mysqli_query($conn,$get_checked_by);
+                $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                //$checked_by['operator_name']
+                echo($checked_by['operator_name']);
+                echo("</li>");
+              }
+
+              echo("</td>");
+              echo("<td>".$request['remarks']."</td>");
+              echo("<td>");
+              echo("<form action='' method='post'><button class='btn btn-success' type='submit' name='approve_edit_tr' value=".$request['request_id']."><i class='fa fa-thumbs-up' aria-hidden='true'>Approve</i></button>");
+              echo("<button class='btn btn-danger' type='submit' name='disapprove_edit_tr' value=".$request['request_id']."><i class='fa fa-thumbs-down' aria-hidden='true'>Disapprove</i></button></form>");
+              echo("</td>");
+              
+            }
+            
+          }
+        ?>
+        
+    </tbody>
+  </table>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
   <!--TR Selection Modal-->
   <div class="modal fade" id="trSelectiondialog" role="dialog">
       <div class="modal-dialog">
@@ -819,7 +1195,7 @@ function tr_getSemester(tr_type)
           <form action="" method="post" onsubmit="return disable_on_submitbtn()">
             <div class="modal-body">
             <div class="modal-container">
-              <div id="err"></div>
+              <div id="err" style="z-index: 1000"></div>
         <div class="component">
            <table class="table table-bordered table-responsive">
                <caption>Subject Components</caption>
@@ -1136,7 +1512,57 @@ function tr_getSemester(tr_type)
           document.getElementById("name"+i).checked=false;   
         }
     }
-   
+    function show_sub_year(cid){
+    $.ajax(
+    {
+      type: "POST",
+      url: "update_tr_ajax",
+      data: 'sub_view=1&course_id='+cid,
+      success: function(data){
+        $("#sub_view_year").html(data);
+    },
+    error: function(e){
+      $("#sub_view_year").html("Unable to load..");
+    }
+	});
     
+  }
+  function show_sub_semester(year){
+    var cid=document.getElementById("sub_view_course").value;
+    $.ajax(
+    {
+      type: "POST",
+      url: "update_tr_ajax",
+      data: 'sub_view_sem=1&course_id='+cid+'&year='+year,
+      success: function(data){
+        $("#sub_view_semester").html(data);
+    },
+    error: function(e){
+      $("#sub_view_semester").html("Unable to load..");
+    }
+	});
+    
+  }
+  function display_sub_view(sem){
+    var cid=document.getElementById("sub_view_course").value;
+    var year=document.getElementById("sub_view_year").value;
+    $.ajax(
+    {
+      type: "POST",
+      url: "update_tr_ajax",
+      data: 'sub_view_disp=1&course_id='+cid+'&year='+year+'&sem='+sem,
+      success: function(data){
+        console.log(data);
+        $("#sub_view_details").html(data);
+    },
+    error: function(e){
+      $("#sub_view_details").html("Unable to load..");
+    }
+	});
+  }
+  function show_update_sub(el){
+    document.getElementById("update_sub_code").value=el.getAttribute("data-sub-code");
+    document.getElementById("update_sub_name").value=el.getAttribute("data-sub-name");
+  }
 </script>
 </html>
