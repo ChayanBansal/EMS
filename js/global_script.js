@@ -1,14 +1,3 @@
-   /*$(window).on("unload", function () {
-                                                                                                                                                              $.ajax({
-                                                                                                                                                                  type: "POST",
-                                                                                                                                                                  cache: false,
-                                                                                                                                                                  url: "logout.php",
-                                                                                                                                                                  data: ({  }),
-                                                                                                                                                                  success: function (result) {
-                                                                                                                                                                  },
-                                                                                                                                                                  error: function (data) { location.reload(); }
-                                                                                                                                                              });
-                                                                                                                                                          });*/
    function disable_on_submitbtn() {
        var btn = document.querySelector('button[type="submit"]');
        btn.classList.add("disabled");
@@ -17,8 +6,8 @@
    }
 
    function disable_on_submitinput() {
-       /*var btn = document.querySelector('input[type="submit"]');
-       btn.classList.add("disabled");*/
+       var btn = document.querySelector('input[type="submit"]');
+       btn.classList.add("disabled");
        var uname = document.getElementById("username").value;
        var i = 0;
        var x = true;
@@ -28,7 +17,6 @@
            }
        }
        if (x == false) {
-           //alert("Special character not allowed in Username!!");
            document.getElementById("err").innerHTML = '<div class="alert alert-danger fade in" id="err" style="z-index:200; width: 100%">Special Characters like *,&,$,# not allowed in Username<span class="close" data-dismiss="alert" style="font-size:2.6rem">&times</span></div>';
            return x;
        } else {
