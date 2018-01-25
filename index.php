@@ -88,4 +88,5 @@ if (isset($_POST['login'])) {
 //Backend scripting
 $op_login = new form_receive();
 $op_login->login();
+require('preloader/preload.php');
 ?>

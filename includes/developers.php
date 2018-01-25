@@ -54,6 +54,7 @@
     $head=new head();
     $head->displayheader();
     $head->dispmenu(1,["home.php"],["glyphicon glyphicon-home"],["Home"]);
+    require('../preloader/preload.php');
      $foot=new footer();
     $foot->disp_footer();
    

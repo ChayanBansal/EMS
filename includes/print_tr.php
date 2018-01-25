@@ -121,7 +121,7 @@ $valid->conf_logged_in();
                 }Doubtful Code*/
                 $get_fail_sub = "SELECT distinct(sub_id) FROM failure_report WHERE roll_id=" . $roll_id['roll_id'];
                 $get_fail_sub_run = mysqli_query($conn, $get_fail_sub);
-                if (mysqli_affected_rows($conn) == 0) {
+                if (mysqli_num_rows($get_fail_sub_run) == 0) {
                     $result_pass_fail[$loopcount] = "PASS";
                 } else {
                     $result_pass_fail[$loopcount] = "FAIL";

@@ -55,6 +55,7 @@ require("frontend_lib.php");
 require("class_lib.php");
 $validate = new validate();
 $validate->conf_logged_in_super();
+require('../preloader/preload.php');
 if (isset($_SESSION['tr_generated'])) {
   if ($_SESSION['tr_generated'] == true) {
     $alert = new alert();

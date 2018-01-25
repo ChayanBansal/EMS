@@ -1,20 +1,17 @@
 <?php
 session_start();
 if (isset($_POST['view_tr_submit'])) {
-    
+
     $safety = new input_check();
     $safety->input_safe($conn, $post_input);
-    if(!(is_nan($_POST['tr_batch']) AND is_nan($_POST['tr_course']) AND is_nan($_POST['tr_semester'])) AND is_nan($_POST['tr_type']) AND $_SESSION['token']==$_POST['5d57af0a25794bf7516ef53d2de3a230'])
-    {
-        $_SESSION['from_year'] = $safety->input_safe($conn, $_POST['tr_batch']); 
-        $_SESSION['course_id'] = $safety->input_safe($conn, $_POST['tr_course']); 
-        $_SESSION['semester'] = $safety->input_safe($conn, $_POST['tr_semester']); 
-        $_SESSION['main_atkt'] = $safety->input_safe($conn, $_POST['tr_type']); 
-    }
-    else
-    {
+    if (!(is_nan($_POST['tr_batch']) and is_nan($_POST['tr_course']) and is_nan($_POST['tr_semester'])) and is_nan($_POST['tr_type']) and $_SESSION['token'] == $_POST['5d57af0a25794bf7516ef53d2de3a230']) {
+        $_SESSION['from_year'] = $safety->input_safe($conn, $_POST['tr_batch']);
+        $_SESSION['course_id'] = $safety->input_safe($conn, $_POST['tr_course']);
+        $_SESSION['semester'] = $safety->input_safe($conn, $_POST['tr_semester']);
+        $_SESSION['main_atkt'] = $safety->input_safe($conn, $_POST['tr_type']);
+    } else {
         $er = new alert();
-        $er->exec("Some error occured during your selection of input","danger");
+        $er->exec("Some error occured during your selection of input", "danger");
     }
 } else {
     header('location: /ems/includes/404.html');
@@ -101,6 +98,7 @@ if (isset($_POST['view_tr_submit'])) {
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+require('../preloader/preload.php');
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
@@ -110,71 +108,71 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
 ?>
 <div class="contain">
     <?php
-    mysqli_autocommit($conn,FALSE);
+    mysqli_autocommit($conn, false);
     mysqli_begin_transaction($conn);
-    try{
-    $get_count_semesters = "SELECT duration*2 as 'semcount' from courses where course_id=" . $_SESSION['course_id'];
-    $get_count_semesters_run = mysqli_query($conn, $get_count_semesters);
-    if ($get_count_semesters_run) {
-        $semcount = mysqli_fetch_assoc($get_count_semesters_run)['semcount'];
-    }
-    $get_students_qry = "SELECT * FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND current_sem=" . $_SESSION['semester'] . " AND from_year=" . $_SESSION['from_year'];
-    $get_students_qry_run = mysqli_query($conn, $get_students_qry);
-    if ($get_students_qry_run) {
-        $stud_count = 1;
-        $total_credits = 0;
-        $total_gpv = 0;
-        while ($student = mysqli_fetch_assoc($get_students_qry_run)) {
-            $sgpa = new SplFixedArray($semcount);
-            $fail_paper_code = new SplFixedArray($semcount);
-            $result_pass_fail = new SplFixedArray($semcount);
-            $cur_failure_report = "";
-            $get_roll_id = "SELECT distinct(roll_id),semester from roll_list WHERE enrol_no='" . $student['enrol_no'] . "' ORDER BY semester";
-            $get_roll_id_run = mysqli_query($conn, $get_roll_id);
-            $loopcount = 0;
-            while ($roll_id = mysqli_fetch_assoc($get_roll_id_run)) {
-                $get_prev_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $roll_id['roll_id'];
-                $get_prev_sgpa_run = mysqli_query($conn, $get_prev_sgpa);
-                $ressgpa = mysqli_fetch_assoc($get_prev_sgpa_run);
-                $sgpa[$loopcount] = $ressgpa['sgpa'];
+    try {
+        $get_count_semesters = "SELECT duration*2 as 'semcount' from courses where course_id=" . $_SESSION['course_id'];
+        $get_count_semesters_run = mysqli_query($conn, $get_count_semesters);
+        if ($get_count_semesters_run) {
+            $semcount = mysqli_fetch_assoc($get_count_semesters_run)['semcount'];
+        }
+        $get_students_qry = "SELECT * FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND current_sem=" . $_SESSION['semester'] . " AND from_year=" . $_SESSION['from_year'];
+        $get_students_qry_run = mysqli_query($conn, $get_students_qry);
+        if ($get_students_qry_run) {
+            $stud_count = 1;
+            $total_credits = 0;
+            $total_gpv = 0;
+            while ($student = mysqli_fetch_assoc($get_students_qry_run)) {
+                $sgpa = new SplFixedArray($semcount);
+                $fail_paper_code = new SplFixedArray($semcount);
+                $result_pass_fail = new SplFixedArray($semcount);
+                $cur_failure_report = "";
+                $get_roll_id = "SELECT distinct(roll_id),semester from roll_list WHERE enrol_no='" . $student['enrol_no'] . "' ORDER BY semester";
+                $get_roll_id_run = mysqli_query($conn, $get_roll_id);
+                $loopcount = 0;
+                while ($roll_id = mysqli_fetch_assoc($get_roll_id_run)) {
+                    $get_prev_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $roll_id['roll_id'];
+                    $get_prev_sgpa_run = mysqli_query($conn, $get_prev_sgpa);
+                    $ressgpa = mysqli_fetch_assoc($get_prev_sgpa_run);
+                    $sgpa[$loopcount] = $ressgpa['sgpa'];
                 /*if ($sgpa[$loopcount] >= 4.0) {
                     $result_pass_fail[$loopcount] = "PASS";
                 } else {
                     $result_pass_fail[$loopcount] = "FAIL";
                 }Doubtful Code*/
-                $get_fail_sub = "SELECT distinct(sub_id) FROM failure_report WHERE roll_id=" . $roll_id['roll_id'];
-                $get_fail_sub_run = mysqli_query($conn, $get_fail_sub);
-                if (mysqli_affected_rows($conn) == 0) {
-                    $result_pass_fail[$loopcount] = "PASS";
-                } else {
-                    $result_pass_fail[$loopcount] = "FAIL";
-                }
-                $failtext = "";
-                while ($failsubid = mysqli_fetch_assoc($get_fail_sub_run)) {
-                    $get_subflag = "SELECT sub_code,practical_flag FROM sub_distribution WHERE sub_id=" . $failsubid['sub_id'];
-                    $get_subflag_run = mysqli_query($conn, $get_subflag);
-                    $res = mysqli_fetch_assoc($get_subflag_run);
-                    if ($res['practical_flag'] == 1) {
-                        $failtext .= $res['sub_code'] . "[P] ";
-                    } else if ($res['practical_flag'] == 2) {
-                        $failtext .= $res['sub_code'] . "[IE] ";
+                    $get_fail_sub = "SELECT distinct(sub_id) FROM failure_report WHERE roll_id=" . $roll_id['roll_id'];
+                    $get_fail_sub_run = mysqli_query($conn, $get_fail_sub);
+                    if (mysqli_affected_rows($conn) == 0) {
+                        $result_pass_fail[$loopcount] = "PASS";
                     } else {
-                        $failtext .= $res['sub_code'] . "[T] ";
+                        $result_pass_fail[$loopcount] = "FAIL";
                     }
+                    $failtext = "";
+                    while ($failsubid = mysqli_fetch_assoc($get_fail_sub_run)) {
+                        $get_subflag = "SELECT sub_code,practical_flag FROM sub_distribution WHERE sub_id=" . $failsubid['sub_id'];
+                        $get_subflag_run = mysqli_query($conn, $get_subflag);
+                        $res = mysqli_fetch_assoc($get_subflag_run);
+                        if ($res['practical_flag'] == 1) {
+                            $failtext .= $res['sub_code'] . "[P] ";
+                        } else if ($res['practical_flag'] == 2) {
+                            $failtext .= $res['sub_code'] . "[IE] ";
+                        } else {
+                            $failtext .= $res['sub_code'] . "[T] ";
+                        }
+                    }
+                    $fail_paper_code[$loopcount] = $failtext;
+                    $loopcount++;
                 }
-                $fail_paper_code[$loopcount] = $failtext;
-                $loopcount++;
-            }
-            $get_cur_rollid = "SELECT roll_id from roll_list WHERE semester=" . $_SESSION['semester'] . " AND enrol_no='" . $student['enrol_no'] . "'";
-            $get_cur_rollid_run = mysqli_query($conn, $get_cur_rollid);
-            $cur_rollid = mysqli_fetch_assoc($get_cur_rollid_run)['roll_id'];
-            $get_current_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $cur_rollid;
-            $get_current_sgpa_run = mysqli_query($conn, $get_current_sgpa);
-            $cur_sgpa = mysqli_fetch_assoc($get_current_sgpa_run)['sgpa'];
-            $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $student['enrol_no'] . "'";
-            $get_cur_cgpa_run = mysqli_query($conn, $get_cur_cgpa);
-            $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa_run)['cgpa'];
-            echo ('<div class="tr_container" style="width: 100%; overflow:auto">
+                $get_cur_rollid = "SELECT roll_id from roll_list WHERE semester=" . $_SESSION['semester'] . " AND enrol_no='" . $student['enrol_no'] . "'";
+                $get_cur_rollid_run = mysqli_query($conn, $get_cur_rollid);
+                $cur_rollid = mysqli_fetch_assoc($get_cur_rollid_run)['roll_id'];
+                $get_current_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $cur_rollid;
+                $get_current_sgpa_run = mysqli_query($conn, $get_current_sgpa);
+                $cur_sgpa = mysqli_fetch_assoc($get_current_sgpa_run)['sgpa'];
+                $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $student['enrol_no'] . "'";
+                $get_cur_cgpa_run = mysqli_query($conn, $get_cur_cgpa);
+                $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa_run)['cgpa'];
+                echo ('<div class="tr_container" style="width: 100%; overflow:auto">
             <table class="table table-striped table-bordered">
             <caption>
             <div class="caption-container">
@@ -187,12 +185,12 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             <td class="block" colspan="3">Mother\'s Name: ' . $student['mother_name'] . '</td>
             <td class="block">Gender: ' . $student['gender'] . '</td>
             <td class="block" colspan="2">Status:');
-            if ($_SESSION['main_atkt'] == "main") {
-                echo ("Regular");
-            } else {
-                echo ("EX");
-            }
-            echo ('</td> </div>
+                if ($_SESSION['main_atkt'] == "main") {
+                    echo ("Regular");
+                } else {
+                    echo ("EX");
+                }
+                echo ('</td> </div>
             </caption>
             <tr>
             <th style="vertical-align:middle">Paper Code</th>
@@ -214,307 +212,305 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
             <th style="vertical-align:middle;width:40%" colspan="' . ($semcount + 1) . '">Previous Semester Details</th>
         </tr>
             ');
-            $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
-            $get_subjects_qry_run = mysqli_query($conn, $get_subjects_qry);
-            $rowcount = 1;
-            $fail_flag = false;
-            while ($subject = mysqli_fetch_assoc($get_subjects_qry_run)) {
-                echo ('<tr style="vertical-align:middle">');
-                $get_subid_count = "SELECT count(*) from sub_distribution WHERE sub_code='" . $subject['sub_code'] . "'";
-                $get_subid_count_run = mysqli_query($conn, $get_subid_count);
-                $subid_count = mysqli_fetch_assoc($get_subid_count_run)['count(*)'];
-                echo ('
+                $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
+                $get_subjects_qry_run = mysqli_query($conn, $get_subjects_qry);
+                $rowcount = 1;
+                $fail_flag = false;
+                while ($subject = mysqli_fetch_assoc($get_subjects_qry_run)) {
+                    echo ('<tr style="vertical-align:middle">');
+                    $get_subid_count = "SELECT count(*) from sub_distribution WHERE sub_code='" . $subject['sub_code'] . "'";
+                    $get_subid_count_run = mysqli_query($conn, $get_subid_count);
+                    $subid_count = mysqli_fetch_assoc($get_subid_count_run)['count(*)'];
+                    echo ('
                 <td style="vertical-align:middle" rowspan="' . $subid_count . '">' . $subject['sub_code'] . '</td>
                 <td style="vertical-align:middle" rowspan="' . $subid_count . '">' . $subject['sub_name'] . '</td>
                 ');
-                $sub_id_loop = "SELECT sub_id,practical_flag from sub_distribution WHERE sub_code='" . $subject['sub_code'] . "'";
-                $sub_id_loop_run = mysqli_query($conn, $sub_id_loop);
-                $subidcount = 1;
-                while ($subid = mysqli_fetch_assoc($sub_id_loop_run)) {
-                    if ($subidcount > 1) {
-                        echo ('<tr style="vertical-align:middle">');
-                    }
-                    $get_comp_id = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid['sub_id'] . " ORDER BY component_id";
-                    $get_comp_id_run = mysqli_query($conn, $get_comp_id);
-                    if ($subid['practical_flag'] == 1) {
-                        echo ('<td>P</td><td>100</td>');
-                        while ($pass_marks = mysqli_fetch_assoc($get_comp_id_run)) {
-                            $practical_pass[] = $pass_marks['passing_marks'];
+                    $sub_id_loop = "SELECT sub_id,practical_flag from sub_distribution WHERE sub_code='" . $subject['sub_code'] . "'";
+                    $sub_id_loop_run = mysqli_query($conn, $sub_id_loop);
+                    $subidcount = 1;
+                    while ($subid = mysqli_fetch_assoc($sub_id_loop_run)) {
+                        if ($subidcount > 1) {
+                            echo ('<tr style="vertical-align:middle">');
                         }
-                        $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
-                        $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
-                        $marks = mysqli_fetch_assoc($get_cap_qry_run);
-                        $fail = false;
-                        if (is_null($marks['end_sem'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
-                            $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
-                            $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
-                            if ($ia_marks < $practical_pass[2]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
-                                $fail = true;
-                                $fail_flag = true;
-                            } else {
-                                echo ("<td>" . $marks['end_sem'] . "</td>");
+                        $get_comp_id = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid['sub_id'] . " ORDER BY component_id";
+                        $get_comp_id_run = mysqli_query($conn, $get_comp_id);
+                        if ($subid['practical_flag'] == 1) {
+                            echo ('<td>P</td><td>100</td>');
+                            while ($pass_marks = mysqli_fetch_assoc($get_comp_id_run)) {
+                                $practical_pass[] = $pass_marks['passing_marks'];
                             }
-                        }
+                            $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
+                            $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
+                            $marks = mysqli_fetch_assoc($get_cap_qry_run);
+                            $fail = false;
+                            if (is_null($marks['end_sem'])) {
+                                echo ('<td> - </td>');
+                            } else {
+                                $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
+                                $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
+                                $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
+                                if ($ia_marks < $practical_pass[2]) {
+                                    echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
+                                    $fail = true;
+                                    $fail_flag = true;
+                                } else {
+                                    echo ("<td>" . $marks['end_sem'] . "</td>");
+                                }
+                            }
 
-                        if (is_null($marks['cat_cap_ia'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            if ($marks['cat_cap_ia'] < $practical_pass[0]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
-                                $fail = true;
-                                $fail_flag = true;
+                            if (is_null($marks['cat_cap_ia'])) {
+                                echo ('<td> - </td>');
                             } else {
-                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                                if ($marks['cat_cap_ia'] < $practical_pass[0]) {
+                                    echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                                    $fail = true;
+                                    $fail_flag = true;
+                                } else {
+                                    echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                                }
                             }
-                        }
-                        if (is_null($marks['total'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            echo ("<td>" . $marks['total'] . "</td>");
-                        }
-                        if ($fail) {
-                            $cur_failure_report .= $subject['sub_code'] . "[P] ";
-                        }
-
-                    } else if ($subid['practical_flag'] == 2) {
-                        echo ('<td>IE</td><td>100</td>');
-                        $ie_pass = mysqli_fetch_assoc($get_comp_id_run)['passing_marks'];
-                        $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
-                        $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
-                        $marks = mysqli_fetch_assoc($get_cap_qry_run);
-                        $fail = false;
-                        if (is_null($marks['end_sem'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            if ($marks['end_sem'] < $practical_pass[1]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
-                                $fail = true;
-                                $fail_flag = true;
-                            } else {
-                                echo ("<td>" . $marks['end_sem'] . "</td>");
-                            }
-                        }
-                        if (is_null($marks['cat_cap_ia'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            if ($marks['cat_cap_ia'] < $practical_pass[0]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
-                                $fail = true;
-                                $fail_flag = true;
-                            } else {
-                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
-                            }
-                        }
-                        if (is_null($marks['total'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            if ($marks['total'] < $ie_pass) {
-                                echo ("<td style='background: #EF6545'>" . $marks['total'] . "</td>");
+                            if (is_null($marks['total'])) {
+                                echo ('<td> - </td>');
                             } else {
                                 echo ("<td>" . $marks['total'] . "</td>");
                             }
-                        }
-
-                    } else {
-                        echo ('<td>T</td><td>100</td>');
-                        while ($pass_marks = mysqli_fetch_assoc($get_comp_id_run)) {
-                            $theory_pass[] = $pass_marks['passing_marks'];
-                        }
-                        $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
-                        $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
-                        $marks = mysqli_fetch_assoc($get_cap_qry_run);
-                        $fail = false;
-                        if (is_null($marks['end_sem'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            if ($marks['end_sem'] < $theory_pass[1]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
-                                $fail = true;
-                                $fail_flag = true;
-                            } else {
-                                echo ("<td>" . $marks['end_sem'] . "</td>");
+                            if ($fail) {
+                                $cur_failure_report .= $subject['sub_code'] . "[P] ";
                             }
-                        }
 
-                        if (is_null($marks['cat_cap_ia'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            if ($marks['cat_cap_ia'] < $theory_pass[0]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
-                                $fail = true;
-                                $fail_flag = true;
+                        } else if ($subid['practical_flag'] == 2) {
+                            echo ('<td>IE</td><td>100</td>');
+                            $ie_pass = mysqli_fetch_assoc($get_comp_id_run)['passing_marks'];
+                            $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
+                            $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
+                            $marks = mysqli_fetch_assoc($get_cap_qry_run);
+                            $fail = false;
+                            if (is_null($marks['end_sem'])) {
+                                echo ('<td> - </td>');
                             } else {
-                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                                if ($marks['end_sem'] < $practical_pass[1]) {
+                                    echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
+                                    $fail = true;
+                                    $fail_flag = true;
+                                } else {
+                                    echo ("<td>" . $marks['end_sem'] . "</td>");
+                                }
                             }
-                        }
-                        if (is_null($marks['total'])) {
-                            echo ('<td> - </td>');
-                        } else {
-                            echo ("<td>" . $marks['total'] . "</td>");
-                        }
-                        if ($fail) {
-                            $cur_failure_report .= $subject['sub_code'] . "[T] ";
-                        }
+                            if (is_null($marks['cat_cap_ia'])) {
+                                echo ('<td> - </td>');
+                            } else {
+                                if ($marks['cat_cap_ia'] < $practical_pass[0]) {
+                                    echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                                    $fail = true;
+                                    $fail_flag = true;
+                                } else {
+                                    echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                                }
+                            }
+                            if (is_null($marks['total'])) {
+                                echo ('<td> - </td>');
+                            } else {
+                                if ($marks['total'] < $ie_pass) {
+                                    echo ("<td style='background: #EF6545'>" . $marks['total'] . "</td>");
+                                } else {
+                                    echo ("<td>" . $marks['total'] . "</td>");
+                                }
+                            }
 
-                    }
-                    echo ('<td>' . $marks['percent'] . '</td>
+                        } else {
+                            echo ('<td>T</td><td>100</td>');
+                            while ($pass_marks = mysqli_fetch_assoc($get_comp_id_run)) {
+                                $theory_pass[] = $pass_marks['passing_marks'];
+                            }
+                            $get_cap_qry = "SELECT * FROM tr WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'];
+                            $get_cap_qry_run = mysqli_query($conn, $get_cap_qry);
+                            $marks = mysqli_fetch_assoc($get_cap_qry_run);
+                            $fail = false;
+                            if (is_null($marks['end_sem'])) {
+                                echo ('<td> - </td>');
+                            } else {
+                                if ($marks['end_sem'] < $theory_pass[1]) {
+                                    echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
+                                    $fail = true;
+                                    $fail_flag = true;
+                                } else {
+                                    echo ("<td>" . $marks['end_sem'] . "</td>");
+                                }
+                            }
+
+                            if (is_null($marks['cat_cap_ia'])) {
+                                echo ('<td> - </td>');
+                            } else {
+                                if ($marks['cat_cap_ia'] < $theory_pass[0]) {
+                                    echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                                    $fail = true;
+                                    $fail_flag = true;
+                                } else {
+                                    echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                                }
+                            }
+                            if (is_null($marks['total'])) {
+                                echo ('<td> - </td>');
+                            } else {
+                                echo ("<td>" . $marks['total'] . "</td>");
+                            }
+                            if ($fail) {
+                                $cur_failure_report .= $subject['sub_code'] . "[T] ";
+                            }
+
+                        }
+                        echo ('<td>' . $marks['percent'] . '</td>
                     <td>' . $marks['grade'] . '</td>
                     <td>' . $marks['gp'] . '</td>
                     <td>' . $marks['cr'] . '</td>
                     <td>' . $marks['gpv'] . '</td>
                     ');
-                    $total_credits += $marks['cr'];
-                    $total_gpv += $marks['gpv'];
+                        $total_credits += $marks['cr'];
+                        $total_gpv += $marks['gpv'];
 
-                    switch ($rowcount) {
-                        case 1:
-                            echo ('<td id="cr' . $stud_count . '"></td>
+                        switch ($rowcount) {
+                            case 1:
+                                echo ('<td id="cr' . $stud_count . '"></td>
                         <td id="gpv' . $stud_count . '"></td>');
-                            echo ('<th style="vertical-align:middle">Semester</th>');
-                            $convert = new conversion();
-                            for ($i = 1; $i <= $semcount; $i++) {
-                                echo ('<th>' . $convert->numberToRomanRepresentation($i) . '</th>');
-                            }
-                            break;
+                                echo ('<th style="vertical-align:middle">Semester</th>');
+                                $convert = new conversion();
+                                for ($i = 1; $i <= $semcount; $i++) {
+                                    echo ('<th>' . $convert->numberToRomanRepresentation($i) . '</th>');
+                                }
+                                break;
 
-                        case 3:
-                            echo ('<td colspan="2" style="font-weight:700;"> Semester ' . $convert->numberToRomanRepresentation($_SESSION['semester']) . '</td>
+                            case 3:
+                                echo ('<td colspan="2" style="font-weight:700;"> Semester ' . $convert->numberToRomanRepresentation($_SESSION['semester']) . '</td>
                             <td>SGPA</td>
                             ');
-                            for ($i = 0; $i < $semcount; $i++) {
-                                if (empty($sgpa[$i])) {
-                                    echo ('<td> - </td>');
-                                } else {
-                                    echo ('<td>' . $sgpa[$i] . '</td>');
-                                }
-                            }
-                            break;
-
-                        case 4:
-                            echo ("<td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
-                            echo ("<td>Result</td>");
-                            for ($i = 0; $i < $semcount; $i++) {
-                                if (empty($result_pass_fail[$i])) {
-                                    echo ('<td> - </td>');
-                                } else {
-                                    if ($result_pass_fail[$i] == "PASS") {
-                                        echo ("<td style='color: #1AC124'>" . $result_pass_fail[$i] . "</td>");
+                                for ($i = 0; $i < $semcount; $i++) {
+                                    if (empty($sgpa[$i])) {
+                                        echo ('<td> - </td>');
                                     } else {
-                                        echo ("<td style='color: #DF3611'>" . $result_pass_fail[$i] . "</td>");
-
+                                        echo ('<td>' . $sgpa[$i] . '</td>');
                                     }
                                 }
-                            }
-                            break;
+                                break;
 
-                        case 5:
-                            if ($fail_flag) {
-                                echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
-                            } else {
-                                echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
-                            }
-                            echo ("<td>Fail In Paper Code</td>");
-                            for($i=0;$i<$semcount;$i++) {
-                                if (empty($fail_paper_code[$i])) {
-                                    echo ('<td> - </td>');
-                                } else {
-                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                            case 4:
+                                echo ("<td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
+                                echo ("<td>Result</td>");
+                                for ($i = 0; $i < $semcount; $i++) {
+                                    if (empty($result_pass_fail[$i])) {
+                                        echo ('<td> - </td>');
+                                    } else {
+                                        if ($result_pass_fail[$i] == "PASS") {
+                                            echo ("<td style='color: #1AC124'>" . $result_pass_fail[$i] . "</td>");
+                                        } else {
+                                            echo ("<td style='color: #DF3611'>" . $result_pass_fail[$i] . "</td>");
+
+                                        }
+                                    }
                                 }
-                            }
-                            break;
+                                break;
 
-                        case 6:
-                            echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
-                            break;
-                        case 7:
-                            echo ("<td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
-                            break;
+                            case 5:
+                                if ($fail_flag) {
+                                    echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
+                                } else {
+                                    echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
+                                }
+                                echo ("<td>Fail In Paper Code</td>");
+                                for ($i = 0; $i < $semcount; $i++) {
+                                    if (empty($fail_paper_code[$i])) {
+                                        echo ('<td> - </td>');
+                                    } else {
+                                        echo ("<td>" . $fail_paper_code[$i] . "</td>");
+                                    }
+                                }
+                                break;
+
+                            case 6:
+                                echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
+                                break;
+                            case 7:
+                                echo ("<td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
+                                break;
+                        }
+                        echo ('</tr>');
+                        $rowcount++;
+                        $subid_count++;
                     }
-                    echo ('</tr>');
-                    $rowcount++;
-                    $subid_count++;
                 }
-            }
-            if ($rowcount < 7) {
-                while ($rowcount != 8) {
-                    switch ($rowcount) {
-                        case 3:
+                if ($rowcount < 7) {
+                    while ($rowcount != 8) {
+                        switch ($rowcount) {
+                            case 3:
 
-                            echo ('<tr><td colspan="12"></td>
+                                echo ('<tr><td colspan="12"></td>
                             <td colspan="2" style="font-weight:700;"> Semester ' . $convert->numberToRomanRepresentation($_SESSION['semester']) . '</td>
                             <td>SGPA</td>
                             ');
-                            for ($i = 0; $i < $semcount; $i++) {
-                                if (empty($sgpa[$i])) {
-                                    echo ('<td> - </td>');
-                                } else {
-                                    echo ('<td>' . $sgpa[$i] . '</td>');
+                                for ($i = 0; $i < $semcount; $i++) {
+                                    if (empty($sgpa[$i])) {
+                                        echo ('<td> - </td>');
+                                    } else {
+                                        echo ('<td>' . $sgpa[$i] . '</td>');
+                                    }
                                 }
-                            }
-                            echo ("</tr>");
-                            break;
+                                echo ("</tr>");
+                                break;
 
-                        case 4:
-                            echo ("<tr><td colspan='12'></td><td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
-                            echo ("<td>Result</td>");
-                            for ($i = 0; $i < $semcount; $i++) {
-                                if (empty($result_pass_fail[$i])) {
-                                    echo ('<td> - </td>');
-                                } else {
-                                    echo ("<td>" . $result_pass_fail[$i] . "</td>");
+                            case 4:
+                                echo ("<tr><td colspan='12'></td><td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
+                                echo ("<td>Result</td>");
+                                for ($i = 0; $i < $semcount; $i++) {
+                                    if (empty($result_pass_fail[$i])) {
+                                        echo ('<td> - </td>');
+                                    } else {
+                                        echo ("<td>" . $result_pass_fail[$i] . "</td>");
+                                    }
                                 }
-                            }
-                            echo ("</tr>");
-                            break;
+                                echo ("</tr>");
+                                break;
 
-                        case 5:
-                            echo ("<tr><td colspan='12'></td>");
-                            if ($fail_flag) {
-                                echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
-                            } else {
-                                echo ("<td colspan='2' style='font-weight:700; color: #1AC124' >Result : PASS</td>");
-                            }
-
-                            echo ("<td>Fail In Paper Code</td>");
-                            for($i=0;$i<$semcount;$i++) {
-                                if (empty($fail_paper_code[$i])) {
-                                    echo ('<td> - </td>');
+                            case 5:
+                                echo ("<tr><td colspan='12'></td>");
+                                if ($fail_flag) {
+                                    echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
                                 } else {
-                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                                    echo ("<td colspan='2' style='font-weight:700; color: #1AC124' >Result : PASS</td>");
                                 }
-                            }
-                            echo ("</tr>");
-                            break;
 
-                        case 6:
-                            echo ('<tr><td colspan="12"></td>
+                                echo ("<td>Fail In Paper Code</td>");
+                                for ($i = 0; $i < $semcount; $i++) {
+                                    if (empty($fail_paper_code[$i])) {
+                                        echo ('<td> - </td>');
+                                    } else {
+                                        echo ("<td>" . $fail_paper_code[$i] . "</td>");
+                                    }
+                                }
+                                echo ("</tr>");
+                                break;
+
+                            case 6:
+                                echo ('<tr><td colspan="12"></td>
                             <td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
-                            echo ("</tr>");
-                            break;
-                        case 7:
-                            echo ("<tr><td colspan='12'></td>
+                                echo ("</tr>");
+                                break;
+                            case 7:
+                                echo ("<tr><td colspan='12'></td>
                             <td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
-                            echo ("</tr>");
-                            break;
+                                echo ("</tr>");
+                                break;
+                        }
+                        $rowcount++;
                     }
-                    $rowcount++;
                 }
-            }
-            echo ('<script>
+                echo ('<script>
             window.setTimeout(function(){set_rem_tr_values(' . $stud_count . ',' . $total_credits . ',' . $total_gpv . ',"Fail In Subject Code ' . $cur_failure_report . '")},1000);</script>');
-            echo ('</table></div>');
-            $stud_count++;
-        }
+                echo ('</table></div>');
+                $stud_count++;
+            }
 
-    }
-    mysqli_commit($conn);
-}
-    catch($Exception $e)
-    {
+        }
+        mysqli_commit($conn);
+    } catch ($Exception $e) {
         mysqli_rollback($conn);
     }
     ?>

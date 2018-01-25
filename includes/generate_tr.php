@@ -3,6 +3,7 @@ session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+require('../preloader/preload.php');
 $validate = new validate();
 $validate->conf_logged_in_super();
 if (isset($_POST['tr_submit'])) {

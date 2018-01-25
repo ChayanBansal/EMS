@@ -135,6 +135,7 @@ session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+require('../preloader/preload.php');
 $valid = new validate();
 $valid->conf_logged_in();
 $obj = new head();

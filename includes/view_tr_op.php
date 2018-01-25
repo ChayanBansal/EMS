@@ -4,7 +4,6 @@ require("class_lib.php");
     require("config.php");
     require("frontend_lib.php");
 if (isset($_POST['tr_view_proceed'])) {
-    
     $input_chk = new input_check();
     $_SESSION['from_year']= $input_chk->input_safe($conn,$_POST['tr_view_batch']);
     $_SESSION['course_id'] = $_SESSION['current_course_id'];
@@ -117,6 +116,7 @@ if (isset($_POST['tr_view_proceed'])) {
 
 $obj = new head();
 $obj->displayheader();
+require('../preloader/preload.php');
 $options = new useroptions();
 $valid = new validate();
 $valid->conf_logged_in();

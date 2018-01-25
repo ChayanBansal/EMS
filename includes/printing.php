@@ -42,6 +42,7 @@ if (isset($_POST['print_proceed'])) {
     require("class_lib.php");
     $valid = new validate();
     $valid->conf_logged_in();
+    require('../preloader/preload.php');
     $obj = new head();
     $obj->displayheader();
     $obj->dispmenu(4, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/useroptions", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);

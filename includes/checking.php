@@ -121,6 +121,7 @@ $validate=new validate();
 $validate->conf_logged_in();
 $obj = new head();
 $obj->displayheader();
+require('../preloader/preload.php');
 $obj->dispmenu(4, ["home", "index", "useroptions", "developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "Contact Super Admin");

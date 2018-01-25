@@ -19,6 +19,7 @@
     require("config.php");
     require("frontend_lib.php");
     require("class_lib.php");
+    require('../preloader/preload.php');
     $validate=new validate();
     $validate->conf_logged_in();
     $obj=new head();

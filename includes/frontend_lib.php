@@ -87,5 +87,4 @@ class modals{
             </div>');
     }
 }
-require("../preloader/preload.php");
 ?>
