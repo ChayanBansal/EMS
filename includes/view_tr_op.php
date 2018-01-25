@@ -264,10 +264,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         if (is_null($marks['end_sem'])) {
                             echo ('<td> - </td>');
                         } else {
-                            $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
-                            $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
-                            $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
-                            if ($ia_marks < $practical_pass[2]) {
+                            if ($marks['end_sem'] < $practical_pass[1]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
                                 $fail = true;
                                 $fail_flag = true;
@@ -279,7 +276,10 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         if (is_null($marks['cat_cap_ia'])) {
                             echo ('<td> - </td>');
                         } else {
-                            if ($marks['cat_cap_ia'] < $practical_pass[0]) {
+                            $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
+                            $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
+                            $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
+                            if ($marks['cat_cap_ia'] < $practical_pass[0] || $ia_marks<$practical_pass[2]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
                                 $fail = true;
                                 $fail_flag = true;

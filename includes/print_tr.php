@@ -6,7 +6,7 @@ if (isset($_POST['tr_print_proceed'])) {
     $_SESSION['semester'] = $_POST['tr_print_semester'];
     $_SESSION['main_atkt'] = $_POST['tr_print_type'];
 } else {
-   header('location: /ems/includes/404.html');
+    header('location: /ems/includes/404.html');
 }
 ?>
 <!DOCTYPE html>
@@ -151,11 +151,11 @@ $valid->conf_logged_in();
             $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $student['enrol_no'] . "'";
             $get_cur_cgpa_run = mysqli_query($conn, $get_cur_cgpa);
             $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa_run)['cgpa'];
-            $get_total_gpv_cr="SELECT sum(gpv),sum(cr) FROM tr WHERE roll_id=".$cur_rollid;
-            $get_total_gpv_cr_run=mysqli_query($conn,$get_total_gpv_cr);
-            $result=mysqli_fetch_assoc($get_total_gpv_cr_run);
-            $total_gpv=$result['sum(gpv)'];
-            $total_cr=$result['sum(cr)'];
+            $get_total_gpv_cr = "SELECT sum(gpv),sum(cr) FROM tr WHERE roll_id=" . $cur_rollid;
+            $get_total_gpv_cr_run = mysqli_query($conn, $get_total_gpv_cr);
+            $result = mysqli_fetch_assoc($get_total_gpv_cr_run);
+            $total_gpv = $result['sum(gpv)'];
+            $total_cr = $result['sum(cr)'];
             echo ('<div class="tr_container" style="width: 100%; overflow:auto">
             <table class="table table-striped table-bordered">
             <caption>
@@ -230,10 +230,7 @@ $valid->conf_logged_in();
                         if (is_null($marks['end_sem'])) {
                             echo ('<td> - </td>');
                         } else {
-                            $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
-                            $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
-                            $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
-                            if ($ia_marks < $practical_pass[2]) {
+                            if ($marks['end_sem'] < $practical_pass[1]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
                                 $fail = true;
                                 $fail_flag = true;
@@ -245,7 +242,10 @@ $valid->conf_logged_in();
                         if (is_null($marks['cat_cap_ia'])) {
                             echo ('<td> - </td>');
                         } else {
-                            if ($marks['cat_cap_ia'] < $practical_pass[0]) {
+                            $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
+                            $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
+                            $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
+                            if ($marks['cat_cap_ia'] < $practical_pass[0] || $ia_marks < $practical_pass[2]) {
                                 echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
                                 $fail = true;
                                 $fail_flag = true;
@@ -253,6 +253,7 @@ $valid->conf_logged_in();
                                 echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
                             }
                         }
+
                         if (is_null($marks['total'])) {
                             echo ('<td> - </td>');
                         } else {
@@ -351,8 +352,8 @@ $valid->conf_logged_in();
                     ');
                     switch ($rowcount) {
                         case 1:
-                            echo ('<td>'.$total_cr.'</td>
-                        <td>'.$total_gpv.'</td>');
+                            echo ('<td>' . $total_cr . '</td>
+                        <td>' . $total_gpv . '</td>');
                             echo ('<th style="vertical-align:middle">Semester</th>');
                             $convert = new conversion();
                             for ($i = 1; $i <= $semcount; $i++) {
@@ -397,11 +398,11 @@ $valid->conf_logged_in();
                                 echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
                             }
                             echo ("<td>Fail In Paper Code</td>");
-                            for($i=0;$i<$semcount;$i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                                    echo ("<td>" . $fail_paper_code[$i] . "</td>");
                                 }
                             }
                             break;
@@ -459,11 +460,11 @@ $valid->conf_logged_in();
                             }
 
                             echo ("<td>Fail In Paper Code</td>");
-                            for($i=0;$i<$semcount;$i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
-                                    echo ("<td>".$fail_paper_code[$i]."</td>");
+                                    echo ("<td>" . $fail_paper_code[$i] . "</td>");
                                 }
                             }
                             echo ("</tr>");

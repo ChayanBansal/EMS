@@ -1,10 +1,10 @@
 <?php
 session_start();
+require("config.php");
+require("class_lib.php");
 if (isset($_POST['view_tr_submit'])) {
-
     $safety = new input_check();
-    $safety->input_safe($conn, $post_input);
-    if (!(is_nan($_POST['tr_batch']) and is_nan($_POST['tr_course']) and is_nan($_POST['tr_semester'])) and is_nan($_POST['tr_type']) and $_SESSION['token'] == $_POST['5d57af0a25794bf7516ef53d2de3a230']) {
+    if (!(is_nan($_POST['tr_batch']) and is_nan($_POST['tr_course']) and is_nan($_POST['tr_semester'])) and $_SESSION['token'] == $_POST['5d57af0a25794bf7516ef53d2de3a230']) {
         $_SESSION['from_year'] = $safety->input_safe($conn, $_POST['tr_batch']);
         $_SESSION['course_id'] = $safety->input_safe($conn, $_POST['tr_course']);
         $_SESSION['semester'] = $safety->input_safe($conn, $_POST['tr_semester']);
@@ -95,9 +95,9 @@ if (isset($_POST['view_tr_submit'])) {
 </head>
 <body>
 <?php
-require("config.php");
+
 require("frontend_lib.php");
-require("class_lib.php");
+
 require('../preloader/preload.php');
 $obj = new head();
 $obj->displayheader();
@@ -246,10 +246,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             if (is_null($marks['end_sem'])) {
                                 echo ('<td> - </td>');
                             } else {
-                                $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
-                                $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
-                                $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
-                                if ($ia_marks < $practical_pass[2]) {
+                                if ($marks['end_sem'] < $practical_pass[1]) {
                                     echo ("<td style='background: #EF6545'>" . $marks['end_sem'] . "</td>");
                                     $fail = true;
                                     $fail_flag = true;
@@ -261,7 +258,10 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             if (is_null($marks['cat_cap_ia'])) {
                                 echo ('<td> - </td>');
                             } else {
-                                if ($marks['cat_cap_ia'] < $practical_pass[0]) {
+                                $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
+                                $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
+                                $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
+                                if ($marks['cat_cap_ia'] < $practical_pass[0] || $ia_marks < $practical_pass[2]) {
                                     echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
                                     $fail = true;
                                     $fail_flag = true;
@@ -510,7 +510,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
 
         }
         mysqli_commit($conn);
-    } catch ($Exception $e) {
+    } catch (Exception $e) {
         mysqli_rollback($conn);
     }
     ?>
