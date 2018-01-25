@@ -136,6 +136,7 @@ require('config.php');
                 margin: 0.1cm;
                 margin-top: 0.25cm !important;
                 margin-right: 0.3cm !important;
+                margin-left: 0 !important;
             }
             .first1 {
                 position: absolute;
@@ -166,7 +167,7 @@ require('config.php');
                 color: rgb(0, 6, 83);
             }
             .t2 {
-                width: 40%;
+                width: 50%;
                 font-size: 13px;
                 color: rgb(0, 6, 83);
             }
@@ -194,6 +195,7 @@ require('config.php');
             }
             .t3 table {
                 width: 100%;
+                height: 10cm;
             }
             .t3 th {
                 padding: 0px;
