@@ -26,7 +26,7 @@
     $obj->displayheader();
     $obj->dispmenu(3,["/ems/includes/home","/ems/includes/logout","/ems/includes/developers"],["glyphicon glyphicon-home","glyphicon glyphicon-log-out","glyphicon glyphicon-info-sign"],["Home","Log Out","About Us"]);
     $dashboard=new dashboard();
-    $dashboard->display($_SESSION['operator_name'],["Change Password","Sign Out"],["change_password","index"],"Contact Super Admin");
+    $dashboard->display($_SESSION['operator_name'],["Sign Out"],["index"],"Contact Super Admin");
     $ai=new course();
     $ai->display($conn);
     

@@ -141,8 +141,7 @@
                         <b>NOTE:</b> 
                         <br>
                         <ol>
-                      <li>  Please change your password as soon as you log into the portal for maximum security.
-                            <li> Keep these details private, do not share these details with anyone.
+                           <li> Keep these details private, do not share these details with anyone.
                                     <li>This is an auto-generated e-mail, please do not reply to it.    
                     </ol>
                     </div>   

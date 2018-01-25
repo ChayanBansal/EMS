@@ -186,7 +186,7 @@ require('config.php');
             }
             .lower {
                 position: absolute;
-                top: 10.1cm;
+                top: 10.3cm;
             }
             .t3 {
                 position: relative;
@@ -195,7 +195,7 @@ require('config.php');
             }
             .t3 table {
                 width: 100%;
-                height: 13cm;
+                height: 12.5cm;
             }
             .t3 th {
                 padding: 0px;
