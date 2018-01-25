@@ -6,7 +6,7 @@ require('class_lib.php');
 if ($_POST['getType'] == 1) {
     if (isset($_POST['from_year']) AND !(is_nan($_POST['from_year']))) {
         $safety = new input_check();
-        $from_year = $safety->$safety($conn,$_POST['from_year']);
+        $from_year = $safety->input_safe($conn,$_POST['from_year']);
         $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'];
         $get_semester_run = mysqli_query($conn, $get_semester);
         $result = mysqli_fetch_assoc($get_semester_run);
