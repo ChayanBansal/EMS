@@ -16,9 +16,10 @@ if (isset($_POST['login'])) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Examination Portal</title>
     <link rel="stylesheet" href="css/style.css">
-    
 </head>
 <body>
+<link rel="stylesheet" href="/ems/preloader/css/loader.css">
+<script src="/ems/preloader/js/loader.js"></script> 
     <?php
     require_once("includes/config.php");
     require("includes/frontend_lib.php");
