@@ -15,7 +15,6 @@
     require_once("includes/config.php");
     require("includes/frontend_lib.php");
     require("includes/class_lib.php");
-    require('preloader/preload.php');
     $obj=new head();
     $obj->displayheader();
     $obj->dispmenu(3,["/ems/includes/home","/ems/index","/ems/includes/developers"],["glyphicon glyphicon-home","glyphicon glyphicon-log-in","glyphicon glyphicon-info-sign"],["Home","Log In as Operator","About Us"]);
@@ -79,4 +78,5 @@
 <?php
     $super_login=new form_receive();
     $super_login->super_login();
+    require('preloader/preload.php');
 ?>
