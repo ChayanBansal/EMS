@@ -195,7 +195,7 @@ require('config.php');
             }
             .t3 table {
                 width: 100%;
-                height: 10cm;
+                height: 13cm;
             }
             .t3 th {
                 padding: 0px;
