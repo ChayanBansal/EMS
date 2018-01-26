@@ -584,7 +584,7 @@ function chat(location,username)
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
+        <h4 class="modal-title">Edit TR Requests</h4>
       </div>
       <div class="modal-body">
       <?php
@@ -600,34 +600,42 @@ function chat(location,username)
       </tr>
     </thead>
     <tbody>');
+    if(!$get_requests_run)
+    {
+        $err = new alert();
+        $err->exec("No requests to show","info");
+    }
+    else
+    {
         while($edit_tr_requests=mysqli_fetch_assoc($get_requests_run))
-        {
-        //$edit_tr_requests['request_id'] $edit_tr_requests['requester'] $edit_tr_requests['roll_id'] $edit_tr_requests['sub_code'] $edit_tr_requests['remarks'] $edit_tr_requests['status']
-        $get_edit_enrol="SELECT enrol_no FROM roll_list WHERE roll_id=".$edit_tr_requests['roll_id'];
-        $get_edit_enrol_run=mysqli_query($conn,$get_edit_enrol);
-        $edit_enrol_no=mysqli_fetch_assoc($get_edit_enrol_run);
-        //$edit_enrol_no['enrol_no']
-        
-    echo('
-      <tr>
-        <td>'.$edit_enrol_no["enrol_no"].'</td>
-        <td>'.$edit_tr_requests['sub_code'].'</td>
-        <td>'.$edit_tr_requests['remarks'].'</td>');
-        
-        switch($edit_tr_requests['status'])
-        {
-            case 0:
-                echo('<td>Pending</td>');
-                break;
-            case 1:
-                echo('<td>Approved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_submit" value="'.$edit_tr_requests['request_id'].'">Click here to process</button></form></td>');
-                break;
-            case 2:
-                echo('<td>Disapproved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_close" value="'.$edit_tr_requests['request_id'].'">Click here to close</button></form></td>');
-                break;
-        }
+            {
+            //$edit_tr_requests['request_id'] $edit_tr_requests['requester'] $edit_tr_requests['roll_id'] $edit_tr_requests['sub_code'] $edit_tr_requests['remarks'] $edit_tr_requests['status']
+            $get_edit_enrol="SELECT enrol_no FROM roll_list WHERE roll_id=".$edit_tr_requests['roll_id'];
+            $get_edit_enrol_run=mysqli_query($conn,$get_edit_enrol);
+            $edit_enrol_no=mysqli_fetch_assoc($get_edit_enrol_run);
+            //$edit_enrol_no['enrol_no']
+            
+        echo('
+        <tr>
+            <td>'.$edit_enrol_no["enrol_no"].'</td>
+            <td>'.$edit_tr_requests['sub_code'].'</td>
+            <td>'.$edit_tr_requests['remarks'].'</td>');
+            
+            switch($edit_tr_requests['status'])
+            {
+                case 0:
+                    echo('<td>Pending</td>');
+                    break;
+                case 1:
+                    echo('<td>Approved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_submit" value="'.$edit_tr_requests['request_id'].'">Click here to process</button></form></td>');
+                    break;
+                case 2:
+                    echo('<td>Disapproved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_close" value="'.$edit_tr_requests['request_id'].'">Click here to close</button></form></td>');
+                    break;
+            }
 
-      echo('</tr>');
+        echo('</tr>');
+        }
     }
       echo('
     </tbody>
