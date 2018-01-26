@@ -602,6 +602,7 @@ function chat(location,username)
     <tbody>');
     if(!$get_requests_run)
     {
+        echo("<tr style='text-align:center;'><td colspan='4'>No requests to show!</td><tr>");
         $err = new alert();
         $err->exec("No requests to show","info");
     }
