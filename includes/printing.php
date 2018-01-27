@@ -33,6 +33,20 @@ if (isset($_POST['print_proceed'])) {
     table.table-bordered > tbody > tr >td{
        
     }
+    table tbody tr:nth-child(odd):hover{
+        transition: all 300ms ease-in-out;
+        background: #9D70EB;
+        box-shadow: 5px 7px 1px rgba(96, 101, 106,0.5);
+        color: white;
+    }
+    table tr:nth-child(even):hover{
+        transition: all 300ms ease-in-out;
+        background: #E7648A;
+        box-shadow: 5px 7px 1px rgba(96, 101, 106,0.5);
+        color: white;
+    
+    }
+    
     </style>
 </head>
 <body>
