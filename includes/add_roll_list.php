@@ -7,7 +7,7 @@
     <title>User Options</title>
     <link rel="stylesheet" href="/ems/css/style.css">
     <link rel="stylesheet" href="/ems/w3css/w3.css">
-    <link href="https://fonts.googleapis.com/css?family=Boogaloo" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Gentium+Book+Basic" rel="stylesheet">
     <style>
     #sem{
         margin: 10px;
@@ -134,7 +134,7 @@
   cursor: pointer;
 }
 .student_card{
-    font-family: 'Boogaloo', cursive;
+    font-family: 'Gentium Book Basic', serif;
 }
 
     </style>
@@ -142,7 +142,10 @@
 <body>
 <?php
 session_start();
-$_SESSION['current_course_id']=$_POST['roll_course'];
+if(isset($_POST['proceed_to_add_roll']))
+{
+    $_SESSION['current_course_id']=$_POST['roll_course'];
+}
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
@@ -165,16 +168,16 @@ if(isset($_POST['proceed_to_add_roll']))
     $get_students_run=mysqli_query($conn,$get_students);
     if($get_students_run)
     {
-        echo('<div style="display:flex; justify-content:space-around; ">
+        echo('<div style="display:flex; justify-content:space-around; overflow:auto; margin-bottom:100px; ">
         
-        <table style="width:60%;align:center; background-color:#873333; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
+        <table style="width:80%;align:center; background-color:#C84646; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
         <caption>Batch: '.$from_year.' | Semester: '.$semester.'
 
          </caption>
         <thead>
           <tr>
             <th><center><h2><input type="checkbox" id="select_all_check" onclick="select_all();"></h2></center></th>
-            <th><center><h2 style="color:white;font-family:Boogaloo, cursive;">Student</h2></center></th>
+            <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">Student</h2></center></th>
           </tr>
           
         </thead>
@@ -197,7 +200,9 @@ if(isset($_POST['proceed_to_add_roll']))
             
             <footer class="w3-container w3-blue" style="display:flex; flex-wrap: wrap;align-content: space-around;">
             <h4>
-                Name: '.$student["first_name"]);
+                <table>
+                <tr>
+                <td>Name:</td><td>'.$student["first_name"]);
                 if($student["middle_name"]=="")
                 {
                     echo(' '.$student["last_name"]);
@@ -208,16 +213,26 @@ if(isset($_POST['proceed_to_add_roll']))
                 }
 
             echo('
-            <br>
-            Gender: '.$student["gender"].'
-            <br>
-            Current Semester: '.$student["current_sem"].'
-            <br>
-            Father\'s Name: '.$student["father_name"].'
-            <br>
-            Mother\'s Name: '.$student["mother_name"].'
-            <br>
-            Address: '.$student["address"].'
+            </td>
+            <tr>
+            <td>
+            Gender:</td><td>'.$student["gender"].'
+            </td></tr>
+            <tr>
+            <td>Current Semester:</td><td>'.$student["current_sem"].'
+            </td><td></tr>
+            <tr><td>
+            Father\'s Name:</td><td>'.$student["father_name"].'
+            </td></tr>
+            <tr>
+            <td>
+            Mother\'s Name:</td><td>'.$student["mother_name"].'
+            </td></tr>
+            <tr>
+            <td>
+            Address:</td><td>'.$student["address"].'
+            </td></tr>
+            </table>
             </h4>
             <div class="w3-container" style="float:right">
                 <img src="../stud_img/'.$student['enrol_no'].'.jpg" alt="'.$student['enrol_no'].'">
@@ -227,7 +242,7 @@ if(isset($_POST['proceed_to_add_roll']))
             </div></div></div></td></tr>');  
         }
         echo('
-        <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list">Register for Examination</button></center></th></tr>
+        <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$semester.'">Register for Examination</button></center></th></tr>
         </tbody>
         </form>
         </table></div>');
@@ -264,3 +279,30 @@ function toogle_select_all()
 </script>
 </body>
 </html>
+<?php
+if(isset($_POST['create_roll_list']))
+{
+    $input_clear = new input_check();
+    $semester = $input_clear->input_safe($conn,$_POST['create_roll_list']);
+    $enrol_no = $input_clear->input_safe($conn,$_POST['enrol_no']);
+    $total=count($enrol_no);
+    for($i=0; $i<$total ; $i++)
+    {
+        mysqli_autocommit($conn,FALSE);
+        mysqli_begin_transaction($conn);
+        $enrol_number=$enrol[$i];
+        $add_roll="INSERT INTO roll_list(enrol_no,semester) VALUES('$enrol_number',$semester)";
+        $add_roll_run=mysqli_query($conn,$add_roll);
+    }
+    
+    
+        mysqli_commit($conn);
+        $_SESSION['roll_list_added']=1;
+        header('location: home.php');
+    
+    
+    
+    
+    
+}
+?>
