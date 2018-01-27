@@ -11,7 +11,22 @@
     .c_ug_pg{
         margin-bottom: 100px;
     }
+    .option{
+        padding: 20px;
+        padding-right: 40px;
+        padding-left: 40px;
+        margin: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        color: white;
+        font-size: 2rem;
+        flex-direction: column;
+        align-items: center;
+        font-family: 'PT Sans', sans-serif;
+        width: 100%;
+    }
     </style>
+    
 </head>
 <body>
 <?php
@@ -38,6 +53,41 @@
         $logout_modal=new modals();
     $logout_modal->display_logout_modal();
     ?>
-          
+          <script>
+     function roll_get_batch(course)
+  {
+    $.ajax({
+        type: "POST",
+        url: "roll_list_ajax",
+        data: 'operation=1&course_id='+course,
+        success: function(data)
+                {
+                    $(document.getElementById('roll_batch_list')).html(data);  
+                },
+        error: function(e){
+            $(document.getElementById('roll_batch_list')).html("Unable to load batches");
+        }
+        
+    });
+  }
+
+  function roll_get_semester(batch)
+  {
+    var course = document.getElementById('roll_course_list').value;
+    $.ajax({
+        type: "POST",
+        url: "roll_list_ajax",
+        data: 'operation=2&batch='+batch+'&course='+course,
+        success: function(data)
+                {
+                    $(document.getElementById('roll_semester_list')).html(data);  
+                },
+        error: function(e){
+            $(document.getElementById('roll_semester_list')).html("Unable to load semester");
+        }
+        
+    });
+  }
+    </script>
 </body>
 </html>

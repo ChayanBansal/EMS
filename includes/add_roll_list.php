@@ -7,6 +7,7 @@
     <title>User Options</title>
     <link rel="stylesheet" href="/ems/css/style.css">
     <link rel="stylesheet" href="/ems/w3css/w3.css">
+    <link href="https://fonts.googleapis.com/css?family=Boogaloo" rel="stylesheet">
     <style>
     #sem{
         margin: 10px;
@@ -132,12 +133,16 @@
   height: 30px;
   cursor: pointer;
 }
+.student_card{
+    font-family: 'Boogaloo', cursive;
+}
 
     </style>
 </head>
 <body>
 <?php
 session_start();
+$_SESSION['current_course_id']=$_POST['roll_course'];
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
@@ -162,28 +167,26 @@ if(isset($_POST['proceed_to_add_roll']))
     {
         echo('<div style="display:flex; justify-content:space-around; ">
         
-        <table style="width:60%;align:center; background-color:#FF7052; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
-        <tcaption>');
-        $get_course_name="SELECT course_name FROM courses WHERE course_id=$course_id";
-        $get_course_name_run=mysqli_query($conn,$get_course_name);
-        $course_name=mysqli_fetch_assoc($get_course_name_run);
+        <table style="width:60%;align:center; background-color:#873333; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
+        <caption>Batch: '.$from_year.' | Semester: '.$semester.'
 
-        echo($course_name["course_name"].' </tcaption>
+         </caption>
         <thead>
           <tr>
-            <th><center><h2>Select</h2></center></th>
-            <th><center><h2>Student</h2></center></th>
+            <th><center><h2><input type="checkbox" id="select_all_check" onclick="select_all();"></h2></center></th>
+            <th><center><h2 style="color:white;font-family:Boogaloo, cursive;">Student</h2></center></th>
           </tr>
           
         </thead>
+        <form action="" method="post">
         <tbody>');
         
         while($student=mysqli_fetch_assoc($get_students_run))
         {
           echo('
           <tr>
-            <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" name="enrol_no" value="'.$student['enrol_no'].'"</td>
-            <td>
+            <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" onclick="toogle_select_all()" class="roll_check" name="enrol_no[]" value="'.$student['enrol_no'].'"></td>
+            <td><div class="student_card">
           <div><div class="w3-card-4">
 
             <header class="w3-container w3-blue">
@@ -221,9 +224,12 @@ if(isset($_POST['proceed_to_add_roll']))
             </div>
             </footer>
             
-            </div></div></td></tr>');  
+            </div></div></div></td></tr>');  
         }
-        echo('</tbody>
+        echo('
+        <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list">Register for Examination</button></center></th></tr>
+        </tbody>
+        </form>
         </table></div>');
     }
     else
@@ -238,3 +244,23 @@ $obj->disp_footer();
 $logout_modal = new modals();
 $logout_modal->display_logout_modal();
 ?>
+<script>
+function select_all()
+{
+    if(document.getElementById("select_all_check").checked)
+    {
+        $(".roll_check").prop('checked', true);
+    }
+}
+function toogle_select_all()
+{
+    var all_checks = document.getElementsByClassName("roll_check");
+    if(document.getElementsByClassName("roll_check").checked==false)
+    {
+        $("#select_all_check").prop('checked', false);
+    }
+}
+
+</script>
+</body>
+</html>

@@ -343,6 +343,65 @@ class course
 				//UG list close
 		echo ('</form>
 		</div>
+		<center><div class="main-container" style="width:40%;">
+    <div class="sub-container">
+		<button class="option dark_red" data-toggle="modal" data-target="#add_roll_list_modal"><i style="font-size:36px;"class="fa fa-vcard-o"></i>Add Roll List (Register Students for examinations)</button>
+		</div>
+		</div></center>
+		<!-- Add Roll List Modal Box Start -->
+
+
+<!-- Modal -->
+<div id="add_roll_list_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+    <form action="add_roll_list" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Register Students for the Examination (Generate Roll List)</h4>
+      </div>
+      <div class="modal-body">
+        
+            <div class="form-group">
+                <label for="roll_course">Course: </label>
+                <select id="roll_course_list" name="roll_course" class="form-control" onChange="roll_get_batch(this.value)" required>
+                    <option value="" disabled selected>Select Course</option>');   
+                        $get_roll_course="SELECT course_id, course_name FROM courses";
+                        $get_roll_course_run=mysqli_query($conn,$get_roll_course);
+                        if($get_roll_course_run)
+                        {
+                            while($roll_courses=mysqli_fetch_assoc($get_roll_course_run))
+                            {
+                                echo('<option value="'.$roll_courses['course_id'].'">'.$roll_courses['course_name'].'</option>');   
+                            }
+                        }                    
+                echo('</select>
+            </div>   
+            <div class="form-group">
+                <label for="roll_batch">Batch (From Year): </label>
+                <select id="roll_batch_list" name="roll_batch" class="form-control" onChange="roll_get_semester(this.value)" required>
+                    <option value="" disabled selected>Select batch</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="roll_semester">Semester: </label>
+                <select id="roll_semester_list" name="roll_semester" class="form-control" required>
+                    <option value="" disabled selected>Select Semester</option>
+                </select>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-success" name="proceed_to_add_roll">Proceed</button>
+      </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+<!-- Add Roll List Modal Box Close -->
 		');
 	}
 }
