@@ -775,6 +775,7 @@ class super_user_options
 	function message($conn)
 	{
 		if (isset($_POST['send_mail'])) {
+			$input_chk=new input_check();
 			$emails = array();
 			$subject = $input_chk->input_safe($conn, $_POST['mail_sub']);
 			$body = $input_chk->input_safe($conn, $_POST['mail_body']);

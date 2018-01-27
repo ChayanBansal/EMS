@@ -41,7 +41,7 @@
             mysqli_commit($conn);
         } catch (Exception $e) {
             $alert=new alert();
-            $alert->exec("Error while sending the mail! Please try again..", "warning");
+            $alert->exec("Error while sending the mail! Please try again..".$e, "warning");
         }
 
     function Mail_text($body){
