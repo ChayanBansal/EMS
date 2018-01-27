@@ -4,22 +4,32 @@ session_start();
 if (isset($_POST['tr_edit_close'])) {
     $close_request = "UPDATE edit_tr_request SET status=3 WHERE request_id=" . $_POST['tr_edit_close'];
     $close_request_run = mysqli_query($conn, $close_request);
-}
-if (isset($_POST['tr_edit_submit'])) {
-    $request_id = $_POST['tr_edit_submit'];
-    $get_request_details = "SELECT * FROM edit_tr_request WHERE request_id=" . $request_id;
-    $get_request_details_run = mysqli_query($conn, $get_request_details);
-    if ($get_request_details_run) {
-        $req_details = mysqli_fetch_assoc($get_request_details_run);
-        $subcode = $req_details['sub_code'];
-        $enroll = "SELECT enrol_no FROM roll_list WHERE roll_id=" . $req_details['roll_id'];
-        $enroll = mysqli_query($conn, $enroll);
-        $enroll = mysqli_fetch_assoc($enroll)['enrol_no'];
-        $rollid = $req_details['roll_id'];
+    if($close_request_run){
+        $_SESSION['tr_req_close']=true;
+    
+    }else{
+        $_SESSION['tr_req_close']=false;
+    
     }
-} else {
-    //header('location: 404.html');
+    header('location: useroptions');
+}else{
+    if (isset($_POST['tr_edit_submit'])) {
+        $request_id = $_POST['tr_edit_submit'];
+        $get_request_details = "SELECT * FROM edit_tr_request WHERE request_id=" . $request_id;
+        $get_request_details_run = mysqli_query($conn, $get_request_details);
+        if ($get_request_details_run) {
+            $req_details = mysqli_fetch_assoc($get_request_details_run);
+            $subcode = $req_details['sub_code'];
+            $enroll = "SELECT enrol_no FROM roll_list WHERE roll_id=" . $req_details['roll_id'];
+            $enroll = mysqli_query($conn, $enroll);
+            $enroll = mysqli_fetch_assoc($enroll)['enrol_no'];
+            $rollid = $req_details['roll_id'];
+        }
+    } else {
+        header('location: 404.html');
+    }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -98,16 +108,18 @@ if (isset($_POST['tr_edit_submit'])) {
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
+
 $validate = new validate();
 $validate->conf_logged_in();
+$options=new useroptions();
+$options->update_tr($conn);
 $obj = new head();
 $obj->displayheader();
 require('../preloader/preload.php');
 $obj->dispmenu(4, ["home", "index", "useroptions", "developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
 $dashboard = new dashboard();
 $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "Contact Super Admin");
-$options=new useroptions();
-$options->update_tr($conn);
+
 $input = new input_field();
 $input_btn = new input_button();
 ?>
@@ -217,9 +229,7 @@ $input_btn = new input_button();
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=5 AND sub_id=$subid";
-                    echo($max_marks);
                     $max_marks = round(mysqli_fetch_assoc(mysqli_query($conn, $max_marks))['max_marks']);
-                    echo($max_marks);
                     $get_tr_marks = "SELECT marks FROM score WHERE roll_id=$rollid AND sub_id=$subid AND component_id=5";
                     $get_tr_marks = mysqli_query($conn, $get_tr_marks);
                     $marks = mysqli_fetch_assoc($get_tr_marks)['marks'];

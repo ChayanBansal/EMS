@@ -170,6 +170,27 @@ if (isset($_SESSION['already_checked'])) {
     }
     unset($_SESSION['already_checked']);
 }
+if (isset($_SESSION['tr_updated'])) {
+    $alert = new alert();
+    if ($_SESSION['tr_updated']) {
+        $alert->exec("TR for Enrollment Number: " . $_SESSION['enrollment'] . " successfully updated!", "success");
+    }
+    else{
+        $alert->exec("Unable to update TR!", "danger");
+    }
+    unset($_SESSION['tr_updated']);
+    unset($_SESSION['enrollment']);
+}
+if(isset($_SESSION['tr_req_close'])){
+    $alert = new alert();
+    if ($_SESSION['tr_req_close']) {
+        $alert->exec("Request Closed", "info");
+    }
+    else{
+        $alert->exec("Unable to close request!", "danger");
+    }
+    unset($_SESSION['tr_req_close']);
+}
 
 ?>
 

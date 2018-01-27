@@ -367,17 +367,15 @@ class course
             <div class="form-group">
                 <label for="roll_course">Course: </label>
                 <select id="roll_course_list" name="roll_course" class="form-control" onChange="roll_get_batch(this.value)" required>
-                    <option value="" disabled selected>Select Course</option>');   
-                        $get_roll_course="SELECT course_id, course_name FROM courses";
-                        $get_roll_course_run=mysqli_query($conn,$get_roll_course);
-                        if($get_roll_course_run)
-                        {
-                            while($roll_courses=mysqli_fetch_assoc($get_roll_course_run))
-                            {
-                                echo('<option value="'.$roll_courses['course_id'].'">'.$roll_courses['course_name'].'</option>');   
-                            }
-                        }                    
-                echo('</select>
+                    <option value="" disabled selected>Select Course</option>');
+		$get_roll_course = "SELECT course_id, course_name FROM courses";
+		$get_roll_course_run = mysqli_query($conn, $get_roll_course);
+		if ($get_roll_course_run) {
+			while ($roll_courses = mysqli_fetch_assoc($get_roll_course_run)) {
+				echo ('<option value="' . $roll_courses['course_id'] . '">' . $roll_courses['course_name'] . '</option>');
+			}
+		}
+		echo ('</select>
             </div>   
             <div class="form-group">
                 <label for="roll_batch">Batch (From Year): </label>
@@ -834,7 +832,7 @@ class super_user_options
 	function message($conn)
 	{
 		if (isset($_POST['send_mail'])) {
-			$input_chk=new input_check();
+			$input_chk = new input_check();
 			$emails = array();
 			$subject = $input_chk->input_safe($conn, $_POST['mail_sub']);
 			$body = $input_chk->input_safe($conn, $_POST['mail_body']);
@@ -987,7 +985,8 @@ class useroptions
 	function update_tr($conn)
 	{
 		if (isset($_POST['tr_update_done'])) {
-			$request_id = $_POST['tr_update_done'];
+			$input_safe=new input_check();
+			$request_id = $input_safe->input_safe($conn,$_POST['tr_update_done']);
 			$get_request_details = "SELECT * FROM edit_tr_request WHERE request_id=" . $request_id;
 			$get_request_details_run = mysqli_query($conn, $get_request_details);
 			if ($get_request_details_run) {
@@ -1523,13 +1522,17 @@ class useroptions
 						$update_atkt = mysqli_query($conn, $update_atkt);
 					}
 					$alert = new alert();
+					$_SESSION['enrollment'] = $enroll;
 					if ($update_fail) {
-						$alert->exec("Unable to update TR!", "danger");
+						$_SESSION['tr_updated'] = false;
+						header('location: useroptions');
 					} else {
-						$update_status="UPDATE edit_tr_request SET status=3 WHERE request_id=$request_id";
-						$update_status_run=mysqli_query($conn,$update_status);
-						$alert->exec("TR for Enrollment Number: " . $enroll . " successfully updated!", "success");
+						$update_status = "UPDATE edit_tr_request SET status=3 WHERE request_id=$request_id";
+						$update_status_run = mysqli_query($conn, $update_status);
+						$_SESSION['tr_updated'] = true;
+						header('location: useroptions');
 					}
+					
 				}
 
 			}
