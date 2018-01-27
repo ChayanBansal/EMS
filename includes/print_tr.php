@@ -368,14 +368,26 @@ $valid->conf_logged_in();
                             for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($sgpa[$i])) {
                                     echo ('<td> - </td>');
-                                } else {
-                                    echo ('<td>' . $sgpa[$i] . '</td>');
+                                } else {    
+                                    if (empty($fail_paper_code[$i])) {
+                                        echo ('<td>' . $sgpa[$i] . '</td>');
+                                    } else {
+                                        echo ("<td> - </td>");
+                                    }
                                 }
                             }
+                            
                             break;
 
                         case 4:
-                            echo ("<td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
+                            echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
+                            if ($fail_flag) {
+                                echo('-');
+                            }
+                            else{
+                            echo($cur_sgpa);
+                            }
+                            echo("</td>");
                             echo ("<td>Result</td>");
                             for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($result_pass_fail[$i])) {
@@ -431,16 +443,29 @@ $valid->conf_logged_in();
                             for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($sgpa[$i])) {
                                     echo ('<td> - </td>');
-                                } else {
-                                    echo ('<td>' . $sgpa[$i] . '</td>');
+                                } else {    
+                                    if (empty($fail_paper_code[$i])) {
+                                        echo ('<td>' . $sgpa[$i] . '</td>');
+                                        
+                                    } else {
+                                        echo ("<td> - </td>");
+                                    }
                                 }
                             }
+                            
                             echo ("</tr>");
                             break;
 
                         case 4:
-                            echo ("<tr><td colspan='12'></td><td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
-                            echo ("<td>Result</td>");
+                        echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
+                        if ($fail_flag) {
+                            echo('-');
+                        }
+                        else{
+                        echo($cur_sgpa);
+                        }
+                        echo("</td>");
+                         echo ("<td>Result</td>");
                             for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($result_pass_fail[$i])) {
                                     echo ('<td> - </td>');
