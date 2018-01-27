@@ -35,6 +35,20 @@
     require("frontend_lib.php");
     require("class_lib.php");
     require('../preloader/preload.php');
+    if(isset($_SESSION['roll_list_added']))
+    {
+        if($_SESSION['roll_list_added']==1)
+        {
+            $roll_list_added_alert = new alert();
+            $roll_list_added_alert->exec("Roll List Added","success");
+        }
+        else if($_SESSION['roll_list_added']==0)
+        {
+            $roll_list_not_added_alert = new alert();
+            $roll_list_not_added_alert->exec("Not able to add the roll list","danger");
+        }
+        unset($_SESSION['roll_list_added']);
+    }
     $validate=new validate();
     $validate->conf_logged_in();
     $obj=new head();
