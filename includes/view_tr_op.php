@@ -404,15 +404,28 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($sgpa[$i])) {
                                     echo ('<td> - </td>');
-                                } else {
-                                    echo ('<td>' . $sgpa[$i] . '</td>');
+                                } else {    
+                                    if (empty($fail_paper_code[$i])) {
+                                        echo ('<td>' . $sgpa[$i] . '</td>');
+                                        
+                                    } else {
+                                        echo ("<td> - </td>");
+                                    }
                                 }
                             }
+                            
                             break;
 
                         case 4:
-                            echo ("<td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
-                            echo ("<td>Result</td>");
+                        echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
+                        if ($fail_flag) {
+                            echo('-');
+                        }
+                        else{
+                        echo($cur_sgpa);
+                        }
+                        echo("</td>");
+                        echo ("<td>Result</td>");
                             for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($result_pass_fail[$i])) {
                                     echo ('<td> - </td>');
@@ -447,7 +460,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
                             break;
                         case 7:
-                            echo ("<td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
+                            echo ("<td colspan='2' style='font-weight:700;'>CGPA : --</td>");// To be replaced by $cur_cgpa
                             break;
                     }
                     echo ('</tr>');
@@ -467,16 +480,29 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($sgpa[$i])) {
                                     echo ('<td> - </td>');
-                                } else {
-                                    echo ('<td>' . $sgpa[$i] . '</td>');
+                                } else {    
+                                    if (empty($fail_paper_code[$i])) {
+                                        echo ('<td>' . $sgpa[$i] . '</td>');
+                                        
+                                    } else {
+                                        echo ("<td> - </td>");
+                                    }
                                 }
                             }
+                            
                             echo ("</tr>");
                             break;
 
                         case 4:
-                            echo ("<tr><td colspan='12'></td><td colspan='2' style='font-weight:700;'>SGPA: $cur_sgpa</td>");
-                            echo ("<td>Result</td>");
+                        echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
+                        if ($fail_flag) {
+                            echo('-');
+                        }
+                        else{
+                        echo($cur_sgpa);
+                        }
+                        echo("</td>");
+                        echo ("<td>Result</td>");
                             for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($result_pass_fail[$i])) {
                                     echo ('<td> - </td>');
@@ -513,7 +539,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             break;
                         case 7:
                             echo ("<tr><td colspan='12'></td>
-                            <td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
+                            <td colspan='2' style='font-weight:700;'>CGPA : --</td>");//To be replaced by $cur_cgpa
                             echo ("</tr>");
                             break;
                     }
