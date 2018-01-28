@@ -416,15 +416,20 @@ require('config.php');
                          </span>
                      </div>
              </caption>
-             <caption align="bottom">
-                 <div class="caption-container">
-                     <div class="block">
-                         <?php
-                            echo($audit_pf.' in '.$audit_code.' ('.$audit_name.') <span class="info"></span>');
-                         ?> 
-                        </div>
-                 </div>
-             </caption>
+             <?php
+             if(isset($audit_pf))
+             {
+                echo(' <caption align="bottom">
+                    <div class="caption-container">
+                        <div class="block">');
+                            
+                                echo($audit_pf.' in '.$audit_code.' ('.$audit_name.') <span class="info"></span>');
+                            
+                            echo('</div>
+                    </div>
+                </caption>');
+             }
+             ?>
          </table>
      </div>
  </div>
