@@ -181,7 +181,7 @@ if(isset($_POST['proceed_to_add_roll']))
           </tr>
           
         </thead>
-        <form action="" method="post">
+        <form action="add_roll_backend" method="post">
         <tbody>');
         
         while($student=mysqli_fetch_assoc($get_students_run))
@@ -243,8 +243,8 @@ if(isset($_POST['proceed_to_add_roll']))
         }
         echo('
         <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$semester.'">Register for Examination</button></center></th></tr>
-        </tbody>
-        </form>
+        </tbody></form>
+        
         </table></div>');
     }
     else
@@ -279,30 +279,3 @@ function toogle_select_all()
 </script>
 </body>
 </html>
-<?php
-if(isset($_POST['create_roll_list']))
-{
-    $input_clear = new input_check();
-    $semester = $input_clear->input_safe($conn,$_POST['create_roll_list']);
-    $enrol_no = $input_clear->input_safe($conn,$_POST['enrol_no']);
-    $total=count($enrol_no);
-    for($i=0; $i<$total ; $i++)
-    {
-        mysqli_autocommit($conn,FALSE);
-        mysqli_begin_transaction($conn);
-        $enrol_number=$enrol[$i];
-        $add_roll="INSERT INTO roll_list(enrol_no,semester) VALUES('$enrol_number',$semester)";
-        $add_roll_run=mysqli_query($conn,$add_roll);
-    }
-    
-    
-        mysqli_commit($conn);
-        $_SESSION['roll_list_added']=1;
-        header('location: home.php');
-    
-    
-    
-    
-    
-}
-?>

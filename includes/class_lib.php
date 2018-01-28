@@ -389,8 +389,9 @@ class course
                     <option value="" disabled selected>Select Semester</option>
                 </select>
             </div>
-      </div>
-      <div class="modal-footer">
+	  </div>
+	  <div class="well" style="margin:10px; background-color:#F45D3D; color:white; font-size:20px;">Please make sure you do not register the same candidate more than once for the same Examination!!</div>
+	  <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success" name="proceed_to_add_roll">Proceed</button>
       </div>
