@@ -132,7 +132,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
     if ($get_count_semesters_run) {
         $semcount = mysqli_fetch_assoc($get_count_semesters_run)['semcount'];
     }
-    $get_students_qry = "SELECT * FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND current_sem=" . $_SESSION['semester'] . " AND from_year=" . $_SESSION['from_year'];
+    $get_students_qry = "SELECT * FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND current_sem=" . $_SESSION['semester'] . " AND from_year=" . $_SESSION['from_year']." AND enrol_no IN(SELECT enrol_no FROM roll_list)";
     $get_students_qry_run = mysqli_query($conn, $get_students_qry);
     if ($get_students_qry_run) {
         $stud_count = 1;
