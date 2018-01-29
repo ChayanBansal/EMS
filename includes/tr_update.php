@@ -108,7 +108,6 @@ if (isset($_POST['tr_edit_close'])) {
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
-
 $validate = new validate();
 $validate->conf_logged_in();
 $options=new useroptions();

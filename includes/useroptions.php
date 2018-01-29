@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -135,9 +136,11 @@ session_start();
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
-require('../preloader/preload.php');
+
 $valid = new validate();
 $valid->conf_logged_in();
+
+require('../preloader/preload.php');
 $obj = new head();
 $obj->displayheader();
 
@@ -799,6 +802,8 @@ function chat(location,username)
 
 
 <?php
+
+
 $obj = new footer();
 $obj->disp_footer();
 $logout_modal = new modals();

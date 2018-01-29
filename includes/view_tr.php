@@ -2,6 +2,8 @@
 session_start();
 require("config.php");
 require("class_lib.php");
+$validate = new validate();
+$validate->conf_logged_in_super();
 if (isset($_POST['view_tr_submit'])) {
     $safety = new input_check();
     if (!(is_nan($_POST['tr_batch']) and is_nan($_POST['tr_course']) and is_nan($_POST['tr_semester'])) and $_SESSION['token'] == $_POST['5d57af0a25794bf7516ef53d2de3a230']) {

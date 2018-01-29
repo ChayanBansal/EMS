@@ -1,6 +1,8 @@
 <?php
 session_start();
 require("class_lib.php");
+$valid = new validate();
+$valid->conf_logged_in();
     require("config.php");
     require("frontend_lib.php");
 if (isset($_POST['tr_view_proceed'])) {
