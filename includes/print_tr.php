@@ -110,10 +110,11 @@ $valid->conf_logged_in();
             $get_roll_id_run = mysqli_query($conn, $get_roll_id);
             $loopcount = 0;
             while ($roll_id = mysqli_fetch_assoc($get_roll_id_run)) {
+                $sem=$roll_id['semester']-1;
                 $get_prev_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $roll_id['roll_id'];
                 $get_prev_sgpa_run = mysqli_query($conn, $get_prev_sgpa);
                 $ressgpa = mysqli_fetch_assoc($get_prev_sgpa_run);
-                $sgpa[$roll_id['semester']] = $ressgpa['sgpa'];
+                $sgpa[$sem] = $ressgpa['sgpa'];
                 /*if ($sgpa[$loopcount] >= 4.0) {
                     $result_pass_fail[$loopcount] = "PASS";
                 } else {
@@ -122,9 +123,9 @@ $valid->conf_logged_in();
                 $get_fail_sub = "SELECT distinct(sub_id) FROM failure_report WHERE roll_id=" . $roll_id['roll_id'];
                 $get_fail_sub_run = mysqli_query($conn, $get_fail_sub);
                 if (mysqli_num_rows($get_fail_sub_run) == 0) {
-                    $result_pass_fail[$loopcount] = "PASS";
+                    $result_pass_fail[$sem] = "PASS";
                 } else {
-                    $result_pass_fail[$loopcount] = "FAIL";
+                    $result_pass_fail[$sem] = "FAIL";
                 }
                 $failtext = "";
                 while ($failsubid = mysqli_fetch_assoc($get_fail_sub_run)) {
@@ -139,7 +140,7 @@ $valid->conf_logged_in();
                         $failtext .= $res['sub_code'] . "[T] ";
                     }
                 }
-                $fail_paper_code[$roll_id['semester']] = $failtext;
+                $fail_paper_code[$sem] = $failtext;
                 $loopcount++;
             }
             $get_cur_rollid = "SELECT roll_id from roll_list WHERE semester=" . $_SESSION['semester'] . " AND enrol_no='" . $student['enrol_no'] . "'";
