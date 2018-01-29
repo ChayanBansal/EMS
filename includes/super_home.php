@@ -905,7 +905,7 @@ function tr_getSemester(tr_type)
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Edit TR Requests</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body table-responsive">
       <table class="table">
     <thead>
       <tr>

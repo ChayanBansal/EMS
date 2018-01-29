@@ -343,7 +343,7 @@ class course
 				//UG list close
 		echo ('</form>
 		</div>
-		<center><div class="main-container" style="width:40%;">
+		<center><div class="main-container" style="width:40%; margin-bottom:100px;">
     <div class="sub-container">
 		<button class="option dark_red" data-toggle="modal" data-target="#add_roll_list_modal"><i style="font-size:36px;"class="fa fa-vcard-o"></i>Add Roll List (Register Students for examinations)</button>
 		</div>
