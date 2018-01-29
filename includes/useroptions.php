@@ -22,7 +22,6 @@
     }
 
     .main-container{
-        
         animation: fadein 500ms ease-in-out 1;
         opacity: 0;
         animation-fill-mode: forwards;
