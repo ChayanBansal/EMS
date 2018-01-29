@@ -171,8 +171,9 @@ if(isset($_POST['proceed_to_add_roll']))
         echo('<div style="display:flex; justify-content:space-around; overflow:auto; margin-bottom:100px; ">
         
         <table style="width:80%;align:center; background-color:#C84646; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
-        <caption>Batch: '.$from_year.' | Semester: '.$semester.'
-
+        <caption>
+        Batch: '.$from_year.' | Semester: '.$semester.'
+        <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students..">
          </caption>
         <thead>
           <tr>
@@ -182,7 +183,7 @@ if(isset($_POST['proceed_to_add_roll']))
           
         </thead>
         <form action="add_roll_backend" method="post">
-        <tbody>');
+        <tbody id="roll_list">');
         
         while($student=mysqli_fetch_assoc($get_students_run))
         {
@@ -275,6 +276,14 @@ function toogle_select_all()
         $("#select_all_check").prop('checked', false);
     }
 }
+$(document).ready(function(){
+  $("#searchbar").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#roll_list tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
 
 </script>
 </body>

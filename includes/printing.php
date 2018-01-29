@@ -77,7 +77,7 @@ if (isset($_POST['print_proceed'])) {
     </div>
         </div>
         <form action="marksheet" method="post">
-        <table class="table table-striped table-responsive table-bordered">
+        <table class="table table-responsive">
          <caption> <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students.."></caption>
     <thead>
       <tr>
