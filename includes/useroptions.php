@@ -169,6 +169,27 @@ if (isset($_SESSION['already_checked'])) {
     }
     unset($_SESSION['already_checked']);
 }
+if (isset($_SESSION['tr_updated'])) {
+    $alert = new alert();
+    if ($_SESSION['tr_updated']) {
+        $alert->exec("TR for Enrollment Number: " . $_SESSION['enrollment'] . " successfully updated!", "success");
+    }
+    else{
+        $alert->exec("Unable to update TR!", "danger");
+    }
+    unset($_SESSION['tr_updated']);
+    unset($_SESSION['enrollment']);
+}
+if(isset($_SESSION['tr_req_close'])){
+    $alert = new alert();
+    if ($_SESSION['tr_req_close']) {
+        $alert->exec("Request Closed", "info");
+    }
+    else{
+        $alert->exec("Unable to close request!", "danger");
+    }
+    unset($_SESSION['tr_req_close']);
+}
 
 ?>
 
@@ -288,40 +309,7 @@ function chat(location,username)
 	});
   }
 
-  function roll_get_batch(course)
-  {
-    $.ajax({
-        type: "POST",
-        url: "roll_list_ajax",
-        data: 'operation=1&course_id='+course,
-        success: function(data)
-                {
-                    $(document.getElementById('roll_batch_list')).html(data);  
-                },
-        error: function(e){
-            $(document.getElementById('roll_batch_list')).html("Unable to load batches");
-        }
-        
-    });
-  }
-
-  function roll_get_semester(batch)
-  {
-    var course = document.getElementById('roll_course_list').value;
-    $.ajax({
-        type: "POST",
-        url: "roll_list_ajax",
-        data: 'operation=2&batch='+batch+'&course='+course,
-        success: function(data)
-                {
-                    $(document.getElementById('roll_semester_list')).html(data);  
-                },
-        error: function(e){
-            $(document.getElementById('roll_semester_list')).html("Unable to load semester");
-        }
-        
-    });
-  }
+ 
 </script>
 <!--ChatBox-->
 <div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
@@ -371,7 +359,7 @@ function chat(location,username)
 
 <div class="main-container col-lg-8 col-md-8 col-sm-12 col-xs-12">
     <div class="sub-container col-lg-8 col-sm-12 col-md-12 col-xs-12">
-        <button class="option dark_red" data-toggle="modal" data-target="#add_roll_list_modal"><i style="font-size:36px;"class="fa fa-vcard-o"></i>Add Roll List (Register Students for examinations)</button>
+        
         <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
         <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
         <button class="option blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-eye-open"></i></div> View TR</button>
@@ -687,62 +675,7 @@ function chat(location,username)
 </div>
 <!-- Edit TR Request Status Modal Close -->
 
-<!-- Add Roll List Modal Box Start -->
 
-
-<!-- Modal -->
-<div id="add_roll_list_modal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-    <form action="add_roll_list" method="post">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Register Students for the Examination (Generate Roll List)</h4>
-      </div>
-      <div class="modal-body">
-        
-            <div class="form-group">
-                <label for="roll_course">Course: </label>
-                <select id="roll_course_list" name="roll_course" class="form-control" onChange="roll_get_batch(this.value)" required>
-                    <option value="" disabled selected>Select Course</option>   
-                    <?php
-                        $get_roll_course="SELECT course_id, course_name FROM courses";
-                        $get_roll_course_run=mysqli_query($conn,$get_roll_course);
-                        if($get_roll_course_run)
-                        {
-                            while($roll_courses=mysqli_fetch_assoc($get_roll_course_run))
-                            {
-                                echo('<option value="'.$roll_courses['course_id'].'">'.$roll_courses['course_name'].'</option>');   
-                            }
-                        }
-                    ?>                    
-                </select>
-            </div>   
-            <div class="form-group">
-                <label for="roll_batch">Batch (From Year): </label>
-                <select id="roll_batch_list" name="roll_batch" class="form-control" onChange="roll_get_semester(this.value)" required>
-                    <option value="" disabled selected>Select batch</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="roll_semester">Semester: </label>
-                <select id="roll_semester_list" name="roll_semester" class="form-control" required>
-                    <option value="" disabled selected>Select Semester</option>
-                </select>
-            </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-success" name="proceed_to_add_roll">Proceed</button>
-      </div>
-      </form>
-    </div>
-
-  </div>
-</div>
-<!-- Add Roll List Modal Box Close -->
 <!-- Check Marks Modal Box -->
 <div id="check_marks_modal" class="modal fade" role="dialog">
   <div class="modal-dialog modal-lg" style="width:95%">

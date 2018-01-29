@@ -7,6 +7,7 @@
     <title>User Options</title>
     <link rel="stylesheet" href="/ems/css/style.css">
     <link rel="stylesheet" href="/ems/w3css/w3.css">
+    <link href="https://fonts.googleapis.com/css?family=Gentium+Book+Basic" rel="stylesheet">
     <style>
     #sem{
         margin: 10px;
@@ -132,12 +133,19 @@
   height: 30px;
   cursor: pointer;
 }
+.student_card{
+    font-family: 'Gentium Book Basic', serif;
+}
 
     </style>
 </head>
 <body>
 <?php
 session_start();
+if(isset($_POST['proceed_to_add_roll']))
+{
+    $_SESSION['current_course_id']=$_POST['roll_course'];
+}
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
@@ -160,30 +168,28 @@ if(isset($_POST['proceed_to_add_roll']))
     $get_students_run=mysqli_query($conn,$get_students);
     if($get_students_run)
     {
-        echo('<div style="display:flex; justify-content:space-around; ">
+        echo('<div style="display:flex; justify-content:space-around; overflow:auto; margin-bottom:100px; ">
         
-        <table style="width:60%;align:center; background-color:#FF7052; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
-        <tcaption>');
-        $get_course_name="SELECT course_name FROM courses WHERE course_id=$course_id";
-        $get_course_name_run=mysqli_query($conn,$get_course_name);
-        $course_name=mysqli_fetch_assoc($get_course_name_run);
+        <table style="width:80%;align:center; background-color:#C84646; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
+        <caption>Batch: '.$from_year.' | Semester: '.$semester.'
 
-        echo($course_name["course_name"].' </tcaption>
+         </caption>
         <thead>
           <tr>
-            <th><center><h2>Select</h2></center></th>
-            <th><center><h2>Student</h2></center></th>
+            <th><center><h2><input type="checkbox" id="select_all_check" onclick="select_all();"></h2></center></th>
+            <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">Student</h2></center></th>
           </tr>
           
         </thead>
+        <form action="add_roll_backend" method="post">
         <tbody>');
         
         while($student=mysqli_fetch_assoc($get_students_run))
         {
           echo('
           <tr>
-            <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" name="enrol_no" value="'.$student['enrol_no'].'"</td>
-            <td>
+            <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" onclick="toogle_select_all()" class="roll_check" name="enrol_no[]" value="'.$student['enrol_no'].'"></td>
+            <td><div class="student_card">
           <div><div class="w3-card-4">
 
             <header class="w3-container w3-blue">
@@ -194,7 +200,9 @@ if(isset($_POST['proceed_to_add_roll']))
             
             <footer class="w3-container w3-blue" style="display:flex; flex-wrap: wrap;align-content: space-around;">
             <h4>
-                Name: '.$student["first_name"]);
+                <table>
+                <tr>
+                <td>Name:</td><td>'.$student["first_name"]);
                 if($student["middle_name"]=="")
                 {
                     echo(' '.$student["last_name"]);
@@ -205,25 +213,38 @@ if(isset($_POST['proceed_to_add_roll']))
                 }
 
             echo('
-            <br>
-            Gender: '.$student["gender"].'
-            <br>
-            Current Semester: '.$student["current_sem"].'
-            <br>
-            Father\'s Name: '.$student["father_name"].'
-            <br>
-            Mother\'s Name: '.$student["mother_name"].'
-            <br>
-            Address: '.$student["address"].'
+            </td>
+            <tr>
+            <td>
+            Gender:</td><td>'.$student["gender"].'
+            </td></tr>
+            <tr>
+            <td>Current Semester:</td><td>'.$student["current_sem"].'
+            </td><td></tr>
+            <tr><td>
+            Father\'s Name:</td><td>'.$student["father_name"].'
+            </td></tr>
+            <tr>
+            <td>
+            Mother\'s Name:</td><td>'.$student["mother_name"].'
+            </td></tr>
+            <tr>
+            <td>
+            Address:</td><td>'.$student["address"].'
+            </td></tr>
+            </table>
             </h4>
             <div class="w3-container" style="float:right">
                 <img src="../stud_img/'.$student['enrol_no'].'.jpg" alt="'.$student['enrol_no'].'">
             </div>
             </footer>
             
-            </div></div></td></tr>');  
+            </div></div></div></td></tr>');  
         }
-        echo('</tbody>
+        echo('
+        <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$semester.'">Register for Examination</button></center></th></tr>
+        </tbody></form>
+        
         </table></div>');
     }
     else
@@ -238,3 +259,23 @@ $obj->disp_footer();
 $logout_modal = new modals();
 $logout_modal->display_logout_modal();
 ?>
+<script>
+function select_all()
+{
+    if(document.getElementById("select_all_check").checked)
+    {
+        $(".roll_check").prop('checked', true);
+    }
+}
+function toogle_select_all()
+{
+    var all_checks = document.getElementsByClassName("roll_check");
+    if(document.getElementsByClassName("roll_check").checked==false)
+    {
+        $("#select_all_check").prop('checked', false);
+    }
+}
+
+</script>
+</body>
+</html>

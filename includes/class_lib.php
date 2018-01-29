@@ -343,6 +343,64 @@ class course
 				//UG list close
 		echo ('</form>
 		</div>
+		<center><div class="main-container" style="width:40%;">
+    <div class="sub-container">
+		<button class="option dark_red" data-toggle="modal" data-target="#add_roll_list_modal"><i style="font-size:36px;"class="fa fa-vcard-o"></i>Add Roll List (Register Students for examinations)</button>
+		</div>
+		</div></center>
+		<!-- Add Roll List Modal Box Start -->
+
+
+<!-- Modal -->
+<div id="add_roll_list_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+    <form action="add_roll_list" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Register Students for the Examination (Generate Roll List)</h4>
+      </div>
+      <div class="modal-body">
+        
+            <div class="form-group">
+                <label for="roll_course">Course: </label>
+                <select id="roll_course_list" name="roll_course" class="form-control" onChange="roll_get_batch(this.value)" required>
+                    <option value="" disabled selected>Select Course</option>');
+		$get_roll_course = "SELECT course_id, course_name FROM courses";
+		$get_roll_course_run = mysqli_query($conn, $get_roll_course);
+		if ($get_roll_course_run) {
+			while ($roll_courses = mysqli_fetch_assoc($get_roll_course_run)) {
+				echo ('<option value="' . $roll_courses['course_id'] . '">' . $roll_courses['course_name'] . '</option>');
+			}
+		}
+		echo ('</select>
+            </div>   
+            <div class="form-group">
+                <label for="roll_batch">Batch (From Year): </label>
+                <select id="roll_batch_list" name="roll_batch" class="form-control" onChange="roll_get_semester(this.value)" required>
+                    <option value="" disabled selected>Select batch</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="roll_semester">Semester: </label>
+                <select id="roll_semester_list" name="roll_semester" class="form-control" required>
+                    <option value="" disabled selected>Select Semester</option>
+                </select>
+            </div>
+	  </div>
+	  <div class="well" style="margin:10px; background-color:#F45D3D; color:white; font-size:20px;">Please make sure you do not register the same candidate more than once for the same Examination!!</div>
+	  <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-success" name="proceed_to_add_roll">Proceed</button>
+      </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+<!-- Add Roll List Modal Box Close -->
 		');
 	}
 }
@@ -775,7 +833,7 @@ class super_user_options
 	function message($conn)
 	{
 		if (isset($_POST['send_mail'])) {
-			$input_chk=new input_check();
+			$input_chk = new input_check();
 			$emails = array();
 			$subject = $input_chk->input_safe($conn, $_POST['mail_sub']);
 			$body = $input_chk->input_safe($conn, $_POST['mail_body']);
@@ -928,7 +986,8 @@ class useroptions
 	function update_tr($conn)
 	{
 		if (isset($_POST['tr_update_done'])) {
-			$request_id = $_POST['tr_update_done'];
+			$input_safe=new input_check();
+			$request_id = $input_safe->input_safe($conn,$_POST['tr_update_done']);
 			$get_request_details = "SELECT * FROM edit_tr_request WHERE request_id=" . $request_id;
 			$get_request_details_run = mysqli_query($conn, $get_request_details);
 			if ($get_request_details_run) {
@@ -961,28 +1020,522 @@ class useroptions
 				foreach ($components as $comp) {
 					$get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=$comp AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
 					$get_sub_id = mysqli_query($conn, $get_sub_id);
-					$subid=mysqli_fetch_assoc($get_sub_id)['sub_id'];
+					$subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
 					//updating score
-					$update_score="UPDATE score SET marks=".$_SESSION['marks'.$comp]." WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
-					$update_score_run=mysqli_query($conn,$update_score);
-					echo($update_score);
-					if($update_score_run){
+					$update_score = "UPDATE score SET marks=" . $_SESSION['marks' . $comp] . " WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+					$update_score_run = mysqli_query($conn, $update_score);
+					if ($update_score_run) {
 						//success	
 					}
 				}
 				//updating tr
+				$update_fail = false;
 				foreach ($components as $comp) {
 					$get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=$comp AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
 					$get_sub_id = mysqli_query($conn, $get_sub_id);
-					$subid=mysqli_fetch_assoc($get_sub_id)['sub_id'];
-					$update_tr="UPDATE score SET marks=".$_SESSION['marks'.$comp]." WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
-					$update_score_run=mysqli_query($conn,$update_score);
-					echo($update_score);
-					if($update_score_run){
-						//success	
+					$subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
+					$get_credits = "SELECT credits_allotted FROM sub_distribution WHERE sub_id=$subid";
+					$sub_id = mysqli_fetch_assoc(mysqli_query($conn, $get_credits));
+
+					$get_score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=$comp AND sub_id=$subid";
+					$score = mysqli_fetch_assoc(mysqli_query($conn, $get_score))['marks'];
+					switch ($comp) {
+						case 1:
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=1 AND sub_id=$subid";
+							$cat_cap_ia = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=2 AND sub_id=$subid";
+							$end_sem = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+
+							$get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid . " AND component_id=" . $comp;
+							$get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
+							$passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks']; //$passing_marks['passing_marks']
+							$check_fail_exists = "SELECT * FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+							$check_fail_exists = mysqli_query($conn, $check_fail_exists);
+
+							if ($cat_cap_ia < $passing_marks) {
+								$update_roll_list = "UPDATE roll_list SET atkt_flag=1 WHERE roll_id=" . $rollid;//Updating atkt_flag
+								$update_roll_list_run = mysqli_query($conn, $update_roll_list);
+
+								if (mysqli_num_rows($check_fail_exists) == 0) {
+									$insert_failure_report = "INSERT INTO failure_report(roll_id, sub_id, component_id) 
+									VALUES($rollid,$subid,$comp)";
+									$insert_failure_report = mysqli_query($conn, $insert_failure_report);
+
+								}
+							} else {
+								if (mysqli_num_rows($check_fail_exists) > 0) {
+									$del_failure = "DELETE FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+									$del_failure_run = mysqli_query($conn, $del_failure);
+								}
+							}
+							$total = $cat_cap_ia + $end_sem;
+							$percentage = (($total * 100) / 100);
+							if ($percentage >= 91 and $percentage <= 100) {
+								$grade = 'O';
+								$gp = 10;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 81 and $percentage < 91) {
+								$grade = 'A+';
+								$gp = 9;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 71 and $percentage < 81) {
+								$grade = 'A';
+								$gp = 8;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 61 and $percentage < 71) {
+								$grade = 'B+';
+								$gp = 7;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 51 and $percentage < 61) {
+								$grade = 'B';
+								$gp = 6;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 41 and $percentage < 51) {
+								$grade = 'C';
+								$gp = 5;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage == 40) {
+								$grade = 'P';
+								$gp = 4;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage < 40) {
+								$grade = 'F';
+								$gp = 0;
+								$cr = 0;
+								$gpv = $gp * $cr;
+							}
+							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr_run = mysqli_query($conn, $update_tr);
+							if (!$update_tr_run) {
+								$update_fail = true;
+							}
+							break;
+
+						case 2:
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=1 AND sub_id=$subid";
+							$cat_cap_ia = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=2 AND sub_id=$subid";
+							$end_sem = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+
+							$get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid . " AND component_id=" . $comp;
+							$get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
+							$passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks']; //$passing_marks['passing_marks']
+							$check_fail_exists = "SELECT * FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+							$check_fail_exists = mysqli_query($conn, $check_fail_exists);
+
+							if ($end_sem < $passing_marks) {
+								$update_roll_list = "UPDATE roll_list SET atkt_flag=1 WHERE roll_id=" . $rollid;//Updating atkt_flag
+								$update_roll_list_run = mysqli_query($conn, $update_roll_list);
+
+								if (mysqli_num_rows($check_fail_exists) == 0) {
+									$insert_failure_report = "INSERT INTO failure_report(roll_id, sub_id, component_id) 
+									VALUES($rollid,$subid,$comp)";
+									$insert_failure_report = mysqli_query($conn, $insert_failure_report);
+
+								}
+							} else {
+								if (mysqli_num_rows($check_fail_exists) > 0) {
+									$del_failure = "DELETE FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+									$del_failure_run = mysqli_query($conn, $del_failure);
+								}
+							}
+							$total = $cat_cap_ia + $end_sem;
+							$percentage = (($total * 100) / 100);
+							if ($percentage >= 91 and $percentage <= 100) {
+								$grade = 'O';
+								$gp = 10;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 81 and $percentage < 91) {
+								$grade = 'A+';
+								$gp = 9;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 71 and $percentage < 81) {
+								$grade = 'A';
+								$gp = 8;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 61 and $percentage < 71) {
+								$grade = 'B+';
+								$gp = 7;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 51 and $percentage < 61) {
+								$grade = 'B';
+								$gp = 6;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 41 and $percentage < 51) {
+								$grade = 'C';
+								$gp = 5;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage == 40) {
+								$grade = 'P';
+								$gp = 4;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage < 40) {
+								$grade = 'F';
+								$gp = 0;
+								$cr = 0;
+								$gpv = $gp * $cr;
+							}
+							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr_run = mysqli_query($conn, $update_tr);
+							if (!$update_tr_run) {
+								$update_fail = true;
+							}
+							break;
+
+						case 3:
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=3 AND sub_id=$subid";
+							$cat_cap_ia = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=4 AND sub_id=$subid";
+							$end_sem = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=5 AND sub_id=$subid";
+							$cat_cap_ia += mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+
+							$get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid . " AND component_id=" . $comp;
+							$get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
+							$passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks']; //$passing_marks['passing_marks']
+							$check_fail_exists = "SELECT * FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+							$check_fail_exists = mysqli_query($conn, $check_fail_exists);
+
+							if ($cat_cap_ia < $passing_marks) {
+								$update_roll_list = "UPDATE roll_list SET atkt_flag=1 WHERE roll_id=" . $rollid;//Updating atkt_flag
+								$update_roll_list_run = mysqli_query($conn, $update_roll_list);
+
+								if (mysqli_num_rows($check_fail_exists) == 0) {
+									$insert_failure_report = "INSERT INTO failure_report(roll_id, sub_id, component_id) 
+									VALUES($rollid,$subid,$comp)";
+									$insert_failure_report = mysqli_query($conn, $insert_failure_report);
+
+								}
+							} else {
+								if (mysqli_num_rows($check_fail_exists) > 0) {
+									$del_failure = "DELETE FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+									$del_failure_run = mysqli_query($conn, $del_failure);
+								}
+							}
+							$total = $cat_cap_ia + $end_sem;
+							$percentage = (($total * 100) / 100);
+							if ($percentage >= 91 and $percentage <= 100) {
+								$grade = 'O';
+								$gp = 10;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 81 and $percentage < 91) {
+								$grade = 'A+';
+								$gp = 9;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 71 and $percentage < 81) {
+								$grade = 'A';
+								$gp = 8;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 61 and $percentage < 71) {
+								$grade = 'B+';
+								$gp = 7;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 51 and $percentage < 61) {
+								$grade = 'B';
+								$gp = 6;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 41 and $percentage < 51) {
+								$grade = 'C';
+								$gp = 5;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage == 40) {
+								$grade = 'P';
+								$gp = 4;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage < 40) {
+								$grade = 'F';
+								$gp = 0;
+								$cr = 0;
+								$gpv = $gp * $cr;
+							}
+							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr_run = mysqli_query($conn, $update_tr);
+							if (!$update_tr_run) {
+								$update_fail = true;
+							}
+							break;
+
+						case 4:
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=3 AND sub_id=$subid";
+							$cat_cap_ia = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=4 AND sub_id=$subid";
+							$end_sem = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=5 AND sub_id=$subid";
+							$cat_cap_ia += mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+
+							$get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid . " AND component_id=" . $comp;
+							$get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
+							$passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks']; //$passing_marks['passing_marks']
+							$check_fail_exists = "SELECT * FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+							$check_fail_exists = mysqli_query($conn, $check_fail_exists);
+
+							if ($end_sem < $passing_marks) {
+								$update_roll_list = "UPDATE roll_list SET atkt_flag=1 WHERE roll_id=" . $rollid;//Updating atkt_flag
+								$update_roll_list_run = mysqli_query($conn, $update_roll_list);
+
+								if (mysqli_num_rows($check_fail_exists) == 0) {
+									$insert_failure_report = "INSERT INTO failure_report(roll_id, sub_id, component_id) 
+									VALUES($rollid,$subid,$comp)";
+									$insert_failure_report = mysqli_query($conn, $insert_failure_report);
+
+								}
+							} else {
+								if (mysqli_num_rows($check_fail_exists) > 0) {
+									$del_failure = "DELETE FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+									$del_failure_run = mysqli_query($conn, $del_failure);
+								}
+							}
+							$total = $cat_cap_ia + $end_sem;
+							$percentage = (($total * 100) / 100);
+							if ($percentage >= 91 and $percentage <= 100) {
+								$grade = 'O';
+								$gp = 10;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 81 and $percentage < 91) {
+								$grade = 'A+';
+								$gp = 9;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 71 and $percentage < 81) {
+								$grade = 'A';
+								$gp = 8;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 61 and $percentage < 71) {
+								$grade = 'B+';
+								$gp = 7;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 51 and $percentage < 61) {
+								$grade = 'B';
+								$gp = 6;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 41 and $percentage < 51) {
+								$grade = 'C';
+								$gp = 5;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage == 40) {
+								$grade = 'P';
+								$gp = 4;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage < 40) {
+								$grade = 'F';
+								$gp = 0;
+								$cr = 0;
+								$gpv = $gp * $cr;
+							}
+							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr_run = mysqli_query($conn, $update_tr);
+							if (!$update_tr_run) {
+								$update_fail = true;
+							}
+							break;
+
+						case 5:
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=3 AND sub_id=$subid";
+							$cat_cap_ia = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=4 AND sub_id=$subid";
+							$end_sem = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=5 AND sub_id=$subid";
+							$ia = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+							$cat_cap_ia += $ia;
+
+							$get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid . " AND component_id=" . $comp;
+							$get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
+							$passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks']; //$passing_marks['passing_marks']
+							$check_fail_exists = "SELECT * FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+							$check_fail_exists = mysqli_query($conn, $check_fail_exists);
+							if ($ia < $passing_marks) {
+
+								$update_roll_list = "UPDATE roll_list SET atkt_flag=1 WHERE roll_id=" . $rollid;//Updating atkt_flag
+								$update_roll_list_run = mysqli_query($conn, $update_roll_list);
+
+								if (mysqli_num_rows($check_fail_exists) == 0) {
+									$insert_failure_report = "INSERT INTO failure_report(roll_id, sub_id, component_id) 
+									VALUES($rollid,$subid,$comp)";
+									$insert_failure_report = mysqli_query($conn, $insert_failure_report);
+
+								}
+							} else {
+								if (mysqli_num_rows($check_fail_exists) > 0) {
+									$del_failure = "DELETE FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+									$del_failure_run = mysqli_query($conn, $del_failure);
+								}
+							}
+							$total = $cat_cap_ia + $end_sem;
+							$percentage = (($total * 100) / 100);
+							if ($percentage >= 91 and $percentage <= 100) {
+								$grade = 'O';
+								$gp = 10;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 81 and $percentage < 91) {
+								$grade = 'A+';
+								$gp = 9;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 71 and $percentage < 81) {
+								$grade = 'A';
+								$gp = 8;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 61 and $percentage < 71) {
+								$grade = 'B+';
+								$gp = 7;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 51 and $percentage < 61) {
+								$grade = 'B';
+								$gp = 6;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 41 and $percentage < 51) {
+								$grade = 'C';
+								$gp = 5;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage == 40) {
+								$grade = 'P';
+								$gp = 4;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage < 40) {
+								$grade = 'F';
+								$gp = 0;
+								$cr = 0;
+								$gpv = $gp * $cr;
+							}
+							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr_run = mysqli_query($conn, $update_tr);
+							if (!$update_tr_run) {
+								$update_fail = true;
+							}
+							break;
+
+						case 6:
+							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=6 AND sub_id=$subid";
+							$ie = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
+
+							$get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid . " AND component_id=" . $comp;
+							$get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
+							$passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks']; //$passing_marks['passing_marks']
+							$check_fail_exists = "SELECT * FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+							$check_fail_exists = mysqli_query($conn, $check_fail_exists);
+
+							if ($ie < $passing_marks) {
+								$update_roll_list = "UPDATE roll_list SET atkt_flag=1 WHERE roll_id=" . $rollid;//Updating atkt_flag
+								$update_roll_list_run = mysqli_query($conn, $update_roll_list);
+
+								if (mysqli_num_rows($check_fail_exists) == 0) {
+									$insert_failure_report = "INSERT INTO failure_report(roll_id, sub_id, component_id) 
+									VALUES($rollid,$subid,$comp)";
+									$insert_failure_report = mysqli_query($conn, $insert_failure_report);
+
+								}
+							} else {
+								if (mysqli_num_rows($check_fail_exists) > 0) {
+									$del_failure = "DELETE FROM failure_report WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+									$del_failure_run = mysqli_query($conn, $del_failure);
+								}
+							}
+							$total = $ie;
+							$percentage = (($total * 100) / 100);
+							if ($percentage >= 91 and $percentage <= 100) {
+								$grade = 'O';
+								$gp = 10;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 81 and $percentage < 91) {
+								$grade = 'A+';
+								$gp = 9;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 71 and $percentage < 81) {
+								$grade = 'A';
+								$gp = 8;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 61 and $percentage < 71) {
+								$grade = 'B+';
+								$gp = 7;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 51 and $percentage < 61) {
+								$grade = 'B';
+								$gp = 6;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage >= 41 and $percentage < 51) {
+								$grade = 'C';
+								$gp = 5;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage == 40) {
+								$grade = 'P';
+								$gp = 4;
+								$cr = $sub_id['credits_allotted'];
+								$gpv = $gp * $cr;
+							} else if ($percentage < 40) {
+								$grade = 'F';
+								$gp = 0;
+								$cr = 0;
+								$gpv = $gp * $cr;
+							}
+							$update_tr = "UPDATE tr SET ie=$ie, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr_run = mysqli_query($conn, $update_tr);
+							if (!$update_tr_run) {
+								$update_fail = true;
+							}
+							break;
+
+
+
 					}
+					$check_atkt_flag = "SELECT count(*) FROM failure_report WHERE roll_id=$rollid";
+					$check_atkt_flag = mysqli_query($conn, $check_atkt_flag);
+					if (mysqli_fetch_assoc($check_atkt_flag)['count(*)'] == 0) {
+						$update_atkt = "UPDATE roll_list SET atkt_flag=0 WHERE roll_id=$rollid";
+						$update_atkt = mysqli_query($conn, $update_atkt);
+					}
+					$alert = new alert();
+					$_SESSION['enrollment'] = $enroll;
+					if ($update_fail) {
+						$_SESSION['tr_updated'] = false;
+						header('location: useroptions');
+					} else {
+						$update_status = "UPDATE edit_tr_request SET status=3 WHERE request_id=$request_id";
+						$update_status_run = mysqli_query($conn, $update_status);
+						$_SESSION['tr_updated'] = true;
+						header('location: useroptions');
+					}
+					
 				}
-				
+
 			}
 		}
 	}
