@@ -113,7 +113,7 @@ $valid->conf_logged_in();
                 $get_prev_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $roll_id['roll_id'];
                 $get_prev_sgpa_run = mysqli_query($conn, $get_prev_sgpa);
                 $ressgpa = mysqli_fetch_assoc($get_prev_sgpa_run);
-                $sgpa[$loopcount] = $ressgpa['sgpa'];
+                $sgpa[$roll_id['semester']] = $ressgpa['sgpa'];
                 /*if ($sgpa[$loopcount] >= 4.0) {
                     $result_pass_fail[$loopcount] = "PASS";
                 } else {
@@ -139,7 +139,7 @@ $valid->conf_logged_in();
                         $failtext .= $res['sub_code'] . "[T] ";
                     }
                 }
-                $fail_paper_code[$loopcount] = $failtext;
+                $fail_paper_code[$roll_id['semester']] = $failtext;
                 $loopcount++;
             }
             $get_cur_rollid = "SELECT roll_id from roll_list WHERE semester=" . $_SESSION['semester'] . " AND enrol_no='" . $student['enrol_no'] . "'";
