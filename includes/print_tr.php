@@ -420,7 +420,13 @@ $valid->conf_logged_in();
                             break;
 
                         case 6:
-                            echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
+                            echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
+                            if (empty($fail_paper_code[$_SESSION['semester']])) {
+                                echo ('<td> - </td>');
+                            } else {
+                                echo ("<td>" . $fail_paper_code[$_SESSION['semester']] . "</td>");
+                            }
+                            echo('</td>');
                             break;
                         case 7:
                             echo ("<td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
