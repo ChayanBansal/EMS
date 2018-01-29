@@ -242,7 +242,7 @@ $input_btn = new input_button();
             case 6:
                 if ($req_details['ie_flag'] == 1) {
                     echo ('<td>' . $comp['component_name'] . '</td>');
-                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=1 AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=6 AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=6 AND sub_id=$subid";
