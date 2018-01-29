@@ -46,7 +46,6 @@ if (isset($_POST['print_proceed'])) {
         color: white;
     
     }
-    
     </style>
 </head>
 <body>

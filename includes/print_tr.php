@@ -200,6 +200,16 @@ $valid->conf_logged_in();
             $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
             $get_subjects_qry_run = mysqli_query($conn, $get_subjects_qry);
             $rowcount = 1;
+            $fail_flag_fr = "SELECT count(*) FROM failure_report WHERE roll_id=$cur_rollid";
+            $fail_flag_fr=mysqli_query($conn,$fail_flag_fr);
+            $fail_flag_fr=mysqli_fetch_assoc($fail_flag_fr)['count(*)'];
+            if($fail_flag_fr==0){
+                $failure=FALSE;
+            }
+            else{
+                $failure=TRUE;
+            }
+           
             $fail_flag = false;
             while ($subject = mysqli_fetch_assoc($get_subjects_qry_run)) {
                 echo ('<tr style="vertical-align:middle">');
@@ -382,7 +392,7 @@ $valid->conf_logged_in();
 
                         case 4:
                             echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
-                            if ($fail_flag) {
+                            if ($failure) {
                                 echo('-');
                             }
                             else{
@@ -405,7 +415,7 @@ $valid->conf_logged_in();
                             break;
 
                         case 5:
-                            if ($fail_flag) {
+                            if ($failure) {
                                 echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
                             } else {
                                 echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
@@ -430,8 +440,8 @@ $valid->conf_logged_in();
                             echo('</td>');
                             break;
                         case 7:
-                            echo ("<td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
-                            break;
+                        echo ("<td colspan='2' style='font-weight:700;'>CGPA : --</td>");// To be replaced by $cur_cgpa
+                        break;
                     }
                     echo ('</tr>');
                     $rowcount++;
@@ -465,7 +475,7 @@ $valid->conf_logged_in();
 
                         case 4:
                         echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
-                        if ($fail_flag) {
+                        if ($failure) {
                             echo('-');
                         }
                         else{
@@ -485,10 +495,10 @@ $valid->conf_logged_in();
 
                         case 5:
                             echo ("<tr><td colspan='12'></td>");
-                            if ($fail_flag) {
+                            if ($failure) {
                                 echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
                             } else {
-                                echo ("<td colspan='2' style='font-weight:700; color: #1AC124' >Result : PASS</td>");
+                               echo ("<td colspan='2' style='font-weight:700; color: #1AC124' >Result : PASS</td>");
                             }
 
                             echo ("<td>Fail In Paper Code</td>");
@@ -509,8 +519,8 @@ $valid->conf_logged_in();
                             echo ("</tr>");
                             break;
                         case 7:
-                            echo ("<tr><td colspan='12'></td>
-                            <td colspan='2' style='font-weight:700;'>CGPA : $cur_cgpa</td>");
+                            echo ("<tr><td colspan='12'>
+                            CGPA : --</td>");// To be replaced by $cur_cgpa
                             echo ("</tr>");
                             break;
                     }
