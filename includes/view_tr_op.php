@@ -474,7 +474,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         if (empty($fail_paper_code[$_SESSION['semester']-1])) {
                             echo ('<td> - </td>');
                         } else {
-                            echo ("<td>" . $fail_paper_code[$_SESSION['semester']-1] . "</td>");
+                            echo ( $fail_paper_code[$_SESSION['semester']-1] . "</td>");
                         }
                         echo('</td>');
                         break;
@@ -556,7 +556,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         if (empty($fail_paper_code[$_SESSION['semester']-1])) {
                             echo ('<td> - </td>');
                         } else {
-                            echo ("<td>" . $fail_paper_code[$_SESSION['semester']-1] . "</td>");
+                            echo ($fail_paper_code[$_SESSION['semester']-1] . "</td>");
                         }
                         echo('</td>');
                          echo ("</tr>");

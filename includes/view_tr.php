@@ -118,7 +118,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
         if ($get_count_semesters_run) {
             $semcount = mysqli_fetch_assoc($get_count_semesters_run)['semcount'];
         }
-        $get_students_qry = "SELECT * FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND current_sem=" . $_SESSION['semester'] . " AND from_year=" . $_SESSION['from_year']." AND enrol_no IN(SELECT enrol_no FROM roll_list)";
+        $get_students_qry = "SELECT * FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND current_sem=" . $_SESSION['semester'] . " AND from_year=" . $_SESSION['from_year'] . " AND enrol_no IN(SELECT enrol_no FROM roll_list)";
         $get_students_qry_run = mysqli_query($conn, $get_students_qry);
         if ($get_students_qry_run) {
             $stud_count = 1;
@@ -133,7 +133,7 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                 $get_roll_id_run = mysqli_query($conn, $get_roll_id);
                 $loopcount = 0;
                 while ($roll_id = mysqli_fetch_assoc($get_roll_id_run)) {
-                    $sem=$roll_id['semester']-1;
+                    $sem = $roll_id['semester'] - 1;
                     $get_prev_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $roll_id['roll_id'];
                     $get_prev_sgpa_run = mysqli_query($conn, $get_prev_sgpa);
                     $ressgpa = mysqli_fetch_assoc($get_prev_sgpa_run);
@@ -165,8 +165,6 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                     }
                     $fail_paper_code[$sem] = $failtext;
                     $loopcount++;
-               
-
                 }
                 $get_cur_rollid = "SELECT roll_id from roll_list WHERE semester=" . $_SESSION['semester'] . " AND enrol_no='" . $student['enrol_no'] . "'";
                 $get_cur_rollid_run = mysqli_query($conn, $get_cur_rollid);
@@ -221,15 +219,14 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                 $get_subjects_qry_run = mysqli_query($conn, $get_subjects_qry);
                 $rowcount = 1;
                 $fail_flag_fr = "SELECT count(*) FROM failure_report WHERE roll_id=$cur_rollid";
-            $fail_flag_fr=mysqli_query($conn,$fail_flag_fr);
-            $fail_flag_fr=mysqli_fetch_assoc($fail_flag_fr)['count(*)'];
-            if($fail_flag_fr==0){
-                $failure=FALSE;
-            }
-            else{
-                $failure=TRUE;
-            }
-           
+                $fail_flag_fr = mysqli_query($conn, $fail_flag_fr);
+                $fail_flag_fr = mysqli_fetch_assoc($fail_flag_fr)['count(*)'];
+                if ($fail_flag_fr == 0) {
+                    $failure = false;
+                } else {
+                    $failure = true;
+                }
+
                 $fail_flag = false;
                 while ($subject = mysqli_fetch_assoc($get_subjects_qry_run)) {
                     echo ('<tr style="vertical-align:middle">');
@@ -401,10 +398,10 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                                 for ($i = 0; $i < $semcount; $i++) {
                                     if (empty($sgpa[$i])) {
                                         echo ('<td> - </td>');
-                                    } else {    
+                                    } else {
                                         if (empty($fail_paper_code[$i])) {
                                             echo ('<td>' . $sgpa[$i] . '</td>');
-                                            
+
                                         } else {
                                             echo ("<td> - </td>");
                                         }
@@ -413,15 +410,14 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                                 break;
 
                             case 4:
-                            echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
-                            if ($failure) {
-                                echo('-');
-                            }
-                            else{
-                            echo($cur_sgpa);
-                            }
-                            echo("</td>");
-                            echo ("<td>Result</td>");
+                                echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
+                                if ($failure) {
+                                    echo ('-');
+                                } else {
+                                    echo ($cur_sgpa);
+                                }
+                                echo ("</td>");
+                                echo ("<td>Result</td>");
                                 for ($i = 0; $i < $semcount; $i++) {
                                     if (empty($result_pass_fail[$i])) {
                                         echo ('<td> - </td>');
@@ -437,31 +433,31 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                                 break;
 
                             case 5:
-                            
-                            if ($failure) {
-                                echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
-                            } else {
-                               echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
+
+                                if ($failure) {
+                                    echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
+                                } else {
+                                    echo ("<td colspan='2' style='font-weight:700; color: #1AC124'>Result : PASS</td>");
                                 }
                                 echo ("<td>Fail In Paper Code</td>");
                                 for ($i = 0; $i < $semcount; $i++) {
                                     if (empty($fail_paper_code[$i])) {
-                                        echo ('<td> - </td>');
+                                        echo ('<td>-</td>');
                                     } else {
-                                        echo ("<td>" . $fail_paper_code[$i] . "</td>");
+                                        echo ("<td>".$fail_paper_code[$i] . "</td>");
                                     }
                                 }
                                 break;
 
                             case 6:
-                            echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
-                            if (empty($fail_paper_code[$_SESSION['semester']-1])) {
-                                echo ('<td> - </td>');
-                            } else {
-                                echo ("<td>" . $fail_paper_code[$_SESSION['semester']-1] . "</td>");
-                            }
-                            echo('</td>');
-                             break;
+                                echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
+                                if (empty($fail_paper_code[$_SESSION['semester'] - 1])) {
+                                    echo ('<td> - </td>');
+                                } else {
+                                    echo ($fail_paper_code[$_SESSION['semester'] - 1] . "</td>");
+                                }
+                                echo ('</td>');
+                                break;
                             case 7:
                                 echo ("<td colspan='2' style='font-weight:700;'>CGPA : -- </td>");// to be replaced by actual $cur_cgpa
                                 break;
@@ -480,32 +476,31 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                             <td colspan="2" style="font-weight:700;"> Semester ' . $convert->numberToRomanRepresentation($_SESSION['semester']) . '</td>
                             <td>SGPA</td>
                             ');
-                            for ($i = 0; $i < $semcount; $i++) {
-                                if (empty($sgpa[$i])) {
-                                    echo ('<td> - </td>');
-                                } else {    
-                                    if (empty($fail_paper_code[$i])) {
-                                        echo ('<td>' . $sgpa[$i] . '</td>');
-                                        
+                                for ($i = 0; $i < $semcount; $i++) {
+                                    if (empty($sgpa[$i])) {
+                                        echo ('<td> - </td>');
                                     } else {
-                                        echo ("<td> - </td>");
+                                        if (empty($fail_paper_code[$i])) {
+                                            echo ('<td>' . $sgpa[$i] . '</td>');
+
+                                        } else {
+                                            echo ("<td> - </td>");
+                                        }
                                     }
                                 }
-                            }
-                            
+
                                 echo ("</tr>");
                                 break;
 
                             case 4:
-                            echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
-                            if ($failure) {
-                                echo('-');
-                            }
-                            else{
-                            echo($cur_sgpa);
-                            }
-                            echo("</td>");
-                            echo ("<td>Result</td>");
+                                echo ("<td colspan='2' style='font-weight:700;'>SGPA: ");
+                                if ($failure) {
+                                    echo ('-');
+                                } else {
+                                    echo ($cur_sgpa);
+                                }
+                                echo ("</td>");
+                                echo ("<td>Result</td>");
                                 for ($i = 0; $i < $semcount; $i++) {
                                     if (empty($result_pass_fail[$i])) {
                                         echo ('<td> - </td>');
@@ -527,23 +522,23 @@ $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Pass
                                 echo ("<td>Fail In Paper Code</td>");
                                 for ($i = 0; $i < $semcount; $i++) {
                                     if (empty($fail_paper_code[$i])) {
-                                        echo ('<td> - </td>');
+                                        echo ('<td>-</td>');
                                     } else {
-                                        echo ("<td>" . $fail_paper_code[$i] . "</td>");
+                                        echo ("<td>".$fail_paper_code[$i] . "</td>");
                                     }
                                 }
                                 echo ("</tr>");
                                 break;
 
                             case 6:
-                            echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
-                            if (empty($fail_paper_code[$_SESSION['semester']-1])) {
-                                echo ('<td> - </td>');
-                            } else {
-                                echo ("<td>" . $fail_paper_code[$_SESSION['semester']-1] . "</td>");
-                            }
-                            echo('</td>');
-                            echo ("</tr>");
+                                echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
+                                if (empty($fail_paper_code[$_SESSION['semester'] - 1])) {
+                                    echo ('<td> - </td>');
+                                } else {
+                                    echo ($fail_paper_code[$_SESSION['semester'] - 1] . "</td>");
+                                }
+                                echo ('</td>');
+                                echo ("</tr>");
                                 break;
                             case 7:
                                 echo ("<tr><td colspan='12'></td>
