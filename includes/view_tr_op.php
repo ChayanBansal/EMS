@@ -147,10 +147,11 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             $get_roll_id_run = mysqli_query($conn, $get_roll_id);
             $loopcount = 0;
             while ($roll_id = mysqli_fetch_assoc($get_roll_id_run)) {
+                $sem=$roll_id['semester']-1;
                 $get_prev_sgpa = "SELECT sgpa FROM exam_summary WHERE roll_id=" . $roll_id['roll_id'];
                 $get_prev_sgpa_run = mysqli_query($conn, $get_prev_sgpa);
                 $ressgpa = mysqli_fetch_assoc($get_prev_sgpa_run);
-                $sgpa[$loopcount] = $ressgpa['sgpa'];
+                $sgpa[$sem] = $ressgpa['sgpa'];
                 /*if ($sgpa[$loopcount] >= 4.0) {
                     $result_pass_fail[$loopcount] = "PASS";
                 } else {
@@ -158,10 +159,10 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                 }Doubtful Code*/
                 $get_fail_sub = "SELECT distinct(sub_id) FROM failure_report WHERE roll_id=" . $roll_id['roll_id'];
                 $get_fail_sub_run = mysqli_query($conn, $get_fail_sub);
-                if (mysqli_affected_rows($conn) == 0) {
-                    $result_pass_fail[$loopcount] = "PASS";
+                if (mysqli_num_rows($get_fail_sub_run) == 0) {
+                    $result_pass_fail[$sem] = "PASS";
                 } else {
-                    $result_pass_fail[$loopcount] = "FAIL";
+                    $result_pass_fail[$sem] = "FAIL";
                 }
                 $failtext = "";
                 while ($failsubid = mysqli_fetch_assoc($get_fail_sub_run)) {
@@ -176,7 +177,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                         $failtext .= $res['sub_code'] . "[T] ";
                     }
                 }
-                $fail_paper_code[$loopcount] = $failtext;
+                $fail_paper_code[$sem] = $failtext;
                 $loopcount++;
             }
             $get_cur_rollid = "SELECT roll_id from roll_list WHERE semester=" . $_SESSION['semester'] . " AND enrol_no='" . $student['enrol_no'] . "'";
@@ -457,8 +458,14 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             break;
 
                         case 6:
-                            echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
-                            break;
+                        echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
+                        if (empty($fail_paper_code[$_SESSION['semester']-1])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            echo ("<td>" . $fail_paper_code[$_SESSION['semester']-1] . "</td>");
+                        }
+                        echo('</td>');
+                        break;
                         case 7:
                             echo ("<td colspan='2' style='font-weight:700;'>CGPA : --</td>");// To be replaced by $cur_cgpa
                             break;
@@ -533,9 +540,14 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             break;
 
                         case 6:
-                            echo ('<tr><td colspan="12"></td>
-                            <td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :</td>');
-                            echo ("</tr>");
+                        echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
+                        if (empty($fail_paper_code[$_SESSION['semester']-1])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            echo ("<td>" . $fail_paper_code[$_SESSION['semester']-1] . "</td>");
+                        }
+                        echo('</td>');
+                         echo ("</tr>");
                             break;
                         case 7:
                             echo ("<tr><td colspan='12'></td>
