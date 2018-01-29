@@ -22,7 +22,7 @@
     $password = new input_field();
     $submit = new input_button();
     ?>
-<form action='' method='post' onsubmit="return disable_on_submitinput()">
+<form action='' method='post' onsubmit="return disable_on_submitinput()"  autocomplete="off">
     <div class="form-container">
 		<div class="main">
 			 <div class="login">

@@ -33,7 +33,7 @@ if (isset($_POST['login'])) {
     $submit = new input_button();
     ?>
     <div id="err"></div>
-<form  action='' method='post' onsubmit="return disable_on_submitinput()">
+<form  action='' method='post' onsubmit="return disable_on_submitinput()" autocomplete="off">
     <div class="form-container">
 		<div class="main">
 			 <div class="login">

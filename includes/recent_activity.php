@@ -13,7 +13,6 @@
 
             $get_audit="SELECT component_id, sub_code, semester, atkt_flag, course_id, from_year FROM auditing WHERE transaction_id=".$data['transaction_id'];
             $get_audit_run=mysqli_query($conn,$get_audit);
-            
             if($get_audit_run)
             {
                 $audit=mysqli_fetch_assoc($get_audit_run);
