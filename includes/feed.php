@@ -123,7 +123,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
 $input = new input_field();
 
 ?>
- <div id="err" style="position: fixed; top: 0; width: 100%"></div>
+ <div id="err" style="position: fixed; top: 0; width: 100%;z-index: 1000"></div>
  <form action="" method="post">
      <div class="feed-container">
         <div class="subselected">

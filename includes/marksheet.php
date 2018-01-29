@@ -411,7 +411,8 @@ require('config.php');
                      <div class="block">CGPA: 
                          <span class="info">
                             <?php
-                                echo($stud['cgpa']);
+                                echo('--');
+                                //echo($stud['cgpa']);
                             ?>
                          </span>
                      </div>
