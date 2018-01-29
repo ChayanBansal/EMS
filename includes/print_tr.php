@@ -423,9 +423,9 @@ $valid->conf_logged_in();
                         case 6:
                             echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
                             if (empty($fail_paper_code[$_SESSION['semester']-1])) {
-                                echo ('<td> - </td>');
+                                echo (' - </td>');
                             } else {
-                                echo ("<td>" . $fail_paper_code[$_SESSION['semester']-1] . "</td>");
+                                echo ( $fail_paper_code[$_SESSION['semester']-1] . "</td>");
                             }
                             echo('</td>');
                             break;
@@ -505,12 +505,6 @@ $valid->conf_logged_in();
                         case 6:
                             echo ('<tr><td colspan="12"></td>
                             <td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
-                            if (empty($fail_paper_code[$_SESSION['semester']-1])) {
-                                echo ('<td> - </td>');
-                            } else {
-                                echo ("<td>" . $fail_paper_code[$_SESSION['semester']-1] . "</td>");
-                            }
-                            
                             echo('</td>');
                             echo ("</tr>");
                             break;
