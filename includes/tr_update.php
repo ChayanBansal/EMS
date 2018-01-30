@@ -26,7 +26,7 @@ if (isset($_POST['tr_edit_close'])) {
             $rollid = $req_details['roll_id'];
         }
     } else {
-        header('location: 404.html');
+       header('location: 404.html');
     }
 }
 
@@ -157,7 +157,6 @@ $input_btn = new input_button();
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=1 AND sub_id=$subid";
-                    
                     $max_marks = round(mysqli_fetch_assoc(mysqli_query($conn, $max_marks))['max_marks']);
                     $get_tr_marks = "SELECT marks FROM score WHERE roll_id=$rollid AND sub_id=$subid AND component_id=1";
                     $get_tr_marks = mysqli_query($conn, $get_tr_marks);

@@ -988,6 +988,7 @@ class useroptions
 		if (isset($_POST['tr_update_done'])) {
 			$input_safe=new input_check();
 			$request_id = $input_safe->input_safe($conn,$_POST['tr_update_done']);
+			mysqli_autocommit($conn,FALSE);
 			$get_request_details = "SELECT * FROM edit_tr_request WHERE request_id=" . $request_id;
 			$get_request_details_run = mysqli_query($conn, $get_request_details);
 			if ($get_request_details_run) {
@@ -1203,7 +1204,6 @@ class useroptions
 							$end_sem = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
 							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=5 AND sub_id=$subid";
 							$cat_cap_ia += mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
-
 							$get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid . " AND component_id=" . $comp;
 							$get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
 							$passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks']; //$passing_marks['passing_marks']
@@ -1512,9 +1512,29 @@ class useroptions
 								$update_fail = true;
 							}
 							break;
-
-
-
+					}
+					$total_earned_gpv="SELECT gpv,cr FROM tr WHERE roll_id=$rollid";
+					$total_earned_gpv=mysqli_query($conn,$total_earned_gpv);
+					$total_cr_allot=0;
+					$total_earn_gpv=0;
+					$total_cr_earned=0;
+					while($res=mysqli_fetch_assoc($total_earned_gpv)){
+						$total_cr_earned+=$res['cr'];
+						$total_earn_gpv+=$res['gpv'];
+					}
+					$get_total_cr="SELECT credits_allotted FROM sub_distribution WHERE sub_code IN
+					(SELECT sub_code FROM subjects WHERE course_id IN 
+					(SELECT course_id FROM students WHERE enrol_no IN
+					(SELECT enrol_no FROM roll_list WHERE roll_id=$rollid)))";
+					$get_total_cr_run=mysqli_query($conn,$get_total_cr);
+					while($cred=mysqli_fetch_assoc($get_total_cr_run)){
+						$total_cr_allot+=$cred['credits_allotted'];
+					}
+					$sgpa=$total_earn_gpv/$total_cr_allot;
+					$update_exam_summary="UPDATE exam_summary SET total_credits_earned=$total_cr_earned,total_gpv_earned=$total_earn_gpv,sgpa=$sgpa WHERE roll_id=$rollid";
+					$update_exam_summary_run=mysqli_query($conn,$update_exam_summary);
+					if(!$update_exam_summary_run){
+						$update_fail=TRUE;
 					}
 					$check_atkt_flag = "SELECT count(*) FROM failure_report WHERE roll_id=$rollid";
 					$check_atkt_flag = mysqli_query($conn, $check_atkt_flag);
@@ -1525,11 +1545,14 @@ class useroptions
 					$alert = new alert();
 					$_SESSION['enrollment'] = $enroll;
 					if ($update_fail) {
+						mysqli_rollback($conn);
 						$_SESSION['tr_updated'] = false;
 						header('location: useroptions');
 					} else {
 						$update_status = "UPDATE edit_tr_request SET status=3 WHERE request_id=$request_id";
 						$update_status_run = mysqli_query($conn, $update_status);
+						mysqli_commit($conn);
+						mysqli_autocommit($conn,TRUE);
 						$_SESSION['tr_updated'] = true;
 						header('location: useroptions');
 					}
