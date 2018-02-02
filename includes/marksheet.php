@@ -215,10 +215,15 @@ require('config.php');
         }
     </style>
 </head>
-
 <body onload='history.replaceState("", "", "printing");window.print();window.history.back();'><!--window.print(); window.history.back(); history.replaceState("", "", "printing"); window.history.back()-->
     <div class="first1">
-        <div class="s_image"><img src="/ems/stud_img/<?=$stud['enrol_no']?>.jpg" alt="" class="stud_img"></div>
+    <div class="s_image"><img src="/ems/stud_img/<?=$stud['enrol_no']?><?php
+    if(file_exists("../stud_img/".$stud['enrol_no'].".png")){
+        echo(".png");
+    }else{
+        echo(".jpg");
+    }
+    ?>" alt="" class="stud_img"></div>
     </div>
     <div class="main1">
         <div class="upper">
