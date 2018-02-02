@@ -236,7 +236,13 @@ if(isset($_POST['proceed_to_add_roll']))
             </table>
             </h4>
             <div class="w3-container" style="float:right">
-                <img src="../stud_img/'.$student['enrol_no'].'.jpg" alt="'.$student['enrol_no'].'">
+                <img src="../stud_img/'.$student['enrol_no']);
+                if(file_exists("../stud_img/".$student['enrol_no'].".png")){
+                    echo(".png");
+                }else{
+                    echo(".jpg");
+                }
+                echo('" alt="'.$student['enrol_no'].'">
             </div>
             </footer>
             
