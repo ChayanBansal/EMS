@@ -805,6 +805,7 @@ class super_user_options
 	{
 		if (isset($_POST['session_update_submit'])) {
 			$alert = new alert();
+			$input_chk=input_check();
 			$ay = $input_chk->input_safe($conn, $_POST['session_ay']);
 			$course_id = $input_chk->input_safe($conn, $_POST['session_update_submit']);
 			$semester = $input_chk->input_safe($conn, $_POST['session_semester']);
