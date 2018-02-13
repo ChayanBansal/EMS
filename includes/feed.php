@@ -82,16 +82,13 @@ if (isset($_POST['proceed_to_feed'])) {
     }
     table tbody tr:nth-child(odd):hover{
         transition: all 300ms ease-in-out;
-        background: #3D98ED;
+        background: white;
         box-shadow: 5px 7px 1px rgba(96, 101, 106,0.5);
-        color: white;
     }
     table tr:nth-child(even):hover{
         transition: all 300ms ease-in-out;
-        background: #DB450D;
+        background: white;
         box-shadow: 5px 7px 1px rgba(96, 101, 106,0.5);
-        color: white;
-    
     }
     table.table-bordered > tbody > tr >td{
         border: 1px solid #204F93 !important;
