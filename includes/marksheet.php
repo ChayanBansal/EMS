@@ -164,12 +164,12 @@ require('config.php');
                 width: 40%;
                 float: left;
                 font-size: 13px;
-                color: rgb(0, 6, 83);
+                color: rgb(0, 20, 100);
             }
             .t2 {
                 width: 50%;
                 font-size: 13px;
-                color: rgb(0, 6, 83);
+                color: rgb(0, 20, 100);
             }
             .t1 td {
                 vertical-align: top;
@@ -199,13 +199,14 @@ require('config.php');
             }
             .t3 th {
                 padding: 0px;
-                color: #A42116;
+                color: #c61809;
                 font-weight: 700;
                 font-size: 12px;
             }
             .t3 td {
                 padding: 1px;
                 font-size: 12px;
+                color: rgb(0, 20, 100);
             }
             .block {
                 padding: 1px;
