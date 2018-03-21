@@ -98,13 +98,15 @@ if ($_POST['getComponent']) {
     }
 }
 if (isset($_POST['get_ay'])) {
-    $get_course_years = "SELECT distinct(from_year) FROM students WHERE course_id=" . $_POST['get_ay'];
+    $get_course_years = "SELECT distinct(from_year) FROM academic_sessions WHERE course_id=" . $_POST['get_ay'];
     $get_course_years_run = mysqli_query($conn, $get_course_years);
-    if ($get_course_years_run) {
+    if ($get_course_years_run && mysqli_num_rows($get_course_years_run)>0) {
         while ($row = mysqli_fetch_assoc($get_course_years_run)) {
             echo ('<option value="' . $row['from_year'] . '" >' . $row['from_year'] . '</option>   
                 ');
         }
+    }else{
+        echo ('<option disabled>No academic session!</option>');
     }
 }
 

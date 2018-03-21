@@ -557,29 +557,13 @@ function tr_getSemester(tr_type)
             ?>
             <div class="form-group">
                 <label for="name">Academic Year</label>
-                <select name="session_year" id="type" class="form-control" required>
-                    <?php
-                    $input = new input_field();
-                    $get_details_qry = "SELECT distinct(from_year) as acad_year from students";
-                    $get_details_qry_run = mysqli_query($conn, $get_details_qry);
-                    if ($get_details_qry_run) {
-                      while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
-                        echo ('
-                        <option value="' . $row['acad_year'] . '">' . $row['acad_year'] . '</option>
-                        ');
-                      }
-                    } else {
-                      $alert = new alert();
-                      $alert->exec("Unable to fetch session academic years....", "warning");
-                    }
-                    ?>
-                 </select>
+                <input type="number" name="session_year" min="2016" class="form-control">
                 </div>
                 <div class="form-group">
                 <label for="type">Course Name</label>
                 <select name="session_course" id="type" class="form-control" required>
                 <?php
-                $get_details_qry = "SELECT distinct s.course_id,course_name from students s, courses c where s.course_id=c.course_id";
+                $get_details_qry = "SELECT course_id,course_name from courses";
                 $get_details_qry_run = mysqli_query($conn, $get_details_qry);
                 if ($get_details_qry_run) {
                   while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
@@ -792,8 +776,7 @@ function tr_getSemester(tr_type)
          <div class="modal-body">
             <table class="table table-striped table-bordered" style="width: 100%">
             <caption class="form-inline">
-
-<div class="form-group">
+    <div class="form-group">
          <select name="sub_view_course" id="sub_view_course" class="form-control" onchange="show_sub_year(this.value)" required>
          <option value="" disabled selected>Select a course</option>   
          <?php
@@ -1263,20 +1246,6 @@ function tr_getSemester(tr_type)
    <div class="form-group">
             <select name="myear" id="myear" class="form-control" required>
             <option value="" disabled selected>Select Academic Year</option>
-            <?php
-            $get_year_qry = "SELECT distinct(from_year) from academic_sessions";
-            $get_year_qry_run = mysqli_query($conn, $get_year_qry);
-            if ($get_year_qry_run) {
-              while ($row = mysqli_fetch_assoc($get_year_qry_run)) {
-                echo ('
-                    <option value="' . $row['from_year'] . '" >' . $row['from_year'] . '</option>   
-                    ');
-              }
-            } else {
-              $alert = new alert();
-              $alert->exec("Unable to fetch academic sessions for subjects!", "warning");
-            }
-            ?>  
            </select>
         </div>
         <div class="form-group">

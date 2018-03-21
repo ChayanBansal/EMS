@@ -19,10 +19,10 @@ if (isset($_POST['tr_subcode'])) {
 }
 if(isset($_POST['sub_view'])){
     $cid=$_POST['course_id'];
-    $get_ay="SELECT distinct(from_year) FROM students WHERE course_id=$cid";
+    $get_ay="SELECT distinct(from_year) FROM academic_sessions WHERE course_id=$cid";
     $get_ay_run=mysqli_query($conn,$get_ay);
     if(mysqli_num_rows($get_ay_run)==0){
-        echo("<option>No students found!</option>");
+        echo("<option>No subjects found!</option>");
     }
     else{
         echo("<option disabled selected>Select academic year</option>");
@@ -33,7 +33,7 @@ if(isset($_POST['sub_view'])){
     
 }
 if(isset($_POST['sub_view_sem'])){
-    $get_sem="SELECT distinct(semester) FROM subjects WHERE course_id=".$_POST['course_id']." AND from_year=".$_POST['year'];
+    $get_sem="SELECT current_semester as semester FROM academic_sessions WHERE course_id=".$_POST['course_id']." AND from_year=".$_POST['year'];
     $get_sem_run=mysqli_query($conn,$get_sem);
     if(mysqli_num_rows($get_sem_run)==0){
         echo("<option>No subjects found!</option>");
@@ -44,9 +44,10 @@ if(isset($_POST['sub_view_sem'])){
             echo('<option value="'.$sem['semester'].'">'.$sem['semester'].'</option>');    
         }
     }
+    echo($get_sem);
 }
 if(isset($_POST['sub_view_disp'])){
-    $get_subject="SELECT sub_code,sub_name,elective_flag,ie_flag FROM subjects WHERE course_id=".$_POST['course_id']." AND from_year=".$_POST['year']." AND semester=".$_POST['sem'];
+    $get_subject="SELECT sub_code,sub_name,elective_flag,ie_flag FROM subjects WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=".$_POST['course_id']." AND from_year=".$_POST['year']." AND current_semester=".$_POST['sem'].")";
     $get_subject_run=mysqli_query($conn,$get_subject);
     echo($_POST['course_id'].$_POST['year']);
     $i=1;

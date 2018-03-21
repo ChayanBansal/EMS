@@ -117,7 +117,7 @@ $input_btn = new input_button();
             </div>
 
 <?php
-$get_current_sem_qry = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id'];
+$get_current_sem_qry = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id']." ORDER BY current_semester LIMIT 1";
 $get_current_sem_qry_run = mysqli_query($conn, $get_current_sem_qry);
 if ($get_current_sem_qry_run) {
     while ($semester = mysqli_fetch_assoc($get_current_sem_qry_run)) {
@@ -153,7 +153,8 @@ if ($get_current_sem_qry_run) {
         <tbody>');
         $subject_count = 0;
         $subject_completed = 0;
-        $get_sub_qry = "SELECT * from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND semester=" . $sem . " AND from_year=" . $_SESSION['from_year'];
+        $get_sub_qry = "SELECT * from subjects WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND current_semester=" . $sem . " AND from_year=" . $_SESSION['from_year'].")";
+        echo $get_sub_qry;
         $get_sub_qry_run = mysqli_query($conn, $get_sub_qry);
         if ($get_sub_qry_run) {
             while ($sub = mysqli_fetch_assoc($get_sub_qry_run)) {
@@ -195,12 +196,15 @@ if ($get_current_sem_qry_run) {
             }
         }
         $prog_width = ($subject_completed / $subject_count) * 100;
+        echo("SELECT count(*) FROM tr WHERE roll_id IN(SELECT roll_id FROM roll_list WHERE enrol_no IN(SELECT enrol_no FROM students WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] ."AND current_semester=" . $sem . ")");
+        
         echo ('</tbody>
         <caption align="bottom">
         <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center">
+        
         <div class="col-lg-7 col-md-7 col-sm-6">');
         if ($subject_count == $subject_completed) {
-            $check_tr_generated = "SELECT count(*) FROM tr WHERE roll_id IN(SELECT roll_id FROM roll_list WHERE enrol_no IN(SELECT enrol_no FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . ") AND semester=" . $sem . ")";
+            $check_tr_generated = "SELECT count(*) FROM tr WHERE roll_id IN(SELECT roll_id FROM roll_list WHERE enrol_no IN(SELECT enrol_no FROM students WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] ." AND current_semester=" . $sem . "))";
             $check_tr_generated_run = mysqli_query($conn, $check_tr_generated);
             $check_tr_gen = mysqli_fetch_assoc($check_tr_generated_run)['count(*)'];
             if ($check_tr_gen > 0) {

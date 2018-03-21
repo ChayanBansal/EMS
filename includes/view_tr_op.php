@@ -121,7 +121,7 @@ $obj->displayheader();
 require('../preloader/preload.php');
 $options = new useroptions();
 $valid = new validate();
-$valid->conf_logged_in();
+//$valid->conf_logged_in();
 $options->request_tr_update($conn);
 $obj->dispmenu(4, ["/ems/includes/home", "/ems/includes/logout", "/ems/includes/useroptions", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
 $dashboard = new dashboard();
