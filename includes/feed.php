@@ -155,8 +155,10 @@ $input = new input_field();
     if($elective_flag['elective_flag']==0)
     {
         if ($_SESSION['main_atkt'] == "main") {
-            $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,roll_list r where course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
-        } else if ($_SESSION['main_atkt'] == "atkt") {
+            $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,roll_list r where s.ac_session_id IN
+                            (SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND current_semester=".$_SESSION['semester'].") 
+                            AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
+        } else if ($_SESSION['main_atkt'] == "atkt") {// FOR FUTURE INCREMENT
             $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,atkt_list r where course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
         }
         $get_stud_qry_run = mysqli_query($conn, $get_stud_qry);
