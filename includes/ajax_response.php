@@ -46,12 +46,12 @@ if ($_POST['getSubject'] == 1) {
     if ($_POST['from_year'] and $_POST['main_atkt'] and $_POST['semester']) {
         echo ('<option value="">Select Subject</option>');
         if ($_POST['main_atkt'] == 'main') {
-            $get_sub_main = "SELECT sub_code, sub_name FROM subjects WHERE course_id=" . $_SESSION['current_course_id'] . " AND semester=" . $_POST['semester'] . " AND from_year=" . $_POST['from_year'];
+            $get_sub_main = "SELECT sub_code, sub_name FROM subjects WHERE ac_session_id IN (SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND semester=" . $_POST['semester'] . " AND from_year=" . $_POST['from_year'].")";
             $get_sub_main_run = mysqli_query($conn, $get_sub_main);
             while ($main_sub = mysqli_fetch_assoc($get_sub_main_run)) {
                 echo ('<option value="' . $main_sub['sub_code'] . '">' . $main_sub['sub_name'] . '</option>');
             }
-        } else if ($_POST['main_atkt'] == 'main') {
+        } else if ($_POST['main_atkt'] == 'atkt') {//FOR FUTURE INCREMENT
             $get_atkt_sub = "SELECT sub_code, sub_name FROM subjects WHERE sub_code IN 
                             (SELECT DISTINCT(sub_code) FROM sub_distribution WHERE sub_id IN
                             (SELECT sub_id FROM atkt_subjects WHERE roll_id IN
