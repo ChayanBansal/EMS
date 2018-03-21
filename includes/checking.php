@@ -171,7 +171,7 @@ $input_btn = new input_button();
     <tbody id="checking_table">
      <?php 
         $get_fed_marks="SELECT st.enrol_no, st.first_name, st.middle_name, st.last_name, st.father_name, sc.marks, r.roll_id FROM students st, score sc, roll_list r WHERE sc.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=".$_SESSION['check_transaction_id']." AND st.enrol_no IN
-                        (SELECT enrol_no FROM students WHERE from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'].")";
+                        (SELECT enrol_no FROM students WHERE ac_session_id IN (SELECT ac_session_id from academic_sessions WHERE from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id']."))";
         $get_fed_marks_run=mysqli_query($conn,$get_fed_marks);
         while($fed_marks=mysqli_fetch_assoc($get_fed_marks_run))
         {
