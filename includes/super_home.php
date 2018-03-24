@@ -823,9 +823,8 @@ function tr_getSemester(tr_type)
     </table>
             </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <!--<button type="submit" class="btn btn-primary" name="course_submit">Submit</button>-->
-        </div>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
+          </div>
         </div>
         
       </div>
@@ -833,8 +832,6 @@ function tr_getSemester(tr_type)
     
   </div>
   <!--End-->
-
-
  <!-- Update Subject Modal -->
  <div class="modal fade" id="updatesubjectdialog" role="dialog">
       <div class="modal-dialog">
