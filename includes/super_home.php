@@ -595,6 +595,20 @@ function tr_getSemester(tr_type)
             $input = new input_button();
             ?>
             <table class="table table-responsive table-striped table-bordered">
+            <caption>
+            <form class="form-inline">
+            <div class="form-group">
+                    <label for="session_type">Type :</label>
+                    <select id="session_type" name="session_type" class="form-control" required onchange="show_session_contents(this.value)">
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="main">Main</option>
+                        <option value="retotal">Retotaling</option>
+                        <option value="reval">Revaluation</option>
+                        <option value="atkt">ATKT</option>
+                    </select>
+                </div>
+              </form>
+            </caption>
             <thead>
                 <tr style="text-align:center">
                 <th>Academic Year</th>

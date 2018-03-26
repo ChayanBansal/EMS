@@ -30,6 +30,9 @@ if (isset($_POST['login'])) {
     $user_name = new input_field();
     $password = new input_field();
     $submit = new input_button();
+    //Backend scripting
+$op_login = new form_receive();
+$op_login->login();
     ?>
     <div id="err"></div>
 <form  action='' method='post' onsubmit="return disable_on_submitinput()" autocomplete="off">
@@ -84,8 +87,6 @@ if (isset($_POST['login'])) {
         </script>
 </html>
 <?php
-//Backend scripting
-$op_login = new form_receive();
-$op_login->login();
+
 require('preloader/preload.php');
 ?>
