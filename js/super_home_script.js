@@ -129,6 +129,32 @@ function check_credits(el, no) {
             break;
     }
 }
+function show_session_contents(stype){
+    $.ajax({
+        type:'POST',
+        url:'modal_ajax',
+        data:'session_display=1&type='+stype,
+        success:function(contents){
+            $("#session-display").html(contents);
+        },
+        error:function(log){
+            console.log(log);
+        }
+    });
+}
+function get_session_display_sem(year){
+    $.ajax({
+        type:'POST',
+        url:'modal_ajax',
+        data:'session_year=1&year='+year,
+        success:function(contents){
+            $("#session_course").html(contents);
+        },
+        error:function(log){
+            console.log(log);
+        }
+    });
+}
 function toggle_course_name(){
     var course=document.getElementById("cname");
     if(course.hasAttribute("readonly")){

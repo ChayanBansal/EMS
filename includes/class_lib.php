@@ -777,32 +777,130 @@ class super_user_options
 	{
 		if (isset($_POST['session_submit'])) {
 			$alert = new alert();
+			$type=$_POST['session_type'];
 			$course_id = $_POST['session_course'];
 			$from_year = $_POST['session_year'];
 			$semester = $_POST['session_semester'];
-			$check_session_qry = "SELECT count(*) from academic_sessions where from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
-			$check_session_qry_run = mysqli_query($conn, $check_session_qry);
-			if ($check_session_qry_run) {
-				$result_count = mysqli_fetch_assoc($check_session_qry_run);
-				if ($result_count['count(*)'] == 0) {
-					mysqli_autocommit($conn, false);
-					$add_session_qry = "INSERT into academic_sessions(from_year,course_id,current_semester) VALUES($from_year,$course_id,$semester)";
-					$add_session_qry_run = mysqli_query($conn, $add_session_qry);
-					if ($add_session_qry_run) {
-						mysqli_commit($conn);
-						mysqli_autocommit($conn, true);
-						$alert->exec("Session successfully created!", "success");
+			switch ($type) {
+				case 'main':
+				$check_session_qry = "SELECT count(*) from academic_sessions where from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+				$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+				if ($check_session_qry_run) {
+					$result_count = mysqli_fetch_assoc($check_session_qry_run);
+					if ($result_count['count(*)'] == 0) {
+						mysqli_autocommit($conn, false);
+						$add_session_qry = "INSERT into academic_sessions(from_year,course_id,current_semester) VALUES($from_year,$course_id,$semester)";	
 					} else {
-						$alert->exec("Unable to create session!", "danger");
+						mysqli_rollback($conn);
+						mysqli_autocommit($conn, true);
+						$alert->exec("Academic session already exists! Consider updating session..", "warning");
+						return;
 					}
-				} else {
-					mysqli_rollback($conn);
+				}
+				else{
+					return;
+				}
+				break;
+				
+				case 'retotal':
+				$get_ac_session="SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+				$get_ac_session_run=mysqli_query($conn,$get_ac_session);
+				if(mysqli_num_rows($get_ac_session_run)==0){
+					$alert->exec("Please open an academic session first!","warning");
+					return;
+				}
+				else{
+					$ac_sess_id=mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
+				}
+				$check_session_qry = "SELECT count(*) from ems_retotal.retotal_sessions where ac_session_id =$ac_sess_id";
+				$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+				if ($check_session_qry_run) {
+					$result_count = mysqli_fetch_assoc($check_session_qry_run);
+					if ($result_count['count(*)'] == 0) {
+						mysqli_autocommit($conn, false);
+						$add_session_qry = "INSERT INTO ems_retotal.retotal_sessions(ac_session_id) VALUES($ac_sess_id)";	
+					} else {
+						mysqli_rollback($conn);
+						mysqli_autocommit($conn, true);
+						$alert->exec("Retotalling session already exists!", "warning");
+						return;
+					}
+				}
+				else{
+					return;
+				}
+				
+				break;
+				case 'reval':
+				$get_ac_session="SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+				$get_ac_session_run=mysqli_query($conn,$get_ac_session);
+				if(mysqli_num_rows($get_ac_session_run)==0){
+					$alert->exec("Please open an academic session first!","warning");
+					return;
+				}
+				else{
+					$ac_sess_id=mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
+				}
+				$check_session_qry = "SELECT count(*) from ems_reval.reval_sessions where ac_session_id =$ac_sess_id";
+				$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+				if ($check_session_qry_run) {
+					$result_count = mysqli_fetch_assoc($check_session_qry_run);
+					if ($result_count['count(*)'] == 0) {
+						mysqli_autocommit($conn, false);
+						$add_session_qry = "INSERT INTO ems_reval.reval_sessions(ac_session_id) VALUES($ac_sess_id)";	
+					} else {
+						mysqli_rollback($conn);
+						mysqli_autocommit($conn, true);
+						$alert->exec("Revaluation session already exists!", "warning");
+						return;
+					}
+				}
+				else{
+					return;
+				}
+				break;
+				case 'atkt':
+				$get_ac_session="SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+				$get_ac_session_run=mysqli_query($conn,$get_ac_session);
+				if(mysqli_num_rows($get_ac_session_run)==0){
+					$alert->exec("Please open an academic session first!","warning");
+					return;
+				}
+				else{
+					$ac_sess_id=mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
+				}
+				$check_session_qry = "SELECT count(*) from ems_atkt.atkt_sessions where ac_session_id =$ac_sess_id";
+				$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+				if ($check_session_qry_run) {
+					$result_count = mysqli_fetch_assoc($check_session_qry_run);
+					if ($result_count['count(*)'] == 0) {
+						mysqli_autocommit($conn, false);
+						$add_session_qry = "INSERT INTO ems_atkt.atkt_sessions(ac_session_id) VALUES($ac_sess_id)";	
+					} else {
+						mysqli_rollback($conn);
+						mysqli_autocommit($conn, true);
+						$alert->exec("ATKT session already exists!", "warning");
+						return;
+					}
+				}
+				else{
+					return;
+				}
+					break;
+
+				default:
+					# code...
+					break;
+			}
+			$add_session_qry_run = mysqli_query($conn, $add_session_qry);
+				if ($add_session_qry_run) {
+					mysqli_commit($conn);
 					mysqli_autocommit($conn, true);
-					$alert->exec("Academic session already exists! Consider updating session..", "warning");
+					$alert->exec("Session successfully created!", "success");
+				} else {
+					$alert->exec("Unable to create session!", "danger");
 				}
 			}
-		}
-
 	}
 
 	function update_session($conn)

@@ -556,34 +556,16 @@ function tr_getSemester(tr_type)
             $input = new input_field();
             ?>
             <div class="form-group">
-                <label for="name">Academic Year</label>
-                <input type="number" name="session_year" min="2016" class="form-control">
+                    <label for="session_type">Type :</label>
+                    <select id="session_type" name="session_type" class="form-control" required onchange="show_session_contents(this.value)">
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="main">Main</option>
+                        <option value="retotal">Retotaling</option>
+                        <option value="reval">Revaluation</option>
+                        <option value="atkt">ATKT</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                <label for="type">Course Name</label>
-                <select name="session_course" id="type" class="form-control" required>
-                <?php
-                $get_details_qry = "SELECT course_id,course_name from courses";
-                $get_details_qry_run = mysqli_query($conn, $get_details_qry);
-                if ($get_details_qry_run) {
-                  while ($row = mysqli_fetch_assoc($get_details_qry_run)) {
-                    echo ('
-                        <option value="' . $row['course_id'] . '">' . $row['course_name'] . '</option>
-                        ');
-                  }
-                } else {
-                  $alert = new alert();
-                  $alert->exec("Unable to fetch session courses....", "warning");
-                }
-                ?>
-                 </select>
-                </div>
-                <div class="form-group">
-                <label for="semester">Semester</label>
-                <?php
-                $input->display_table("semester", "form-control", "number", "session_semester", "", 1, 0, 8, 0, 8);
-                ?>
-                </div>
+            <div id="session-display">
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

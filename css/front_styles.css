@@ -21,7 +21,7 @@ body{
     z-index: 200 !important;
 }
 .title{
-    font-size: 2.6rem;
+    font-size: 2.4rem;
     color: white;
     font-family: "Segoe UI",Arial,sans-serif;
     text-transform: uppercase;
@@ -30,7 +30,7 @@ body{
 .container{
     font-size: 24px !important;
     width: 100%!important;
-    min-height: 70px!important;
+    min-height: 5rem !important;
     padding: 5px!important;
     display: flex;         /* establish flex container */
     flex-direction: row;            /* default value; can be omitted */
@@ -41,7 +41,7 @@ body{
     margin: 0;
 }
 .logo img{
-    height: 70px;
+    height: 5rem ;
 }
 .text{
     font-size: 2.2rem;
@@ -131,7 +131,7 @@ a{
     flex-wrap: nowrap;              /* default value; can be omitted */
     justify-content: space-between;
     align-items: center;
-    height: 8rem;
+    height: 6rem;
     width: 100%;
     padding: 5px;
     color: white;
@@ -230,6 +230,9 @@ a{
 }
 @media (max-width:590px){
     .title{
+        display: none;
+    }
+    .footer-img{
         display: none;
     }
 }
