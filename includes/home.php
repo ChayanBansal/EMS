@@ -70,10 +70,11 @@
           <script>
      function roll_get_batch(course)
   {
+      var type=document.getElementById("roll_course_list").value;
     $.ajax({
         type: "POST",
         url: "roll_list_ajax",
-        data: 'operation=1&course_id='+course,
+        data: 'operation=1&course_id='+course+'&type='+type,
         success: function(data)
                 {
                     $(document.getElementById('roll_batch_list')).html(data);  
@@ -87,11 +88,12 @@
 
   function roll_get_semester(batch)
   {
+    var type=document.getElementById("roll_course_list").value;
     var course = document.getElementById('roll_course_list').value;
     $.ajax({
         type: "POST",
         url: "roll_list_ajax",
-        data: 'operation=2&batch='+batch+'&course='+course,
+        data: 'operation=2&batch='+batch+'&course='+course+'&type='+type,
         success: function(data)
                 {
                     $(document.getElementById('roll_semester_list')).html(data);  

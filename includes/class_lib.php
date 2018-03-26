@@ -345,7 +345,7 @@ class course
 		</div>
 		<center><div class="main-container" style="width:40%; margin-bottom:100px;">
     <div class="sub-container">
-		<button class="option dark_red" data-toggle="modal" data-target="#add_roll_list_modal"><i style="font-size:36px;"class="fa fa-vcard-o"></i>Add Roll List (Register Students for examinations)</button>
+		<button class="option dark_red" data-toggle="modal" data-target="#add_roll_list_modal"><i style="font-size:36px;"class="fa fa-vcard-o"></i>Student Registration Section</button>
 		</div>
 		</div></center>
 		<!-- Add Roll List Modal Box Start -->
@@ -360,11 +360,32 @@ class course
     <form action="add_roll_list" method="post">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Register Students for the Examination (Generate Roll List)</h4>
+		<h4 class="modal-title">Student Registration Section
+			<p style="font-size:12px;">
+				Academic Semester |
+				Main Exam |
+				Retotaling |
+				Revaluation |
+				ATKT
+			</p>
+		</h4>
+		
       </div>
       <div class="modal-body">
-        
-            <div class="form-group">
+			<div class="form-group">
+				<label for="register_for_type">Type </label>
+				<select id="register_for_type" name="register_for_type" class="form-control" required>
+					<option value="" disabled selected>Select Type</option>
+					<option value="1" >Academic Semester</option>
+					<option value="2" >Main</option>
+					<option value="3" >Retotaling</option>
+					<option value="4" >Revaluation</option>
+					<option value="5" >ATKT</option>
+
+				</select>
+			</div>
+			
+	  		<div class="form-group">
                 <label for="roll_course">Course: </label>
                 <select id="roll_course_list" name="roll_course" class="form-control" onChange="roll_get_batch(this.value)" required>
                     <option value="" disabled selected>Select Course</option>');
