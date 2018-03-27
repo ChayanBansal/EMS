@@ -298,9 +298,10 @@ class course
 {
 	function randomize()
 	{
-		$colors = ["blue", "red", "green", "yellow", "pink"];
-		$i = mt_rand(0, 4);
-		return $colors[$i];
+		//$colors = ["blue", "red", "green", "yellow", "pink"];
+		//$i = mt_rand(0, 4);
+		//return $colors[$i];
+		return "chayanraghav_class_blue";
 	}
 
 

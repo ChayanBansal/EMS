@@ -308,6 +308,13 @@ table td{
     cursor: pointer;
     background: #98148E;
 }
+.chayanraghav_class_blue{
+    
+    background: rgba(0, 50, 135,1) !important;
+}
+.chayanraghav_class_blue:hover{
+    background: #0041AE;
+}
 
 a{
     color: inherit;
@@ -363,41 +370,43 @@ a{
 /*Custom bootstrap menu styles*/ 
 #custom-bootstrap-menu.navbar-default .navbar-brand {
     color: rgba(255, 255, 255, 1);
+    background: #D90000;
+    
 }
 #custom-bootstrap-menu.navbar-default {
     font-size: 16px;
-    background-color: rgba(21, 112, 203, 1);
+    background-color: #D90000;
     border-width: 0px;
     font-family: Helvetica;
+    box-shadow: 0px 4px 8px #BD6E6E ;
 }
 #custom-bootstrap-menu.navbar-default .navbar-nav>li>a {
     color: rgba(255, 255, 255, 1);
-    background-color: rgba(248, 248, 248, 0);
 }
 #custom-bootstrap-menu.navbar-default .navbar-nav>li>a:hover,
 #custom-bootstrap-menu.navbar-default .navbar-nav>li>a:focus {
     color: rgba(255, 255, 255, 1);
-    background-color: rgba(80, 157, 234, 1);
+    background-color: rgba(80, 78, 78, 0.4);
 }
 #custom-bootstrap-menu.navbar-default .navbar-nav>.active>a,
 #custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
 #custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
     color: rgba(255, 255, 255, 1);
-    background-color: rgba(80, 157, 234, 1);
+    background-color: rgba(80, 78, 78, 0.4);
 }
 #custom-bootstrap-menu.navbar-default .navbar-toggle {
-    border-color: #509dea;
+    border-color: rgba(80, 78, 78, 0.4);
 }
 #custom-bootstrap-menu.navbar-default .navbar-toggle:hover,
 #custom-bootstrap-menu.navbar-default .navbar-toggle:focus {
-    background-color: #509dea;
+    background-color: rgba(80, 78, 78, 0.4);
 }
 #custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
-    background-color: #509dea;
+    background-color: rgba(80, 78, 78, 0.4);
 }
 #custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar,
 #custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
-    background-color: #1570cb;
+    background-color: rgba(80, 78, 78, 0.4);
 }
 
 @media (max-width:768px){

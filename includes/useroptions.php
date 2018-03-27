@@ -47,6 +47,9 @@
         display: flex;
         flex-wrap: wrap;
         color: white;
+        background-color: ;
+        border-color: rgba(0, 50, 135,0.2) !important;
+        border-radius: 3px;
         font-size: 2rem;
         flex-direction: column;
         align-items: center;
@@ -118,14 +121,20 @@
     }
     #accordion2{
         display: block;
+        align-items:center;
+        justify-content: center;
         padding: 20px;
         background-color: #f1f1f1;
-        height: 100%;
+        height: 720px;
+        margin-top: 0;
         margin-bottom: 70px;
       }
       .chat_box{
         height:250px;
         overflow:auto;
+      }
+      .chayanraghav_block{
+          display: flex;
       }
 
     </style>
@@ -196,10 +205,7 @@ if(isset($_SESSION['tr_req_close'])){
 
 ?>
 
-<div class="cr_container">
-<div class="tcaption">
-Please select a choice:</div>
-</div>
+
 <?php
 /*$options=new useroptions();
 $options->display($conn);
@@ -315,8 +321,9 @@ function chat(location,username)
  
 </script>
 <!--ChatBox-->
+<div style="background: red;display: block">
 <div class="panel-group col-lg-3 col-md-4 col-sm-12 col-xs-12" id="accordion2" >
-   <h3><center>Chat</center></h3>
+   <h3 style="margin-top:-5px"><center>Chat</center></h3>
    <?php 
     $get_users = "SELECT CONCAT('s',super_admin_id) AS id, super_admin_username AS username, super_admin_name AS name FROM super_admin UNION
     SELECT CONCAT('o',operator_id) As id, operator_username AS username, operator_name AS name FROM operators";
@@ -358,19 +365,31 @@ function chat(location,username)
 
     ?>  
 </div>
+</div>
     <!--ChatBoxEnd-->
 
 <div class="main-container col-lg-8 col-md-8 col-sm-12 col-xs-12">
-    <div class="sub-container col-lg-8 col-sm-12 col-md-12 col-xs-12">
-        
-        <button class="option red " data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
-        <button class="option green " data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
-        <button class="option blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-eye-open"></i></div> View TR</button>
-        <button class="option yellow" data-toggle="modal" data-target="#print_tr"><div><i class="glyphicon glyphicon-print"></i></div> Print TR</button>
-        <button class="option dark_red" data-toggle="modal" data-target="#edit_tr_request"><div><i class= "glyphicon glyphicon-ok-circle" ></i></div> Edit TR Requests</button> 
-        <button class="option pink" data-toggle="modal" data-target="#gen_marksheet"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
 
+    <div class="sub-container col-lg-8 col-sm-12 col-md-12 col-xs-12">
+    <div class="cr_container">
+<div class="tcaption">
+Please select a choice:</div>
+</div>
+<div>
+    <div class="chayanraghav_block ">
+        <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
+        <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
     </div>
+    <div class="chayanraghav_block">
+        <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-eye-open"></i></div> View TR</button>
+        <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#print_tr"><div><i class="glyphicon glyphicon-print"></i></div> Print TR</button>
+    </div>
+    <div class="chayanraghav_block">
+        <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#edit_tr_request"><div><i class= "glyphicon glyphicon-ok-circle" ></i></div> Edit TR Requests</button> 
+        <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#gen_marksheet"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
+    </div>
+    </div>
+</div>
 </div> 
 
 <!-- Modal -->

@@ -8,7 +8,7 @@
 }
 body{
     margin: 0;
-    background: rgba(42, 69, 142 ,0.1);
+    background: rgba(209, 209, 209 ,0.85);
 }
 .menu-contain{
     position: fixed;
@@ -21,7 +21,7 @@ body{
     z-index: 200 !important;
 }
 .title{
-    font-size: 2.4rem;
+    font-size: 2rem;
     color: white;
     font-family: "Segoe UI",Arial,sans-serif;
     text-transform: uppercase;
@@ -36,7 +36,8 @@ body{
     flex-direction: row;            /* default value; can be omitted */
     flex-wrap: nowrap;              /* default value; can be omitted */
     justify-content: space-between; /* switched from default (flex-start, see below) */
-    background: #2A458E;
+    background: #373737;
+    box-shadow: 0px 4px 8px black ;
     align-items: center;
     margin: 0;
 }
@@ -54,7 +55,7 @@ body{
     float: right;
     margin: 10px;
     margin-right: 0px;
-    background: rgba(42, 69, 142 ,0.9);
+    background: #373737;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -124,7 +125,7 @@ a{
     color: white;
 }
 .footer {
-    background: rgba(255, 0,0, 0.85);
+    background: #373737;
     position: fixed;
     display: flex;                  /* establish flex container */
     flex-direction: row;            /* default value; can be omitted */

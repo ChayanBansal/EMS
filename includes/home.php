@@ -24,6 +24,7 @@
         align-items: center;
         font-family: 'PT Sans', sans-serif;
         width: 100%;
+        background: #0041AE;
     }
     </style>
     

@@ -24,14 +24,14 @@ function RightMouseDown() { return false;}
 class head
 {
     var $title = "Symbiosis University of Applied Sciences";
-    var $logo = "/ems/images/logo2.jpg";
+    var $logo = "/ems/images/logo2.png";
     var $rtitle = "Examination Portal";
     function displayheader()
     {
         echo (' <div class="container">
         <div class="logo"><img src="' . $this->logo . '" alt="Suas Indore"></div>
-        <div class="title">' . $this->title . '</div>
-        <div class="text">' . $this->rtitle . '</div>
+        <!-- <div class="title">' . $this->title . '</div> -->
+        <div class="title">' . $this->rtitle . '</div>
         </div>');
     }
     function dispmenu($n, $href, $class, $tooltip)
