@@ -8,11 +8,6 @@ function add() {
     document.getElementById("no_subjects").value++;
     display_subjects('up');
 }
-function subtract() {
-    if (document.getElementById("no_subjects").value > 1)
-        document.getElementById("no_subjects").value--;
-    display_subjects('down');
-}
 function show_semester() {
     var sel = document.getElementById("mcourse");
     var duration = sel.options[sel.selectedIndex].getAttribute("data-course-duration");
@@ -26,15 +21,21 @@ function show_semester() {
 }
 function display_subjects(direction) {
     var val = document.getElementById("no_subjects").value;
-    var table = document.getElementById("subject_area");
-    table.innerHTML = "";
+    var table = $("#subject_area");//document.getElementById("subject_area");
+    if(direction=='down'){
+        display_subjects.counter=0;
+        table.html('');
+    }
+    if( typeof display_subjects.counter == 'undefined' ) {
+        display_subjects.counter=0
+    }
+    var i=display_subjects.counter++;
     if (isNaN(val)) {
         table.innerHTML = "Add a subject to insert";
     }
     else {
 
-        for (var i = 1; i <= val; i++) {
-            table.innerHTML += `
+            table.append(`
                         <tr>
                 <td>
                 <input type="text" name="subcode`+ i + `" id="subcode` + i + `" class="form-control" required>
@@ -62,8 +63,7 @@ function display_subjects(direction) {
                 </td>
                 <td style="text-align: center">
                 <input type="checkbox" name="elective`+ i + `" id="elective` + i + `" class="form-control">
-                </td>  `;
-        }
+                </td>  `);
     }
 
 }

@@ -87,7 +87,6 @@
     caption select{
         margin: 5px;
     }
-
     .span-btn:hover{
-        cursor: pointer;
+        cursor: pointer !important;
     }

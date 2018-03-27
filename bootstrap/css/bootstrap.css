@@ -5839,7 +5839,7 @@ button.list-group-item-danger.active:focus {
   padding: 9px;
   border-radius: 3px;
 }
-.close {
+.close-alert {
   float: right;
   font-size: 21px;
   font-weight: bold;
@@ -5848,15 +5848,25 @@ button.list-group-item-danger.active:focus {
   text-shadow: 0 1px 0 #fff;
   filter: alpha(opacity=20);
 }
+.close{
+  float: right;
+  font-size: 21px;
+  font-weight: bold;
+  line-height: 1;
+  text-shadow: 0 1px 0 #fff;
+  filter: alpha(opacity=20);  
+}
 .close:hover,
-.close:focus {
-  color: white;
+.close:focus,
+.close-alert:hover,
+.close-alert:focus {
   text-decoration: none;
   cursor: pointer;
   filter: alpha(opacity=50);
   opacity: .5;
 }
-button.close {
+button.close,
+button.close-alert {
   -webkit-appearance: none;
   padding: 0;
   cursor: pointer;

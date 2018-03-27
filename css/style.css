@@ -269,6 +269,7 @@ table td{
     cursor: pointer;
 }
 .blue{
+    /*background: linear-gradient(to right,#6093D7,#2560B2,#0F4998,#2560B2,#6093D7);*/
     background: #1E68BB;
     cursor: pointer;
 }
