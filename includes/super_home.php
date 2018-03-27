@@ -68,25 +68,20 @@ if (isset($_SESSION['tr_generated'])) {
   }
   unset($_SESSION['tr_generated']);
 }
-if(isset($_POST['approve_edit_tr']))
-{
-  $update_edit_tr="UPDATE edit_tr_request SET status=1 WHERE request_id=".$_POST['approve_edit_tr'];
-  $update_edit_tr_run=mysqli_query($conn,$update_edit_tr);
-  if($update_edit_tr_run==TRUE)
-  {
+if (isset($_POST['approve_edit_tr'])) {
+  $update_edit_tr = "UPDATE edit_tr_request SET status=1 WHERE request_id=" . $_POST['approve_edit_tr'];
+  $update_edit_tr_run = mysqli_query($conn, $update_edit_tr);
+  if ($update_edit_tr_run == true) {
     $a = new alert();
-    $a->exec("Request Approved","success");
+    $a->exec("Request Approved", "success");
     unset($_POST['approve_edit_tr']);
   }
-}
-else if(isset($_POST['disapprove_edit_tr']))
-{
-  $update_edit_tr="UPDATE edit_tr_request SET status=2 WHERE request_id=".$_POST['disapprove_edit_tr'];
-  $update_edit_tr_run=mysqli_query($conn,$update_edit_tr);
-  if($update_edit_tr_run==TRUE)
-  {
+} else if (isset($_POST['disapprove_edit_tr'])) {
+  $update_edit_tr = "UPDATE edit_tr_request SET status=2 WHERE request_id=" . $_POST['disapprove_edit_tr'];
+  $update_edit_tr_run = mysqli_query($conn, $update_edit_tr);
+  if ($update_edit_tr_run == true) {
     $a = new alert();
-    $a->exec("Request Disapproved","danger");
+    $a->exec("Request Disapproved", "danger");
     unset($_POST['disapprove_edit_tr']);
   }
 }
@@ -345,7 +340,7 @@ function tr_getSemester(tr_type)
             <div>Sessions</div>
             <div class="sub-option" id="subopt5">
             <button data-toggle="modal" data-target="#addsessionModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
-            <button data-toggle="modal" data-target="#viewsessionModal"><i class="glyphicon glyphicon-pencil"></i> Update Session</button>
+            <button data-toggle="modal" data-target="#viewsessionModal"><i class="glyphicon glyphicon-pencil"></i> View/Update Session</button>
             <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#select_month">Set Examination Month</button>
             </div>
             </div>
@@ -403,9 +398,9 @@ function tr_getSemester(tr_type)
       </div>
       <div class="modal-footer">
       <?php 
-        $token = new csrf_token();
-        $token->hidden_input($_SESSION['token']);
-        ?>
+      $token = new csrf_token();
+      $token->hidden_input($_SESSION['token']);
+      ?>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success" name="view_tr_submit">Proceed</button>
       </div>
@@ -594,22 +589,18 @@ function tr_getSemester(tr_type)
             <?php
             $input = new input_button();
             ?>
-            <table class="table table-responsive table-striped table-bordered">
-            <caption>
-            <form class="form-inline">
-            <div class="form-group">
-                    <label for="session_type">Type :</label>
-                    <select id="session_type" name="session_type" class="form-control" required onchange="show_session_contents(this.value)">
-                        <option value="" disabled selected>Select Type</option>
-                        <option value="main">Main</option>
-                        <option value="retotal">Retotaling</option>
-                        <option value="reval">Revaluation</option>
-                        <option value="atkt">ATKT</option>
-                    </select>
-                </div>
-              </form>
-            </caption>
-            <thead>
+            <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle="tab" href="#tabs-session-main">Main</a></li>
+            <li><a data-toggle="tab" href="#tabs-session-retotal">Retotalling</a></li>
+            <li><a data-toggle="tab" href="#tabs-session-reval">Revaluation</a></li>
+            <li><a data-toggle="tab" href="#tabs-session-atkt">ATKT</a></li>
+            </ul>
+
+            <div class="tab-content">
+              
+            <div id="tabs-session-main" class="tab-pane fade in active">
+              <table class="table table-responsive table-striped table-bordered">
+              <thead>
                 <tr style="text-align:center">
                 <th>Academic Year</th>
                 <th>Course Name</th>
@@ -636,9 +627,113 @@ function tr_getSemester(tr_type)
                         ');
                       }
                     }
+                    else{
+                      echo("<td colspan='4'>No sessions found!</td>");
+                    }
                     ?>
                 </tbody>
         </table>
+      </div>
+
+
+      <div id="tabs-session-retotal" class="tab-pane fade in">
+              <table class="table table-responsive table-striped table-bordered">
+              <thead>
+                <tr style="text-align:center">
+                <th>Academic Year</th>
+                <th>Course Name</th>
+                <th>Current Semester</th>
+                </tr>
+            </thead>
+                <tbody>
+                    <?php
+                    $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id AND ac_session_id IN(SELECT ac_session_id FROM $retotal.retotal_sessions)";
+                    $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
+                    if ($get_sessions_qry_run AND mysqli_num_rows($get_sessions_qry_run)!=0) {
+                      while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
+                        echo ('
+                            <tr style="text-align:center">
+                            <td>' . $row['from_year'] . '</td>
+                            <td>' . $row['course_name'] . '</td>
+                            <td>' . $row['current_semester'] . '</td>
+                            ');
+                      }
+                    }
+                    else{
+                      echo("<td colspan='3'>No sessions found!</td>");
+                    }
+                    ?>
+                </tbody>
+        </table>
+      </div>
+
+      <div id="tabs-session-reval" class="tab-pane fade in">
+              <table class="table table-responsive table-striped table-bordered">
+              <thead>
+                <tr style="text-align:center">
+                <th>Academic Year</th>
+                <th>Course Name</th>
+                <th>Current Semester</th>
+                </tr>
+            </thead>
+                <tbody>
+                    <?php
+                    $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id AND ac_session_id IN(SELECT ac_session_id FROM $reval.reval_sessions)";
+                    $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
+                    if ($get_sessions_qry_run AND mysqli_num_rows($get_sessions_qry_run)!=0) {
+                      while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
+                        echo ('
+                            <tr style="text-align:center">
+                            <td>' . $row['from_year'] . '</td>
+                            <td>' . $row['course_name'] . '</td>
+                            <td>' . $row['current_semester'] . '</td>
+                            ');
+                        
+                      }
+                    }
+                    else{
+                      echo("<td colspan='3'>No sessions found!</td>");
+                    }
+                    ?>
+                </tbody>
+        </table>
+      </div>              
+
+      <div id="tabs-session-atkt" class="tab-pane fade in">
+              <table class="table table-responsive table-striped table-bordered">
+              <thead>
+                <tr style="text-align:center">
+                <th>Academic Year</th>
+                <th>Course Name</th>
+                <th>Current Semester</th>
+                </tr>
+            </thead>
+                <tbody>
+                    <?php
+                    $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions)";
+                    $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
+                    if ($get_sessions_qry_run AND mysqli_num_rows($get_sessions_qry_run)!=0) {
+                      while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
+                        echo ('
+                            <tr style="text-align:center">
+                            <td>' . $row['from_year'] . '</td>
+                            <td>' . $row['course_name'] . '</td>
+                            <td>' . $row['current_semester'] . '</td>
+                            ');
+                      }
+                    }
+                    else{
+                      echo("<td colspan='3'>No sessions found!</td>");
+                    }
+                    ?>
+                </tbody>
+        </table>
+      </div>
+
+
+
+            </div>
+            
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -776,19 +871,19 @@ function tr_getSemester(tr_type)
          <select name="sub_view_course" id="sub_view_course" class="form-control" onchange="show_sub_year(this.value)" required>
          <option value="" disabled selected>Select a course</option>   
          <?php
-         $get_course_qry = "SELECT * from courses";
-         $get_course_qry_run = mysqli_query($conn, $get_course_qry);
-         if ($get_course_qry_run) {
-           while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
-             echo ('
+        $get_course_qry = "SELECT * from courses";
+        $get_course_qry_run = mysqli_query($conn, $get_course_qry);
+        if ($get_course_qry_run) {
+          while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
+            echo ('
                  <option value="' . $row['course_id'] . '" data-course-duration=' . $row['duration'] . '>' . $row['course_name'] . '</option>   
                  ');
-           }
-         } else {
-           $alert = new alert();
-           $alert->exec("Unable to fetch courses!", "warning");
-         }
-         ?>
+          }
+        } else {
+          $alert = new alert();
+          $alert->exec("Unable to fetch courses!", "warning");
+        }
+        ?>
      </select>
      </div>
 <div class="form-group">
@@ -852,7 +947,7 @@ function tr_getSemester(tr_type)
               <div class="form-group">
               <label for="type">Subject Name</label>
               <?php
-              $input->display_w_value("update_sub_name","form-control","text","update_sub_name","","",1);
+              $input->display_w_value("update_sub_name", "form-control", "text", "update_sub_name", "", "", 1);
               ?>
               </div>
           </div>
@@ -899,199 +994,184 @@ function tr_getSemester(tr_type)
     <tbody style="overflow: auto;">
 
         <?php
-          $fetch_request="SELECT * FROM edit_tr_request WHERE status=0";
-          $fetch_request_run=mysqli_query($conn,$fetch_request);
-          if($fetch_request_run)
-          {
-            if(mysqli_num_rows($fetch_request_run)==0)
-            {
-              $a = new alert();
-              $a->exec("No requests to show","info");
-            }
-            else if($fetch_request_run)
-            {
-              while($request=mysqli_fetch_assoc($fetch_request_run))
+        $fetch_request = "SELECT * FROM edit_tr_request WHERE status=0";
+        $fetch_request_run = mysqli_query($conn, $fetch_request);
+        if ($fetch_request_run) {
+          if (mysqli_num_rows($fetch_request_run) == 0) {
+            $a = new alert();
+            $a->exec("No requests to show", "info");
+          } else if ($fetch_request_run) {
+            while ($request = mysqli_fetch_assoc($fetch_request_run))
               /* $request['request_id'], $request['requester'], $request['roll_id'], $request['sub_code'], $request['cat_flag'], $request['end_theory_flag'], 
                 $request['cap_flag'], $request['end_practical_flag'], $request['ia_flag'], $request['ie_flag'],  
                 $request['remarks'], $request['timestamp'], $request['status']
-              */
-              {
-                echo("<tr>");
-                echo("<td>".$request['timestamp']."</td>");
-                $get_requester_name="SELECT operator_name FROM operators WHERE operator_id=".$request['requester'];
-                $get_requester_name=mysqli_query($conn,$get_requester_name);
-                $requester=mysqli_fetch_assoc($get_requester_name);
+             */
+            {
+              echo ("<tr>");
+              echo ("<td>" . $request['timestamp'] . "</td>");
+              $get_requester_name = "SELECT operator_name FROM operators WHERE operator_id=" . $request['requester'];
+              $get_requester_name = mysqli_query($conn, $get_requester_name);
+              $requester = mysqli_fetch_assoc($get_requester_name);
                 //$requester['operator_name']
-                echo("<td>".$requester['operator_name']."</td>");
-                
-                $get_stud_detail="SELECT enrol_no, first_name, middle_name, last_name FROM students WHERE enrol_no IN
-                (SELECT enrol_no FROM roll_list WHERE roll_id=".$request['roll_id'].")";
-                $get_stud_detail=mysqli_query($conn,$get_stud_detail);
-                $stud_detail=mysqli_fetch_assoc($get_stud_detail);
-                //$stud_detail['enrol_no'] $stud_detail['first_name'] $stud_detail['middle_name'] $stud_detail['last_name']
-                echo("<td>".$stud_detail['enrol_no']."</td>");
-                echo("<td>".$stud_detail['first_name']);
-                if($stud_detail['middle_name']=="")
-                {
-                  echo(" ".$stud_detail['last_name']."</td>");
-                }
-                else
-                {
-                  echo(" ".$stud_detail['middle_name']." ".$stud_detail['last_name']."</td>");
-                }
-                
+              echo ("<td>" . $requester['operator_name'] . "</td>");
 
-                $get_sub_name="SELECT sub_name FROM subjects WHERE sub_code='".$request['sub_code']."'";
-                $get_sub_name_run=mysqli_query($conn,$get_sub_name);
-                $sub_name=mysqli_fetch_assoc($get_sub_name_run);
+              $get_stud_detail = "SELECT enrol_no, first_name, middle_name, last_name FROM students WHERE enrol_no IN
+                (SELECT enrol_no FROM roll_list WHERE roll_id=" . $request['roll_id'] . ")";
+              $get_stud_detail = mysqli_query($conn, $get_stud_detail);
+              $stud_detail = mysqli_fetch_assoc($get_stud_detail);
+                //$stud_detail['enrol_no'] $stud_detail['first_name'] $stud_detail['middle_name'] $stud_detail['last_name']
+              echo ("<td>" . $stud_detail['enrol_no'] . "</td>");
+              echo ("<td>" . $stud_detail['first_name']);
+              if ($stud_detail['middle_name'] == "") {
+                echo (" " . $stud_detail['last_name'] . "</td>");
+              } else {
+                echo (" " . $stud_detail['middle_name'] . " " . $stud_detail['last_name'] . "</td>");
+              }
+
+
+              $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $request['sub_code'] . "'";
+              $get_sub_name_run = mysqli_query($conn, $get_sub_name);
+              $sub_name = mysqli_fetch_assoc($get_sub_name_run);
                 //$sub_name['sub_name']
 
-                echo("<td>".$request['sub_code']."</td>");
-                echo("<td>".$sub_name['sub_name']."</td>");
+              echo ("<td>" . $request['sub_code'] . "</td>");
+              echo ("<td>" . $sub_name['sub_name'] . "</td>");
 
-                echo("<td><ul>");
-                if($request['cat_flag']==1)
-                {
-                  echo("<li>");
-                  echo("CAT");
-                  $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
+              echo ("<td><ul>");
+              if ($request['cat_flag'] == 1) {
+                echo ("<li>");
+                echo ("CAT");
+                $get_fed_by = "SELECT operator_name FROM operators WHERE operator_id IN
                               (SELECT operator_id FROM transactions WHERE transaction_id IN
-                              (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=1))";
-                  $get_fed_by_run=mysqli_query($conn,$get_fed_by);
-                  $fed_by=mysqli_fetch_assoc($get_fed_by_run);
+                              (SELECT transaction_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=1))";
+                $get_fed_by_run = mysqli_query($conn, $get_fed_by);
+                $fed_by = mysqli_fetch_assoc($get_fed_by_run);
                   //$fed_by['operator_name']
-                  echo(" / ".$fed_by['operator_name']." / ");
-                  $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
+                echo (" / " . $fed_by['operator_name'] . " / ");
+                $get_checked_by = "SELECT operator_name FROM operators WHERE operator_id IN
                               (SELECT operator_id FROM checking WHERE check_id IN
-                              (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=1))";
-                  $get_checked_by_run=mysqli_query($conn,$get_checked_by);
-                  $checked_by=mysqli_fetch_assoc($get_checked_by_run);
+                              (SELECT check_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=1))";
+                $get_checked_by_run = mysqli_query($conn, $get_checked_by);
+                $checked_by = mysqli_fetch_assoc($get_checked_by_run);
                   //$checked_by['operator_name']
-                  echo($checked_by['operator_name']);
-                  echo("</li>");
-                } 
-
-                if($request['end_theory_flag']==1)
-                {
-                  echo("<li>");
-                  echo("End Sem Theory");
-                  $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM transactions WHERE transaction_id IN
-                              (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=2))";
-                  $get_fed_by_run=mysqli_query($conn,$get_fed_by);
-                  $fed_by=mysqli_fetch_assoc($get_fed_by_run);
-                  //$fed_by['operator_name']
-                  echo(" / ".$fed_by['operator_name']." / ");
-                  $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM checking WHERE check_id IN
-                              (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=2))";
-                  $get_checked_by_run=mysqli_query($conn,$get_checked_by);
-                  $checked_by=mysqli_fetch_assoc($get_checked_by_run);
-                  //$checked_by['operator_name']
-                  echo($checked_by['operator_name']);
-                  echo("</li>");
-                }
-                
-                if($request['cap_flag']==1)
-                {
-                  echo("<li>");
-                  echo("CAP");
-                  $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM transactions WHERE transaction_id IN
-                              (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=3))";
-                  $get_fed_by_run=mysqli_query($conn,$get_fed_by);
-                  $fed_by=mysqli_fetch_assoc($get_fed_by_run);
-                  //$fed_by['operator_name']
-                  echo(" / ".$fed_by['operator_name']." / ");
-                  $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM checking WHERE check_id IN
-                              (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=3))";
-                  $get_checked_by_run=mysqli_query($conn,$get_checked_by);
-                  $checked_by=mysqli_fetch_assoc($get_checked_by_run);
-                  //$checked_by['operator_name']
-                  echo($checked_by['operator_name']);
-                  echo("</li>");
-                }
-                
-                if($request['end_practical_flag']==1)
-                {
-                  echo("<li>");
-                  echo("End Sem Practical");
-                  $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM transactions WHERE transaction_id IN
-                              (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=4))";
-                  $get_fed_by_run=mysqli_query($conn,$get_fed_by);
-                  $fed_by=mysqli_fetch_assoc($get_fed_by_run);
-                  //$fed_by['operator_name']
-                  echo(" / ".$fed_by['operator_name']." / ");
-                  $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM checking WHERE check_id IN
-                              (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=4))";
-                  $get_checked_by_run=mysqli_query($conn,$get_checked_by);
-                  $checked_by=mysqli_fetch_assoc($get_checked_by_run);
-                  //$checked_by['operator_name']
-                  echo($checked_by['operator_name']);
-                  echo("</li>");
-                }
-
-                if($request['ia_flag']==1)
-                {
-                  echo("<li>");
-                  echo("IA");
-                  $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM transactions WHERE transaction_id IN
-                              (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=5))";
-                  $get_fed_by_run=mysqli_query($conn,$get_fed_by);
-                  $fed_by=mysqli_fetch_assoc($get_fed_by_run);
-                  //$fed_by['operator_name']
-                  echo(" / ".$fed_by['operator_name']." / ");
-                  $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM checking WHERE check_id IN
-                              (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=5))";
-                  $get_checked_by_run=mysqli_query($conn,$get_checked_by);
-                  $checked_by=mysqli_fetch_assoc($get_checked_by_run);
-                  //$checked_by['operator_name']
-                  echo($checked_by['operator_name']);
-                  echo("</li>");
-                }
-
-                if($request['ie_flag']==1)
-                {
-                  echo("<li>");
-                  echo("IE");
-                  $get_fed_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM transactions WHERE transaction_id IN
-                              (SELECT transaction_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=6))";
-                  $get_fed_by_run=mysqli_query($conn,$get_fed_by);
-                  $fed_by=mysqli_fetch_assoc($get_fed_by_run);
-                  //$fed_by['operator_name']
-                  echo(" / ".$fed_by['operator_name']." / ");
-                  $get_checked_by="SELECT operator_name FROM operators WHERE operator_id IN
-                              (SELECT operator_id FROM checking WHERE check_id IN
-                              (SELECT check_id FROM score WHERE roll_id=".$request['roll_id']." AND component_id=6))";
-                  $get_checked_by_run=mysqli_query($conn,$get_checked_by);
-                  $checked_by=mysqli_fetch_assoc($get_checked_by_run);
-                  //$checked_by['operator_name']
-                  echo($checked_by['operator_name']);
-                  echo("</li>");
-                }
-
-                echo("</td>");
-                echo("<td>".$request['remarks']."</td>");
-                echo("<td>");
-                echo("<form action='' method='post'><button class='btn btn-success' type='submit' name='approve_edit_tr' value=".$request['request_id']."><i class='fa fa-thumbs-up' aria-hidden='true'>Approve</i></button>");
-                echo("<button class='btn btn-danger' type='submit' name='disapprove_edit_tr' value=".$request['request_id']."><i class='fa fa-thumbs-down' aria-hidden='true'>Disapprove</i></button></form>");
-                echo("</td>");
-                
+                echo ($checked_by['operator_name']);
+                echo ("</li>");
               }
-              
+
+              if ($request['end_theory_flag'] == 1) {
+                echo ("<li>");
+                echo ("End Sem Theory");
+                $get_fed_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM transactions WHERE transaction_id IN
+                              (SELECT transaction_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=2))";
+                $get_fed_by_run = mysqli_query($conn, $get_fed_by);
+                $fed_by = mysqli_fetch_assoc($get_fed_by_run);
+                  //$fed_by['operator_name']
+                echo (" / " . $fed_by['operator_name'] . " / ");
+                $get_checked_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM checking WHERE check_id IN
+                              (SELECT check_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=2))";
+                $get_checked_by_run = mysqli_query($conn, $get_checked_by);
+                $checked_by = mysqli_fetch_assoc($get_checked_by_run);
+                  //$checked_by['operator_name']
+                echo ($checked_by['operator_name']);
+                echo ("</li>");
+              }
+
+              if ($request['cap_flag'] == 1) {
+                echo ("<li>");
+                echo ("CAP");
+                $get_fed_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM transactions WHERE transaction_id IN
+                              (SELECT transaction_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=3))";
+                $get_fed_by_run = mysqli_query($conn, $get_fed_by);
+                $fed_by = mysqli_fetch_assoc($get_fed_by_run);
+                  //$fed_by['operator_name']
+                echo (" / " . $fed_by['operator_name'] . " / ");
+                $get_checked_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM checking WHERE check_id IN
+                              (SELECT check_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=3))";
+                $get_checked_by_run = mysqli_query($conn, $get_checked_by);
+                $checked_by = mysqli_fetch_assoc($get_checked_by_run);
+                  //$checked_by['operator_name']
+                echo ($checked_by['operator_name']);
+                echo ("</li>");
+              }
+
+              if ($request['end_practical_flag'] == 1) {
+                echo ("<li>");
+                echo ("End Sem Practical");
+                $get_fed_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM transactions WHERE transaction_id IN
+                              (SELECT transaction_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=4))";
+                $get_fed_by_run = mysqli_query($conn, $get_fed_by);
+                $fed_by = mysqli_fetch_assoc($get_fed_by_run);
+                  //$fed_by['operator_name']
+                echo (" / " . $fed_by['operator_name'] . " / ");
+                $get_checked_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM checking WHERE check_id IN
+                              (SELECT check_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=4))";
+                $get_checked_by_run = mysqli_query($conn, $get_checked_by);
+                $checked_by = mysqli_fetch_assoc($get_checked_by_run);
+                  //$checked_by['operator_name']
+                echo ($checked_by['operator_name']);
+                echo ("</li>");
+              }
+
+              if ($request['ia_flag'] == 1) {
+                echo ("<li>");
+                echo ("IA");
+                $get_fed_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM transactions WHERE transaction_id IN
+                              (SELECT transaction_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=5))";
+                $get_fed_by_run = mysqli_query($conn, $get_fed_by);
+                $fed_by = mysqli_fetch_assoc($get_fed_by_run);
+                  //$fed_by['operator_name']
+                echo (" / " . $fed_by['operator_name'] . " / ");
+                $get_checked_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM checking WHERE check_id IN
+                              (SELECT check_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=5))";
+                $get_checked_by_run = mysqli_query($conn, $get_checked_by);
+                $checked_by = mysqli_fetch_assoc($get_checked_by_run);
+                  //$checked_by['operator_name']
+                echo ($checked_by['operator_name']);
+                echo ("</li>");
+              }
+
+              if ($request['ie_flag'] == 1) {
+                echo ("<li>");
+                echo ("IE");
+                $get_fed_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM transactions WHERE transaction_id IN
+                              (SELECT transaction_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=6))";
+                $get_fed_by_run = mysqli_query($conn, $get_fed_by);
+                $fed_by = mysqli_fetch_assoc($get_fed_by_run);
+                  //$fed_by['operator_name']
+                echo (" / " . $fed_by['operator_name'] . " / ");
+                $get_checked_by = "SELECT operator_name FROM operators WHERE operator_id IN
+                              (SELECT operator_id FROM checking WHERE check_id IN
+                              (SELECT check_id FROM score WHERE roll_id=" . $request['roll_id'] . " AND component_id=6))";
+                $get_checked_by_run = mysqli_query($conn, $get_checked_by);
+                $checked_by = mysqli_fetch_assoc($get_checked_by_run);
+                  //$checked_by['operator_name']
+                echo ($checked_by['operator_name']);
+                echo ("</li>");
+              }
+
+              echo ("</td>");
+              echo ("<td>" . $request['remarks'] . "</td>");
+              echo ("<td>");
+              echo ("<form action='' method='post'><button class='btn btn-success' type='submit' name='approve_edit_tr' value=" . $request['request_id'] . "><i class='fa fa-thumbs-up' aria-hidden='true'>Approve</i></button>");
+              echo ("<button class='btn btn-danger' type='submit' name='disapprove_edit_tr' value=" . $request['request_id'] . "><i class='fa fa-thumbs-down' aria-hidden='true'>Disapprove</i></button></form>");
+              echo ("</td>");
+
             }
+
           }
-          else
-          {
-            $a = new alert();
-            $a->exec("No requests to show","info");
-          }
+        } else {
+          $a = new alert();
+          $a->exec("No requests to show", "info");
+        }
         ?>
         
     </tbody>
@@ -1248,10 +1328,14 @@ function tr_getSemester(tr_type)
         </div>
         <div class="form-group">
             <div class="input-group">
-            <span class="input-group-addon" onclick="subtract()" class="span-btn"><i class="glyphicon glyphicon-minus"></i></span>
-            <input type="number" name="number_subjects" class="form-control" placeholder="Number of subjects" id="no_subjects" onkeyup="display_subjects('down')" min="0" onchange="display_subjects('down')" >
-            <span class="input-group-addon" onclick="add()" class="span-btn"><i class="glyphicon glyphicon-plus"></i></span>
+            <span class="input-group-addon span-btn" onclick="$('#no_subjects').val(1);  display_subjects('down');"><i class="glyphicon glyphicon-repeat"></i></span>
+            <input type="number" name="number_subjects" class="form-control" placeholder="Number of subjects" id="no_subjects" onkeyup="display_subjects('down')" min="0" onchange="display_subjects('down')" readonly>
+            <span class="input-group-addon span-btn" onclick="add()"><i class="glyphicon glyphicon-plus"></i></span>
             </div>
+        </div>
+        <div class="form-group">
+        <input type="button" value="Load Previous" class="btn btn-primary">    
+        <input type="button" value="Create New" class="btn btn-success">    
         </div>
         
     </caption>
@@ -1345,15 +1429,14 @@ function tr_getSemester(tr_type)
       <div class="modal-body">
       <div class="form-group">
         <div class="checkbox">
-          <?php $get_sessions="SELECT * FROM academic_sessions";
-                $get_sessions_run=mysqli_query($conn,$get_sessions);
-                while($session=mysqli_fetch_assoc($get_sessions_run))
-                {
-                  $get_course_name="SELECT course_id,course_name FROM courses WHERE course_id=".$session['course_id'];
-                  $get_course_name=mysqli_query($conn,$get_course_name);
-                  $course_name=mysqli_fetch_assoc($get_course_name);
-                  echo('<label><input type="checkbox" name="session'.$session['course_id'].'" value="'.$session['ac_session_id'].'">'.$course_name['course_name'].'-'.$session['from_year'].'-'.$session['current_semester'].' </label>');
-                }
+          <?php $get_sessions = "SELECT * FROM academic_sessions";
+          $get_sessions_run = mysqli_query($conn, $get_sessions);
+          while ($session = mysqli_fetch_assoc($get_sessions_run)) {
+            $get_course_name = "SELECT course_id,course_name FROM courses WHERE course_id=" . $session['course_id'];
+            $get_course_name = mysqli_query($conn, $get_course_name);
+            $course_name = mysqli_fetch_assoc($get_course_name);
+            echo ('<label><input type="checkbox" name="session' . $session['course_id'] . '" value="' . $session['ac_session_id'] . '">' . $course_name['course_name'] . '-' . $session['from_year'] . '-' . $session['current_semester'] . ' </label>');
+          }
           ?>
           </div>
           <div clas="form-group">

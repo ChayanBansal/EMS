@@ -1,5 +1,5 @@
 <?php
-$host="192.168.104.178";
+$host="localhost";
 $user="enduser";
 $pass="enduser@ems";
 $db="ems";
@@ -12,4 +12,12 @@ if(!(similar_text($browser,"Chrome")>=6)){
     echo("Browser does not support this application!");
     die();
 }
+
+/*
+Database Variable declarations
+*/
+$main="ems";
+$retotal="ems_retotal";
+$reval="ems_reval";
+$atkt="ems_atkt";
 ?>
