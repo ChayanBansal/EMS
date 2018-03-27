@@ -47,12 +47,15 @@ if(isset($_POST['sub_view_sem'])){
     echo($get_sem);
 }
 if(isset($_POST['sub_view_disp'])){
-    $get_subject="SELECT sub_code,sub_name,elective_flag,ie_flag FROM subjects WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=".$_POST['course_id']." AND from_year=".$_POST['year']." AND current_semester=".$_POST['sem'].")";
+    $get_subject="SELECT sub_code,sub_name,elective_flag,ie_flag,ac_sub_code FROM subjects WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=".$_POST['course_id']." AND from_year=".$_POST['year']." AND current_semester=".$_POST['sem'].")";
     $get_subject_run=mysqli_query($conn,$get_subject);
-    echo($_POST['course_id'].$_POST['year']);
     $i=1;
+    if(mysqli_num_rows($get_subject_run)==0){
+        $alert=new alert();
+        $alert->exec("No subjects Found!","info");
+    }
     while($subject=mysqli_fetch_assoc($get_subject_run)){
-        $theory_cr="SELECT credits_allotted as credits FROM sub_distribution WHERE sub_code='".$subject['sub_code']."' AND practical_flag=0";
+        $theory_cr="SELECT credits_allotted as credits FROM sub_distribution WHERE ac_sub_code='".$subject['ac_sub_code']."' AND practical_flag=0";
         $theory_cr=mysqli_query($conn,$theory_cr);
         if(mysqli_num_rows($theory_cr)==0){
             $tcr="-";
@@ -60,7 +63,7 @@ if(isset($_POST['sub_view_disp'])){
         else{
             $tcr=mysqli_fetch_assoc($theory_cr)['credits'];
         }
-        $prac_cr="SELECT credits_allotted as credits FROM sub_distribution WHERE sub_code='".$subject['sub_code']."' AND practical_flag=1";
+        $prac_cr="SELECT credits_allotted as credits FROM sub_distribution WHERE ac_sub_code='".$subject['ac_sub_code']."' AND practical_flag=1";
         $prac_cr=mysqli_query($conn,$prac_cr);
         if(mysqli_num_rows($prac_cr)==0){
             $pcr="-";

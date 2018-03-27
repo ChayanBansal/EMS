@@ -612,6 +612,7 @@ function tr_getSemester(tr_type)
                     <?php
                     $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id";
                     $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
+                    $alert = new alert();
                     if ($get_sessions_qry_run) {
                       while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
                         echo ('
@@ -626,9 +627,8 @@ function tr_getSemester(tr_type)
                         echo ('</td>
                         ');
                       }
-                    }
-                    else{
-                      echo("<td colspan='4'>No sessions found!</td>");
+                    } else {
+                      echo ("<td colspan='4'>No sessions found!</td>");
                     }
                     ?>
                 </tbody>
@@ -649,7 +649,7 @@ function tr_getSemester(tr_type)
                     <?php
                     $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id AND ac_session_id IN(SELECT ac_session_id FROM $retotal.retotal_sessions)";
                     $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
-                    if ($get_sessions_qry_run AND mysqli_num_rows($get_sessions_qry_run)!=0) {
+                    if ($get_sessions_qry_run and mysqli_num_rows($get_sessions_qry_run) != 0) {
                       while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
                         echo ('
                             <tr style="text-align:center">
@@ -658,9 +658,8 @@ function tr_getSemester(tr_type)
                             <td>' . $row['current_semester'] . '</td>
                             ');
                       }
-                    }
-                    else{
-                      echo("<td colspan='3'>No sessions found!</td>");
+                    } else {
+                      $alert->exec("No Sessions Found!", "info");
                     }
                     ?>
                 </tbody>
@@ -680,7 +679,7 @@ function tr_getSemester(tr_type)
                     <?php
                     $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id AND ac_session_id IN(SELECT ac_session_id FROM $reval.reval_sessions)";
                     $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
-                    if ($get_sessions_qry_run AND mysqli_num_rows($get_sessions_qry_run)!=0) {
+                    if ($get_sessions_qry_run and mysqli_num_rows($get_sessions_qry_run) != 0) {
                       while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
                         echo ('
                             <tr style="text-align:center">
@@ -688,11 +687,11 @@ function tr_getSemester(tr_type)
                             <td>' . $row['course_name'] . '</td>
                             <td>' . $row['current_semester'] . '</td>
                             ');
-                        
+
                       }
-                    }
-                    else{
-                      echo("<td colspan='3'>No sessions found!</td>");
+                    } else {
+
+                      $alert->exec("No Sessions Found!", "info");
                     }
                     ?>
                 </tbody>
@@ -712,7 +711,7 @@ function tr_getSemester(tr_type)
                     <?php
                     $get_sessions_qry = "SELECT from_year,s.course_id,course_name,current_semester from academic_sessions s, courses c where s.course_id=c.course_id AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions)";
                     $get_sessions_qry_run = mysqli_query($conn, $get_sessions_qry);
-                    if ($get_sessions_qry_run AND mysqli_num_rows($get_sessions_qry_run)!=0) {
+                    if ($get_sessions_qry_run and mysqli_num_rows($get_sessions_qry_run) != 0) {
                       while ($row = mysqli_fetch_assoc($get_sessions_qry_run)) {
                         echo ('
                             <tr style="text-align:center">
@@ -721,16 +720,13 @@ function tr_getSemester(tr_type)
                             <td>' . $row['current_semester'] . '</td>
                             ');
                       }
-                    }
-                    else{
-                      echo("<td colspan='3'>No sessions found!</td>");
+                    } else {
+                      $alert->exec("No Sessions Found!", "info");
                     }
                     ?>
                 </tbody>
         </table>
       </div>
-
-
 
             </div>
             
@@ -1322,7 +1318,7 @@ function tr_getSemester(tr_type)
            </select>
         </div>
         <div class="form-group">
-            <select name="msemester" id="msemester" class="form-control" required>
+            <select name="msemester" id="msemester" class="form-control" required onchange="enable_load_prev_subjects()">
             <option value="" disabled selected>Select semester</option>  
            </select>
         </div>
@@ -1334,7 +1330,7 @@ function tr_getSemester(tr_type)
             </div>
         </div>
         <div class="form-group">
-        <input type="button" value="Load Previous" class="btn btn-primary">    
+        <input type="button" value="Load Previous" id="load_prev_sub" class="btn btn-primary" onclick="load_previous_subjects()" disabled>    
         <input type="button" value="Create New" class="btn btn-success">    
         </div>
         

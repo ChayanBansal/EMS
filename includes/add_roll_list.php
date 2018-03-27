@@ -177,117 +177,216 @@ if(isset($_POST['proceed_to_add_roll']))
             {
                 $ac_session_id=$result['ac_session_id'];
             }
-        }
         
-        $previous_semester=((int)$semester)-1;
-        //session in which students are already registered (i.e, their previous session_id)
-        $get_previous_ac_session_id="SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$previous_semester";
-        $get_previous_ac_session_id_run=mysqli_query($conn,$get_previous_ac_session_id);
-    
-            foreach($get_previous_ac_session_id_run as $result)
-            {
-                $previous_ac_session_id=$result['ac_session_id'];
-            }
-            print($previous_ac_session_id);
-        $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender` FROM students WHERE ac_session_id=$previous_ac_session_id";
-        $get_students_run=mysqli_query($conn,$get_students);
-        if($get_students_run)
-        {
-            echo("ANDAR TO AYA");
-            echo('<div style="display:flex; justify-content:space-around; overflow:auto; margin-bottom:100px; ">
-            
-            <table style="width:80%;align:center; background-color:#C84646; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
-            <caption>
-            Batch: '.$from_year.' | Previous Semester: '.$previous_semester.' | Registering for semester: '.$semester.'
-            <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students..">
-            </caption>
-            <thead>
-            <tr>
-                <th><center><h2><input type="checkbox" id="select_all_check" onclick="select_all();"></h2></center></th>
-                <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">Student</h2></center></th>
-            </tr>
-            
-            </thead>
-            <form action="add_roll_backend" method="post">
-            <input type="hidden" value="1" name="type">
-            <tbody id="roll_list">');
-            
-            while($student=mysqli_fetch_assoc($get_students_run))
-            {
-            echo('
-            <tr>
-                <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" onclick="toogle_select_all()" class="roll_check" name="enrol_no[]" value="'.$student['enrol_no'].'"></td>
-                <td><div class="student_card">
-            <div><div class="w3-card-4">
+            $previous_semester=((int)$semester)-1;
 
-                <header class="w3-container w3-blue">
-                <h3>'.$student['enrol_no'].'</h3>
-                </header>
-                
-                
-                
-                <footer class="w3-container w3-blue" style="display:flex; flex-wrap: wrap;align-content: space-around;">
-                <h4>
-                    <table>
+            //session in which students are already registered (i.e, their previous session_id)
+            $get_previous_ac_session_id="SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$previous_semester";
+            $get_previous_ac_session_id_run=mysqli_query($conn,$get_previous_ac_session_id);
+            if($get_previous_ac_session_id_run!=FALSE)
+            {
+                foreach($get_previous_ac_session_id_run as $result)
+                {
+                    $previous_ac_session_id=$result['ac_session_id'];
+                }
+                $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender` FROM students WHERE ac_session_id=$previous_ac_session_id";
+                $get_students_run=mysqli_query($conn,$get_students);
+                if($get_students_run!=FALSE)
+                {
+                    echo('<div style="display:flex; justify-content:space-around; overflow:auto; margin-bottom:100px; ">
+                    
+                    <table style="width:80%;align:center; background-color:#C84646; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
+                    <caption>
+                    Batch: '.$from_year.' | Previous Semester: '.$previous_semester.' | Registering for semester: '.$semester.'
+                    <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students..">
+                    </caption>
+                    <thead>
                     <tr>
-                    <td>Name:</td><td>'.$student["first_name"]);
-                    if($student["middle_name"]=="")
+                        <th><center><h2><input type="checkbox" id="select_all_check" onclick="select_all();"></h2></center></th>
+                        <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">Student</h2></center></th>
+                    </tr>
+                    
+                    </thead>
+                    <form action="add_roll_backend" method="post">
+                    <input type="hidden" value="1" name="type">
+                    <tbody id="roll_list">');
+                    
+                    while($student=mysqli_fetch_assoc($get_students_run))
                     {
-                        echo(' '.$student["last_name"]);
-                    }
-                    else
-                    {
-                        echo(' '.$student["middle_name"].' '.$student["last_name"]);
-                    }
+                        echo('
+                        <tr>
+                            <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" onclick="toogle_select_all()" class="roll_check" name="enrol_no[]" value="'.$student['enrol_no'].'"></td>
+                            <td><div class="student_card">
+                        <div><div class="w3-card-4">
 
-                echo('
-                </td>
-                <tr>
-                <td>
-                Gender:</td><td>'.$student["gender"].'
-                </td></tr>
-               
-                <tr><td>
-                Father\'s Name:</td><td>'.$student["father_name"].'
-                </td></tr>
-                <tr>
-                <td>
-                Mother\'s Name:</td><td>'.$student["mother_name"].'
-                </td></tr>
-                <tr>
-                <td>
-                Address:</td><td>'.$student["address"].'
-                </td></tr>
-                </table>
-                </h4>
-                <div class="w3-container" style="float:right">
-                    <img src="../stud_img/'.$student['enrol_no']);
-                    if(file_exists("../stud_img/".$student['enrol_no'].".png")){
-                        echo(".png");
-                    }else{
-                        echo(".jpg");
+                            <header class="w3-container w3-blue">
+                            <h3>'.$student['enrol_no'].'</h3>
+                            </header>
+                            
+                            
+                            
+                            <footer class="w3-container w3-blue" style="display:flex; flex-wrap: wrap;align-content: space-around;">
+                            <h4>
+                                <table>
+                                <tr>
+                                <td>Name:</td><td>'.$student["first_name"]);
+                                if($student["middle_name"]=="")
+                                {
+                                    echo(' '.$student["last_name"]);
+                                }
+                                else
+                                {
+                                    echo(' '.$student["middle_name"].' '.$student["last_name"]);
+                                }
+
+                        echo('
+                        </td>
+                        <tr>
+                        <td>
+                        Gender:</td><td>'.$student["gender"].'
+                        </td></tr>
+                    
+                        <tr><td>
+                        Father\'s Name:</td><td>'.$student["father_name"].'
+                        </td></tr>
+                        <tr>
+                        <td>
+                        Mother\'s Name:</td><td>'.$student["mother_name"].'
+                        </td></tr>
+                        <tr>
+                        <td>
+                        Address:</td><td>'.$student["address"].'
+                        </td></tr>
+                        </table>
+                        </h4>
+                        <div class="w3-container" style="float:right">
+                            <img src="../stud_img/'.$student['enrol_no']);
+                            if(file_exists("../stud_img/".$student['enrol_no'].".png")){
+                                echo(".png");
+                            }else{
+                                echo(".jpg");
+                            }
+                            echo('" alt="'.$student['enrol_no'].'">
+                        </div>
+                        </footer>
+                        
+                        </div></div></div></td></tr>');  
                     }
-                    echo('" alt="'.$student['enrol_no'].'">
-                </div>
-                </footer>
-                
-                </div></div></div></td></tr>');  
+                    echo('
+                    <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$ac_session_id.'">Register for Academic Semester</button></center></th></tr>
+                    </tbody></form>
+                    
+                    </table></div>');
+                }
+                else
+                {
+                    echo("No record to show");
+                }
             }
-            echo('
-            <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$ac_session_id.'">Register for Academic Semester</button></center></th></tr>
-            </tbody></form>
-            
-            </table></div>');
         }
-        else
-        {
-            echo("No record to show");
-        }
-    
     }
-    else
+    else if($type==='2')
     {
-        echo("IF mein nhi aaya");
+         //Session in which the students are to be registered
+         $get_ac_session_id="SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+         $get_ac_session_id_run=mysqli_query($conn,$get_ac_session_id);
+         if($get_ac_session_id_run!=FALSE)
+         {
+            while($result=mysqli_fetch_assoc($get_ac_session_id_run))
+            {
+                $ac_session_id=$result['ac_session_id'];
+            }
+            $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender` FROM students WHERE ac_session_id=$ac_session_id";
+            $get_students_run=mysqli_query($conn,$get_students);
+            if($get_students_run!=FALSE)
+            {
+                echo('<div style="display:flex; justify-content:space-around; overflow:auto; margin-bottom:100px; ">
+                
+                <table style="width:80%;align:center; background-color:#C84646; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
+                <caption>
+                Batch: '.$from_year.' | Registering for Main Exam | Semester: '.$semester.'
+                <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students..">
+                </caption>
+                <thead>
+                <tr>
+                    <th><center><h2><input type="checkbox" id="select_all_check" onclick="select_all();"></h2></center></th>
+                    <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">Student</h2></center></th>
+                </tr>
+                
+                </thead>
+                <form action="add_roll_backend" method="post">
+                <input type="hidden" value="2" name="type">
+                <tbody id="roll_list">');
+                
+                while($student=mysqli_fetch_assoc($get_students_run))
+                {
+                    echo('
+                    <tr>
+                        <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" onclick="toogle_select_all()" class="roll_check" name="enrol_no[]" value="'.$student['enrol_no'].'"></td>
+                        <td><div class="student_card">
+                    <div><div class="w3-card-4">
+
+                        <header class="w3-container w3-blue">
+                        <h3>'.$student['enrol_no'].'</h3>
+                        </header>
+                        <footer class="w3-container w3-blue" style="display:flex; flex-wrap: wrap;align-content: space-around;">
+                        <h4>
+                            <table>
+                            <tr>
+                            <td>Name:</td><td>'.$student["first_name"]);
+                            if($student["middle_name"]=="")
+                            {
+                                echo(' '.$student["last_name"]);
+                            }
+                            else
+                            {
+                                echo(' '.$student["middle_name"].' '.$student["last_name"]);
+                            }
+
+                    echo('
+                    </td>
+                    <tr>
+                    <td>
+                    Gender:</td><td>'.$student["gender"].'
+                    </td></tr>
+                
+                    <tr><td>
+                    Father\'s Name:</td><td>'.$student["father_name"].'
+                    </td></tr>
+                    <tr>
+                    <td>
+                    Mother\'s Name:</td><td>'.$student["mother_name"].'
+                    </td></tr>
+                    <tr>
+                    <td>
+                    Address:</td><td>'.$student["address"].'
+                    </td></tr>
+                    </table>
+                    </h4>
+                    <div class="w3-container" style="float:right">
+                        <img src="../stud_img/'.$student['enrol_no']);
+                        if(file_exists("../stud_img/".$student['enrol_no'].".png")){
+                            echo(".png");
+                        }else{
+                            echo(".jpg");
+                        }
+                        echo('" alt="'.$student['enrol_no'].'">
+                    </div>
+                    </footer>
+                    
+                    </div></div></div></td></tr>');  
+                }
+                echo('
+                <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$ac_session_id.'">Register for Academic Semester</button></center></th></tr>
+                </tbody></form>
+                
+                </table></div>');
+            }
+            else
+            {
+                echo("No record to show");
+            }
+        }
     }
 }
 
