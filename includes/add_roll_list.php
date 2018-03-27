@@ -166,7 +166,7 @@ if(isset($_POST['proceed_to_add_roll']))
     $from_year=$input_clear->input_safe($conn,$_POST['roll_batch']);
     $semester=$input_clear->input_safe($conn,$_POST['roll_semester']);
 
-    if($type=1)
+    if($type===1 )
     {
         $get_ac_session_id="SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
         $get_ac_session_id_run=mysqli_query($conn,$get_ac_session_id);
@@ -177,9 +177,19 @@ if(isset($_POST['proceed_to_add_roll']))
                 $ac_session_id=$result['ac_session_id'];
             }
         }
+        
+        $previous_semester=$semester-1;
+        $get_previous_ac_session_id="SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$previous_semester";
+        $get_previous_ac_session_id_run=mysqli_query($conn,$get_ac_session_id);
+        if($get_previous_ac_session_id_run!=FALSE)
+        {
+            while($result=mysqli_fetch_assoc($get_ac_session_id_run))
+            {
+                $previous_ac_session_id=$result['ac_session_id'];
+            }
+        }
     
-    
-        $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender`, `current_sem` FROM students WHERE ac_session_id=$ac_session_id";
+        $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender`, `current_sem` FROM students WHERE ac_session_id=$previous_ac_session_id";
         $get_students_run=mysqli_query($conn,$get_students);
         if($get_students_run)
         {
@@ -198,6 +208,7 @@ if(isset($_POST['proceed_to_add_roll']))
             
             </thead>
             <form action="add_roll_backend" method="post">
+            <input type="hidden" value="1" name="type">
             <tbody id="roll_list">');
             
             while($student=mysqli_fetch_assoc($get_students_run))
@@ -264,7 +275,7 @@ if(isset($_POST['proceed_to_add_roll']))
                 </div></div></div></td></tr>');  
             }
             echo('
-            <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$semester.'">Register for Examination</button></center></th></tr>
+            <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$ac_session_id.'">Register for Examination</button></center></th></tr>
             </tbody></form>
             
             </table></div>');
