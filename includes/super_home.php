@@ -1322,7 +1322,7 @@ function tr_getSemester(tr_type)
            </select>
         </div>
         <div class="form-group">
-            <select name="msemester" id="msemester" class="form-control" required>
+            <select name="msemester" id="msemester" class="form-control" required onchange="enable_load_prev_subjects()">
             <option value="" disabled selected>Select semester</option>  
            </select>
         </div>
@@ -1334,7 +1334,7 @@ function tr_getSemester(tr_type)
             </div>
         </div>
         <div class="form-group">
-        <input type="button" value="Load Previous" class="btn btn-primary">    
+        <input type="button" value="Load Previous" id="load_prev_sub" class="btn btn-primary" onclick="load_previous_subjects()" disabled>    
         <input type="button" value="Create New" class="btn btn-success">    
         </div>
         

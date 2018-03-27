@@ -585,9 +585,11 @@ class super_user_options
 				$ie_max = $input_chk->input_safe($conn, $_POST['max6']);
 				if (isset($_POST['ie' . $i])) {
 					if (empty($cat_pass) or empty($cat_max) or empty($end_theory_pass) or empty($end_theory_max) or empty($cap_pass) or empty($cap_max) or empty($end_practical_pass) or empty($end_practical_max) or empty($ia_pass) or empty($ia_max) or empty($ie_pass) or empty($ie_max)) {
+						$alert->exec("Please verify all fields!","danger");
 						return;
 					}
 				} else if (empty($total_cr) or empty($cat_pass) or empty($cat_max) or empty($end_theory_pass) or empty($end_theory_max) or empty($cap_pass) or empty($cap_max) or empty($end_practical_pass) or empty($end_practical_max) or empty($ia_pass) or empty($ia_max) or empty($ie_pass) or empty($ie_max)) {
+					$alert->exec("Please verify all fields!","danger");
 					return;
 				}
 				if (isset($_POST['elective' . $i])) {

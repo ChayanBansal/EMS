@@ -165,3 +165,33 @@ function toggle_course_name(){
   function set_course(){
       document.getElementById("cname").value=document.getElementById("prog_name").value+" "+document.getElementById("branch_name").value;
   }
+  function enable_load_prev_subjects(){
+      $("#load_prev_sub").prop("disabled",false);
+  }
+  function load_previous_subjects(){
+      var course=$("#mcourse").val();
+      var ay=$("#myear").val();
+      var sem=$("#msemester").val();
+      $.ajax({
+        type:'POST',
+        url:'modal_ajax',
+        data:{"prev_sub_load":1,
+        "course":course,
+        "year":ay,
+        "semester":sem},
+        success:function(contents){
+            var jdata=JSON.parse(contents);
+            if(jdata.status==0){
+                alert("No subjects found!");
+            }
+            else{
+                $("#subject_area").html(jdata.data);
+            }
+            $("#no_subjects").val(jdata.rowcount);
+            
+        },
+        error:function(log){
+            console.log(log);
+        }
+    });
+  }
