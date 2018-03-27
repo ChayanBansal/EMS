@@ -49,6 +49,22 @@
         }
         unset($_SESSION['roll_list_added']);
     }
+
+    if(isset($_SESSION['academic_semester_registration']))
+    {
+        if($_SESSION['academic_semester_registration']==1)
+        {
+            $roll_list_added_alert = new alert();
+            $roll_list_added_alert->exec("Students registeration for the Academic Semester successful","success");
+        }
+        else if($_SESSION['academic_semester_registration']==0)
+        {
+            $roll_list_not_added_alert = new alert();
+            $roll_list_not_added_alert->exec("Students registeration for the Academic Semester unsuccessful","danger");
+        }
+        unset($_SESSION['academic_semester_registration']);
+    }
+
     $validate=new validate();
     $validate->conf_logged_in();
     $obj=new head();

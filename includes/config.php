@@ -1,7 +1,7 @@
 <?php
 $host="192.168.104.178";
-$user="enduser";
-$pass="enduser@ems";
+$user="chayan";
+$pass="chayan@ems";
 $db="ems";
 $conn=mysqli_connect($host,$user,$pass,$db);
 if(mysqli_connect_errno()){

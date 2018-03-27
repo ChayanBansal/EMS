@@ -166,8 +166,9 @@ if(isset($_POST['proceed_to_add_roll']))
     $from_year=$input_clear->input_safe($conn,$_POST['roll_batch']);
     $semester=$input_clear->input_safe($conn,$_POST['roll_semester']);
 
-    if($type===1 )
+    if($type==='1')
     {
+        //Session in which the students are to be registered
         $get_ac_session_id="SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
         $get_ac_session_id_run=mysqli_query($conn,$get_ac_session_id);
         if($get_ac_session_id_run!=FALSE)
@@ -178,26 +179,26 @@ if(isset($_POST['proceed_to_add_roll']))
             }
         }
         
-        $previous_semester=$semester-1;
+        $previous_semester=((int)$semester)-1;
+        //session in which students are already registered (i.e, their previous session_id)
         $get_previous_ac_session_id="SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$previous_semester";
-        $get_previous_ac_session_id_run=mysqli_query($conn,$get_ac_session_id);
-        if($get_previous_ac_session_id_run!=FALSE)
-        {
-            while($result=mysqli_fetch_assoc($get_ac_session_id_run))
+        $get_previous_ac_session_id_run=mysqli_query($conn,$get_previous_ac_session_id);
+    
+            foreach($get_previous_ac_session_id_run as $result)
             {
                 $previous_ac_session_id=$result['ac_session_id'];
             }
-        }
-    
-        $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender`, `current_sem` FROM students WHERE ac_session_id=$previous_ac_session_id";
+            print($previous_ac_session_id);
+        $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender` FROM students WHERE ac_session_id=$previous_ac_session_id";
         $get_students_run=mysqli_query($conn,$get_students);
         if($get_students_run)
         {
+            echo("ANDAR TO AYA");
             echo('<div style="display:flex; justify-content:space-around; overflow:auto; margin-bottom:100px; ">
             
             <table style="width:80%;align:center; background-color:#C84646; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
             <caption>
-            Batch: '.$from_year.' | Semester: '.$semester.'
+            Batch: '.$from_year.' | Previous Semester: '.$previous_semester.' | Registering for semester: '.$semester.'
             <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students..">
             </caption>
             <thead>
@@ -245,9 +246,7 @@ if(isset($_POST['proceed_to_add_roll']))
                 <td>
                 Gender:</td><td>'.$student["gender"].'
                 </td></tr>
-                <tr>
-                <td>Current Semester:</td><td>'.$student["current_sem"].'
-                </td><td></tr>
+               
                 <tr><td>
                 Father\'s Name:</td><td>'.$student["father_name"].'
                 </td></tr>
@@ -275,7 +274,7 @@ if(isset($_POST['proceed_to_add_roll']))
                 </div></div></div></td></tr>');  
             }
             echo('
-            <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$ac_session_id.'">Register for Examination</button></center></th></tr>
+            <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$ac_session_id.'">Register for Academic Semester</button></center></th></tr>
             </tbody></form>
             
             </table></div>');
@@ -285,6 +284,10 @@ if(isset($_POST['proceed_to_add_roll']))
             echo("No record to show");
         }
     
+    }
+    else
+    {
+        echo("IF mein nhi aaya");
     }
 }
 

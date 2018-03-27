@@ -12,27 +12,33 @@ if(isset($_POST['create_roll_list']))
         $ac_session_id = $input_clear->input_safe($conn,$_POST['create_roll_list']);
         $enrol_no = $_POST['enrol_no'];
         $total=count($enrol_no);
+
         $temp=0;
         for($i=0; $i<$total ; $i++)
         {
             mysqli_autocommit($conn,FALSE);
             mysqli_begin_transaction($conn);
             $enrol_number=$input_clear->input_safe($conn,$enrol_no[$i]);
-            $update_ac_session="UPDATE students SET ac_session_id=$ac_session_id WHERE enrol_no=$enrol_no";
+            print($enrol_number);
+            $update_ac_session="UPDATE students SET `ac_session_id`=$ac_session_id WHERE enrol_no='".$enrol_number."'";
             $update_ac_session_run=mysqli_query($conn,$update_ac_session);
-            if($add_roll_run)
+            if($update_ac_session_run!=FALSE)
             {
                 $temp++;
             }
         }
+        print("Temp: ".$temp);
         if($temp==$total)
         {
             mysqli_commit($conn);
-            $_SESSION['roll_list_added']=1;
+            mysqli_autocommit($conn,TRUE);
+            $_SESSION['academic_semester_registration']=1;
         }
         else
         {
-            $_SESSION['roll_list_added']=0;
+            mysqli_rollback($conn);
+            mysqli_autocommit($conn,TRUE);
+            $_SESSION['academic_semester_registration']=0;
         }
     }
     else if($_POST['type']===2)
