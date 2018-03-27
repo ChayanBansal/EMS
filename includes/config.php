@@ -1,13 +1,7 @@
 <?php
-<<<<<<< HEAD
-$host="192.168.104.178";
-$user="chayan";
-$pass="chayan@ems";
-=======
 $host="localhost";
 $user="enduser";
 $pass="enduser@ems";
->>>>>>> a4b1a580f3e2a79365646748d677b920f5efc5b3
 $db="ems";
 $conn=mysqli_connect($host,$user,$pass,$db);
 if(mysqli_connect_errno()){
