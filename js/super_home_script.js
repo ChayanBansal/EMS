@@ -19,17 +19,15 @@ function show_semester() {
             `;
     }
 }
+var i=0;
 function display_subjects(direction) {
     var val = document.getElementById("no_subjects").value;
     var table = $("#subject_area");//document.getElementById("subject_area");
     if(direction=='down'){
-        display_subjects.counter=0;
+        i=0;
         table.html('');
     }
-    if( typeof display_subjects.counter == 'undefined' ) {
-        display_subjects.counter=0
-    }
-    var i=display_subjects.counter++;
+    i++;
     if (isNaN(val)) {
         table.innerHTML = "Add a subject to insert";
     }

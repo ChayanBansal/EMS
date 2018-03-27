@@ -538,14 +538,18 @@ class super_user_options
 			if (empty($no_of_sub) or empty($course_id) or empty($semester) or is_nan($semester) or is_nan($no_of_sub)) {
 				return;
 			}
+			mysqli_autocommit($conn,FALSE);
+			mysqli_begin_transaction($conn);
+			$get_ac_session_qry = "SELECT ac_session_id FROM academic_sessions WHERE from_year=$ay AND course_id=$course_id AND current_semester=$semester";
+			$get_ac_session_qry_run = mysqli_query($conn, $get_ac_session_qry);
+			if (mysqli_num_rows($get_ac_session_qry_run) == 1) {
+				$ac_session = mysqli_fetch_assoc($get_ac_session_qry_run)['ac_session_id'];
+			} else {
+				return;
+			}
 			for ($i = 1; $i <= $no_of_sub; $i++) {
-				$get_ac_session_qry="SELECT ac_session_id FROM academic_sessions WHERE from_year=$ay AND course_id=$course_id AND current_semester=$semester";
-				$get_ac_session_qry_run=mysqli_query($conn,$get_ac_session_qry);
-				if(mysqli_num_rows($get_ac_session_qry_run)==1){
-					$ac_session=mysqli_fetch_assoc($get_ac_session_qry_run)['ac_session_id'];
-				}
 				$subcode = $input_chk->input_safe($conn, $_POST['subcode' . $i]);
-				$check_sub_exists_qry = "SELECT count(*) from subjects where sub_code='" . $subcode . "'";
+				$check_sub_exists_qry = "SELECT count(*) from subjects where sub_code='" . $subcode . "' AND ac_session_id=$ac_session";
 				$check_sub_exists_qry_run = mysqli_query($conn, $check_sub_exists_qry);
 				if ($check_sub_exists_qry_run) {
 					$get_count = mysqli_fetch_assoc($check_sub_exists_qry_run);
@@ -579,11 +583,11 @@ class super_user_options
 				$ia_max = $input_chk->input_safe($conn, $_POST['max5']);
 				$ie_pass = $input_chk->input_safe($conn, $_POST['pass6']);
 				$ie_max = $input_chk->input_safe($conn, $_POST['max6']);
-				if(isset($_POST['ie' . $i])){
+				if (isset($_POST['ie' . $i])) {
 					if (empty($cat_pass) or empty($cat_max) or empty($end_theory_pass) or empty($end_theory_max) or empty($cap_pass) or empty($cap_max) or empty($end_practical_pass) or empty($end_practical_max) or empty($ia_pass) or empty($ia_max) or empty($ie_pass) or empty($ie_max)) {
 						return;
 					}
-				}else if (empty($total_cr) or empty($cat_pass) or empty($cat_max) or empty($end_theory_pass) or empty($end_theory_max) or empty($cap_pass) or empty($cap_max) or empty($end_practical_pass) or empty($end_practical_max) or empty($ia_pass) or empty($ia_max) or empty($ie_pass) or empty($ie_max)) {
+				} else if (empty($total_cr) or empty($cat_pass) or empty($cat_max) or empty($end_theory_pass) or empty($end_theory_max) or empty($cap_pass) or empty($cap_max) or empty($end_practical_pass) or empty($end_practical_max) or empty($ia_pass) or empty($ia_max) or empty($ie_pass) or empty($ie_max)) {
 					return;
 				}
 				if (isset($_POST['elective' . $i])) {
@@ -596,13 +600,14 @@ class super_user_options
 					$theory_cr = 0;
 					$practical_cr = 0;
 					$total_cr = 0;
-					$add_subject_qry = "INSERT into subjects values('" . $subcode . "','" . $subname . "'," . $total_cr ."," . $ie . "," . $elective . ",$ac_session)";
+					$add_subject_qry = "INSERT into subjects(sub_code,sub_name,total_credits,ie_flag,elective_flag,ac_session_id) values('" . $subcode . "','" . $subname . "'," . $total_cr . "," . $ie . "," . $elective . ",$ac_session)";
 					$add_subject_qry_run = mysqli_query($conn, $add_subject_qry);
 					if ($add_subject_qry_run) {
-						$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',2,0)";
+						$ac_sub_code = mysqli_insert_id($conn);
+						$sub_distribution_qry = "INSERT into sub_distribution(practical_flag,credits_allotted,ac_sub_code) VALUES(2,0,$ac_sub_code)";
 						$sub_distribution_qry_run = mysqli_query($conn, $sub_distribution_qry);
 						if ($sub_distribution_qry_run) {
-							$get_sub_id_qry = "SELECT * from sub_distribution where sub_code='" . $subcode . "'";
+							$get_sub_id_qry = "SELECT * from sub_distribution where ac_sub_code=$ac_sub_code";
 							$get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
 							if ($get_sub_id_qry_run) {
 								$row = mysqli_fetch_assoc($get_sub_id_qry_run);
@@ -618,25 +623,26 @@ class super_user_options
 					}
 				} else {
 					$ie = 0;
-					$add_subject_qry = "INSERT into subjects values('" . $subcode . "','" . $subname . "'," . $total_cr ."," . $ie . "," . $elective . ",$ac_session)";
+					$add_subject_qry = "INSERT into subjects(sub_code,sub_name,total_credits,ie_flag,elective_flag,ac_session_id) values('" . $subcode . "','" . $subname . "'," . $total_cr . "," . $ie . "," . $elective . ",$ac_session)";
 					$add_subject_qry_run = mysqli_query($conn, $add_subject_qry);
+					$ac_sub_code = mysqli_insert_id($conn);
 					if ($add_subject_qry_run) {
 
 						switch ($type) {
 							case 'theory':
-								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . ")";
+								$sub_distribution_qry = "INSERT into sub_distribution(practical_flag,credits_allotted,ac_sub_code) VALUES(0," . $theory_cr . ",$ac_sub_code)";
 								break;
 
 							case 'practical':
-								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',1," . $practical_cr . ")";
+								$sub_distribution_qry = "INSERT into sub_distribution(practical_flag,credits_allotted,ac_sub_code) VALUES(1," . $practical_cr . ",$ac_sub_code)";
 								break;
 							case 'both':
-								$sub_distribution_qry = "INSERT into sub_distribution(sub_code,practical_flag,credits_allotted) VALUES('" . $subcode . "',0," . $theory_cr . "),('" . $subcode . "',1," . $practical_cr . ")";
+								$sub_distribution_qry = "INSERT into sub_distribution(practical_flag,credits_allotted,ac_sub_code) VALUES(0," . $theory_cr . ",$ac_sub_code),(1," . $practical_cr . ",$ac_sub_code)";
 								break;
 						}
 						$sub_distribution_qry_run = mysqli_query($conn, $sub_distribution_qry);
 						if ($sub_distribution_qry_run) {
-							$get_sub_id_qry = "SELECT * from sub_distribution where sub_code='" . $subcode . "'";
+							$get_sub_id_qry = "SELECT * from sub_distribution where ac_sub_code=$ac_sub_code";
 							$get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
 							if ($get_sub_id_qry_run) {
 								while ($row = mysqli_fetch_assoc($get_sub_id_qry_run)) {
@@ -671,8 +677,12 @@ class super_user_options
 
 			}
 			if ($success) {
+				mysqli_commit($conn);
+				mysqli_autocommit($conn,TRUE);
 				$alert->exec("Records successfully inserted!", "success");
 			} else {
+				mysqli_rollback($conn);
+				mysqli_autocommit($conn,TRUE);				
 				$alert->exec("Unable to insert subjects", "danger");
 			}
 
@@ -798,115 +808,108 @@ class super_user_options
 	{
 		if (isset($_POST['session_submit'])) {
 			$alert = new alert();
-			$type=$_POST['session_type'];
+			$type = $_POST['session_type'];
 			$course_id = $_POST['session_course'];
 			$from_year = $_POST['session_year'];
 			$semester = $_POST['session_semester'];
 			switch ($type) {
 				case 'main':
-				$check_session_qry = "SELECT count(*) from academic_sessions where from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
-				$check_session_qry_run = mysqli_query($conn, $check_session_qry);
-				if ($check_session_qry_run) {
-					$result_count = mysqli_fetch_assoc($check_session_qry_run);
-					if ($result_count['count(*)'] == 0) {
-						mysqli_autocommit($conn, false);
-						$add_session_qry = "INSERT into academic_sessions(from_year,course_id,current_semester) VALUES($from_year,$course_id,$semester)";	
+					$check_session_qry = "SELECT count(*) from academic_sessions where from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+					$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+					if ($check_session_qry_run) {
+						$result_count = mysqli_fetch_assoc($check_session_qry_run);
+						if ($result_count['count(*)'] == 0) {
+							mysqli_autocommit($conn, false);
+							$add_session_qry = "INSERT into academic_sessions(from_year,course_id,current_semester) VALUES($from_year,$course_id,$semester)";
+						} else {
+							mysqli_rollback($conn);
+							mysqli_autocommit($conn, true);
+							$alert->exec("Academic session already exists! Consider updating session..", "warning");
+							return;
+						}
 					} else {
-						mysqli_rollback($conn);
-						mysqli_autocommit($conn, true);
-						$alert->exec("Academic session already exists! Consider updating session..", "warning");
 						return;
 					}
-				}
-				else{
-					return;
-				}
-				break;
-				
+					break;
+
 				case 'retotal':
-				$get_ac_session="SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
-				$get_ac_session_run=mysqli_query($conn,$get_ac_session);
-				if(mysqli_num_rows($get_ac_session_run)==0){
-					$alert->exec("Please open an academic session first!","warning");
-					return;
-				}
-				else{
-					$ac_sess_id=mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
-				}
-				$check_session_qry = "SELECT count(*) from ems_retotal.retotal_sessions where ac_session_id =$ac_sess_id";
-				$check_session_qry_run = mysqli_query($conn, $check_session_qry);
-				if ($check_session_qry_run) {
-					$result_count = mysqli_fetch_assoc($check_session_qry_run);
-					if ($result_count['count(*)'] == 0) {
-						mysqli_autocommit($conn, false);
-						$add_session_qry = "INSERT INTO ems_retotal.retotal_sessions(ac_session_id) VALUES($ac_sess_id)";	
+					$get_ac_session = "SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+					$get_ac_session_run = mysqli_query($conn, $get_ac_session);
+					if (mysqli_num_rows($get_ac_session_run) == 0) {
+						$alert->exec("Please open an academic session first!", "warning");
+						return;
 					} else {
-						mysqli_rollback($conn);
-						mysqli_autocommit($conn, true);
-						$alert->exec("Retotalling session already exists!", "warning");
+						$ac_sess_id = mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
+					}
+					$check_session_qry = "SELECT count(*) from ems_retotal.retotal_sessions where ac_session_id =$ac_sess_id";
+					$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+					if ($check_session_qry_run) {
+						$result_count = mysqli_fetch_assoc($check_session_qry_run);
+						if ($result_count['count(*)'] == 0) {
+							mysqli_autocommit($conn, false);
+							$add_session_qry = "INSERT INTO ems_retotal.retotal_sessions(ac_session_id) VALUES($ac_sess_id)";
+						} else {
+							mysqli_rollback($conn);
+							mysqli_autocommit($conn, true);
+							$alert->exec("Retotalling session already exists!", "warning");
+							return;
+						}
+					} else {
 						return;
 					}
-				}
-				else{
-					return;
-				}
-				
-				break;
+
+					break;
 				case 'reval':
-				$get_ac_session="SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
-				$get_ac_session_run=mysqli_query($conn,$get_ac_session);
-				if(mysqli_num_rows($get_ac_session_run)==0){
-					$alert->exec("Please open an academic session first!","warning");
-					return;
-				}
-				else{
-					$ac_sess_id=mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
-				}
-				$check_session_qry = "SELECT count(*) from ems_reval.reval_sessions where ac_session_id =$ac_sess_id";
-				$check_session_qry_run = mysqli_query($conn, $check_session_qry);
-				if ($check_session_qry_run) {
-					$result_count = mysqli_fetch_assoc($check_session_qry_run);
-					if ($result_count['count(*)'] == 0) {
-						mysqli_autocommit($conn, false);
-						$add_session_qry = "INSERT INTO ems_reval.reval_sessions(ac_session_id) VALUES($ac_sess_id)";	
+					$get_ac_session = "SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+					$get_ac_session_run = mysqli_query($conn, $get_ac_session);
+					if (mysqli_num_rows($get_ac_session_run) == 0) {
+						$alert->exec("Please open an academic session first!", "warning");
+						return;
 					} else {
-						mysqli_rollback($conn);
-						mysqli_autocommit($conn, true);
-						$alert->exec("Revaluation session already exists!", "warning");
+						$ac_sess_id = mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
+					}
+					$check_session_qry = "SELECT count(*) from ems_reval.reval_sessions where ac_session_id =$ac_sess_id";
+					$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+					if ($check_session_qry_run) {
+						$result_count = mysqli_fetch_assoc($check_session_qry_run);
+						if ($result_count['count(*)'] == 0) {
+							mysqli_autocommit($conn, false);
+							$add_session_qry = "INSERT INTO ems_reval.reval_sessions(ac_session_id) VALUES($ac_sess_id)";
+						} else {
+							mysqli_rollback($conn);
+							mysqli_autocommit($conn, true);
+							$alert->exec("Revaluation session already exists!", "warning");
+							return;
+						}
+					} else {
 						return;
 					}
-				}
-				else{
-					return;
-				}
-				break;
+					break;
 				case 'atkt':
-				$get_ac_session="SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
-				$get_ac_session_run=mysqli_query($conn,$get_ac_session);
-				if(mysqli_num_rows($get_ac_session_run)==0){
-					$alert->exec("Please open an academic session first!","warning");
-					return;
-				}
-				else{
-					$ac_sess_id=mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
-				}
-				$check_session_qry = "SELECT count(*) from ems_atkt.atkt_sessions where ac_session_id =$ac_sess_id";
-				$check_session_qry_run = mysqli_query($conn, $check_session_qry);
-				if ($check_session_qry_run) {
-					$result_count = mysqli_fetch_assoc($check_session_qry_run);
-					if ($result_count['count(*)'] == 0) {
-						mysqli_autocommit($conn, false);
-						$add_session_qry = "INSERT INTO ems_atkt.atkt_sessions(ac_session_id) VALUES($ac_sess_id)";	
+					$get_ac_session = "SELECT ac_session_id FROM academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester";
+					$get_ac_session_run = mysqli_query($conn, $get_ac_session);
+					if (mysqli_num_rows($get_ac_session_run) == 0) {
+						$alert->exec("Please open an academic session first!", "warning");
+						return;
 					} else {
-						mysqli_rollback($conn);
-						mysqli_autocommit($conn, true);
-						$alert->exec("ATKT session already exists!", "warning");
+						$ac_sess_id = mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
+					}
+					$check_session_qry = "SELECT count(*) from ems_atkt.atkt_sessions where ac_session_id =$ac_sess_id";
+					$check_session_qry_run = mysqli_query($conn, $check_session_qry);
+					if ($check_session_qry_run) {
+						$result_count = mysqli_fetch_assoc($check_session_qry_run);
+						if ($result_count['count(*)'] == 0) {
+							mysqli_autocommit($conn, false);
+							$add_session_qry = "INSERT INTO ems_atkt.atkt_sessions(ac_session_id) VALUES($ac_sess_id)";
+						} else {
+							mysqli_rollback($conn);
+							mysqli_autocommit($conn, true);
+							$alert->exec("ATKT session already exists!", "warning");
+							return;
+						}
+					} else {
 						return;
 					}
-				}
-				else{
-					return;
-				}
 					break;
 
 				default:
@@ -914,21 +917,21 @@ class super_user_options
 					break;
 			}
 			$add_session_qry_run = mysqli_query($conn, $add_session_qry);
-				if ($add_session_qry_run) {
-					mysqli_commit($conn);
-					mysqli_autocommit($conn, true);
-					$alert->exec("Session successfully created!", "success");
-				} else {
-					$alert->exec("Unable to create session!", "danger");
-				}
+			if ($add_session_qry_run) {
+				mysqli_commit($conn);
+				mysqli_autocommit($conn, true);
+				$alert->exec("Session successfully created!", "success");
+			} else {
+				$alert->exec("Unable to create session!", "danger");
 			}
+		}
 	}
 
 	function update_session($conn)
 	{
 		if (isset($_POST['session_update_submit'])) {
 			$alert = new alert();
-			$input_chk=new input_check();
+			$input_chk = new input_check();
 			$ay = $input_chk->input_safe($conn, $_POST['session_ay']);
 			$course_id = $input_chk->input_safe($conn, $_POST['session_update_submit']);
 			$semester = $input_chk->input_safe($conn, $_POST['session_semester']);
@@ -939,8 +942,7 @@ class super_user_options
 				$update_student_semester = "UPDATE students SET current_sem=$semester WHERE from_year=$ay AND course_id=$course_id";
 				$update_student_semester_run = mysqli_query($conn, $update_student_semester);
 				$alert->exec("Academic Session successfully updated!", "success");
-			}
-			 else {
+			} else {
 				mysqli_rollback($conn);
 				mysqli_autocommit($conn, true);
 				$alert->exec("Failed to update session!", "danger");
@@ -1104,9 +1106,9 @@ class useroptions
 	function update_tr($conn)
 	{
 		if (isset($_POST['tr_update_done'])) {
-			$input_safe=new input_check();
-			$request_id = $input_safe->input_safe($conn,$_POST['tr_update_done']);
-			mysqli_autocommit($conn,FALSE);
+			$input_safe = new input_check();
+			$request_id = $input_safe->input_safe($conn, $_POST['tr_update_done']);
+			mysqli_autocommit($conn, false);
 			$get_request_details = "SELECT * FROM edit_tr_request WHERE request_id=" . $request_id;
 			$get_request_details_run = mysqli_query($conn, $get_request_details);
 			if ($get_request_details_run) {
@@ -1631,28 +1633,28 @@ class useroptions
 							}
 							break;
 					}
-					$total_earned_gpv="SELECT gpv,cr FROM tr WHERE roll_id=$rollid";
-					$total_earned_gpv=mysqli_query($conn,$total_earned_gpv);
-					$total_cr_allot=0;
-					$total_earn_gpv=0;
-					$total_cr_earned=0;
-					while($res=mysqli_fetch_assoc($total_earned_gpv)){
-						$total_cr_earned+=$res['cr'];
-						$total_earn_gpv+=$res['gpv'];
+					$total_earned_gpv = "SELECT gpv,cr FROM tr WHERE roll_id=$rollid";
+					$total_earned_gpv = mysqli_query($conn, $total_earned_gpv);
+					$total_cr_allot = 0;
+					$total_earn_gpv = 0;
+					$total_cr_earned = 0;
+					while ($res = mysqli_fetch_assoc($total_earned_gpv)) {
+						$total_cr_earned += $res['cr'];
+						$total_earn_gpv += $res['gpv'];
 					}
-					$get_total_cr="SELECT credits_allotted FROM sub_distribution WHERE sub_code IN
+					$get_total_cr = "SELECT credits_allotted FROM sub_distribution WHERE sub_code IN
 					(SELECT sub_code FROM subjects WHERE course_id IN 
 					(SELECT course_id FROM students WHERE enrol_no IN
 					(SELECT enrol_no FROM roll_list WHERE roll_id=$rollid)))";
-					$get_total_cr_run=mysqli_query($conn,$get_total_cr);
-					while($cred=mysqli_fetch_assoc($get_total_cr_run)){
-						$total_cr_allot+=$cred['credits_allotted'];
+					$get_total_cr_run = mysqli_query($conn, $get_total_cr);
+					while ($cred = mysqli_fetch_assoc($get_total_cr_run)) {
+						$total_cr_allot += $cred['credits_allotted'];
 					}
-					$sgpa=$total_earn_gpv/$total_cr_allot;
-					$update_exam_summary="UPDATE exam_summary SET total_credits_earned=$total_cr_earned,total_gpv_earned=$total_earn_gpv,sgpa=$sgpa WHERE roll_id=$rollid";
-					$update_exam_summary_run=mysqli_query($conn,$update_exam_summary);
-					if(!$update_exam_summary_run){
-						$update_fail=TRUE;
+					$sgpa = $total_earn_gpv / $total_cr_allot;
+					$update_exam_summary = "UPDATE exam_summary SET total_credits_earned=$total_cr_earned,total_gpv_earned=$total_earn_gpv,sgpa=$sgpa WHERE roll_id=$rollid";
+					$update_exam_summary_run = mysqli_query($conn, $update_exam_summary);
+					if (!$update_exam_summary_run) {
+						$update_fail = true;
 					}
 					$check_atkt_flag = "SELECT count(*) FROM failure_report WHERE roll_id=$rollid";
 					$check_atkt_flag = mysqli_query($conn, $check_atkt_flag);
@@ -1670,11 +1672,11 @@ class useroptions
 						$update_status = "UPDATE edit_tr_request SET status=3 WHERE request_id=$request_id";
 						$update_status_run = mysqli_query($conn, $update_status);
 						mysqli_commit($conn);
-						mysqli_autocommit($conn,TRUE);
+						mysqli_autocommit($conn, true);
 						$_SESSION['tr_updated'] = true;
 						header('location: useroptions');
 					}
-					
+
 				}
 
 			}
