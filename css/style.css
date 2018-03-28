@@ -27,11 +27,11 @@
     align-items: center;
     justify-content: center;
     color: white;
-    background: #6E6E6E;
+    background: linear-gradient(#BABABA,#6E6E6E);
     width: 100%;
     margin-bottom: 8px;
-    box-shadow: 2px 2px 15px 8px #888888;
-    border-radius: 4px;
+    box-shadow: 4px 4px 20px #888888;
+    border-radius: 2px;
 }
 
 .titleform{
@@ -47,7 +47,7 @@
     padding-bottom: 45px;
     height: 30px;   
     border: 1px solid transparent ;
-    border-bottom-color: #C9D7E3;
+    border-bottom-color: #A9A9A9;
     transition: all 400ms;
 }
 input:focus{
@@ -56,17 +56,18 @@ input:focus{
 }
 .main input[type=submit]{
     text-align: center;
-    background: #09337B;
+    background: black;
     margin-bottom: 20px;
     width: 100%;
     font-size: 30px;
     height: 50px;
     font-weight: 800;
-    color:whitesmoke;
+    color:white;
 
 }
 .main input[type=submit]:hover{
-  background: #2B5FBF; 
+  background: white; 
+  color: black;
    cursor: pointer;
 }
 .main input{

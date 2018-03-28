@@ -8,7 +8,7 @@
 }
 body{
     margin: 0;
-    background: rgba(255, 243, 197 ,0.4);
+    background: rgba(243, 219, 164, 0.4);
 }
 .menu-contain{
     position: fixed;
@@ -136,11 +136,12 @@ a{
     width: 100%;
     padding: 5px;
     color: white;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
     bottom: 0;
-    z-index: 10;
+    z-index: 100;
     margin-top: 20px;
+    box-shadow: 2px -2px 4px #373737;
 }
 
 .uni_name {
