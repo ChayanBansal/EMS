@@ -17,10 +17,12 @@ if (isset($_POST['login'])) {
     <link rel="stylesheet" href="css/style.css">
     <style>
         .newsignin{
-            background:#A31D00 !important;
+            background:white !important;
+            color: red !important;
         }
         .newsignin:hover{
             background: #D72600 !important;
+            color: white !important;
         }
     </style>
 </head>
