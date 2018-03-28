@@ -302,7 +302,7 @@ function tr_getSemester(tr_type)
     
     <div class="sub-container col-lg-8 col-md-10 col-sm-12 col-xs-12">
     <h2 class="tcaption">Choose Operations: </h2>
-        <div class="option chayanraghav_class_blue" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
+        <div class="option_s chayanraghav_class_blue" onmouseover="show('subopt1')" onmouseout="hide('subopt1')">
             <div><i class="glyphicon glyphicon-user"></i></div>
             <div>Operators</div>
             <div class="sub-option" id="subopt1">
@@ -310,7 +310,7 @@ function tr_getSemester(tr_type)
                 <button data-toggle="modal" data-target="#view_op_modal"><i class="glyphicon glyphicon-pencil"></i> View/Lock/Delete</button>
             </div>
             </div>
-        <div class="option chayanraghav_class_blue" onmouseover="show('subopt2')" onmouseout="hide('subopt2')">
+        <div class="option_s chayanraghav_class_blue" onmouseover="show('subopt2')" onmouseout="hide('subopt2')">
             <div><i class="glyphicon glyphicon-file"></i></div>
             <div>Courses</div>
             <div class="sub-option" id="subopt2">
@@ -318,7 +318,7 @@ function tr_getSemester(tr_type)
                 <button data-toggle="modal" data-target="#viewcourseModal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
-            <div class="option chayanraghav_class_blue" onmouseover="show('subopt3')" onmouseout="hide('subopt3')">
+            <div class="option_s chayanraghav_class_blue" onmouseover="show('subopt3')" onmouseout="hide('subopt3')">
             <div><i class="glyphicon glyphicon-retweet"></i></div>
             <div>Marks Processing</div>
             <div class="sub-option" id="subopt3">
@@ -327,7 +327,7 @@ function tr_getSemester(tr_type)
                 <button data-toggle="modal" data-target="#edit_tr_request"><i class="glyphicon glyphicon-check"></i> Edit TR Requests</button>
             </div>
             </div>
-            <div class="option chayanraghav_class_blue" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
+            <div class="option_s chayanraghav_class_blue" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
             <div><i class="glyphicon glyphicon-list-alt"></i></div>
             <div>Subjects</div>
             <div class="sub-option" id="subopt4">
@@ -335,7 +335,7 @@ function tr_getSemester(tr_type)
                 <button data-toggle="modal" data-target="#viewsubjectsModal"><i class="glyphicon glyphicon-pencil"></i> View/Edit</button>
             </div>
             </div>
-            <div class="option chayanraghav_class_blue" onmouseover="show('subopt5')" onmouseout="hide('subopt5')">
+            <div class="option_s chayanraghav_class_blue" onmouseover="show('subopt5')" onmouseout="hide('subopt5')">
             <div><i class="glyphicon glyphicon-th-list"></i></div>
             <div>Sessions</div>
             <div class="sub-option" id="subopt5">
