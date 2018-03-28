@@ -971,6 +971,18 @@ class super_user_options
 	}
 
 }
+class GeneralOptions{
+	function start_transaction($con){
+		mysqli_autocommit($con,FALSE);
+		mysqli_begin_transaction($con);
+	}
+	function end_transaction($con){
+		mysqli_commit($con);
+	}
+	function rollback($con){
+		mysqli_rollback($con);
+	}
+}
 class useroptions
 {
 	function display($conn)
@@ -1017,15 +1029,18 @@ class useroptions
 			header('location: view');
 		}
 	}
-	function insert_marks($conn)
+	function insert_main_marks($conn)
 	{
 		if (isset($_POST['feed_marks'])) {
 			$alert = new alert();
 			$operator_id = $_SESSION['operator_id'];
 			$form_input_check = new input_check();
+			$sqltransact=new GeneralOptions();
+			$sqltransact->start_transaction($conn);
 			$remark = $form_input_check->input_safe($conn, $_POST['remark']);
 			if (empty($remark)) {
 				$alert->exec("Please enter a remark!", "warning");
+				$sqltransact->rollback($conn);
 				return;
 			}
 			$transaction_qry = "INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
@@ -1033,12 +1048,8 @@ class useroptions
 			if ($transaction_qry_run) {
 				$transaction_id = mysqli_insert_id($conn);
 			} else {
+				$sqltransact->rollback($conn);
 				return;
-			}
-			if ($_SESSION['main_atkt'] == "main") {
-				$atkt_flag = 0;
-			} else if ($_SESSION['main_atkt'] == "atkt") {
-				$atkt_flag = 1;
 			}
 			$component_id = $_SESSION['sub_comp_id'];
 			$sub_id = $_SESSION['sub_id'];
@@ -1049,6 +1060,7 @@ class useroptions
 				$marks = $_POST['score' . $i];
 				if (empty($marks) or is_nan($marks)) {
 					$alert->exec("Please enter a correct value for marks!", "warning");
+					$sqltransact->rollback($conn);
 					return;
 				}
 				if ($i == $_SESSION['num_rows']) {
@@ -1059,12 +1071,21 @@ class useroptions
 			}
 			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
 			if ($insert_score_qry_run) {
-				$_SESSION['score_entered_success'] = true;
-				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['from_year'] . "," . $_SESSION['current_course_id'] . "," . $_SESSION['semester'] . ",'" . $_SESSION['sub_code'] . "'," . $transaction_id . ",NULL,$component_id,$atkt_flag)";
+				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['ac_sess_id'] . ","  . $transaction_id . ",NULL,$component_id,0,".$_SESSION['ac_sub_code'].")";
 				$audit_qry_run = mysqli_query($conn, $audit_qry);
-				header('location: /ems/includes/useroptions');
+				if($audit_qry_run){
+					$_SESSION['score_entered_success'] = true;	
+					$sqltransact->end_transaction($conn);
+					header('location: /ems/includes/useroptions');
+				}
+				else{
+					$_SESSION['score_entered_success'] = false;
+					$sqltransact->rollback($conn);
+					header('location: /ems/includes/useroptions');		
+				}
 			} else {
 				$_SESSION['score_entered_success'] = false;
+				$sqltransact->rollback($conn);				
 				header('location: /ems/includes/useroptions');
 			}
 		}

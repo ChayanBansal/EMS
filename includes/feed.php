@@ -3,37 +3,59 @@
 session_start();
 if (isset($_POST['proceed_to_feed'])) {
     require('config.php');
-    $_SESSION['from_year'] = $_POST['batch'];
-    $_SESSION['main_atkt'] = $_POST['main_atkt'];
-    $_SESSION['semester'] = $_POST['semester'];
-    $_SESSION['sub_code'] = $_POST['subject'];
-    $_SESSION['sub_comp_id'] = $_POST['sub_comp'];
-
-    $check_exists_audit_qry = "SELECT count(*) as 'count' from auditing where from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . " AND semester=" . $_SESSION['semester'] . " AND component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
-    $check_exists_audit_qry_run = mysqli_query($conn, $check_exists_audit_qry);
-    if($check_exists_audit_qry_run){
-        $count = mysqli_fetch_assoc($check_exists_audit_qry_run);
-        if ($count['count'] > 0) {
-            $_SESSION['marks_entered_audit'] = true;
-            header('location: /ems/includes/useroptions');
+    $examType = $_POST['main_atkt'];
+    switch ($examType) {
+        case 'main':
+        $_SESSION['from_year'] = $_POST['batch'];
+        $_SESSION['main_atkt'] = $_POST['main_atkt'];
+        $_SESSION['semester'] = $_POST['semester'];
+        $_SESSION['sub_code'] = $_POST['subject'];
+        $_SESSION['sub_comp_id'] = $_POST['sub_comp'];
+        $ac_sess_id="SELECT ac_session_id FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . " AND current_semester=" . $_SESSION['semester'];
+        $ac_sess_id=mysqli_query($conn,$ac_sess_id);
+        $ac_sess_id=mysqli_fetch_assoc($ac_sess_id)['ac_session_id'];
+        $_SESSION['ac_sess_id']=$ac_sess_id;
+        $check_exists_audit_qry = "SELECT count(*) as 'count' from auditing where session_id=$ac_sess_id AND component_id=" . $_SESSION['sub_comp_id'] . " AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
+        $check_exists_audit_qry_run = mysqli_query($conn, $check_exists_audit_qry);
+        if ($check_exists_audit_qry_run) {
+            $count = mysqli_fetch_assoc($check_exists_audit_qry_run);
+            if ($count['count'] > 0) {
+                $_SESSION['marks_entered_audit'] = true;
+                header('location: /ems/includes/useroptions');
+            }
         }
+        $get_sub_id_qry = "SELECT cd.sub_id from component_distribution cd,sub_distribution sd where cd.sub_id=sd.sub_id and component_id=" . $_SESSION['sub_comp_id'] . " AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
+        $get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
+        $sub_id = mysqli_fetch_assoc($get_sub_id_qry_run);
+        $_SESSION['sub_id'] = $sub_id['sub_id'];
+        $getComponentName = "SELECT component_name FROM component WHERE component_id=" . $_SESSION['sub_comp_id'];
+        $getComponentNameRun = mysqli_query($conn, $getComponentName);
+        $comp = mysqli_fetch_assoc($getComponentNameRun);
+        $_SESSION['sub_comp_name'] = $comp['component_name'];
+        $get_subject_name_qry = "SELECT sub_name,ac_sub_code from subjects where sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=$ac_sess_id";
+        $get_subject_name_qry_run = mysqli_query($conn, $get_subject_name_qry);
+        $subname = mysqli_fetch_assoc($get_subject_name_qry_run);
+        $_SESSION['sub_name'] = $subname['sub_name'];
+        $_SESSION['ac_sub_code'] = $subname['ac_sub_code'];
+        $get_max_marks_qry = "SELECT max_marks from component_distribution WHERE sub_id=" . $_SESSION['sub_id'] . " AND component_id=" . $_SESSION['sub_comp_id'];
+        $get_max_marks_qry_run = mysqli_query($conn, $get_max_marks_qry);
+        $max_result = mysqli_fetch_assoc($get_max_marks_qry_run);
+        $_SESSION['max_marks'] = round($max_result['max_marks']);
+            break;
+        case 'retotal':
+
+            break;
+        case 'reval':
+
+            break;
+        case 'atkt':
+
+            break;
+
+        default:
+            die("Error Encountered!");
     }
-    $get_sub_id_qry = "SELECT cd.sub_id from component_distribution cd,sub_distribution sd where cd.sub_id=sd.sub_id and component_id=" . $_SESSION['sub_comp_id'] . " AND sub_code='" . $_SESSION['sub_code'] . "'";
-    $get_sub_id_qry_run = mysqli_query($conn, $get_sub_id_qry);
-    $sub_id = mysqli_fetch_assoc($get_sub_id_qry_run);
-    $_SESSION['sub_id'] = $sub_id['sub_id'];
-    $getComponentName = "SELECT component_name FROM component WHERE component_id=" . $_SESSION['sub_comp_id'];
-    $getComponentNameRun = mysqli_query($conn, $getComponentName);
-    $comp = mysqli_fetch_assoc($getComponentNameRun);
-    $_SESSION['sub_comp_name'] = $comp['component_name'];
-    $get_subject_name_qry = "SELECT sub_name from subjects where sub_code='" . $_SESSION['sub_code'] . "'";
-    $get_subject_name_qry_run = mysqli_query($conn, $get_subject_name_qry);
-    $subname = mysqli_fetch_assoc($get_subject_name_qry_run);
-    $_SESSION['sub_name'] = $subname['sub_name'];
-    $get_max_marks_qry = "SELECT max_marks from component_distribution WHERE sub_id=" . $_SESSION['sub_id'] . " AND component_id=" . $_SESSION['sub_comp_id'];
-    $get_max_marks_qry_run = mysqli_query($conn, $get_max_marks_qry);
-    $max_result = mysqli_fetch_assoc($get_max_marks_qry_run);
-    $_SESSION['max_marks'] = round($max_result['max_marks']);
+    
 } ?>
 <html lang="en">
 <head>
@@ -107,10 +129,10 @@ if (isset($_POST['proceed_to_feed'])) {
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
-$validate=new validate();
+$validate = new validate();
 $validate->conf_logged_in();
 $options = new useroptions(); //inserting marks
-$options->insert_marks($conn);
+$options->insert_main_marks($conn);
 $obj = new head();
 $obj->displayheader();
 require('../preloader/preload.php');
@@ -149,14 +171,13 @@ $input = new input_field();
     </thead>
     <tbody id="student_table">
     <?php
-    $get_elective_flag="SELECT elective_flag FROM subjects WHERE sub_code='".$_SESSION['sub_code']."'";
-    $get_elective_flag_run=mysqli_query($conn,$get_elective_flag);
-    $elective_flag=mysqli_fetch_assoc($get_elective_flag_run);
-    if($elective_flag['elective_flag']==0)
-    {
+    $get_elective_flag = "SELECT elective_flag FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "'";
+    $get_elective_flag_run = mysqli_query($conn, $get_elective_flag);
+    $elective_flag = mysqli_fetch_assoc($get_elective_flag_run);
+    if ($elective_flag['elective_flag'] == 0) {
         if ($_SESSION['main_atkt'] == "main") {
             $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,roll_list r where s.ac_session_id IN
-                            (SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND current_semester=".$_SESSION['semester'].") 
+                            (SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND current_semester=" . $_SESSION['semester'] . ") 
                             AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
         } else if ($_SESSION['main_atkt'] == "atkt") {// FOR FUTURE INCREMENT
             $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,atkt_list r where course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'];
@@ -182,28 +203,21 @@ $input = new input_field();
             $alert = new alert();
             $alert->exec("Unable to fetch roll list!", "warning");
         }
-    }
-    else
-    {
-        $sub_code=$_SESSION['sub_code'];
-        if ($_SESSION['main_atkt'] == "main") 
-        {
-            $get_student_list="SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, r.roll_id FROM students st, elective_map em, roll_list r
-                            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='".$sub_code."' AND r.enrol_no=em.enrol_no 
-                            AND st.from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'];
+    } else {
+        $sub_code = $_SESSION['sub_code'];
+        if ($_SESSION['main_atkt'] == "main") {
+            $get_student_list = "SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, r.roll_id FROM students st, elective_map em, roll_list r
+                            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='" . $sub_code . "' AND r.enrol_no=em.enrol_no 
+                            AND st.from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'];
+        } else {
+            $get_student_list = "SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, atkt_r.roll_id FROM students st, elective_map em, roll_list atkt_r
+            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='" . $sub_code . "' AND atkt_r.enrol_no=em.enrol_no 
+            AND st.from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'];
         }
-        else
-        {
-            $get_student_list="SELECT em.enrol_no, st.first_name, st.last_name, st.father_name, atkt_r.roll_id FROM students st, elective_map em, roll_list atkt_r
-            WHERE st.enrol_no = em.enrol_no AND em.elective_sub_code='".$sub_code."' AND atkt_r.enrol_no=em.enrol_no 
-            AND st.from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id'];
-        }
-        $get_student_list_run=mysqli_query($conn,$get_student_list);
-        if ($get_student_list_run==TRUE) 
-        {
+        $get_student_list_run = mysqli_query($conn, $get_student_list);
+        if ($get_student_list_run == true) {
             $row_count = 1;
-            while ($row = mysqli_fetch_assoc($get_student_list_run)) 
-            {
+            while ($row = mysqli_fetch_assoc($get_student_list_run)) {
                 echo ('<tr>
                     <td>' . $row['enrol_no'] . '</td>
                     <td>' . $row['first_name'] . " " . $row['last_name'] . '</td>
@@ -217,9 +231,7 @@ $input = new input_field();
                 $row_count++;
             }
             $_SESSION['num_rows'] = mysqli_num_rows($get_student_list_run);
-        } 
-        else
-        {
+        } else {
             $alert = new alert();
             $alert->exec("Unable to fetch roll list!", "warning");
         }
@@ -249,7 +261,7 @@ $input = new input_field();
 <?php
 $obj = new footer();
 $obj->disp_footer();
-$logout_modal=new modals();
+$logout_modal = new modals();
 $logout_modal->display_logout_modal();
 ?>
 </body>
