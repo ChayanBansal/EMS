@@ -30,6 +30,7 @@
     background: #4d4d4d;
     width: 100%;
     margin-bottom: 8px;
+    box-shadow: 2px 2px 18px 8px #888888;
 }
 
 .titleform{
