@@ -78,7 +78,7 @@ $op_login->login();
 <script>
         function change(){
             var d=document.getElementById("f1");
-            d.style.borderBottomColor="darkblue";
+            d.style.borderBottomColor="#D72600";
         }
         function change2(){
             var d=document.getElementById("f1");
@@ -90,7 +90,7 @@ $op_login->login();
         }
         function change3(){
             var d=document.getElementById("f2");
-            d.style.borderBottomColor="darkblue";
+            d.style.borderBottomColor="#D72600";
         }
         </script>
 </html>
