@@ -15,6 +15,14 @@ if (isset($_POST['login'])) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Examination Portal</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .newsignin{
+            background:#A31D00 !important;
+        }
+        .newsignin:hover{
+            background: #D72600 !important;
+        }
+    </style>
 </head>
 <body>
 <link rel="stylesheet" href="/ems/preloader/css/loader.css">
@@ -54,7 +62,7 @@ $op_login->login();
                  </div>
 				 <div class="field">
                  <?php
-                $submit->display("", "", "submit", "login", "openover()", "Sign In");
+                $submit->display("", "newsignin", "submit", "login", "openover()", "Sign In");
                 ?>
                  </div>
 			 </div>
