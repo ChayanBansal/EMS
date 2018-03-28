@@ -415,7 +415,7 @@ Please select a choice:</div>
         <div>
         <div class="form-group">
                 <label for="semester">Type :</label>
-                    <select id="exam_type" name="type_exam" class="form-control" onChange="getBatch(this.value)" required>
+                    <select id="exam_type" name="main_atkt" class="form-control" onChange="getBatch(this.value)" required>
                     <option value="" disabled selected>Select Type</option>
                     <option value="main">Main</option>
                     <option value="retotal">Retotalling</option>
