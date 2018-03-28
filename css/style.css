@@ -56,17 +56,18 @@ input:focus{
 }
 .main input[type=submit]{
     text-align: center;
-    background: #09337B;
+    background: black;
     margin-bottom: 20px;
     width: 100%;
     font-size: 30px;
     height: 50px;
     font-weight: 800;
-    color:whitesmoke;
+    color:white;
 
 }
 .main input[type=submit]:hover{
-  background: #2B5FBF; 
+  background: white; 
+  color: black;
    cursor: pointer;
 }
 .main input{

@@ -20,7 +20,7 @@
         margin-top: 5px;
         display: none;
         width: 100%;
-        background: orangered;
+        background: #D90000;
         justify-content: space-around;
         color: white;
         border: 1px solid white;
@@ -43,12 +43,12 @@
     .sub-option button{
         border: none;
         width: 40%;
-        background: orangered;
+        background: #D90000;
         padding: 5px;
     }
     .sub-option button:hover{
         background: white;
-        color: orangered;
+        color: #D90000;
     }
     @keyframes fadein{
         0%{
