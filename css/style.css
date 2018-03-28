@@ -31,7 +31,7 @@
     width: 100%;
     margin-bottom: 8px;
     box-shadow: 2px 2px 15px 8px #888888;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
 .titleform{
@@ -47,7 +47,7 @@
     padding-bottom: 45px;
     height: 30px;   
     border: 1px solid transparent ;
-    border-bottom-color: #C9D7E3;
+    border-bottom-color: #A9A9A9;
     transition: all 400ms;
 }
 input:focus{

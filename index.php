@@ -84,19 +84,19 @@ $op_login->login();
 <script>
         function change(){
             var d=document.getElementById("f1");
-            d.style.borderBottomColor="#C8C8C8";
+            d.style.borderBottomColor="white";
         }
         function change2(){
             var d=document.getElementById("f1");
-            d.style.borderBottomColor="#C9D7E3";
+            d.style.borderBottomColor="#A9A9A9";
         }
         function change4(){
             var d=document.getElementById("f2");
-            d.style.borderBottomColor="#C9D7E3";
+            d.style.borderBottomColor="#A9A9A9";
         }
         function change3(){
             var d=document.getElementById("f2");
-            d.style.borderBottomColor="#C8C8C8";
+            d.style.borderBottomColor="white";
         }
         </script>
 </html>
