@@ -17,12 +17,16 @@ if (isset($_POST['login'])) {
     <link rel="stylesheet" href="css/style.css">
     <style>
         .newsignin{
-            background:white !important;
-            color: red !important;
+            background:black !important;
+            color: white !important;
+            border-radius: 3px;
         }
         .newsignin:hover{
-            background: #D72600 !important;
-            color: white !important;
+            background: white !important;
+            color: black !important;
+        }
+        ::placeholder{
+            color:#C8C8C8;
         }
     </style>
 </head>
@@ -80,7 +84,7 @@ $op_login->login();
 <script>
         function change(){
             var d=document.getElementById("f1");
-            d.style.borderBottomColor="#D72600";
+            d.style.borderBottomColor="#C8C8C8";
         }
         function change2(){
             var d=document.getElementById("f1");
@@ -92,7 +96,7 @@ $op_login->login();
         }
         function change3(){
             var d=document.getElementById("f2");
-            d.style.borderBottomColor="#D72600";
+            d.style.borderBottomColor="#C8C8C8";
         }
         </script>
 </html>
