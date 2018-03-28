@@ -185,19 +185,17 @@ if (isset($_SESSION['tr_updated'])) {
     $alert = new alert();
     if ($_SESSION['tr_updated']) {
         $alert->exec("TR for Enrollment Number: " . $_SESSION['enrollment'] . " successfully updated!", "success");
-    }
-    else{
+    } else {
         $alert->exec("Unable to update TR!", "danger");
     }
     unset($_SESSION['tr_updated']);
     unset($_SESSION['enrollment']);
 }
-if(isset($_SESSION['tr_req_close'])){
+if (isset($_SESSION['tr_req_close'])) {
     $alert = new alert();
     if ($_SESSION['tr_req_close']) {
         $alert->exec("Request Closed", "info");
-    }
-    else{
+    } else {
         $alert->exec("Unable to close request!", "danger");
     }
     unset($_SESSION['tr_req_close']);
@@ -213,33 +211,41 @@ $options->check_opt();*/
 
 ?>
 <script>
-function getType(batch){
+
+function getBatch(etype){
     $.ajax({
 	type: "POST",
 	url: "ajax_response",
-	data: 'from_year='+batch+'&getType=1&getSemester=0&getSubject=0&getComponent=0',
+	data: {
+        "getBatch":1,
+        "type":etype
+    },
 	success: function(data){
-        $("#exam_type").html(data);
-        $("#sem_list").html("<option value='' disabled>Select Semester</option>");
-        $("#sub_list").html("<option value='' disabled>Select Subject</option>");
-        $("#sub_component").html("<option value='' disabled>Select Component</option>");
+        $("#batch_list").html("<option selected disabled>Select Batch</option>");          
+        $("#batch_list").append(data);  
+        $("#sem_list").html("<option selected disabled>Select Semester</option>");
+        $("#sub_list").html("<option selected disabled>Select Subject</option>");
+        $("#sub_component").html("<option selected disabled>Select Component</option>");
+        
     },
     error: function(e){
         alert('Come back again');
     }
 	});
-}
-function getSemester(examType) {
-	var batch=document.getElementById("batch_list").value;
+}    
+function getSemester(batch) {
+    var examType=$("#exam_type").val();
     $.ajax({
 	type: "POST",
 	url: "ajax_response",
-	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch+'&getType=0&getSubject=0&getComponent=0',
+	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch,
 	success: function(data){
-        $("#sem_list").html(data);
-        $("#sub_list").html("<option value='' disabled>Select Subject</option>");
-        $("#sub_component").html("<option value='' disabled>Select Component</option>");
-    },
+        $("#sem_list").html("<option selected disabled>Select Semester</option>");
+        $("#sem_list").append(data);
+        $("#sub_list").html("<option selected disabled>Select Subject</option>");
+        $("#sub_component").html("<option selected disabled>Select Component</option>");
+        
+     },
     error: function(e){
         alert('Come back again');
     }
@@ -253,9 +259,10 @@ function getSubject(semester)
     $.ajax({
 	type: "POST",
 	url: "ajax_response",
-	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getSemester=0&getComponent=0',
+	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt,
 	success: function(data){
-        $("#sub_list").html(data);
+        $("#sub_list").html("<option selected disabled>Select Subject</option>");
+        $("#sub_list").append(data);
         $("#sub_component").html("<option value='' disabled>Select Component</option>");
     },
     error: function(e){
@@ -268,13 +275,14 @@ function getComponent(sub_code)
 {
     var batch=document.getElementById("batch_list").value;
     var main_atkt=document.getElementById("exam_type").value;
-    var semester=document.getElementById("sub_list").value;
+    var semester=document.getElementById("sem_list").value;
     $.ajax({
 	type: "POST",
 	url: "ajax_response",
-	data: 'getSubject=0'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getType=0&getComponent=1&getSemester=0'+'&sub_code='+sub_code,
+	data: 'semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getComponent=1&sub_code='+sub_code,
 	success: function(data){
-        $("#sub_component").html(data);
+        $("#sub_component").html("<option selected disabled>Select Component</option>");
+        $("#sub_component").append(data);
     },
     error: function(e){
         alert('Come back again');
@@ -405,25 +413,24 @@ Please select a choice:</div>
       </div>
       <div class="modal-body">
         <div>
+        <div class="form-group">
+                <label for="semester">Type :</label>
+                    <select id="exam_type" name="type_exam" class="form-control" onChange="getBatch(this.value)" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="main">Main</option>
+                    <option value="retotal">Retotalling</option>
+                    <option value="reval">Revaluation</option>
+                    <option value="atkt">ATKT</option>
+                    </select>
+                </div>
+                
                 <div class="form-group">
                     <label for="batch">Batch (Starting Year) :</label>
-                    <select id="batch_list" name="batch" class="form-control" onChange="getType(this.value)" required>
+                    <select id="batch_list" name="batch" class="form-control" onChange="getSemester(this.value)" required>
                         <option value="" disabled selected>Select Batch</option>
-                        <?php 
-                        $get_batch = "SELECT from_year FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'];
-                        $get_batch_run = mysqli_query($conn, $get_batch);
-                        while ($batches = mysqli_fetch_assoc($get_batch_run)) {
-                            echo ('<option value="' . $batches['from_year'] . '">' . $batches['from_year'] . '</option>');
-                        }
-                        ?>
                     </select>
                 </div>
-                <div class="form-group">
-                <label for="semester">Type :</label>
-                    <select id="exam_type" name="main_atkt" class="form-control" onChange="getSemester(this.value)" required>
-                    <option value="" disabled selected>Select Type</option>
-                    </select>
-                </div>
+                
                         
                 <div class="form-group">
                     <label for="semester">Semester :</label>
@@ -477,14 +484,14 @@ Please select a choice:</div>
                     <select id="tr_batch_list" name="print_batch" class="form-control" required>
                         <option value="" disabled selected>Select Batch</option>
                         <?php
-                    $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
+                        $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
                     (SELECT enrol_no FROM roll_list WHERE roll_id IN
                     (SELECT DISTINCT(roll_id) FROM tr))";
-                    $get_from_year_run = mysqli_query($conn, $get_from_year);
-                    while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
-                        echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
-                    }
-                    ?>
+                        $get_from_year_run = mysqli_query($conn, $get_from_year);
+                        while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
+                            echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group">
@@ -532,14 +539,14 @@ Please select a choice:</div>
                     <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required>
                         <option value="" disabled selected>Select Batch</option>
                         <?php
-                    $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
+                        $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
                     (SELECT enrol_no FROM roll_list WHERE roll_id IN
                     (SELECT DISTINCT(roll_id) FROM tr))";
-                    $get_from_year_run = mysqli_query($conn, $get_from_year);
-                    while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
-                        echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
-                    }
-                    ?>
+                        $get_from_year_run = mysqli_query($conn, $get_from_year);
+                        while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
+                            echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group">
@@ -586,14 +593,14 @@ Please select a choice:</div>
                     <select id="tr_batch_list_view" name="tr_view_batch" class="form-control" required>
                         <option value="" disabled selected>Select Batch</option>
                         <?php
-                    $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
+                        $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
                     (SELECT enrol_no FROM roll_list WHERE roll_id IN
                     (SELECT DISTINCT(roll_id) FROM tr))";
-                    $get_from_year_run = mysqli_query($conn, $get_from_year);
-                    while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
-                        echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
-                    }
-                    ?>
+                        $get_from_year_run = mysqli_query($conn, $get_from_year);
+                        while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
+                            echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group">
@@ -633,9 +640,9 @@ Please select a choice:</div>
       </div>
       <div class="modal-body">
       <?php
-        $get_requests="SELECT `request_id`, `requester`, `roll_id`, `sub_code`, `remarks`, `status` FROM edit_tr_request WHERE requester=".$_SESSION['operator_id']." AND status!=3";
-        $get_requests_run=mysqli_query($conn,$get_requests);
-        echo('<table class="table table-hover">
+        $get_requests = "SELECT `request_id`, `requester`, `roll_id`, `sub_code`, `remarks`, `status` FROM edit_tr_request WHERE requester=" . $_SESSION['operator_id'] . " AND status!=3";
+        $get_requests_run = mysqli_query($conn, $get_requests);
+        echo ('<table class="table table-hover">
     <thead>
       <tr>
         <th>Enrollment No</th>
@@ -645,48 +652,43 @@ Please select a choice:</div>
       </tr>
     </thead>
     <tbody>');
-    if(!$get_requests_run)
-    {
-        echo("<tr style='text-align:center;'><td colspan='4'>No requests to show!</td><tr>");
-        $err = new alert();
-        $err->exec("No requests to show","info");
-    }
-    else
-    {
-        while($edit_tr_requests=mysqli_fetch_assoc($get_requests_run))
-            {
+        if (!$get_requests_run) {
+            echo ("<tr style='text-align:center;'><td colspan='4'>No requests to show!</td><tr>");
+            $err = new alert();
+            $err->exec("No requests to show", "info");
+        } else {
+            while ($edit_tr_requests = mysqli_fetch_assoc($get_requests_run)) {
             //$edit_tr_requests['request_id'] $edit_tr_requests['requester'] $edit_tr_requests['roll_id'] $edit_tr_requests['sub_code'] $edit_tr_requests['remarks'] $edit_tr_requests['status']
-            $get_edit_enrol="SELECT enrol_no FROM roll_list WHERE roll_id=".$edit_tr_requests['roll_id'];
-            $get_edit_enrol_run=mysqli_query($conn,$get_edit_enrol);
-            $edit_enrol_no=mysqli_fetch_assoc($get_edit_enrol_run);
+                $get_edit_enrol = "SELECT enrol_no FROM roll_list WHERE roll_id=" . $edit_tr_requests['roll_id'];
+                $get_edit_enrol_run = mysqli_query($conn, $get_edit_enrol);
+                $edit_enrol_no = mysqli_fetch_assoc($get_edit_enrol_run);
             //$edit_enrol_no['enrol_no']
-            
-        echo('
-        <tr>
-            <td>'.$edit_enrol_no["enrol_no"].'</td>
-            <td>'.$edit_tr_requests['sub_code'].'</td>
-            <td>'.$edit_tr_requests['remarks'].'</td>');
-            
-            switch($edit_tr_requests['status'])
-            {
-                case 0:
-                    echo('<td>Pending</td>');
-                    break;
-                case 1:
-                    echo('<td>Approved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_submit" value="'.$edit_tr_requests['request_id'].'">Click here to process</button></form></td>');
-                    break;
-                case 2:
-                    echo('<td>Disapproved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_close" value="'.$edit_tr_requests['request_id'].'">Click here to close</button></form></td>');
-                    break;
-            }
 
-        echo('</tr>');
+                echo ('
+        <tr>
+            <td>' . $edit_enrol_no["enrol_no"] . '</td>
+            <td>' . $edit_tr_requests['sub_code'] . '</td>
+            <td>' . $edit_tr_requests['remarks'] . '</td>');
+
+                switch ($edit_tr_requests['status']) {
+                    case 0:
+                        echo ('<td>Pending</td>');
+                        break;
+                    case 1:
+                        echo ('<td>Approved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_submit" value="' . $edit_tr_requests['request_id'] . '">Click here to process</button></form></td>');
+                        break;
+                    case 2:
+                        echo ('<td>Disapproved<form action="tr_update" method="post"><button class="btn btn-info" type="submit" name="tr_edit_close" value="' . $edit_tr_requests['request_id'] . '">Click here to close</button></form></td>');
+                        break;
+                }
+
+                echo ('</tr>');
+            }
         }
-    }
-      echo('
+        echo ('
     </tbody>
   </table>');
-      ?>
+        ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -842,7 +844,7 @@ $logout_modal->display_logout_modal();
 function tr_getSemester(id,id2,tr_type)
 {
   tr_from_year=document.getElementById(id).value;
-  tr_course_id=<?=$_SESSION['current_course_id']?>;
+  tr_course_id=<?= $_SESSION['current_course_id'] ?>;
   $.ajax(
     {
       type: "POST",
