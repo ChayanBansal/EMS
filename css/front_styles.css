@@ -141,7 +141,7 @@ a{
     bottom: 0;
     z-index: 100;
     margin-top: 20px;
-    box-shadow: 0px -4px 8px #373737;
+    box-shadow: 2px -2px 4px #373737;
 }
 
 .uni_name {
