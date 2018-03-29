@@ -17,7 +17,7 @@
             $check_id=mysqli_insert_id($conn);
 
         $update_score = "SELECT st.enrol_no, r.roll_id FROM students st, score sc, roll_list r WHERE sc.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=" . $_SESSION['check_transaction_id'] . " AND st.enrol_no IN
-            (SELECT enrol_no FROM students WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . ")";
+            (SELECT enrol_no FROM students WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . "))";
         $update_score_run = mysqli_query($conn, $update_score);
 
         while ($new_score = mysqli_fetch_assoc($update_score_run)) {
@@ -36,7 +36,7 @@
             header('location: useroptions');         
         }
         else{
-            
+            mysqli_rollback($conn);
         }
         mysqli_commit($conn);
         header('location: useroptions');

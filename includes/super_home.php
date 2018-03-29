@@ -211,7 +211,46 @@ function tr_getSemester(tr_type)
     }
 	});
   }
+
+  function getTrGenBatch(tr_type){
+    $.ajax(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: {
+        "tr_gen_type":1,
+        "tr_type":tr_type
+      },
+      success: function(data){
+        $("#tr_from_year").html("<option disabled selected>Select Batch</option>");        
+        $("#tr_from_year").append(data);
+    },
+    error: function(e){
+      $("#tr_from_year").html("Unable to load");
+    }
+	});
+  }
   
+  function getTrGenCourse(batch){
+    var tr_type=$("#tr_gen_type").val();
+    $.ajax(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: {
+        "tr_gen_batch":1,
+        "tr_type":tr_type,
+        "tr_batch":batch
+      },
+      success: function(data){
+        $("#tr_course").html("<option disabled selected>Select Course</option>");        
+        $("#tr_course").append(data);
+    },
+    error: function(e){
+      $("#tr_course").html("Unable to load");
+    }
+	});
+  }
 
 
 </script>
@@ -1199,35 +1238,25 @@ function tr_getSemester(tr_type)
           $input = new input_field();
           ?>
           <div class="form-group">
+              <label for="">Type</label>
+              <select id="tr_gen_type" name="tr_gen_type" class="form-control" onChange="getTrGenBatch(this.value)" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="main">Main</option>
+                    <option value="retotal">Retotalling</option>
+                    <option value="reval">Revaluation</option>
+                    <option value="atkt">ATKT</option>
+                    </select>
+              </div>
+          <div class="form-group">
               <label for="name">Academic Year</label>
-                <select name="tr_from_year" id="" class="form-control" required>
-                  <?php
-                  $get_ay_qry = "SELECT distinct(from_year) from academic_sessions";
-                  $get_ay_qry_run = mysqli_query($conn, $get_ay_qry);
-                  if ($get_ay_qry_run) {
-                    while ($row = mysqli_fetch_assoc($get_ay_qry_run)) {
-                      echo ('
-                      <option value="' . $row['from_year'] . '">' . $row['from_year'] . '</option>
-                      ');
-                    }
-                  }
-                  ?>
+                <select name="tr_from_year" id="tr_from_year" class="form-control" required onChange="getTrGenCourse(this.value)">
+                <option disabled selected>Select Batch</option>
                 </select>
               </div>
               <div class="form-group">
               <label for="type">Select Course</label>
-              <select name="tr_course" id="" class="form-control" required>
-                  <?php
-                  $get_course_qry = "SELECT course_id,course_name from courses";
-                  $get_course_qry_run = mysqli_query($conn, $get_course_qry);
-                  if ($get_course_qry_run) {
-                    while ($row = mysqli_fetch_assoc($get_course_qry_run)) {
-                      echo ('
-                      <option value="' . $row['course_id'] . '">' . $row['course_name'] . '</option>
-                      ');
-                    }
-                  }
-                  ?>
+              <select name="tr_course" id="tr_course" class="form-control" required>
+              <option disabled selected>Select Course</option>
                 </select>
               </div>
              
