@@ -2,9 +2,8 @@
 require('config.php');
 session_start();
 if (isset($_POST["check_button_main"])) {
-    $_SESSION['check_transaction_id'] = $_POST['check_button'];
+    $_SESSION['check_transaction_id'] = $_POST['check_button_main'];
     $get_check_detail = "SELECT A.*, T.operator_id, T.remark,acs.*,s.sub_code FROM auditing A, transactions T,academic_sessions acs,subjects s WHERE A.transaction_id=T.transaction_id AND A.ac_sub_code=s.ac_sub_code AND A.session_id=acs.ac_session_id AND A.transaction_id=" . $_SESSION['check_transaction_id'];
-    echo($get_check_detail);
     $get_check_detail_run = mysqli_query($conn, $get_check_detail);
     while ($check_detail = mysqli_fetch_assoc($get_check_detail_run)) {
         $_SESSION['from_year'] = $check_detail['from_year'];
@@ -42,7 +41,7 @@ if (isset($_POST["check_button_main"])) {
 }
 else if(isset($_POST['check_button_atkt'])){
     //atkt process
-    $_SESSION['check_transaction_id'] = $_POST['check_button'];
+    $_SESSION['check_transaction_id'] = $_POST['check_button_atkt'];
     $get_check_detail = "SELECT A.*, T.operator_id, T.remark,acs.*,s.sub_code FROM auditing A, transactions T,academic_sessions acs,subjects s WHERE A.transaction_id=T.transaction_id AND A.ac_sub_code=s.ac_sub_code AND A.session_id=acs.ac_session_id AND A.transaction_id=" . $_SESSION['check_transaction_id'];
     echo($get_check_detail);
     $get_check_detail_run = mysqli_query($conn, $get_check_detail);

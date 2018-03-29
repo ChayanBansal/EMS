@@ -776,7 +776,7 @@ Please select a choice:</div>
         } else {
             echo ('<tr class="success">');
             echo ('<td>' . $check_list["from_year"] . '</td>');
-            echo ('<td>' . $check_list["semester"] . '</td>');
+            echo ('<td>' . $check_list["current_semester"] . '</td>');
             echo ('<td>MAIN</td>');
             echo ('<td>' . $check_list["sub_code"] . '</td>');
             $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $check_list['sub_code'] . "' AND ac_session_id=" . $check_list['ac_session_id'];
