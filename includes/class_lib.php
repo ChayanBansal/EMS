@@ -64,6 +64,23 @@ class input_field
 			}
 		}
 	}
+	function display_w_value_table($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $disabled_flag, $maximum_value,$value)
+	{
+		if ($disabled_flag == 1) {
+			if ($required_flag == 1) {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) disabled required value='$value'>";
+			} else {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) disabled value='$value'>";
+			}
+		} else {
+			if ($required_flag == 1) {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) required value='$value'>";
+			} else {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) value='$value'>";
+			}
+		}
+	}
+	
 	function display_table_readonly($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $readonly_flag, $maximum_value)
 	{
 		if ($readonly_flag == 1) {
@@ -77,6 +94,22 @@ class input_field
 				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) required>";
 			} else {
 				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) >";
+			}
+		}
+	}
+	function display_table_readonly_w_value($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $readonly_flag, $maximum_value,$value)
+	{
+		if ($readonly_flag == 1) {
+			if ($required_flag == 1) {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) readonly required value='$value'>";
+			} else {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) readonly value='$value'>";
+			}
+		} else {
+			if ($required_flag == 1) {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) required value='$value'>";
+			} else {
+				echo "<input id='$id' class='$class' type='$type' name='$name' placeholder='$placeholder' min='$min' max='$max' onkeyup=validate(this,$maximum_value) onfocusout=validate_focus(this,$maximum_value) value='$value'>";
 			}
 		}
 	}

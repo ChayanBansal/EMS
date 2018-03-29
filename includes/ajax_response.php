@@ -157,7 +157,6 @@ if (isset($_POST['getComponent'])) {
     if ($_POST['from_year'] and $_POST['main_atkt'] and $_POST['semester'] and $_POST['sub_code']) {
         $examType = $_POST['main_atkt'];
         $ac_sess_id = "SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_POST['from_year'] . " AND current_semester=" . $_POST['semester'];
-        echo ($ac_sess_id);
         $ac_sess_id = mysqli_query($conn, $ac_sess_id);
         $ac_sess_id = mysqli_fetch_assoc($ac_sess_id)['ac_session_id'];
         switch ($examType) {
@@ -168,8 +167,7 @@ if (isset($_POST['getComponent'])) {
                 $get_sub_comp_run = mysqli_query($conn, $get_sub_comp);
                 while ($sub_comp = mysqli_fetch_assoc($get_sub_comp_run)) {
                     $sub_code = $_POST['sub_code'];
-                    $check_filled = "SELECT COUNT(*) FROM score WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub_code . "' AND ac_session_id=$ac_sess_id) AND component_id=" . $sub_comp['component_id'] . " AND roll_id IN 
-                    (SELECT roll_id FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE ac_session_id=$ac_sess_id))";
+                    $check_filled = "SELECT COUNT(*) FROM score WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub_code . "' AND ac_session_id=$ac_sess_id)) AND component_id=" . $sub_comp['component_id'] . " AND roll_id IN (SELECT roll_id FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE ac_session_id=$ac_sess_id))";
                     $check_filled_run = mysqli_query($conn, $check_filled);
                     $count = mysqli_fetch_assoc($check_filled_run);
                     if ($count['COUNT(*)'] == 0) {
