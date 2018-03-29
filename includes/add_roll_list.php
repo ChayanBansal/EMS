@@ -183,11 +183,11 @@ if(isset($_POST['proceed_to_add_roll']))
             //session in which students are already registered (i.e, their previous session_id)
             $get_previous_ac_session_id="SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$previous_semester";
             $get_previous_ac_session_id_run=mysqli_query($conn,$get_previous_ac_session_id);
-            if($get_previous_ac_session_id_run!=FALSE)
+            if(mysqli_num_rows($get_previous_ac_session_id_run)>0)
             {
                 foreach($get_previous_ac_session_id_run as $result)
                 {
-                    $previous_ac_session_id=$result['ac_session_id'];
+                    $previous_ac_session_id=$result;
                 }
                 $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender` FROM students WHERE ac_session_id=$previous_ac_session_id";
                 $get_students_run=mysqli_query($conn,$get_students);
@@ -283,6 +283,20 @@ if(isset($_POST['proceed_to_add_roll']))
                     echo("No record to show");
                 }
             }
+            else
+            {
+                $get_course_name="SELECT course_name FROM courses WHERE course_id=$course_id";
+                $get_course_name_run=mysqli_query($conn,$get_course_name);
+                if($get_course_name_run)
+                {
+                    $course_name=mysqli_fetch_assoc($get_course_name_run);
+                    echo("No student found eligible to be registered in Semester $semester as per filters added. <br> Filters added are Semester (to be registerd in) : $semester | Batch : $from_year | Course : ".$course_name["course_name"]);    
+                }
+                else
+                {
+                    echo("No student found eligible to be registered in Semester $semester as per filters added. Filters added are <br> Semester (to be registerd in) : $semester | Batch : $from_year");
+                }
+            }
         }
     }
     else if($type==='2')
@@ -311,6 +325,7 @@ if(isset($_POST['proceed_to_add_roll']))
                 <tr>
                     <th><center><h2><input type="checkbox" id="select_all_check" onclick="select_all();"></h2></center></th>
                     <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">Student</h2></center></th>
+                    <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">Detained Subjects</h2></center></th>
                 </tr>
                 
                 </thead>
@@ -320,7 +335,115 @@ if(isset($_POST['proceed_to_add_roll']))
                 
                 while($student=mysqli_fetch_assoc($get_students_run))
                 {
-                    echo('
+                    $check_double_reg="SELECT roll_id FROM ems.roll_list WHERE enrol_no='".$student["enrol_no"]."' AND semester=$semester";
+                    $check_double_reg_run=mysqli_query($conn,$check_double_reg);
+                    if($check_double_reg_run)
+                    {
+                        if(mysqli_num_rows($check_double_reg_run)>0)
+                        {
+                            echo('
+                            <tr class="info">
+                            <td style="vertical-align:middle; text-align:center; font-size:36px;">Already Registered</td>
+                            <td>
+                            <div class="student_card">
+                    <div><div class="w3-card-4">
+
+                        <header class="w3-container w3-blue">
+                        <h3>'.$student['enrol_no'].'</h3>
+                        </header>
+                        <footer class="w3-container w3-blue" style="display:flex; flex-wrap: wrap;align-content: space-around;">
+                        <h4>
+                        <table>
+                        <tr>
+                        <td>Name:</td><td>'.$student["first_name"]);
+                        if($student["middle_name"]=="")
+                        {
+                            echo(' '.$student["last_name"]);
+                        }
+                        else
+                        {
+                            echo(' '.$student["middle_name"].' '.$student["last_name"]);
+                        }
+
+                echo('
+                </td>
+                <tr>
+                <td>
+                Gender:</td><td>'.$student["gender"].'
+                </td></tr>
+            
+                <tr><td>
+                Father\'s Name:</td><td>'.$student["father_name"].'
+                </td></tr>
+                <tr>
+                <td>
+                Mother\'s Name:</td><td>'.$student["mother_name"].'
+                </td></tr>
+                <tr>
+                <td>
+                Address:</td><td>'.$student["address"].'
+                </td></tr>
+                </table>
+                </h4>
+                <div class="w3-container" style="float:right">
+                    <img src="../stud_img/'.$student['enrol_no']);
+                    if(file_exists("../stud_img/".$student['enrol_no'].".png")){
+                        echo(".png");
+                    }else{
+                        echo(".jpg");
+                    }
+                    echo('" alt="'.$student['enrol_no'].'">
+                </div>
+                </footer>
+                
+                </div></div></div></td><td>');
+                $get_roll_id="SELECT roll_id FROM ems.roll_list WHERE enrol_no='".$student['enrol_no']."' AND semester=$semester";
+                $get_roll_id_run=mysqli_query($conn,$get_roll_id);
+                if($get_roll_id_run)
+                {
+                    $result=mysqli_fetch_assoc($get_roll_id_run);
+                    $get_detained_subject="SELECT sub_id FROM ems.detained_subject WHERE roll_id=".$result['roll_id'];
+                    $get_detained_subject_run=mysqli_query($conn,$get_detained_subject);
+                    if($get_detained_subject_run)
+                    {
+                        foreach($get_detained_subject_run as $det_sub_id)
+                        {
+                            $get_sub_name="SELECT s.sub_name, sd.practical_flag FROM ems.subjects, ems.sub_distribution WHERE s.sub_id=$det_sub_id AND s.ac_sub_code=sd.ac_sub_code";
+                            $get_sub_name_run=mysqli_query($conn,$get_sub_name);
+                            if($get_sub_name_run)
+                            {
+                                echo("<ol>");
+                                foreach($get_sub_name_run as $list_det_sub)
+                                {
+                                    echo("<li>".$list_det_sub["sub_name"]);
+                                    if($list_det_sub["sub_name"]===1)
+                                    {
+                                        echo(" [Practical]</li>");    
+                                    }
+                                    else if($list_det_sub["sub_name"]===0)
+                                    {
+                                        echo(" [Theory] </li>");
+                                    }
+                                    else if($list_det_sub["sub_name"]===2)
+                                    {
+                                        echo(" [IE] </li>");
+                                    }
+                                    
+                                }
+                                echo("</ol>");
+                            }
+                        }
+                    }
+                }
+                
+                echo('</td></tr>');
+                            continue;
+                        }
+                    }
+                    
+                    else
+                    {
+                        echo('
                     <tr>
                         <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" onclick="toogle_select_all()" class="roll_check" name="enrol_no[]" value="'.$student['enrol_no'].'"></td>
                         <td><div class="student_card">
@@ -374,10 +497,39 @@ if(isset($_POST['proceed_to_add_roll']))
                     </div>
                     </footer>
                     
-                    </div></div></div></td></tr>');  
+                    </div></div></div></td>');
+                    echo('<td>');
+                    $get_subjects="SELECT s.ac_sub_code, s.sub_code, s.sub_name, s.elective_flag, sd.sub_id, sd.practical_flag FROM ems.subjects s, ems.sub_distribution sd WHERE s.ac_sesion_id=$ac_session_id AND s.ac_sub_code=sd.ac_sub_code";
+                    $get_subjects_run=mysqli_query($conn,$get_subjects);
+                    if($get_subjects_run)
+                    {
+                        foreach($get_subjects_run as $subject)
+                        {
+                            if($subject["elective_flag"]===0)
+                            {
+                                echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'");
+                            }
+                            else if($subject["elective_flag"]===1)
+                            {
+                                $get_elective_subject="SELECT COUNT(*) FROM ems.elective_map WHERE enrol_no='".$student["enrol_no"]."' AND ac_sub_code=".$subject["ac_sub_code"];
+                                $get_elective_subject_run=mysqli_query($conn,$get_elective_subject);
+                                if($get_elective_subject_run)
+                                {
+                                    $elective_count=mysqli_fetch_assoc($get_elective_subject_run);
+                                    if($elective_count['count']===1)
+                                    {
+                                        echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'");
+                                    }
+                                    
+                                }
+                            }
+                        }    
+                    }                    
+                    echo('</td></tr>');  
+                }
                 }
                 echo('
-                <tr><th colspan="2"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$ac_session_id.'">Register for Academic Semester</button></center></th></tr>
+                <tr><th colspan="3"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$ac_session_id.'">Register for Main Examination</button></center></th></tr>
                 </tbody></form>
                 
                 </table></div>');

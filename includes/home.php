@@ -36,19 +36,20 @@
     require("frontend_lib.php");
     require("class_lib.php");
     require('../preloader/preload.php');
-    if(isset($_SESSION['roll_list_added']))
+    
+    if(isset($_SESSION['main_exam_registration']))
     {
-        if($_SESSION['roll_list_added']==1)
+        if($_SESSION['main_exam_registration']==1)
         {
             $roll_list_added_alert = new alert();
             $roll_list_added_alert->exec("Roll List Added","success");
         }
-        else if($_SESSION['roll_list_added']==0)
+        else if($_SESSION['main_exam_registration']==0)
         {
             $roll_list_not_added_alert = new alert();
             $roll_list_not_added_alert->exec("Not able to add the roll list","danger");
         }
-        unset($_SESSION['roll_list_added']);
+        unset($_SESSION['main_exam_registration']);
     }
 
     if(isset($_SESSION['academic_semester_registration']))
@@ -71,6 +72,7 @@
     $obj=new head();
     $obj->displayheader();
     $obj->dispmenu(3,["/ems/includes/home","/ems/includes/logout","/ems/includes/developers"],["glyphicon glyphicon-home","glyphicon glyphicon-log-out","glyphicon glyphicon-info-sign"],["Home","Log Out","About Us"]);
+    unset($_SESSION['current_course_id']);
     $dashboard=new dashboard();
     $dashboard->display($_SESSION['operator_name'],["Sign Out"],["index"],"Contact Super Admin");
     $ai=new course();
