@@ -301,6 +301,10 @@ if(isset($_POST['proceed_to_add_roll']))
                 }
             }
         }
+        else
+        {
+            echo("No records to show");
+        }
     }
     else if($type==='2')
     {
