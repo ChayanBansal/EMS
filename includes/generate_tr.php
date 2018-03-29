@@ -7,6 +7,7 @@ require('../preloader/preload.php');
 $validate = new validate();
 $validate->conf_logged_in_super();
 if (isset($_POST['tr_submit'])) {
+    $_SESSION['type'] = $_POST['tr_gen_type'];
     $_SESSION['from_year'] = $_POST['tr_from_year'];
     $_SESSION['course_id'] = $_POST['tr_course'];
     $get_course_name_qry = "SELECT course_name from courses where course_id=" . $_SESSION['course_id'];
@@ -100,7 +101,6 @@ if (isset($_POST['tr_submit'])) {
 </head>
 <body>
 <?php
-
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
@@ -108,20 +108,28 @@ $dashboard = new dashboard();
 $dashboard->display_super_dashboard($_SESSION['super_admin_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "");
 $input_btn = new input_button();
 ?>
- <div class="display">
-        <div class="subtitle">
-            Academic Session: <?= $_SESSION['from_year'] ?>
+ <div class="display">               
+ <div class="subtitle">
+ <?= $_SESSION['type'] ?> Examination | 
+  Academic Session: <?= $_SESSION['from_year'] ?>
             </div>
             <div class="subtitle">
            Course:  <?= $_SESSION['course_name'] ?>
             </div>
 
 <?php
-$get_current_sem_qry = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id']." ORDER BY current_semester LIMIT 1";
+if($_SESSION['type']==="main"){
+    //MAIN Start
+?>
+<?php
+$get_current_sem_qry = "SELECT max(current_semester) as current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id'];
 $get_current_sem_qry_run = mysqli_query($conn, $get_current_sem_qry);
 if ($get_current_sem_qry_run) {
     while ($semester = mysqli_fetch_assoc($get_current_sem_qry_run)) {
         $sem = $semester['current_semester'];
+        $ac_sess_id = "SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND current_semester=" . $sem . " AND from_year=" . $_SESSION['from_year'];
+        $ac_sess_id = mysqli_query($conn, $ac_sess_id);
+        $ac_sess_id = mysqli_fetch_assoc($ac_sess_id)['ac_session_id'];
         echo ('
         <form action="generate_tr_back_end" method="POST">
         <table class="table table-responsive table-striped table-bordered">
@@ -153,13 +161,12 @@ if ($get_current_sem_qry_run) {
         <tbody>');
         $subject_count = 0;
         $subject_completed = 0;
-        $get_sub_qry = "SELECT * from subjects WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND current_semester=" . $sem . " AND from_year=" . $_SESSION['from_year'].")";
-        echo $get_sub_qry;
+        $get_sub_qry = "SELECT * from subjects WHERE ac_session_id = $ac_sess_id";
         $get_sub_qry_run = mysqli_query($conn, $get_sub_qry);
         if ($get_sub_qry_run) {
             while ($sub = mysqli_fetch_assoc($get_sub_qry_run)) {
                 echo (' <tr><td>' . $sub['sub_name'] . '</td>');
-                $get_subcomp_qry = "SELECT distinct(component_id) from component_distribution where sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code='" . $sub['sub_code'] . "') ORDER BY component_id";
+                $get_subcomp_qry = "SELECT distinct(component_id) from component_distribution where sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub['sub_code'] . "' AND ac_session_id=$ac_sess_id)) ORDER BY component_id";
                 $get_subcomp_qry_run = mysqli_query($conn, $get_subcomp_qry);
                 $subj_comp = array();
                 $no_of_comp = 0;
@@ -173,7 +180,7 @@ if ($get_current_sem_qry_run) {
                 if ($get_comp_qry_run) {
                     while ($comp_id = mysqli_fetch_assoc($get_comp_qry_run)) {
                         if (in_array($comp_id['component_id'], $subj_comp)) {
-                            $check_auditing_qry = "SELECT check_id FROM auditing WHERE component_id=" . $comp_id['component_id'] . " AND semester=" . $sem . " AND course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND sub_code='" . $sub['sub_code'] . "'";
+                            $check_auditing_qry = "SELECT check_id FROM auditing WHERE component_id=" . $comp_id['component_id'] . " AND session_id=$ac_sess_id AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
                             $check_auditing_qry_run = mysqli_query($conn, $check_auditing_qry);
                             $check_id = mysqli_fetch_assoc($check_auditing_qry_run);
                             if (is_null($check_id['check_id'])) {
@@ -196,21 +203,19 @@ if ($get_current_sem_qry_run) {
             }
         }
         $prog_width = ($subject_completed / $subject_count) * 100;
-        echo("SELECT count(*) FROM tr WHERE roll_id IN(SELECT roll_id FROM roll_list WHERE enrol_no IN(SELECT enrol_no FROM students WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] ."AND current_semester=" . $sem . ")");
-        
         echo ('</tbody>
         <caption align="bottom">
         <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center">
         
         <div class="col-lg-7 col-md-7 col-sm-6">');
         if ($subject_count == $subject_completed) {
-            $check_tr_generated = "SELECT count(*) FROM tr WHERE roll_id IN(SELECT roll_id FROM roll_list WHERE enrol_no IN(SELECT enrol_no FROM students WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] ." AND current_semester=" . $sem . "))";
+            $check_tr_generated = "SELECT count(*) FROM tr WHERE roll_id IN(SELECT roll_id FROM roll_list WHERE enrol_no IN(SELECT enrol_no FROM students WHERE ac_session_id =$ac_sess_id))";
             $check_tr_generated_run = mysqli_query($conn, $check_tr_generated);
             $check_tr_gen = mysqli_fetch_assoc($check_tr_generated_run)['count(*)'];
             if ($check_tr_gen > 0) {
                 echo ('<button class="btn btn-info input-lg" disabled>TR Already Generated <i class="glyphicon glyphicon-ok"></i></button>');
             } else {
-                echo ('<button class="btn btn-default input-lg" type="submit" name="tab_submit" value="' . $sem . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+                echo ('<button class="btn btn-default input-lg" type="submit" name="tab_main_submit" value="' . $sem . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
 
             }
         } else {
@@ -233,7 +238,13 @@ if ($get_current_sem_qry_run) {
 }
 ?>
 </div>
+<?php
+}//Main END
 
+else if($_SESSION['type']==="atkt"){
+    //ATKT Code here
+}
+?>
 <?php
 $obj = new footer();
 $obj->disp_footer();
