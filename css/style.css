@@ -63,7 +63,7 @@ input:focus{
     height: 50px;
     font-weight: 800;
     color:white;
-
+    border-radius: 2px;
 }
 .main input[type=submit]:hover{
   background: white; 
