@@ -125,7 +125,7 @@
         justify-content: center;
         padding: 20px;
         background-color: #f1f1f1;
-        height: 720px;
+        height: 570px;
         margin-top: 0;
         margin-bottom: 70px;
       }
@@ -398,12 +398,20 @@ function chat(location,username)
     <div class="tcaption">
     Please select a choice:</div>
     </div>
+    <div>
+    <div class="chayanraghav_block ">
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
+    </div>
+    <div class="chayanraghav_block">
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-eye-open"></i></div> View TR</button>
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#print_tr"><div><i class="glyphicon glyphicon-print"></i></div> Print TR</button>
+    </div>
+    <div class="chayanraghav_block">
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#edit_tr_request"><div><i class= "glyphicon glyphicon-ok-circle" ></i></div> Edit TR Requests</button> 
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#gen_marksheet"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
+    </div>
+    </div>
 </div>
 </div> 
 

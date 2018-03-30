@@ -1092,7 +1092,7 @@ class useroptions
 				$roll_id = $_SESSION['roll_id' . $i];
 				$marks = $_POST['score' . $i];
 				if (empty($marks) or is_nan($marks)) {
-					$alert->exec("Please enter a correct value for marks!", "warning");
+					$alert->exec("Please enter correct value(s) for marks!", "warning");
 					$sqltransact->rollback($conn);
 					return;
 				}
