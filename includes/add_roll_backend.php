@@ -44,7 +44,7 @@ if(isset($_POST['create_roll_list']))
         $atkt_session_id = $input_clear->input_safe($conn,$_POST['create_roll_list']);
         $enrol_no = $_POST['enrol_no'];
         $total=count($enrol_no);
-        $get_semester="SELECT current_semester FROM ems.academic_sessions WHERE ac_session_id=(SELECT ac_session_id FROM ems_atkt.atkt_sessions WHERE atkt_session_id=$atkt_session_id)";
+        $get_semester="SELECT current_semester FROM $main.academic_sessions WHERE ac_session_id=(SELECT ac_session_id FROM ems_atkt.atkt_sessions WHERE atkt_session_id=$atkt_session_id)";
         $get_semester_run=mysqli_query($conn,$get_semester);
         if($get_semester_run)
         {
@@ -57,7 +57,7 @@ if(isset($_POST['create_roll_list']))
                 mysqli_autocommit($conn,FALSE);
                 mysqli_begin_transaction($conn);
                 $enrol_number=$input_clear->input_safe($conn,$enrol_no[$i]);
-                $get_atkt_roll_id="SELECT atkt_roll_id, roll_id FROM atkt_roll_list WHERE roll_id IN (SELECT roll_id FROM ems.roll_list WHERE semester=$semester AND enrol_no IN (".implode("','",$enrol_number)."))"; 
+                $get_atkt_roll_id="SELECT atkt_roll_id, roll_id FROM atkt_roll_list WHERE roll_id IN (SELECT roll_id FROM $main.roll_list WHERE semester=$semester AND enrol_no IN (".implode("','",$enrol_number)."))"; 
                 $get_atkt_roll_id_run=mysqli_query($conn,$get_atkt_roll_id);
                 if($get_atkt_roll_id_run!=FALSE)
                 {
@@ -112,7 +112,7 @@ if(isset($_POST['create_roll_list']))
         $ac_session_id = $input_clear->input_safe($conn,$_POST['create_roll_list']);
         $enrol_no = $_POST['enrol_no'];
         $total=count($enrol_no);
-        $get_semester="SELECT current_semester FROM ems.academic_sessions WHERE ac_session_id=$ac_session_id";
+        $get_semester="SELECT current_semester FROM $main.academic_sessions WHERE ac_session_id=$ac_session_id";
         $get_semester_run=mysqli_query($conn,$get_semester);
         if($get_semester_run)
         {
@@ -125,7 +125,7 @@ if(isset($_POST['create_roll_list']))
                 mysqli_autocommit($conn,FALSE);
                 mysqli_begin_transaction($conn);
                 $enrol_number=$input_clear->input_safe($conn,$enrol_no[$i]);
-                $insert_into_roll_list="INSERT INTO ems.roll_list(enrol_no, semester) VALUES('".$enrol_number."', $semester)";
+                $insert_into_roll_list="INSERT INTO $main.roll_list(enrol_no, semester) VALUES('".$enrol_number."', $semester)";
                 $insert_into_roll_list_run=mysqli_query($conn,$insert_into_roll_list);
                 if($insert_into_roll_list_run!=FALSE)
                 {
