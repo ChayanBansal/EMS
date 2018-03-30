@@ -332,7 +332,7 @@ function chat(location,username)
     {
       type: "POST",
       url: "select_tr",
-      data: 'tr_getBatch=1&course_id='+tr_course_id+'&type='+tr_type,
+      data: 'tr_getBatch=1&course_id='+tr_course_id+'&type='+type,
       success: function(data){
         $("#tr_batch_list_view").html("<option disabled selected value=''>Select Batch</option>");        
         $("#tr_batch_list_view").append(data);
@@ -553,7 +553,7 @@ function chat(location,username)
           <div class="form-group">
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :   </label>
-                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required>
+                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required onchange="getTrViewSemester(this.value)">
                         <option value="" disabled selected>Select Batch</option>
                         
                     </select>
@@ -602,7 +602,7 @@ function chat(location,username)
           <div class="form-group">
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :</label>
-                    <select id="tr_batch_list_view" name="tr_view_batch" class="form-control" required>
+                    <select id="tr_batch_list_view" name="tr_view_batch" class="form-control" required onchange="tr_getSemester('','tr_semester_view',this.value)">
                         <option value="" disabled selected>Select Batch</option>
                         
                     </select>
@@ -933,10 +933,26 @@ $logout_modal->display_logout_modal();
     });
   });
 });
-function tr_getSemester(id,id2,tr_type)
+function tr_getSemester(id,id2,batch)
 {
-  
+  var tr_from_year=batch;
+  var type=$("#tr_type_select").val();
+  var tr_course_id=<?=$_SESSION['current_course_id']?>;
+  $.ajax(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: 'tr_getSemester=1&course_id='+tr_course_id+'&from_year='+batch+'&type='+type,
+      success: function(data){
+        $("#"+id2).html("<option disabled selected value=''>Select Semester</option>");
+        $("#"+id2).append(data);
+    },
+    error: function(e){
+      $("#tr_semester").html("Unable to load recent activities");
+    }
+	});
   }
+
 
 </script>
 </html>

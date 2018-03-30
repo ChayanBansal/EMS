@@ -64,7 +64,7 @@ class input_field
 			}
 		}
 	}
-	function display_w_value_table($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $disabled_flag, $maximum_value,$value)
+	function display_w_value_table($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $disabled_flag, $maximum_value, $value)
 	{
 		if ($disabled_flag == 1) {
 			if ($required_flag == 1) {
@@ -80,7 +80,7 @@ class input_field
 			}
 		}
 	}
-	
+
 	function display_table_readonly($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $readonly_flag, $maximum_value)
 	{
 		if ($readonly_flag == 1) {
@@ -97,7 +97,7 @@ class input_field
 			}
 		}
 	}
-	function display_table_readonly_w_value($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $readonly_flag, $maximum_value,$value)
+	function display_table_readonly_w_value($id, $class, $type/*password or text or email*/, $name, $placeholder, $required_flag/*0 or 1 */, $min, $max, $readonly_flag, $maximum_value, $value)
 	{
 		if ($readonly_flag == 1) {
 			if ($required_flag == 1) {
@@ -572,7 +572,7 @@ class super_user_options
 			if (empty($no_of_sub) or empty($course_id) or empty($semester) or is_nan($semester) or is_nan($no_of_sub)) {
 				return;
 			}
-			mysqli_autocommit($conn,FALSE);
+			mysqli_autocommit($conn, false);
 			mysqli_begin_transaction($conn);
 			$get_ac_session_qry = "SELECT ac_session_id FROM academic_sessions WHERE from_year=$ay AND course_id=$course_id AND current_semester=$semester";
 			$get_ac_session_qry_run = mysqli_query($conn, $get_ac_session_qry);
@@ -619,11 +619,11 @@ class super_user_options
 				$ie_max = $input_chk->input_safe($conn, $_POST['max6']);
 				if (isset($_POST['ie' . $i])) {
 					if (empty($cat_pass) or empty($cat_max) or empty($end_theory_pass) or empty($end_theory_max) or empty($cap_pass) or empty($cap_max) or empty($end_practical_pass) or empty($end_practical_max) or empty($ia_pass) or empty($ia_max) or empty($ie_pass) or empty($ie_max)) {
-						$alert->exec("Please verify all fields!","danger");
+						$alert->exec("Please verify all fields!", "danger");
 						return;
 					}
 				} else if (empty($total_cr) or empty($cat_pass) or empty($cat_max) or empty($end_theory_pass) or empty($end_theory_max) or empty($cap_pass) or empty($cap_max) or empty($end_practical_pass) or empty($end_practical_max) or empty($ia_pass) or empty($ia_max) or empty($ie_pass) or empty($ie_max)) {
-					$alert->exec("Please verify all fields!","danger");
+					$alert->exec("Please verify all fields!", "danger");
 					return;
 				}
 				if (isset($_POST['elective' . $i])) {
@@ -714,11 +714,11 @@ class super_user_options
 			}
 			if ($success) {
 				mysqli_commit($conn);
-				mysqli_autocommit($conn,TRUE);
+				mysqli_autocommit($conn, true);
 				$alert->exec("Records successfully inserted!", "success");
 			} else {
 				mysqli_rollback($conn);
-				mysqli_autocommit($conn,TRUE);				
+				mysqli_autocommit($conn, true);
 				$alert->exec("Unable to insert subjects", "danger");
 			}
 
@@ -985,6 +985,26 @@ class super_user_options
 			}
 		}
 	}
+	function approve_disapprove_edit_tr($conn)
+	{
+		if (isset($_POST['approve_edit_tr'])) {
+			$update_edit_tr = "UPDATE edit_tr_request SET status=1 WHERE request_id=" . $_POST['approve_edit_tr'];
+			$update_edit_tr_run = mysqli_query($conn, $update_edit_tr);
+			if ($update_edit_tr_run == true) {
+				$a = new alert();
+				$a->exec("Request Approved", "success");
+				unset($_POST['approve_edit_tr']);
+			}
+		} else if (isset($_POST['disapprove_edit_tr'])) {
+			$update_edit_tr = "UPDATE edit_tr_request SET status=2 WHERE request_id=" . $_POST['disapprove_edit_tr'];
+			$update_edit_tr_run = mysqli_query($conn, $update_edit_tr);
+			if ($update_edit_tr_run == true) {
+				$a = new alert();
+				$a->exec("Request Disapproved", "danger");
+				unset($_POST['disapprove_edit_tr']);
+			}
+		}
+	}
 
 	function message($conn)
 	{
@@ -1004,15 +1024,19 @@ class super_user_options
 	}
 
 }
-class GeneralOptions{
-	function start_transaction($con){
-		mysqli_autocommit($con,FALSE);
+class GeneralOptions
+{
+	function start_transaction($con)
+	{
+		mysqli_autocommit($con, false);
 		mysqli_begin_transaction($con);
 	}
-	function end_transaction($con){
+	function end_transaction($con)
+	{
 		mysqli_commit($con);
 	}
-	function rollback($con){
+	function rollback($con)
+	{
 		mysqli_rollback($con);
 	}
 }
@@ -1068,7 +1092,7 @@ class useroptions
 			$alert = new alert();
 			$operator_id = $_SESSION['operator_id'];
 			$form_input_check = new input_check();
-			$sqltransact=new GeneralOptions();
+			$sqltransact = new GeneralOptions();
 			$sqltransact->start_transaction($conn);
 			$remark = $form_input_check->input_safe($conn, $_POST['remark']);
 			if (empty($remark)) {
@@ -1104,21 +1128,20 @@ class useroptions
 			}
 			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
 			if ($insert_score_qry_run) {
-				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['ac_sess_id'] . ","  . $transaction_id . ",NULL,$component_id,0,".$_SESSION['ac_sub_code'].")";
+				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['ac_sess_id'] . "," . $transaction_id . ",NULL,$component_id,0," . $_SESSION['ac_sub_code'] . ")";
 				$audit_qry_run = mysqli_query($conn, $audit_qry);
-				if($audit_qry_run){
-					$_SESSION['score_entered_success'] = true;	
+				if ($audit_qry_run) {
+					$_SESSION['score_entered_success'] = true;
 					$sqltransact->end_transaction($conn);
 					header('location: /ems/includes/useroptions');
-				}
-				else{
+				} else {
 					$_SESSION['score_entered_success'] = false;
 					$sqltransact->rollback($conn);
-					header('location: /ems/includes/useroptions');		
+					header('location: /ems/includes/useroptions');
 				}
 			} else {
 				$_SESSION['score_entered_success'] = false;
-				$sqltransact->rollback($conn);				
+				$sqltransact->rollback($conn);
 				header('location: /ems/includes/useroptions');
 			}
 		}
@@ -1133,6 +1156,7 @@ class useroptions
 			$requester = $_SESSION['operator_id'];
 			$remark = $input_chk->input_safe($conn, $_POST['tr_req_remark']);
 			$subcode = $input_chk->input_safe($conn, $_POST['tr_req_subject']);
+			$ac_sess_id = $input_chk->input_safe($conn, $_POST['ac_sess_id']);
 			if (empty($rollid) or empty($remark) or empty($subcode)) {
 				$alert->exec("All fields are compulsary!", "warning");
 				return;
@@ -1141,7 +1165,10 @@ class useroptions
 				$alert->exec("Roll ID must be a number!", "info");
 				return;
 			}
-			$insert_request = "INSERT into edit_tr_request(requester,roll_id,sub_code,cat_flag,end_theory_flag,cap_flag,end_practical_flag,ia_flag,ie_flag,remarks) VALUES($requester,$rollid,'$subcode',";
+			$get_ac_sub_code = "SELECT ac_sub_code FROM subjects WHERE ac_session_id=$ac_sess_id AND sub_code='$subcode'";
+			$get_ac_sub_code_run = mysqli_query($conn, $get_ac_sub_code);
+			$ac_sub_code = mysqli_fetch_assoc($get_ac_sub_code_run)['ac_sub_code'];
+			$insert_request = "INSERT into edit_tr_request(requester,roll_id,ac_sub_code,cat_flag,end_theory_flag,cap_flag,end_practical_flag,ia_flag,ie_flag,remarks) VALUES($requester,$rollid,$ac_sub_code,";
 			for ($comp = 1; $comp <= 6; $comp++) {
 				if (isset($_POST['tr_update_check' . $comp])) {
 					$insert_request .= "1,";

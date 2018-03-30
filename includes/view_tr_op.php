@@ -10,7 +10,7 @@ if (isset($_POST['tr_view_proceed'])) {
     $_SESSION['from_year']= $input_chk->input_safe($conn,$_POST['tr_view_batch']);
     $_SESSION['course_id'] = $_SESSION['current_course_id'];
     $_SESSION['semester'] = $input_chk->input_safe($conn,$_POST['tr_view_semester']);
-    $_SESSION['main_atkt'] = $input_chk->input_safe($conn,$_POST['tr_view_type']);
+    $_SESSION['main_atkt'] = $input_chk->input_safe($conn,$_POST['tr_type_select']);
     if(empty($_SESSION['from_year']) OR empty($_SESSION['semester']) OR empty($_SESSION['main_atkt'])){
         $alert=new alert();
         $alert->exec("Please verify all fields!","warning");
@@ -225,8 +225,9 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             <th style="vertical-align:middle" colspan="2">Maximum Marks
                 <br>(Th;Pr)</th>
             <th>Th;Pr<br>50:40</th>
-            <th style="vertical-align:middle">CAT;CAP;IA<br>
-                50;40;20</th>
+            <th style="vertical-align:middle">CAT;CAP<br>
+                50;40</th>
+            <th style="vertical-align:middle">IA<br>20</th>
             <th style="vertical-align:middle">Total Th;Pr
                     <br>100;100</th>
             <th style="vertical-align:middle">Per (%)</th>
@@ -255,7 +256,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             $fail_flag = false;
             while ($subject = mysqli_fetch_assoc($get_subjects_qry_run)) {
                 echo ('<tr style="vertical-align:middle">');
-                $get_subid_count = "SELECT count(*) from sub_distribution WHERE sub_code='" . $subject['sub_code'] . "'";
+                $get_subid_count = "SELECT count(*) from sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $subject['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
                 $get_subid_count_run = mysqli_query($conn, $get_subid_count);
                 $subid_count = mysqli_fetch_assoc($get_subid_count_run)['count(*)'];
                 echo ('
@@ -292,20 +293,29 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             }
                         }
 
-                        if (is_null($marks['cat_cap_ia'])) {
+                        if (is_null($marks['cat_cap'])) {
                             echo ('<td> - </td>');
                         } else {
-                            $get_ia_marks = "SELECT marks FROM score WHERE roll_id=" . $cur_rollid . " AND sub_id=" . $subid['sub_id'] . " AND component_id=5";
-                            $get_ia_marks_run = mysqli_query($conn, $get_ia_marks);
-                            $ia_marks = mysqli_fetch_assoc($get_ia_marks_run)['marks'];
-                            if ($marks['cat_cap_ia'] < $practical_pass[0] || $ia_marks<$practical_pass[2]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                            if ($marks['cat_cap'] < $practical_pass[0]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap'] . "</td>");
                                 $fail = true;
                                 $fail_flag = true;
                             } else {
-                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                                echo ("<td>" . $marks['cat_cap'] . "</td>");
                             }
                         }
+                        if (is_null($marks['ia'])) {
+                            echo ('<td> - </td>');
+                        } else {
+                            if ($marks['ia'] < $practical_pass[2]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['ia'] . "</td>");
+                                $fail = true;
+                                $fail_flag = true;
+                            } else {
+                                echo ("<td>" . $marks['ia'] . "</td>");
+                            }
+                        }
+                        
                         if (is_null($marks['total'])) {
                             echo ('<td> - </td>');
                         } else {
@@ -333,17 +343,18 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                                 echo ("<td>" . $marks['end_sem'] . "</td>");
                             }
                         }
-                        if (is_null($marks['cat_cap_ia'])) {
+                        if (is_null($marks['cat_cap'])) {
                             echo ('<td> - </td>');
                         } else {
-                            if ($marks['cat_cap_ia'] < $practical_pass[0]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                            if ($marks['cat_cap'] < $practical_pass[0]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap'] . "</td>");
                                 $fail = true;
                                 $fail_flag = true;
                             } else {
-                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                                echo ("<td>" . $marks['cat_cap'] . "</td>");
                             }
                         }
+                        echo("<td>-</td>");//For IA
                         if (is_null($marks['total'])) {
                             echo ('<td> - </td>');
                         } else {
@@ -375,17 +386,19 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             }
                         }
 
-                        if (is_null($marks['cat_cap_ia'])) {
+                        if (is_null($marks['cat_cap'])) {
                             echo ('<td> - </td>');
                         } else {
-                            if ($marks['cat_cap_ia'] < $theory_pass[0]) {
-                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap_ia'] . "</td>");
+                            if ($marks['cat_cap'] < $theory_pass[0]) {
+                                echo ("<td style='background: #EF6545'>" . $marks['cat_cap'] . "</td>");
                                 $fail = true;
                                 $fail_flag = true;
                             } else {
-                                echo ("<td>" . $marks['cat_cap_ia'] . "</td>");
+                                echo ("<td>" . $marks['cat_cap'] . "</td>");
                             }
                         }
+                        echo("<td>-</td>");//For IA
+
                         if (is_null($marks['total'])) {
                             echo ('<td> - </td>');
                         } else {
@@ -547,7 +560,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             }
 
                             echo ("<td>Fail In Paper Code</td>");
-                            for ($i = 0; $i < $semcount; $i++) {
+                            for ($i = 0; $i <= $semcount; $i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
@@ -558,7 +571,8 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             break;
 
                         case 6:
-                        echo ('<td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
+                        echo ('<tr><td colspan="12"></td>
+                        <td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
                         if (empty($fail_paper_code[$_SESSION['semester']-1])) {
                             echo ('<td> - </td>');
                         } else {
@@ -597,6 +611,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             <h4 class="modal-title">Select from below</h4>
           </div>
           <form action="" method="post" onsubmit="return disable_on_submitbtn()">
+          <input type="hidden" name="ac_sess_id" id="ac_sess_id" value="<?=$ac_sess_id?>">
           <div class="modal-body">
           <?php
             $input = new input_field();
@@ -609,7 +624,6 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
               </div>
               <div class="form-group">
               <label for="type">Select Subject</label>
-             <input type="hidden" id="ac_sess_id"value="<?=$ac_sess_id?>">
               <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)" required>
                   <option disabled selected>Select a Subject</option>
                   <?php
