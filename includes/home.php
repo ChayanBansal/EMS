@@ -89,7 +89,7 @@
           <script>
      function roll_get_batch(course)
   {
-      var type=document.getElementById("roll_course_list").value;
+      var type=document.getElementById("register_for_type").value;
     $.ajax({
         type: "POST",
         url: "roll_list_ajax",
@@ -107,7 +107,7 @@
 
   function roll_get_semester(batch)
   {
-    var type=document.getElementById("roll_course_list").value;
+    var type=document.getElementById("register_for_type").value;
     var course = document.getElementById('roll_course_list').value;
     $.ajax({
         type: "POST",

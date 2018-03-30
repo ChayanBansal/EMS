@@ -547,6 +547,221 @@ if(isset($_POST['proceed_to_add_roll']))
             }
         }
     }
+    else if($type==='3')
+    {
+         //Session in which the students are to be registered
+         $get_atkt_session_id="SELECT ac_session_id, atkt_session_id FROM ems_atkt WHERE ac_session_id =(SELECT ac_session_id FROM ems.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester)";
+         $get_atkt_session_id_run=mysqli_query($conn,$get_atkt_session_id);
+         if($get_atkt_session_id_run!=FALSE)
+         {
+            while($result=mysqli_fetch_assoc($get_atkt_session_id_run))
+            {
+                $ac_session_id=$result['ac_session_id'];
+                $atkt_session_id=$result['atkt_session_id'];
+            }
+            $get_students="SELECT `s.enrol_no`, `s.first_name`, `s.middle_name`, `s.last_name`, `s.father_name`, `s.mother_name`, `s.address`, `s.gender`, r.atkt_reg_flag, r.roll_id FROM ems.students s, ems.roll_list r  WHERE s.ac_session_id=$ac_session_id AND s.enrol_no=r.enrol_no AND s.enrol_no IN(SELECT enrol_no FROM ems.roll_list WHERE semester =$semester AND atkt_flag=1)";
+            $get_students_run=mysqli_query($conn,$get_students);
+            if($get_students_run!=FALSE)
+            {
+                echo('<div style="display:flex; justify-content:space-around; overflow:auto; margin-bottom:100px; ">
+                
+                <table style="width:80%;align:center; background-color:#C84646; box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" class="table table-hover">
+                <caption>
+                Batch: '.$from_year.' | Registering for ATKT Exam | Semester: '.$semester.'
+                <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students..">
+                </caption>
+                <thead>
+                <tr>
+                    <th><center><h2><input type="checkbox" id="select_all_check" onclick="select_all();"></h2></center></th>
+                    <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">Student</h2></center></th>
+                    <th><center><h2 style="color:white;font-family: Gentium Book Basic, serif;">ATKT Subjects</h2></center></th>
+                </tr>
+                
+                </thead>
+                <form action="add_roll_backend" method="post">
+                <input type="hidden" value="5" name="type">
+                <tbody id="roll_list">');
+                
+                while($student=mysqli_fetch_assoc($get_students_run))
+                {
+                    
+                    if($student['atkt_reg_flag']===1)
+                    {
+                        
+                            echo('
+                            <tr class="info">
+                            <td style="vertical-align:middle; text-align:center; font-size:36px;">Already Registered</td>
+                            <td>
+                            <div class="student_card">
+                    <div><div class="w3-card-4">
+
+                        <header class="w3-container w3-blue">
+                        <h3>'.$student['enrol_no'].'</h3>
+                        </header>
+                        <footer class="w3-container w3-blue" style="display:flex; flex-wrap: wrap;align-content: space-around;">
+                        <h4>
+                        <table>
+                        <tr>
+                        <td>Name:</td><td>'.$student["first_name"]);
+                        if($student["middle_name"]=="")
+                        {
+                            echo(' '.$student["last_name"]);
+                        }
+                        else
+                        {
+                            echo(' '.$student["middle_name"].' '.$student["last_name"]);
+                        }
+
+                echo('
+                </td>
+                <tr>
+                <td>
+                Gender:</td><td>'.$student["gender"].'
+                </td></tr>
+            
+                <tr><td>
+                Father\'s Name:</td><td>'.$student["father_name"].'
+                </td></tr>
+                <tr>
+                <td>
+                Mother\'s Name:</td><td>'.$student["mother_name"].'
+                </td></tr>
+                <tr>
+                <td>
+                Address:</td><td>'.$student["address"].'
+                </td></tr>
+                </table>
+                </h4>
+                <div class="w3-container" style="float:right">
+                    <img src="../stud_img/'.$student['enrol_no']);
+                    if(file_exists("../stud_img/".$student['enrol_no'].".png")){
+                        echo(".png");
+                    }else{
+                        echo(".jpg");
+                    }
+                    echo('" alt="'.$student['enrol_no'].'">
+                </div>
+                </footer>
+                
+                </div></div></div></td><td>');
+                $get_atkt_roll_id="SELECT atkt_roll_id FROM ems_atkt.atkt_roll_list WHERE roll_id=".$student['roll_id']."' AND atkt_session_id=$atkt_session_id";
+                $get_atkt_roll_id_run=mysqli_query($conn,$get_atkt_roll_id);
+                if($get_atkt_roll_id_run)
+                {
+                    $result=mysqli_fetch_assoc($get_atkt_roll_id_run);
+                    $get_atkt_subject="SELECT sd.sub_id,sd.practical_flag, s.sub_code, s.sub_name FROM ems.subjects s, ems.sub_distribution WHERE sd.sub_id IN (SELECT sub_id FROM ems_atkt.atkt_subjects WHERE atkt_roll_id=".$result["atkt_roll_id"].")";
+                    $get_atkt_subject_run=mysqli_query($conn,$get_detained_subject);
+                    if($get_atkt_subject_run)
+                    {
+                        echo("<ol>");
+                        foreach($get_atkt_subject_run as $atkt_sub_id)
+                        {
+                            echo("<li>".$atkt_sub_id["subcode"]." ");
+                            if($atkt_sub_id["practical_flag"]===1)
+                            {
+                                echo("[PRACTICAL] </li>");
+                            }
+                            else if($atkt_sub_id["practical_flag"]===0)
+                            {
+                                echo("[THEORY] </li>");
+                            }
+                            else if($atkt_sub_id["practical_flag"]===2)
+                            {
+                                echo("[IE] </li>");
+                            }
+                        }
+                        echo("</ol>");
+                    }
+                }
+                
+                echo('</td></tr>');
+                            continue;
+                        
+                    }
+                    
+                    else
+                    {
+                        echo('
+                    <tr>
+                        <td style="vertical-align:middle; text-align:center; font-size:36px;"><input type="checkbox" onclick="toogle_select_all()" class="roll_check" name="enrol_no[]" value="'.$student['enrol_no'].'"></td>
+                        <td><div class="student_card">
+                    <div><div class="w3-card-4">
+
+                        <header class="w3-container w3-blue">
+                        <h3>'.$student['enrol_no'].'</h3>
+                        </header>
+                        <footer class="w3-container w3-blue" style="display:flex; flex-wrap: wrap;align-content: space-around;">
+                        <h4>
+                            <table>
+                            <tr>
+                            <td>Name:</td><td>'.$student["first_name"]);
+                            if($student["middle_name"]=="")
+                            {
+                                echo(' '.$student["last_name"]);
+                            }
+                            else
+                            {
+                                echo(' '.$student["middle_name"].' '.$student["last_name"]);
+                            }
+
+                    echo('
+                    </td>
+                    <tr>
+                    <td>
+                    Gender:</td><td>'.$student["gender"].'
+                    </td></tr>
+                
+                    <tr><td>
+                    Father\'s Name:</td><td>'.$student["father_name"].'
+                    </td></tr>
+                    <tr>
+                    <td>
+                    Mother\'s Name:</td><td>'.$student["mother_name"].'
+                    </td></tr>
+                    <tr>
+                    <td>
+                    Address:</td><td>'.$student["address"].'
+                    </td></tr>
+                    </table>
+                    </h4>
+                    <div class="w3-container" style="float:right">
+                        <img src="../stud_img/'.$student['enrol_no']);
+                        if(file_exists("../stud_img/".$student['enrol_no'].".png")){
+                            echo(".png");
+                        }else{
+                            echo(".jpg");
+                        }
+                        echo('" alt="'.$student['enrol_no'].'">
+                    </div>
+                    </footer>
+                    
+                    </div></div></div></td>');
+                    echo('<td>');
+                    $get_subjects="SELECT s.ac_sub_code, s.sub_code, s.sub_name, s.elective_flag, sd.sub_id, sd.practical_flag FROM ems.subjects s, ems.sub_distribution sd WHERE s.ac_sesion_id=$ac_session_id AND s.ac_sub_code=sd.ac_sub_code AND sd.sub_id IN
+                                    (SELECT sub_id FROM ems.failure_report WHERE roll_id=".$student["roll_id"].")";
+                    $get_subjects_run=mysqli_query($conn,$get_subjects);
+                    if($get_subjects_run)
+                    {
+                        foreach($get_subjects_run as $subject)
+                        {
+                            echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'");
+                        }    
+                    }                    
+                    echo('</td></tr>');  
+                }
+                }
+                echo('
+                <tr><th colspan="3"><center><button class="btn btn-success" type="submit" name="create_roll_list" value="'.$atkt_session_id.'">Register for ATKT Examination</button></center></th></tr>
+                </tbody></form>
+                
+                </table></div>');
+            }
+            else
+            {
+                echo("No record to show");
+            }
+        }
+    }
 }
 
 $obj = new footer();

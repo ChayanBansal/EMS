@@ -91,7 +91,7 @@ require("class_lib.php");
                                         case 5:
                                             $get_semester="SELECT current_semester from ems.academic_sessions WHERE ac_session_id IN
                                                             (SELECT ac_session_id FROM ems_atkt.atkt_sessions WHERE ac_session_id IN 
-                                                            (SELECT ac_session_id FROM ems.academic_sessions WHERE course_id=$course_id AND from_year=$from_year";
+                                                            (SELECT ac_session_id FROM ems.academic_sessions WHERE course_id=$course_id AND from_year=$from_year))";
                                             $get_semester_run=mysqli_query($conn,$get_semester);
                                             break;
                                     }
@@ -99,7 +99,7 @@ require("class_lib.php");
                                 
                                 if($get_semester_run)
                                 {
-                                    echo('<option value=""disabled selected>Select batch</option>');
+                                    echo('<option value=""disabled selected>Select semester</option>');
                                     while($semester=mysqli_fetch_assoc($get_semester_run))
                                     {
                                         echo('<option value="'.$semester['current_semester'].'">'.$semester['current_semester'].'</option>');
