@@ -272,7 +272,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
             }
         }
     }
-       // header('location: super_home.php');
+       header('location: super_home.php');
 } else {
     header('location: 404.html');
 }
