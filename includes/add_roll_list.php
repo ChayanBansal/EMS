@@ -317,7 +317,7 @@ if(isset($_POST['proceed_to_add_roll']))
             {
                 $ac_session_id=$result['ac_session_id'];
             }
-            $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender` FROM students WHERE ac_session_id=$ac_session_id";
+            $get_students="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `address`, `gender` FROM $main.students WHERE ac_session_id=$ac_session_id";
             $get_students_run=mysqli_query($conn,$get_students);
             if($get_students_run!=FALSE)
             {
@@ -344,8 +344,9 @@ if(isset($_POST['proceed_to_add_roll']))
                 {
                     $check_double_reg="SELECT roll_id FROM $main.roll_list WHERE enrol_no='".$student["enrol_no"]."' AND semester=$semester";
                     $check_double_reg_run=mysqli_query($conn,$check_double_reg);
-                    if($check_double_reg_run)
+                    if(mysqli_num_rows($check_double_reg_run)>0)
                     {
+                        
                         if(mysqli_num_rows($check_double_reg_run)>0)
                         {
                             echo('
@@ -406,12 +407,12 @@ if(isset($_POST['proceed_to_add_roll']))
                 </div></div></div></td><td>');
                 $get_roll_id="SELECT roll_id FROM $main.roll_list WHERE enrol_no='".$student['enrol_no']."' AND semester=$semester";
                 $get_roll_id_run=mysqli_query($conn,$get_roll_id);
-                if($get_roll_id_run)
+                if(mysqli_num_rows($get_roll_id_run)>0)
                 {
                     $result=mysqli_fetch_assoc($get_roll_id_run);
                     $get_detained_subject="SELECT sub_id FROM $main.detained_subject WHERE roll_id=".$result['roll_id'];
                     $get_detained_subject_run=mysqli_query($conn,$get_detained_subject);
-                    if($get_detained_subject_run)
+                    if(mysqli_num_rows($get_detained_subject_run)>0)
                     {
                         foreach($get_detained_subject_run as $det_sub_id)
                         {
@@ -508,7 +509,7 @@ if(isset($_POST['proceed_to_add_roll']))
                     echo('<td>');
                     $get_subjects="SELECT s.ac_sub_code, s.sub_code, s.sub_name, s.elective_flag, sd.sub_id, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE s.ac_sesion_id=$ac_session_id AND s.ac_sub_code=sd.ac_sub_code";
                     $get_subjects_run=mysqli_query($conn,$get_subjects);
-                    if($get_subjects_run)
+                    if(mysqli_num_rows($get_subjects_run)>0)
                     {
                         foreach($get_subjects_run as $subject)
                         {
@@ -646,7 +647,7 @@ if(isset($_POST['proceed_to_add_roll']))
                 </div></div></div></td><td>');
                 $get_atkt_roll_id="SELECT atkt_roll_id FROM ems_atkt.atkt_roll_list WHERE roll_id=".$student['roll_id']."' AND atkt_session_id=$atkt_session_id";
                 $get_atkt_roll_id_run=mysqli_query($conn,$get_atkt_roll_id);
-                if($get_atkt_roll_id_run)
+                if(mysqli_num_rows($get_atkt_roll_id_run)>0)
                 {
                     $result=mysqli_fetch_assoc($get_atkt_roll_id_run);
                     $get_atkt_subject="SELECT sd.sub_id,sd.practical_flag, s.sub_code, s.sub_name FROM $main.subjects s, $main.sub_distribution WHERE sd.sub_id IN (SELECT sub_id FROM ems_atkt.atkt_subjects WHERE atkt_roll_id=".$result["atkt_roll_id"].")";
@@ -740,7 +741,7 @@ if(isset($_POST['proceed_to_add_roll']))
                     $get_subjects="SELECT s.ac_sub_code, s.sub_code, s.sub_name, s.elective_flag, sd.sub_id, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE s.ac_sesion_id=$ac_session_id AND s.ac_sub_code=sd.ac_sub_code AND sd.sub_id IN
                                     (SELECT sub_id FROM $main.failure_report WHERE roll_id=".$student["roll_id"].")";
                     $get_subjects_run=mysqli_query($conn,$get_subjects);
-                    if($get_subjects_run)
+                    if(myqli_num_rows($get_subjects_run)>0)
                     {
                         foreach($get_subjects_run as $subject)
                         {
