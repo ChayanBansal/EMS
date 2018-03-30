@@ -68,16 +68,18 @@ if (isset($_POST['getSemester'])) {
         $examType = $_POST['main_atkt'];
         switch ($examType) {
             case 'main':
-                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " ORDER BY current_semester DESC LIMIT 1";
+                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " ORDER BY current_semester DESC";
                 $get_semester_run = mysqli_query($conn, $get_semester);
-                $result = mysqli_fetch_assoc($get_semester_run);
+                while($result = mysqli_fetch_assoc($get_semester_run)){
+                    $temp = $result['current_semester'];
+                    echo ('<option name="selected_semester" value="' . $temp . '" >' . $temp . '</option>');
+                }
                 $_SESSION['selected_semester'] = $result['current_semester'];
-                $temp = $result['current_semester'];
-                echo ('<option name="selected_semester" value="' . $temp . '" >' . $temp . '</option>');
-
+               
+               
                 break;
             case 'retotal':
-                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM $retotal.retotal_sessions) ORDER BY current_semester DESC LIMIT 1";
+                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM $retotal.retotal_sessions) ORDER BY current_semester DESC";
                 $get_semester_run = mysqli_query($conn, $get_semester);
                 $result = mysqli_fetch_assoc($get_semester_run);
                 $_SESSION['selected_semester'] = $result['current_semester'];
@@ -86,7 +88,7 @@ if (isset($_POST['getSemester'])) {
 
                 break;
             case 'reval':
-                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM $reval.reval_sessions) ORDER BY current_semester DESC LIMIT 1";
+                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM $reval.reval_sessions) ORDER BY current_semester DESC";
                 $get_semester_run = mysqli_query($conn, $get_semester);
                 $result = mysqli_fetch_assoc($get_semester_run);
                 $_SESSION['selected_semester'] = $result['current_semester'];
@@ -95,7 +97,7 @@ if (isset($_POST['getSemester'])) {
 
                 break;
             case 'atkt':
-                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions) ORDER BY current_semester DESC LIMIT 1";
+                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions) ORDER BY current_semester DESC";
                 $get_semester_run = mysqli_query($conn, $get_semester);
                 $result = mysqli_fetch_assoc($get_semester_run);
                 $_SESSION['selected_semester'] = $result['current_semester'];
