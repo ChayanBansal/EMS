@@ -507,7 +507,7 @@ if(isset($_POST['proceed_to_add_roll']))
                     
                     </div></div></div></td>');
                     echo('<td>');
-                    $get_subjects="SELECT s.ac_sub_code, s.sub_code, s.sub_name, s.elective_flag, sd.sub_id, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE s.ac_sesion_id=$ac_session_id AND s.ac_sub_code=sd.ac_sub_code";
+                    $get_subjects="SELECT s.ac_sub_code, s.sub_code, s.sub_name, s.elective_flag, sd.sub_id, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE s.ac_session_id=$ac_session_id AND s.ac_sub_code=sd.ac_sub_code";
                     $get_subjects_run=mysqli_query($conn,$get_subjects);
                     if(mysqli_num_rows($get_subjects_run)>0)
                     {
