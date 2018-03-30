@@ -416,14 +416,14 @@ if(isset($_POST['proceed_to_add_roll']))
                     {
                         foreach($get_detained_subject_run as $det_sub_id)
                         {
-                            $get_sub_name="SELECT s.sub_name, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE sd.sub_id=".$det_sub_id['detained_sub_id']." AND s.ac_sub_code=sd.ac_sub_code";
+                            $get_sub_name="SELECT s.sub_name, s.sub_code, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE sd.sub_id=".$det_sub_id['detained_sub_id']." AND s.ac_sub_code=sd.ac_sub_code";
                             $get_sub_name_run=mysqli_query($conn,$get_sub_name);
                             if($get_sub_name_run)
                             {
-                                echo("<ol>");
+                                echo("<ul>");
                                 foreach($get_sub_name_run as $list_det_sub)
                                 {
-                                    echo("<li>".$list_det_sub["sub_name"]);
+                                    echo("<li> [".$list_det_sub["sub_name"]."] ".$list_det_sub["sub_name"]);
                                     if($list_det_sub["practical_flag"]==='1')
                                     {
                                         echo(" [PRACTICAL]</li>");    
@@ -438,7 +438,7 @@ if(isset($_POST['proceed_to_add_roll']))
                                     }
                                     
                                 }
-                                echo("</ol>");
+                                echo("</ul>");
                             }
                         }
                     }
@@ -518,15 +518,15 @@ if(isset($_POST['proceed_to_add_roll']))
                                 echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'> ");
                                 if($subject["practical_flag"]==='1')
                                 {
-                                    echo($subject["sub_name"]." [Practical] <br>");
+                                    echo("[".$subject["sub_code"]."]".$subject["sub_name"]." [Practical] <br>");
                                 }
                                 else if($subject["practical_flag"]==='0')
                                 {
-                                    echo($subject["sub_name"]." [THEORY] <br>");
+                                    echo("[".$subject["sub_code"]."]".$subject["sub_name"]." [THEORY] <br>");
                                 }
                                 else if($subject["practical_flag"]==='2')
                                 {
-                                    echo($subject["sub_name"]." [IE] <br>");
+                                    echo("[".$subject["sub_code"]."]".$subject["sub_name"]." [IE] <br>");
                                 }
                             }
                             else if($subject["elective_flag"]==='1')
@@ -541,15 +541,15 @@ if(isset($_POST['proceed_to_add_roll']))
                                         echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'> ");
                                         if($subject["practical_flag"]==='1')
                                         {
-                                            echo($subject["sub_name"]." [Practical] <br>");
+                                            echo("[".$subject["sub_code"]."]".$subject["sub_name"]." [Practical] <br>");
                                         }
                                         else if($subject["practical_flag"]==='0')
                                         {
-                                            echo($subject["sub_name"]." [THEORY] <br>");
+                                            echo("[".$subject["sub_code"]."]".$subject["sub_name"]." [THEORY] <br>");
                                         }
                                         else if($subject["practical_flag"]==='2')
                                         {
-                                            echo($subject["sub_name"]." [IE] <br>");
+                                            echo("[".$subject["sub_code"]."]".$subject["sub_name"]." [IE] <br>");
                                         }
                                     }
                                     
