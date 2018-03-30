@@ -68,23 +68,6 @@ if (isset($_SESSION['tr_generated'])) {
   }
   unset($_SESSION['tr_generated']);
 }
-if (isset($_POST['approve_edit_tr'])) {
-  $update_edit_tr = "UPDATE edit_tr_request SET status=1 WHERE request_id=" . $_POST['approve_edit_tr'];
-  $update_edit_tr_run = mysqli_query($conn, $update_edit_tr);
-  if ($update_edit_tr_run == true) {
-    $a = new alert();
-    $a->exec("Request Approved", "success");
-    unset($_POST['approve_edit_tr']);
-  }
-} else if (isset($_POST['disapprove_edit_tr'])) {
-  $update_edit_tr = "UPDATE edit_tr_request SET status=2 WHERE request_id=" . $_POST['disapprove_edit_tr'];
-  $update_edit_tr_run = mysqli_query($conn, $update_edit_tr);
-  if ($update_edit_tr_run == true) {
-    $a = new alert();
-    $a->exec("Request Disapproved", "danger");
-    unset($_POST['disapprove_edit_tr']);
-  }
-}
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
@@ -101,6 +84,7 @@ $options->create_exam_month_year($conn);
 $options->message($conn);
 $options->lock_operator($conn);
 $options->unlock_operator($conn);
+$options->approve_disapprove_edit_tr($conn);
 ?>
    <!--<a id="recent-act" onmouseover="show(this.id)" onmouseout="hide(sidenav)">Hover to show recent activities</a>-->
  <!--<button id="recent-act" onClick="show_recent_act()">Hover to show recent activities</button>-->
@@ -1012,7 +996,16 @@ function tr_getSemester(tr_type)
         <h4 class="modal-title">Edit TR Requests</h4>
       </div>
       <div class="modal-body table-responsive">
-      <table class="table">
+      <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle="tab" href="#tabs-edittr-main">Main</a></li>
+            <li><a data-toggle="tab" href="#tabs-edittr-retotal">Retotalling</a></li>
+            <li><a data-toggle="tab" href="#tabs-edittr-reval">Revaluation</a></li>
+            <li><a data-toggle="tab" href="#tabs-edittr-atkt">ATKT</a></li>
+            </ul>
+            <div class="tab-content">
+              
+            <div id="tabs-edittr-main" class="tab-pane fade in active">
+            <table class="table">
     <thead>
       <tr>
         <th style="vertical-align:middle;">Requested At</th>
@@ -1064,12 +1057,12 @@ function tr_getSemester(tr_type)
               }
 
 
-              $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $request['sub_code'] . "'";
+              $get_sub_name = "SELECT sub_name,sub_code FROM subjects WHERE ac_sub_code='" . $request['ac_sub_code'] . "'";
               $get_sub_name_run = mysqli_query($conn, $get_sub_name);
               $sub_name = mysqli_fetch_assoc($get_sub_name_run);
                 //$sub_name['sub_name']
 
-              echo ("<td>" . $request['sub_code'] . "</td>");
+              echo ("<td>" . $sub_name['sub_code'] . "</td>");
               echo ("<td>" . $sub_name['sub_name'] . "</td>");
 
               echo ("<td><ul>");
@@ -1211,6 +1204,16 @@ function tr_getSemester(tr_type)
         
     </tbody>
   </table>
+          </div>
+
+            <div id="tabs-edittr-retotal" class="tab-pane fade in">
+            </div>
+            <div id="tabs-edittr-reval" class="tab-pane fade in">
+            </div>
+            <div id="tabs-edittr-atkt" class="tab-pane fade in">
+            </div>
+
+            </div>
 
       </div>
       <div class="modal-footer">
