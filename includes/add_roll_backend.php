@@ -38,7 +38,7 @@ if(isset($_POST['create_roll_list']))
             $_SESSION['academic_semester_registration']=0;
         }
     }
-    else if($_POST['type']==='2')
+    else if($_POST['type']==='5')
     {
         $input_clear = new input_check();
         $atkt_session_id = $input_clear->input_safe($conn,$_POST['create_roll_list']);
@@ -106,7 +106,7 @@ if(isset($_POST['create_roll_list']))
             echo("Not able to handle your request");
         }
     }
-    else if($_POST['type']==='5') //atkt backend is not done
+    else if($_POST['type']==='2') //atkt backend is not done
     {
         $input_clear = new input_check();
         $ac_session_id = $input_clear->input_safe($conn,$_POST['create_roll_list']);
@@ -127,6 +127,7 @@ if(isset($_POST['create_roll_list']))
                 $enrol_number=$input_clear->input_safe($conn,$enrol_no[$i]);
                 $insert_into_roll_list="INSERT INTO $main.roll_list(enrol_no, semester) VALUES('".$enrol_number."', $semester)";
                 $insert_into_roll_list_run=mysqli_query($conn,$insert_into_roll_list);
+                //echo($insert_into_roll_list);
                 if($insert_into_roll_list_run!=FALSE)
                 {
                     
@@ -138,8 +139,9 @@ if(isset($_POST['create_roll_list']))
                         $temp_det=0;
                         foreach($detained_subjects as $det_sub)
                         {
-                            $insert_into_detained_subject="INSERT INTO detained_subject(roll_id, sub_id) VALUES($roll_id, $det_sub)";
+                            $insert_into_detained_subject="INSERT INTO detained_subject(roll_id, detained_sub_id) VALUES($roll_id, $det_sub)";
                             $insert_into_detained_subject_run=mysqli_query($conn,$insert_into_detained_subject);
+                            echo($insert_into_detained_subject."<br>");
                             if($insert_into_detained_subject_run)
                             {
                                 $temp_det++;

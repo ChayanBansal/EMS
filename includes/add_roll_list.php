@@ -410,13 +410,13 @@ if(isset($_POST['proceed_to_add_roll']))
                 if(mysqli_num_rows($get_roll_id_run)>0)
                 {
                     $result=mysqli_fetch_assoc($get_roll_id_run);
-                    $get_detained_subject="SELECT sub_id FROM $main.detained_subject WHERE roll_id=".$result['roll_id'];
+                    $get_detained_subject="SELECT detained_sub_id FROM $main.detained_subject WHERE roll_id=".$result['roll_id'];
                     $get_detained_subject_run=mysqli_query($conn,$get_detained_subject);
                     if(mysqli_num_rows($get_detained_subject_run)>0)
                     {
                         foreach($get_detained_subject_run as $det_sub_id)
                         {
-                            $get_sub_name="SELECT s.sub_name, sd.practical_flag FROM $main.subjects, $main.sub_distribution WHERE s.sub_id=$det_sub_id AND s.ac_sub_code=sd.ac_sub_code";
+                            $get_sub_name="SELECT s.sub_name, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE sd.sub_id=".$det_sub_id['detained_sub_id']." AND s.ac_sub_code=sd.ac_sub_code";
                             $get_sub_name_run=mysqli_query($conn,$get_sub_name);
                             if($get_sub_name_run)
                             {
@@ -513,11 +513,23 @@ if(isset($_POST['proceed_to_add_roll']))
                     {
                         foreach($get_subjects_run as $subject)
                         {
-                            if($subject["elective_flag"]===0)
+                            if($subject["elective_flag"]==='0')
                             {
-                                echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'");
+                                echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'> ");
+                                if($subject["practical_flag"]==='1')
+                                {
+                                    echo($subject["sub_name"]." [Practical] <br>");
+                                }
+                                else if($subject["practical_flag"]==='0')
+                                {
+                                    echo($subject["sub_name"]." [THEORY] <br>");
+                                }
+                                else if($subject["practical_flag"]==='2')
+                                {
+                                    echo($subject["sub_name"]." [IE] <br>");
+                                }
                             }
-                            else if($subject["elective_flag"]===1)
+                            else if($subject["elective_flag"]==='1')
                             {
                                 $get_elective_subject="SELECT COUNT(*) FROM $main.elective_map WHERE enrol_no='".$student["enrol_no"]."' AND ac_sub_code=".$subject["ac_sub_code"];
                                 $get_elective_subject_run=mysqli_query($conn,$get_elective_subject);
@@ -526,10 +538,26 @@ if(isset($_POST['proceed_to_add_roll']))
                                     $elective_count=mysqli_fetch_assoc($get_elective_subject_run);
                                     if($elective_count['count']===1)
                                     {
-                                        echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'");
+                                        echo("<input type='checkbox' value='".$subject["sub_id"]."' name='".$student["enrol_no"]."[]'> ");
+                                        if($subject["practical_flag"]==='1')
+                                        {
+                                            echo($subject["sub_name"]." [Practical] <br>");
+                                        }
+                                        else if($subject["practical_flag"]==='0')
+                                        {
+                                            echo($subject["sub_name"]." [THEORY] <br>");
+                                        }
+                                        else if($subject["practical_flag"]==='2')
+                                        {
+                                            echo($subject["sub_name"]." [IE] <br>");
+                                        }
                                     }
                                     
                                 }
+                            }
+                            else
+                            {
+                                echo("Discrepency in the database");
                             }
                         }    
                     }                    
