@@ -424,15 +424,15 @@ if(isset($_POST['proceed_to_add_roll']))
                                 foreach($get_sub_name_run as $list_det_sub)
                                 {
                                     echo("<li>".$list_det_sub["sub_name"]);
-                                    if($list_det_sub["sub_name"]===1)
+                                    if($list_det_sub["practical_flag"]==='1')
                                     {
-                                        echo(" [Practical]</li>");    
+                                        echo(" [PRACTICAL]</li>");    
                                     }
-                                    else if($list_det_sub["sub_name"]===0)
+                                    else if($list_det_sub["practical_flag"]==='0')
                                     {
-                                        echo(" [Theory] </li>");
+                                        echo(" [THEORY] </li>");
                                     }
-                                    else if($list_det_sub["sub_name"]===2)
+                                    else if($list_det_sub["practical_flag"]==='2')
                                     {
                                         echo(" [IE] </li>");
                                     }
