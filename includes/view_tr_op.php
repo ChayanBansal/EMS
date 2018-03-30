@@ -16,9 +16,7 @@ if (isset($_POST['tr_view_proceed'])) {
         $alert->exec("Please verify all fields!","warning");
         die();
     }
-} else {
-   //header('location: /ems/includes/404.html');
-}
+} 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,10 +39,13 @@ if (isset($_POST['tr_view_proceed'])) {
         document.getElementById("tr_roll_id").value=id;
     }
     function getTrComponents(subcode){
+        var sess_id=$("#ac_sess_id").val();
         $.ajax({
 	type: "POST",
 	url: "update_tr_ajax",
-	data: 'tr_subcode='+subcode,
+	data: {"tr_subcode":subcode,
+    "ac_sess_id":sess_id
+    },
 	success: function(data){
         $("#tr_components").html(data);
       },
@@ -134,7 +135,12 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
     if ($get_count_semesters_run) {
         $semcount = mysqli_fetch_assoc($get_count_semesters_run)['semcount'];
     }
-    $get_students_qry = "SELECT * FROM students WHERE course_id=" . $_SESSION['course_id'] . " AND current_sem=" . $_SESSION['semester'] . " AND from_year=" . $_SESSION['from_year']." AND enrol_no IN(SELECT enrol_no FROM roll_list)";
+    $ac_sess_id="SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND current_semester=" . $_SESSION['semester'] . " AND from_year=" . $_SESSION['from_year'];
+    $ac_sess_id_run=mysqli_query($conn,$ac_sess_id);
+    if($ac_sess_id_run){
+        $ac_sess_id=mysqli_fetch_assoc($ac_sess_id_run)['ac_session_id'];
+    }
+    $get_students_qry = "SELECT * FROM students WHERE ac_session_id=$ac_sess_id AND enrol_no IN(SELECT enrol_no FROM roll_list)";
     $get_students_qry_run = mysqli_query($conn, $get_students_qry);
     if ($get_students_qry_run) {
         $stud_count = 1;
@@ -168,7 +174,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                 }
                 $failtext = "";
                 while ($failsubid = mysqli_fetch_assoc($get_fail_sub_run)) {
-                    $get_subflag = "SELECT sub_code,practical_flag FROM sub_distribution WHERE sub_id=" . $failsubid['sub_id'];
+                    $get_subflag = "SELECT s.sub_code,sd.practical_flag FROM sub_distribution sd,subjects s WHERE sub_id=" . $failsubid['sub_id']." AND s.ac_sub_code=sd.ac_sub_code";
                     $get_subflag_run = mysqli_query($conn, $get_subflag);
                     $res = mysqli_fetch_assoc($get_subflag_run);
                     if ($res['practical_flag'] == 1) {
@@ -233,7 +239,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             <th style="vertical-align:middle;width:40%" colspan="' . ($semcount + 1) . '">Previous Semester Details</th>
         </tr>
             ');
-            $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
+            $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE ac_session_id=$ac_sess_id";
             $get_subjects_qry_run = mysqli_query($conn, $get_subjects_qry);
             $rowcount = 1;
             $fail_flag_fr = "SELECT count(*) FROM failure_report WHERE roll_id=$cur_rollid";
@@ -256,7 +262,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                 <td style="vertical-align:middle" rowspan="' . $subid_count . '">' . $subject['sub_code'] . '</td>
                 <td style="vertical-align:middle" rowspan="' . $subid_count . '">' . $subject['sub_name'] . '</td>
                 ');
-                $sub_id_loop = "SELECT sub_id,practical_flag from sub_distribution WHERE sub_code='" . $subject['sub_code'] . "'";
+                $sub_id_loop = "SELECT sub_id,practical_flag from sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $subject['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
                 $sub_id_loop_run = mysqli_query($conn, $sub_id_loop);
                 $subidcount = 1;
                 while ($subid = mysqli_fetch_assoc($sub_id_loop_run)) {
@@ -603,10 +609,11 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
               </div>
               <div class="form-group">
               <label for="type">Select Subject</label>
+             <input type="hidden" id="ac_sess_id"value="<?=$ac_sess_id?>">
               <select name="tr_req_subject" id="tr_subjects" class="form-control" onchange="getTrComponents(this.value)" required>
                   <option disabled selected>Select a Subject</option>
                   <?php
-                    $get_subjects_list = "SELECT sub_name,sub_code FROM subjects WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND semester=" . $_SESSION['semester'];
+                    $get_subjects_list = "SELECT sub_name,sub_code FROM subjects WHERE ac_session_id=$ac_sess_id";
                     $get_subjects_list_run = mysqli_query($conn, $get_subjects_list);
                     while ($sub = mysqli_fetch_assoc($get_subjects_list_run)) {
                         echo ('<option value="' . $sub['sub_code'] . '">' . $sub['sub_code'] . "-" . $sub['sub_name'] . '</option>');
