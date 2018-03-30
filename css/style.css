@@ -26,19 +26,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: white;
-    background: linear-gradient(#BABABA,#6E6E6E,#404040);
+    background: -webkit-linear-gradient(white,lightgray);
     width: 100%;
     margin-bottom: 8px;
-    box-shadow: 4px 4px 20px #888888;
-    border-radius: 2px;
+    transition: all 300ms ease-in-out;
 }
-
+.login:hover{
+    box-shadow: 7px 5px 4px rgba(0,0,0,0.2);
+}
 .titleform{
     margin-top: 30px;
     font-family: calibri;
     font-size: 40px;
-    color: white;
+    color: #4d4d4d;
 }
 .field{
     margin-top: 30px;
@@ -47,7 +47,7 @@
     padding-bottom: 45px;
     height: 30px;   
     border: 1px solid transparent ;
-    border-bottom-color: #A9A9A9;
+    border-bottom-color: #C9D7E3;
     transition: all 400ms;
 }
 input:focus{
@@ -56,20 +56,18 @@ input:focus{
 }
 .main input[type=submit]{
     text-align: center;
-    background: black;
+    background: #09337B;
     margin-bottom: 20px;
     width: 100%;
     font-size: 30px;
     height: 50px;
     font-weight: 800;
-    color:white;
-    border-radius: 2px;
-}
-.main input[type=submit]:hover{
-  background: white; 
-  color: black;
-   cursor: pointer;
-}
+    color:whitesmoke;
+
+}.main input[type=submit]:hover{
+    background: #2B5FBF; 
+     cursor: pointer;
+  }
 .main input{
     text-align: center;
     background: none;

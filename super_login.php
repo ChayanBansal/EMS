@@ -6,12 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Super Admin Login - Examination Portal</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        ::placeholder{
-            color:white;
-            opacity: 0.5;
-        }
-    </style>
 </head>
 <body>
     <?php
