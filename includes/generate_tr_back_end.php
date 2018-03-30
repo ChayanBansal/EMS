@@ -152,7 +152,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
 
                     if ($sub_id['practical_flag'] == 1) {
                         $insert_tr = "INSERT INTO tr (roll_id, sub_id, cat_cap, ia, end_sem, total, percent, grade, gp, cr, gpv) 
-                                VALUES(" . $roll_id['roll_id'] . ", " . $sub_id['sub_id'] . ", " . $cat_cap . ", " . $ia . " " . $end_sem . ", " . $total . ", " . $percentage . ", '" . $grade . "', " . $gp . ", " . $cr . ", " . $gpv . ")";
+                                VALUES(" . $roll_id['roll_id'] . ", " . $sub_id['sub_id'] . ", " . $cat_cap . ", " . $ia . ", " . $end_sem . ", " . $total . ", " . $percentage . ", '" . $grade . "', " . $gp . ", " . $cr . ", " . $gpv . ")";
                         $insert_tr_run = mysqli_query($conn, $insert_tr);
                     } else {
                         $insert_tr = "INSERT INTO tr (roll_id, sub_id, cat_cap, end_sem, total, percent, grade, gp, cr, gpv) 
