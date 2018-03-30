@@ -57,19 +57,19 @@
 <script>
         function change(){
             var d=document.getElementById("f1");
-            d.style.borderBottomColor="white";
+            d.style.borderBottomColor="darkblue";
         }
         function change2(){
             var d=document.getElementById("f1");
-            d.style.borderBottomColor="#A9A9A9";
+            d.style.borderBottomColor="#C9D7E3";
         }
         function change4(){
             var d=document.getElementById("f2");
-            d.style.borderBottomColor="#A9A9A9";
+            d.style.borderBottomColor="#C9D7E3";
         }
         function change3(){
             var d=document.getElementById("f2");
-            d.style.borderBottomColor="white";
+            d.style.borderBottomColor="darkblue";
         }
         </script>
 </html>

@@ -380,7 +380,7 @@ function tr_getSemester(tr_type)
             <div class="sub-option" id="subopt5">
             <button data-toggle="modal" data-target="#addsessionModal"><i class="glyphicon glyphicon-plus"></i> Add</button>
             <button data-toggle="modal" data-target="#viewsessionModal"><i class="glyphicon glyphicon-pencil"></i> View/Update Session</button>
-            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#select_month">Set Examination Month</button>
+            <button data-toggle="modal" data-target="#select_month">Set Examination Month</button>
             </div>
             </div>
 

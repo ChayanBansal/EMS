@@ -45,9 +45,9 @@ if (isset($_POST['tr_gen_type'])) {
 
     }
 }
-if(isset($_POST['tr_gen_batch'])){
+if (isset($_POST['tr_gen_batch'])) {
     if ($_POST['tr_type'] === "main") {
-        $get_course = "SELECT course_id,course_name FROM courses WHERE course_id IN(SELECT distinct(course_id) FROM academic_sessions WHERE from_year=".$_POST['tr_batch'].")";
+        $get_course = "SELECT course_id,course_name FROM courses WHERE course_id IN(SELECT distinct(course_id) FROM academic_sessions WHERE from_year=" . $_POST['tr_batch'] . ")";
         $get_course_run = mysqli_query($conn, $get_course);
         if (mysqli_num_rows($get_course_run) == 0) {
             echo ('<option disabled selected">No courses found!</option>');
@@ -58,7 +58,7 @@ if(isset($_POST['tr_gen_batch'])){
         }
 
     } else if ($_POST['tr_type'] === "atkt") {
-        $get_course = "SELECT course_id,course_name FROM $main.courses WHERE course_id IN(SELECT distinct(course_id) FROM $main.academic_sessions WHERE from_year=".$_POST['tr_batch']." AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions))";
+        $get_course = "SELECT course_id,course_name FROM $main.courses WHERE course_id IN(SELECT distinct(course_id) FROM $main.academic_sessions WHERE from_year=" . $_POST['tr_batch'] . " AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions))";
         $get_course_run = mysqli_query($conn, $get_course);
         if (mysqli_num_rows($get_course_run) == 0) {
             echo ('<option disabled selected">No courses found!</option>');
@@ -68,6 +68,20 @@ if(isset($_POST['tr_gen_batch'])){
             }
         }
 
+    }
+}
+if (isset($_POST['tr_getBatch'])) {
+    if ($_POST['type'] === "main") {
+        $get_from_year = "SELECT DISTINCT(from_year) FROM academic_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM students WHERE course_id=". $_POST['course_id'] . " AND enrol_no IN 
+        (SELECT enrol_no FROM roll_list WHERE roll_id IN
+        (SELECT DISTINCT(roll_id) FROM tr)))";
+        $get_from_year_run = mysqli_query($conn, $get_from_year);
+        while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
+            echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
+        }
+    }
+    else if($_POST['type'] === "atkt"){
+        //ATKT code here
     }
 }
 ?>

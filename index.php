@@ -15,20 +15,6 @@ if (isset($_POST['login'])) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Examination Portal</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .newsignin{
-            background:black !important;
-            color: white !important;
-            border-radius: 3px;
-        }
-        .newsignin:hover{
-            background: white !important;
-            color: black !important;
-        }
-        ::placeholder{
-            color:#C8C8C8;
-        }
-    </style>
 </head>
 <body>
 <link rel="stylesheet" href="/ems/preloader/css/loader.css">
@@ -68,7 +54,7 @@ $op_login->login();
                  </div>
 				 <div class="field">
                  <?php
-                $submit->display("", "newsignin", "submit", "login", "openover()", "Sign In");
+                $submit->display("", "", "submit", "login", "openover()", "Sign In");
                 ?>
                  </div>
 			 </div>
@@ -84,19 +70,19 @@ $op_login->login();
 <script>
         function change(){
             var d=document.getElementById("f1");
-            d.style.borderBottomColor="white";
+            d.style.borderBottomColor="darkblue";
         }
         function change2(){
             var d=document.getElementById("f1");
-            d.style.borderBottomColor="#A9A9A9";
+            d.style.borderBottomColor="#C9D7E3";
         }
         function change4(){
             var d=document.getElementById("f2");
-            d.style.borderBottomColor="#A9A9A9";
+            d.style.borderBottomColor="#C9D7E3";
         }
         function change3(){
             var d=document.getElementById("f2");
-            d.style.borderBottomColor="white";
+            d.style.borderBottomColor="darkblue";
         }
         </script>
 </html>

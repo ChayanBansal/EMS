@@ -221,11 +221,11 @@ function getBatch(etype){
         "type":etype
     },
 	success: function(data){
-        $("#batch_list").html("<option selected disabled>Select Batch</option>");          
+        $("#batch_list").html("<option selected disabled value=''>Select Batch</option>");          
         $("#batch_list").append(data);  
-        $("#sem_list").html("<option selected disabled>Select Semester</option>");
-        $("#sub_list").html("<option selected disabled>Select Subject</option>");
-        $("#sub_component").html("<option selected disabled>Select Component</option>");
+        $("#sem_list").html("<option selected disabled value=''>Select Semester</option>");
+        $("#sub_list").html("<option selected disabled value=''>Select Subject</option>");
+        $("#sub_component").html("<option selected disabled value=''>Select Component</option>");
         
     },
     error: function(e){
@@ -240,10 +240,10 @@ function getSemester(batch) {
 	url: "ajax_response",
 	data: 'getSemester=1'+'&main_atkt='+examType+'&from_year='+batch,
 	success: function(data){
-        $("#sem_list").html("<option selected disabled>Select Semester</option>");
+        $("#sem_list").html("<option selected disabled value=''>Select Semester</option>");
         $("#sem_list").append(data);
-        $("#sub_list").html("<option selected disabled>Select Subject</option>");
-        $("#sub_component").html("<option selected disabled>Select Component</option>");
+        $("#sub_list").html("<option selected disabled value=''>Select Subject</option>");
+        $("#sub_component").html("<option selected disabled value=''>Select Component</option>");
         
      },
     error: function(e){
@@ -261,7 +261,7 @@ function getSubject(semester)
 	url: "ajax_response",
 	data: 'getSubject=1'+'&semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt,
 	success: function(data){
-        $("#sub_list").html("<option selected disabled>Select Subject</option>");
+        $("#sub_list").html("<option selected disabled value=''>Select Subject</option>");
         $("#sub_list").append(data);
         $("#sub_component").html("<option value='' disabled>Select Component</option>");
     },
@@ -281,7 +281,7 @@ function getComponent(sub_code)
 	url: "ajax_response",
 	data: 'semester='+semester+'&from_year='+batch+'&main_atkt='+main_atkt+'&getComponent=1&sub_code='+sub_code,
 	success: function(data){
-        $("#sub_component").html("<option selected disabled>Select Component</option>");
+        $("#sub_component").html("<option selected disabled value=''>Select Component</option>");
         $("#sub_component").append(data);
     },
     error: function(e){
@@ -326,7 +326,23 @@ function chat(location,username)
 	});
   }
 
- 
+ function getTrViewBatch(type){
+    tr_course_id=<?= $_SESSION['current_course_id'] ?>;
+  $.ajax(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: 'tr_getBatch=1&course_id='+tr_course_id+'&type='+tr_type,
+      success: function(data){
+        $("#tr_batch_list_view").html("<option disabled selected value=''>Select Batch</option>");        
+        $("#tr_batch_list_view").append(data);
+
+    },
+    error: function(e){
+      $("#tr_semester").html("Unable to load recent activities");
+    }
+	});
+ }
 </script>
 <!--ChatBox-->
 <div style="background: red;display: block">
@@ -377,26 +393,17 @@ function chat(location,username)
     <!--ChatBoxEnd-->
 
 <div class="main-container col-lg-8 col-md-8 col-sm-12 col-xs-12">
-
     <div class="sub-container col-lg-8 col-sm-12 col-md-12 col-xs-12">
     <div class="cr_container">
-<div class="tcaption">
-Please select a choice:</div>
-</div>
-<div>
-    <div class="chayanraghav_block ">
+    <div class="tcaption">
+    Please select a choice:</div>
+    </div>
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#feed_marks_modal"><div><i class="glyphicon glyphicon-pencil"></i></div> Feed Marks</button>
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#check_marks_modal"><div><i class= "glyphicon glyphicon-check" ></i></div> Check Marks</button>       
-    </div>
-    <div class="chayanraghav_block">
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#view_tr"><div><i class="glyphicon glyphicon-eye-open"></i></div> View TR</button>
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#print_tr"><div><i class="glyphicon glyphicon-print"></i></div> Print TR</button>
-    </div>
-    <div class="chayanraghav_block">
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#edit_tr_request"><div><i class= "glyphicon glyphicon-ok-circle" ></i></div> Edit TR Requests</button> 
         <button class="option chayanraghav_class_blue" data-toggle="modal" data-target="#gen_marksheet"><div><i class= "glyphicon glyphicon-save-file" ></i></div> Generate Marksheet</button> 
-    </div>
-    </div>
 </div>
 </div> 
 
@@ -519,7 +526,6 @@ Please select a choice:</div>
 </div>
 <!-- Generate Marksheet Close-->
 
-
 <!-- Print TR Start-->
 
 <!-- Modal -->
@@ -528,36 +534,31 @@ Please select a choice:</div>
 
     <!-- Modal content-->
     <div class="modal-content">
-      <form action="print_tr" method="post">
+      <form action="view_tr_op" method="post">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span style="color:black">&times;</span></button>
         <h4 class="modal-title">Print TR</h4>
       </div>
       <div class="modal-body">
-                <div class="form-group">
-                    <label for="tr_batch">Batch (Starting Year) :</label>
-                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required>
-                        <option value="" disabled selected>Select Batch</option>
-                        <?php
-                        $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
-                    (SELECT enrol_no FROM roll_list WHERE roll_id IN
-                    (SELECT DISTINCT(roll_id) FROM tr))";
-                        $get_from_year_run = mysqli_query($conn, $get_from_year);
-                        while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
-                            echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="tr_type">Type :</label>
-                    <select id="tr_type" name="tr_print_type" class="form-control" required onChange="tr_getSemester('tr_batch_list_print','tr_semester_print',this.value)">
+      <div class="form-group">
+                    <label>Type :</label>
+                    <select id="tr_type_select" name="tr_type_select" class="form-control" required onchange="getTrViewBatch(this.value)">
                         <option value="" disabled selected>Select Type</option>
                         <option value="main">Main</option>
+                        <option value="retotal">Retotaling</option>
+                        <option value="reval">Revaluation</option>
+                        <option value="atkt">ATKT</option>
                     </select>
                 </div>
+          <div class="form-group">
                 <div class="form-group">
-                    <label for="tr_semester_print">Semester: </label>
+                    <label for="tr_batch">Batch (Starting Year) :   </label>
+                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required>
+                        <option value="" disabled selected>Select Batch</option>
+                        
+                    </select>
+                </div>
+                    <label for="tr_semester">Semester: </label>
                     <select id="tr_semester_print" name="tr_print_semester" class="form-control" required>
                         <option value="" disabled selected>Semester</option>                       
                     </select>
@@ -588,29 +589,24 @@ Please select a choice:</div>
         <h4 class="modal-title">View TR</h4>
       </div>
       <div class="modal-body">
+      <div class="form-group">
+                    <label for="session_type">Type :</label>
+                    <select id="tr_type_select" name="tr_type_select" class="form-control" required onchange="getTrViewBatch(this.value)">
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="main">Main</option>
+                        <option value="retotal">Retotaling</option>
+                        <option value="reval">Revaluation</option>
+                        <option value="atkt">ATKT</option>
+                    </select>
+                </div>
+          <div class="form-group">
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :</label>
                     <select id="tr_batch_list_view" name="tr_view_batch" class="form-control" required>
                         <option value="" disabled selected>Select Batch</option>
-                        <?php
-                        $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
-                    (SELECT enrol_no FROM roll_list WHERE roll_id IN
-                    (SELECT DISTINCT(roll_id) FROM tr))";
-                        $get_from_year_run = mysqli_query($conn, $get_from_year);
-                        while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
-                            echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
-                        }
-                        ?>
+                        
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="tr_type">Type :</label>
-                    <select id="tr_type" name="tr_view_type" class="form-control" required onChange="tr_getSemester('tr_batch_list_view','tr_semester_view',this.value)">
-                        <option value="" disabled selected>Select Type</option>
-                        <option value="main">Main</option>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="tr_semester">Semester: </label>
                     <select id="tr_semester_view" name="tr_view_semester" class="form-control" required>
                         <option value="" disabled selected>Semester</option>                       
@@ -939,20 +935,7 @@ $logout_modal->display_logout_modal();
 });
 function tr_getSemester(id,id2,tr_type)
 {
-  tr_from_year=document.getElementById(id).value;
-  tr_course_id=<?= $_SESSION['current_course_id'] ?>;
-  $.ajax(
-    {
-      type: "POST",
-      url: "select_tr",
-      data: 'tr_getSemester=1&tr_getFromYear=0&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type,
-      success: function(data){
-        $("#"+id2).html(data);
-    },
-    error: function(e){
-      $("#tr_semester").html("Unable to load recent activities");
-    }
-	});
+  
   }
 
 </script>

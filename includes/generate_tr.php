@@ -122,7 +122,7 @@ if($_SESSION['type']==="main"){
     //MAIN Start
 ?>
 <?php
-$get_current_sem_qry = "SELECT max(current_semester) as current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id'];
+$get_current_sem_qry = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id'];
 $get_current_sem_qry_run = mysqli_query($conn, $get_current_sem_qry);
 if ($get_current_sem_qry_run) {
     while ($semester = mysqli_fetch_assoc($get_current_sem_qry_run)) {
