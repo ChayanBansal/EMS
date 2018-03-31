@@ -471,6 +471,7 @@ function chat(location,username)
         </div>
       </div>
       <div class="modal-footer">
+      <button type="reset" class="btn btn-danger pull-left">Reset</button>      
         <input type="submit" class="btn btn-success" name="proceed_to_feed" value="Proceed" >
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
@@ -573,6 +574,7 @@ function chat(location,username)
                 </div>
       </div>
       <div class="modal-footer">
+      <button type="reset" class="btn btn-danger pull-left">Reset</button>      
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success" name="tr_print_proceed">Proceed</button>
       </div>
@@ -622,6 +624,7 @@ function chat(location,username)
                 </div>
       </div>
       <div class="modal-footer">
+      <button type="reset" class="btn btn-danger pull-left">Reset</button>      
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success" name="tr_view_proceed">Proceed</button>
       </div>

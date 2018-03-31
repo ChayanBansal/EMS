@@ -440,6 +440,7 @@ $options->approve_disapprove_edit_tr($conn);
       $token = new csrf_token();
       $token->hidden_input($_SESSION['token']);
       ?>
+      		  <button type="reset" class="btn btn-danger pull-left">Reset</button>      
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success" name="view_tr_submit">Proceed</button>
       </div>
@@ -499,6 +500,7 @@ $options->approve_disapprove_edit_tr($conn);
                 </div>
             </div>
           <div class="modal-footer">
+          <button type="reset" class="btn btn-danger pull-left">Reset</button>      
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary" name="course_submit">Submit</button>
         </div>
@@ -601,7 +603,9 @@ $options->approve_disapprove_edit_tr($conn);
                 </div>
             <div id="session-display">
             </div>
+            </div>
           <div class="modal-footer">
+          <button type="reset" class="btn btn-danger pull-left">Reset</button>      
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-success" name="session_submit">Add Session<i class="glyphicon glyphicon-chevron-right"></i></button>
         </div>
@@ -610,8 +614,6 @@ $options->approve_disapprove_edit_tr($conn);
         
       </div>
     </div>
-    
-  </div>
   <!--End-->
 
   <!-- View Session Modal -->
@@ -816,6 +818,7 @@ $options->approve_disapprove_edit_tr($conn);
               </div>
           </div>
           <div class="modal-footer">
+          <button type="reset" class="btn btn-danger pull-left">Reset</button>      
             <button type="button" class="btn btn-default" data-dismiss="modal">Return</button>
             <button type="submit" class="btn btn-success" name="session_update_submit" value="" id="btn_session_update">Update Session<i class="glyphicon glyphicon-chevron-right"></i></button>
         </div>
@@ -949,6 +952,7 @@ $options->approve_disapprove_edit_tr($conn);
     </table>
             </div>
           <div class="modal-footer">
+          <button type="reset" class="btn btn-danger pull-left">Reset</button>      
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>  
           </div>
         </div>
@@ -1281,6 +1285,7 @@ $options->approve_disapprove_edit_tr($conn);
              
           </div>
           <div class="modal-footer">
+          <button type="reset" class="btn btn-danger pull-left">Reset</button>      
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-success" name="tr_submit" value="" id="btn_session_update">Proceed<i class="glyphicon glyphicon-chevron-right"></i></button>
         </div>
@@ -1402,6 +1407,7 @@ $options->approve_disapprove_edit_tr($conn);
 
             </div>
           <div class="modal-footer">
+          <button type="reset" class="btn btn-danger pull-left" onclick="$('#subject_area').html('')">Reset</button>      
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary" name="add_sub_submit">Submit</button>
         </div>
@@ -1422,7 +1428,7 @@ $options->approve_disapprove_edit_tr($conn);
     
       <!-- Modal content-->
       <div class="modal-content">
-        <form action="" method="post" onsubmit="return disable_on_submitinput()">
+        <form action="" method="post" onsubmit="return disable_on_submitinput()" class="form-inline">
 		<div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Fill in the following details to create a new operator</h4>
@@ -1447,7 +1453,8 @@ $options->approve_disapprove_edit_tr($conn);
           <?php $creation_b = new input_button();
           $creation_b->display("", "btn btn-success", "submit", "create", "submit", "Create"); ?>
 		  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
+		  <button type="reset" class="btn btn-danger pull-left">Reset</button>      
+    </div>
 		</form>
       </div>
       
@@ -1506,6 +1513,7 @@ $options->approve_disapprove_edit_tr($conn);
         </div>
       </div>
       <div class="modal-footer">
+      <button type="reset" class="btn btn-danger pull-left">Reset</button>      
       <button type="submit" class="btn btn-info" name="set_exam_month">Set Examination Month</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
