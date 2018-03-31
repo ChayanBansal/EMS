@@ -44,6 +44,89 @@
             }
           });
     }
+
+  function tr_getFromYear(tr_course_id)
+  {
+    var type=$("#tr_type").val();
+    $.ajax({
+	  type: "POST",
+	  url: "select_tr",
+	  data: {
+    "tr_getFromYear":1,
+    "course_id":tr_course_id,
+    "type":type
+    },
+	  success: function(data){
+        $("#tr_batch_list").html("<option disabled selected value=''>Select Batch</option>");
+        $("#tr_batch_list").append(data);        
+    },
+    error: function(e){
+      $("#tr_batch_list").html("Unable to load recent activities");
+    }
+	});
+  }
+
+function tr_getSemester(batch)
+{
+  tr_from_year=batch
+  tr_course_id=$("#tr_course_list").val();
+  type=$("#tr_type").val();
+  $.ajax(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: {"tr_getSemester":1,
+      "course_id":tr_course_id,
+      "from_year":tr_from_year,
+      "type":type},
+      success: function(data){
+        $("#tr_semester").html(data);
+    },
+    error: function(e){
+      $("#tr_semester").html("Unable to load recent activities");
+    }
+	});
+  }
+
+  function getTrGenBatch(tr_type){
+    $.ajax(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: {
+        "tr_gen_type":1,
+        "tr_type":tr_type
+      },
+      success: function(data){
+        $("#tr_from_year").html("<option disabled selected>Select Batch</option>");        
+        $("#tr_from_year").append(data);
+    },
+    error: function(e){
+      $("#tr_from_year").html("Unable to load");
+    }
+	});
+  }
+  
+  function getTrGenCourse(batch){
+    var tr_type=$("#tr_gen_type").val();
+    $.ajax(
+    {
+      type: "POST",
+      url: "select_tr",
+      data: {
+        "tr_gen_batch":1,
+        "tr_type":tr_type,
+        "tr_batch":batch
+      },
+      success: function(data){
+        $("#tr_course").html("<option disabled selected>Select Course</option>");        
+        $("#tr_course").append(data);
+    },
+    error: function(e){
+      $("#tr_course").html("Unable to load");
+    }
+	});
+  }
     </script>
 </head>
 <body onload="get_recent_act()">
@@ -163,78 +246,7 @@ $options->approve_disapprove_edit_tr($conn);
 	});
   }
 
-  function tr_getFromYear(tr_course_id)
-  {
-    $.ajax({
-	type: "POST",
-	url: "select_tr",
-	data: 'tr_getFromYear=1&course_id='+tr_course_id,
-	success: function(data){
-        $("#tr_batch_list").html(data);
-    },
-    error: function(e){
-      $("#tr_batch_list").html("Unable to load recent activities");
-    }
-	});
-  }
 
-function tr_getSemester(tr_type)
-{
-  tr_from_year=document.getElementById("tr_batch_list").value;
-  tr_course_id=document.getElementById("tr_course_list").value;
-  $.ajax(
-    {
-      type: "POST",
-      url: "select_tr",
-      data: 'tr_getSemester=1&tr_getFromYear=0&course_id='+tr_course_id+'&from_year='+tr_from_year+'&type='+tr_type,
-      success: function(data){
-        $("#tr_semester").html(data);
-    },
-    error: function(e){
-      $("#tr_semester").html("Unable to load recent activities");
-    }
-	});
-  }
-
-  function getTrGenBatch(tr_type){
-    $.ajax(
-    {
-      type: "POST",
-      url: "select_tr",
-      data: {
-        "tr_gen_type":1,
-        "tr_type":tr_type
-      },
-      success: function(data){
-        $("#tr_from_year").html("<option disabled selected>Select Batch</option>");        
-        $("#tr_from_year").append(data);
-    },
-    error: function(e){
-      $("#tr_from_year").html("Unable to load");
-    }
-	});
-  }
-  
-  function getTrGenCourse(batch){
-    var tr_type=$("#tr_gen_type").val();
-    $.ajax(
-    {
-      type: "POST",
-      url: "select_tr",
-      data: {
-        "tr_gen_batch":1,
-        "tr_type":tr_type,
-        "tr_batch":batch
-      },
-      success: function(data){
-        $("#tr_course").html("<option disabled selected>Select Course</option>");        
-        $("#tr_course").append(data);
-    },
-    error: function(e){
-      $("#tr_course").html("Unable to load");
-    }
-	});
-  }
 
 
 </script>
@@ -386,6 +398,17 @@ function tr_getSemester(tr_type)
         <h4 class="modal-title">View TR</h4>
       </div>
       <div class="modal-body">
+              <div class="form-group">
+                    <label for="tr_type">Type :</label>
+                    <select id="tr_type" name="tr_type" class="form-control" required>
+                      <option value="" disabled selected>Select Type</option>
+                        <option value="main">Main</option>
+                        <option value="retotal">Retotaling</option>
+                        <option value="reval">Revaluation</option>
+                        <option value="atkt">ATKT</option>
+                    </select>
+                </div>
+                        
                 <div class="form-group">
                     <label for="tr_course">Course :</label>
                     <select id="tr_course_list" name="tr_course" class="form-control" onChange="tr_getFromYear(this.value)" required>
@@ -401,15 +424,8 @@ function tr_getSemester(tr_type)
                 </div>
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :</label>
-                    <select id="tr_batch_list" name="tr_batch" class="form-control" required>
+                    <select id="tr_batch_list" name="tr_batch" class="form-control" required onchange="tr_getSemester(this.value)">
                         <option value="" disabled selected>Select Batch</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="tr_type">Type :</label>
-                    <select id="tr_type" name="tr_type" class="form-control" required onChange="tr_getSemester(this.value)">
-                        <option value="" disabled selected>Select Type</option>
-                        <option value="main">Main</option>
                     </select>
                 </div>
                 <div class="form-group">

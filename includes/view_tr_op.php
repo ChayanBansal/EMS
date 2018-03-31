@@ -240,7 +240,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
             <th style="vertical-align:middle;width:40%" colspan="' . ($semcount + 1) . '">Previous Semester Details</th>
         </tr>
             ');
-            $get_subjects_qry = "SELECT sub_code,sub_name from subjects WHERE ac_session_id=$ac_sess_id";
+            $get_subjects_qry = "SELECT ac_sub_code,sub_code,sub_name,elective_flag from subjects WHERE ac_session_id=$ac_sess_id";
             $get_subjects_qry_run = mysqli_query($conn, $get_subjects_qry);
             $rowcount = 1;
             $fail_flag_fr = "SELECT count(*) FROM failure_report WHERE roll_id=$cur_rollid";
@@ -255,6 +255,14 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
            
             $fail_flag = false;
             while ($subject = mysqli_fetch_assoc($get_subjects_qry_run)) {
+                
+                if($subject['elective_flag']==1){
+                    $get_elective_count="SELECT count(*) FROM elective_map WHERE enrol_no='".$student['enrol_no'] ."' AND ac_sub_code=".$subject['ac_sub_code'];
+                    $get_elective_count_run=mysqli_query($conn,$get_elective_count);
+                    if(mysqli_num_rows($get_elective_count_run)==0){
+                        continue;
+                    }    
+                }
                 echo ('<tr style="vertical-align:middle">');
                 $get_subid_count = "SELECT count(*) from sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $subject['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
                 $get_subid_count_run = mysqli_query($conn, $get_subid_count);
@@ -552,7 +560,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             break;
 
                         case 5:
-                            echo ("<tr><td colspan='12'></td>");
+                            echo ("<tr><td colspan='13'></td>");
                             if ($failure) {
                                 echo ("<td colspan='2' style='font-weight:700; color: #DF3611'>Result : FAIL</td>");
                             } else {
@@ -560,7 +568,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             }
 
                             echo ("<td>Fail In Paper Code</td>");
-                            for ($i = 0; $i <= $semcount; $i++) {
+                            for ($i = 0; $i < $semcount; $i++) {
                                 if (empty($fail_paper_code[$i])) {
                                     echo ('<td> - </td>');
                                 } else {
@@ -571,7 +579,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                             break;
 
                         case 6:
-                        echo ('<tr><td colspan="12"></td>
+                        echo ('<tr><td colspan="13"></td>
                         <td colspan="2" id="fail' . $stud_count . '" style="font-weight:700;">Fail In Subject Code :');
                         if (empty($fail_paper_code[$_SESSION['semester']-1])) {
                             echo ('<td> - </td>');
@@ -582,7 +590,7 @@ $dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"],
                          echo ("</tr>");
                             break;
                         case 7:
-                            echo ("<tr><td colspan='12'></td>
+                            echo ("<tr><td colspan='13'></td>
                             <td colspan='2' style='font-weight:700;'>CGPA : --</td>");//To be replaced by $cur_cgpa
                             echo ("</tr>");
                             break;

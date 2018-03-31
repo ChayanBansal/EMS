@@ -326,7 +326,7 @@ function chat(location,username)
 	});
   }
 
- function getTrViewBatch(type){
+ function getTrViewBatch(resultid,type){
     tr_course_id=<?= $_SESSION['current_course_id'] ?>;
   $.ajax(
     {
@@ -334,8 +334,8 @@ function chat(location,username)
       url: "select_tr",
       data: 'tr_getBatch=1&course_id='+tr_course_id+'&type='+type,
       success: function(data){
-        $("#tr_batch_list_view").html("<option disabled selected value=''>Select Batch</option>");        
-        $("#tr_batch_list_view").append(data);
+        $("#"+resultid).html("<option disabled selected value=''>Select Batch</option>");        
+        $("#"+resultid).append(data);
 
     },
     error: function(e){
@@ -542,7 +542,7 @@ function chat(location,username)
 
     <!-- Modal content-->
     <div class="modal-content">
-      <form action="view_tr_op" method="post">
+      <form action="print_tr" method="post">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span style="color:black">&times;</span></button>
         <h4 class="modal-title">Print TR</h4>
@@ -550,7 +550,7 @@ function chat(location,username)
       <div class="modal-body">
       <div class="form-group">
                     <label>Type :</label>
-                    <select id="tr_type_select" name="tr_type_select" class="form-control" required onchange="getTrViewBatch(this.value)">
+                    <select id="tr_type_select" name="tr_type_print" class="form-control" required onchange="getTrViewBatch('tr_batch_list_print',this.value)">
                         <option value="" disabled selected>Select Type</option>
                         <option value="main">Main</option>
                         <option value="retotal">Retotaling</option>
@@ -561,7 +561,7 @@ function chat(location,username)
           <div class="form-group">
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :   </label>
-                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required onchange="getTrViewSemester(this.value)">
+                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required onchange="tr_getSemester('','tr_semester_print',this.value)">
                         <option value="" disabled selected>Select Batch</option>
                         
                     </select>
@@ -599,7 +599,7 @@ function chat(location,username)
       <div class="modal-body">
       <div class="form-group">
                     <label for="session_type">Type :</label>
-                    <select id="tr_type_select" name="tr_type_select" class="form-control" required onchange="getTrViewBatch(this.value)">
+                    <select id="tr_type_select" name="tr_type_select" class="form-control" required onchange="getTrViewBatch('tr_batch_list_view',this.value)">
                         <option value="" disabled selected>Select Type</option>
                         <option value="main">Main</option>
                         <option value="retotal">Retotaling</option>
