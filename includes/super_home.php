@@ -1379,7 +1379,6 @@ $options->approve_disapprove_edit_tr($conn);
         </div>
         <div class="form-group">
         <input type="button" value="Load Previous" id="load_prev_sub" class="btn btn-primary" onclick="load_previous_subjects()" disabled>    
-        <input type="button" value="Create New" class="btn btn-success">    
         </div>
         
     </caption>
