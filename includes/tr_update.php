@@ -15,7 +15,7 @@ if (isset($_POST['tr_edit_close'])) {
 }else{
     if (isset($_POST['tr_edit_submit'])) {
         $request_id = $_POST['tr_edit_submit'];
-        $get_request_details = "SELECT * FROM edit_tr_request WHERE request_id=" . $request_id;
+        $get_request_details = "SELECT s.sub_code,s.ac_session_id,etr.* FROM edit_tr_request etr,subjects s WHERE etr.ac_sub_code=s.ac_sub_code AND request_id=" . $request_id;
         $get_request_details_run = mysqli_query($conn, $get_request_details);
         if ($get_request_details_run) {
             $req_details = mysqli_fetch_assoc($get_request_details_run);
@@ -24,6 +24,8 @@ if (isset($_POST['tr_edit_close'])) {
             $enroll = mysqli_query($conn, $enroll);
             $enroll = mysqli_fetch_assoc($enroll)['enrol_no'];
             $rollid = $req_details['roll_id'];
+            $ac_sess_id=$req_details['ac_session_id'];
+            $ac_sub_code=$req_details['ac_sub_code'];
         }
     } else {
        header('location: 404.html');
@@ -111,7 +113,7 @@ require("class_lib.php");
 $validate = new validate();
 $validate->conf_logged_in();
 $options=new useroptions();
-$options->update_tr($conn);
+$options->update_tr_main($conn);
 $obj = new head();
 $obj->displayheader();
 require('../preloader/preload.php');
@@ -146,14 +148,14 @@ $input_btn = new input_button();
     </thead>
     <tbody id="checking_table">
      <?php 
-    $get_comp = "SELECT component_name,component_id FROM component WHERE component_id IN(SELECT component_id FROM component_distribution WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE sub_code='" . $subcode . "'))";
+    $get_comp = "SELECT component_name,component_id FROM component WHERE component_id IN(SELECT component_id FROM component_distribution WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code=$ac_sub_code))";
     $get_comp_run = mysqli_query($conn, $get_comp);
     while ($comp = mysqli_fetch_assoc($get_comp_run)) {
         switch ($comp['component_id']) {
             case 1:
                 if ($req_details['cat_flag'] == 1) {
                     echo ('<td>' . $comp['component_name'] . '</td>');
-                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=1 AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=1 AND sub_id IN(SELECT sub_id from sub_distribution WHERE ac_sub_code =$ac_sub_code";
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=1 AND sub_id=$subid";
@@ -169,7 +171,7 @@ $input_btn = new input_button();
             case 2:
                 if ($req_details['end_theory_flag'] == 1) {
                     echo ('<td>' . $comp['component_name'] . '</td>');
-                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=2 AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=2 AND sub_id IN(SELECT sub_id from sub_distribution WHERE ac_sub_code=$ac_sub_code)";
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=2 AND sub_id=$subid";
@@ -187,7 +189,7 @@ $input_btn = new input_button();
             case 3:
                 if ($req_details['cap_flag'] == 1) {
                     echo ('<td>' . $comp['component_name'] . '</td>');
-                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=3 AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=3 AND sub_id IN(SELECT sub_id from sub_distribution WHERE ac_sub_code=$ac_sub_code)";
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=3 AND sub_id=$subid";
@@ -205,7 +207,7 @@ $input_btn = new input_button();
             case 4:
                 if ($req_details['end_practical_flag'] == 1) {
                     echo ('<td>' . $comp['component_name'] . '</td>');
-                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=4 AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=4 AND sub_id IN(SELECT sub_id from sub_distribution WHERE ac_sub_code=$ac_sub_code)";
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=4 AND sub_id=$subid";
@@ -223,7 +225,7 @@ $input_btn = new input_button();
             case 5:
                 if ($req_details['ia_flag'] == 1) {
                     echo ('<td>' . $comp['component_name'] . '</td>');
-                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=5 AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=5 AND sub_id IN(SELECT sub_id from sub_distribution WHERE ac_sub_code=$ac_sub_code)";
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=5 AND sub_id=$subid";
@@ -240,7 +242,7 @@ $input_btn = new input_button();
             case 6:
                 if ($req_details['ie_flag'] == 1) {
                     echo ('<td>' . $comp['component_name'] . '</td>');
-                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=6 AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+                    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=6 AND sub_id IN(SELECT sub_id from sub_distribution WHERE ac_sub_code=$ac_sub_code)";
                     $get_sub_id = mysqli_query($conn, $get_sub_id);
                     $subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
                     $max_marks = "SELECT max_marks FROM component_distribution WHERE component_id=6 AND sub_id=$subid";

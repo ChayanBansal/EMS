@@ -19,15 +19,13 @@ function show_semester() {
             `;
     }
 }
-var i=0;
 function display_subjects(direction) {
     var val = document.getElementById("no_subjects").value;
+    var i=val;
     var table = $("#subject_area");//document.getElementById("subject_area");
     if(direction=='down'){
-        i=0;
         table.html('');
     }
-    i++;
     if (isNaN(val)) {
         table.innerHTML = "Add a subject to insert";
     }
@@ -183,6 +181,7 @@ function toggle_course_name(){
             var jdata=JSON.parse(contents);
             if(jdata.status==0){
                 alert("No subjects found!");
+                $("#subject_area").html("");
             }
             else{
                 $("#subject_area").html(jdata.data);

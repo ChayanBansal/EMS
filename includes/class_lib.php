@@ -596,11 +596,19 @@ class super_user_options
 				$type = $_POST['type' . $i];
 				if (isset($_POST['theory' . $i])) {
 					$theory_cr = $_POST['theory' . $i];
+					if ($theory_cr == 0) {
+						$alert->exec("Theory credits cannot be 0!", "warning");
+						return;
+					}
 				} else {
 					$theory_cr = 0;
 				}
 				if (isset($_POST['practical' . $i])) {
 					$practical_cr = $_POST['practical' . $i];
+					if ($practical_cr == 0) {
+						$alert->exec("Practical credits cannot be 0!", "warning");
+						return;
+					}
 				} else {
 					$practical_cr = 0;
 				}
@@ -1187,17 +1195,18 @@ class useroptions
 			}
 		}
 	}
-	function update_tr($conn)
+	function update_tr_main($conn)
 	{
 		if (isset($_POST['tr_update_done'])) {
 			$input_safe = new input_check();
 			$request_id = $input_safe->input_safe($conn, $_POST['tr_update_done']);
 			mysqli_autocommit($conn, false);
+			mysqli_begin_transaction($conn);
 			$get_request_details = "SELECT * FROM edit_tr_request WHERE request_id=" . $request_id;
 			$get_request_details_run = mysqli_query($conn, $get_request_details);
 			if ($get_request_details_run) {
 				$req_details = mysqli_fetch_assoc($get_request_details_run);
-				$subcode = $req_details['sub_code'];
+				$subcode = $req_details['ac_sub_code'];
 				$enroll = "SELECT enrol_no FROM roll_list WHERE roll_id=" . $req_details['roll_id'];
 				$enroll = mysqli_query($conn, $enroll);
 				$enroll = mysqli_fetch_assoc($enroll)['enrol_no'];
@@ -1223,7 +1232,7 @@ class useroptions
 					$components[] = 6;
 				}
 				foreach ($components as $comp) {
-					$get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=$comp AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+					$get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=$comp AND sub_id IN(SELECT sub_id from sub_distribution WHERE ac_sub_code=$subcode)";
 					$get_sub_id = mysqli_query($conn, $get_sub_id);
 					$subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
 					//updating score
@@ -1236,7 +1245,7 @@ class useroptions
 				//updating tr
 				$update_fail = false;
 				foreach ($components as $comp) {
-					$get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=$comp AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code='$subcode')";
+					$get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=$comp AND sub_id IN(SELECT sub_id from sub_distribution WHERE sub_code=$subcode)";
 					$get_sub_id = mysqli_query($conn, $get_sub_id);
 					$subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
 					$get_credits = "SELECT credits_allotted FROM sub_distribution WHERE sub_id=$subid";
@@ -1316,7 +1325,7 @@ class useroptions
 								$cr = 0;
 								$gpv = $gp * $cr;
 							}
-							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr = "UPDATE tr SET cat_cap=$cat_cap_ia, ia=NULL, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
 							$update_tr_run = mysqli_query($conn, $update_tr);
 							if (!$update_tr_run) {
 								$update_fail = true;
@@ -1394,7 +1403,7 @@ class useroptions
 								$cr = 0;
 								$gpv = $gp * $cr;
 							}
-							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr = "UPDATE tr SET cat_cap=$cat_cap_ia,ia=NULL, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
 							$update_tr_run = mysqli_query($conn, $update_tr);
 							if (!$update_tr_run) {
 								$update_fail = true;
@@ -1473,7 +1482,7 @@ class useroptions
 								$cr = 0;
 								$gpv = $gp * $cr;
 							}
-							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr = "UPDATE tr SET cat_cap=$cat_cap_ia,ia=NULL, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
 							$update_tr_run = mysqli_query($conn, $update_tr);
 							if (!$update_tr_run) {
 								$update_fail = true;
@@ -1553,7 +1562,7 @@ class useroptions
 								$cr = 0;
 								$gpv = $gp * $cr;
 							}
-							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr = "UPDATE tr SET cat_cap=$cat_cap_ia,ia=NULL, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
 							$update_tr_run = mysqli_query($conn, $update_tr);
 							if (!$update_tr_run) {
 								$update_fail = true;
@@ -1567,7 +1576,6 @@ class useroptions
 							$end_sem = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
 							$score = "SELECT marks FROM score WHERE roll_id=$rollid AND component_id=5 AND sub_id=$subid";
 							$ia = mysqli_fetch_assoc(mysqli_query($conn, $score))['marks'];
-							$cat_cap_ia += $ia;
 
 							$get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $subid . " AND component_id=" . $comp;
 							$get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
@@ -1634,7 +1642,7 @@ class useroptions
 								$cr = 0;
 								$gpv = $gp * $cr;
 							}
-							$update_tr = "UPDATE tr SET cat_cap_ia=$cat_cap_ia, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
+							$update_tr = "UPDATE tr SET cat_cap=$cat_cap_ia, ia=NULL, end_sem=$end_sem, total=$total, percent=$percentage, grade='$grade', gp=$gp, cr=$cr, gpv=$gpv WHERE roll_id=$rollid AND sub_id=$subid";
 							$update_tr_run = mysqli_query($conn, $update_tr);
 							if (!$update_tr_run) {
 								$update_fail = true;
@@ -2488,14 +2496,6 @@ class data_table
 	}
 }
 
-
-class view_operators
-{
-	function execute($conn)
-	{
-
-	}
-}
 
 class csrf_token
 {

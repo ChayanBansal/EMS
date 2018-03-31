@@ -644,7 +644,7 @@ function chat(location,username)
       </div>
       <div class="modal-body">
       <?php
-        $get_requests = "SELECT `request_id`, `requester`, `roll_id`, `sub_code`, `remarks`, `status` FROM edit_tr_request WHERE requester=" . $_SESSION['operator_id'] . " AND status!=3";
+        $get_requests = "SELECT `request_id`, `requester`, `roll_id`, s.`sub_code`, `remarks`, `status` FROM edit_tr_request etr,subjects s WHERE etr.ac_sub_code=s.ac_sub_code AND requester=" . $_SESSION['operator_id'] . " AND status!=3";
         $get_requests_run = mysqli_query($conn, $get_requests);
         echo ('<table class="table table-hover">
     <thead>
@@ -656,11 +656,15 @@ function chat(location,username)
       </tr>
     </thead>
     <tbody>');
+        $err = new alert();
+
         if (!$get_requests_run) {
             echo ("<tr style='text-align:center;'><td colspan='4'>No requests to show!</td><tr>");
-            $err = new alert();
-            $err->exec("No requests to show", "info");
+            $err->exec("Error fetching requests!", "danger");
         } else {
+            if (mysqli_num_rows($get_requests_run) == 0) {
+                $err->exec("No requests to show!", "info");
+            }
             while ($edit_tr_requests = mysqli_fetch_assoc($get_requests_run)) {
             //$edit_tr_requests['request_id'] $edit_tr_requests['requester'] $edit_tr_requests['roll_id'] $edit_tr_requests['sub_code'] $edit_tr_requests['remarks'] $edit_tr_requests['status']
                 $get_edit_enrol = "SELECT enrol_no FROM roll_list WHERE roll_id=" . $edit_tr_requests['roll_id'];
@@ -945,7 +949,7 @@ function tr_getSemester(id,id2,batch)
 {
   var tr_from_year=batch;
   var type=$("#tr_type_select").val();
-  var tr_course_id=<?=$_SESSION['current_course_id']?>;
+  var tr_course_id=<?= $_SESSION['current_course_id'] ?>;
   $.ajax(
     {
       type: "POST",
