@@ -362,6 +362,12 @@ $options->approve_disapprove_edit_tr($conn);
                 <button data-toggle="modal" data-target="#edit_tr_request"><i class="glyphicon glyphicon-check"></i> Edit TR Requests</button>
             </div>
             </div>
+            <div class="option_s chayanraghav_class_blue" onmouseover="show('subopt6')" onmouseout="hide('subopt6')">
+            <div><i class="glyphicon glyphicon-retweet"></i></div>
+            <div>Result Notification</div>
+            <div class="sub-option" id="subopt6">
+                <button data-toggle="modal" data-target="#result_notification"><i class="glyphicon glyphicon-copy"></i> Notify Students</button>            </div>
+            </div>
             <div class="option_s chayanraghav_class_blue" onmouseover="show('subopt4')" onmouseout="hide('subopt4')">
             <div><i class="glyphicon glyphicon-list-alt"></i></div>
             <div>Subjects</div>
@@ -383,6 +389,107 @@ $options->approve_disapprove_edit_tr($conn);
 
     </div>
     </div>
+
+
+<!-- Result Notification Modal -->
+<!-- Modal -->
+<div id="result_notification" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+    <form action="result_notification" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Result Notification</h4>
+      </div>
+      <div class="modal-body">
+      
+        <div class="form-group">
+          <label for="rn__type">Type :</label>
+          <select id="rn_type" name="rn_type" class="form-control" required>
+            <option value="" disabled selected>Select Type</option>
+              <option value="1">Main</option>
+              <option value="2">Retotaling</option>
+              <option value="3">Revaluation</option>
+              <option value="4">ATKT</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="rn_course">Course :</label>
+          <select id="rn__course_list" name="rn_course" class="form-control" onChange="rn_getFromYear(this.value)" required>
+              <option value="" disabled selected>Select Course</option>
+              <?php 
+              $get_course = "SELECT DISTINCT(ac.course_id), c.course_name  FROM $main.academic_sessions ac, $main.courses c WHERE c.course_id=ac.course_id";
+              $get_course_run = mysqli_query($conn, $get_course);
+              while ($course = mysqli_fetch_assoc($get_course_run)) {
+                echo ('<option value="' . $course['course_id'] . '">' . $course['course_name'] . '</option>');
+              }
+              ?>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="rn_from_year">Batch : </label>
+          <select id="rn_from_year" name="rn_from_year" class="form-control" onChange="rn_getSemester(this.value)" required>
+              <option value="" disabled selected>Select Batch</option>
+          </select>
+        </div>
+      
+      <div class="form-group">
+          <label for="rn_semester">Semester : </label>
+          <select id="rn_semester" name="rn_semester" class="form-control" required>
+              <option value="" disabled selected>Select Semester</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" name="notify_students" class="btn btn-success">Notify Students</button>
+      </div>
+      
+    </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function rn_getSemester(from_year)
+  {
+    var type=document.getElementById("rn_type").value;
+    var course=document.getElementById("rn__course_list").value;
+    $.ajax({
+    type: "POST",
+    url: "result_notification",
+    data: 'getSemester=1&type='+type+'&course_id='+course+'&from_year='+from_year,
+    success: function(data){
+          $("#rn_semester").html(data);
+    },
+    error: function(e){
+      $("#rn_semester").html("Unable to load semesters");
+    }
+	});
+  }
+  function rn_getFromYear(course)
+  {
+    var type=document.getElementById("rn_type").value;
+    $.ajax({
+    type: "POST",
+    url: "result_notification",
+    data: 'getFromYear=1&type='+type+'&course_id='+course,
+    success: function(data){
+          $("#rn_from_year").html(data);
+    },
+    error: function(e){
+      $("#rn_from_year").html("Unable to load batches");
+    }
+	});
+  }
+</script>
+
+<!-- Result Notification Modal End -->
+
 
 <!-- View TR Modal Start-->
 
@@ -408,7 +515,7 @@ $options->approve_disapprove_edit_tr($conn);
                         <option value="atkt">ATKT</option>
                     </select>
                 </div>
-                        
+                    
                 <div class="form-group">
                     <label for="tr_course">Course :</label>
                     <select id="tr_course_list" name="tr_course" class="form-control" onChange="tr_getFromYear(this.value)" required>
