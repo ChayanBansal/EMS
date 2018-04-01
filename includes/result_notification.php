@@ -234,7 +234,7 @@ elseif(isset($_POST["notify_students"]))
                                 {
                                     if(mysqli_num_rows($get_atkt_subjects_run)>0)
                                     {
-                                        $get_sub_detail="SELECT s.sub_name, s.sub_code, sd.practical_flag FROM subjects s, sub_distribution sd WHERE s.ac_sub_code=sd.ac_sub_code AND sd.sub_id IN(".implode("','",$get_atkt_subjects_run) .")";
+                                        $get_sub_detail="SELECT s.sub_name, s.sub_code, sd.practical_flag FROM subjects s, sub_distribution sd WHERE s.ac_sub_code=sd.ac_sub_code AND sd.sub_id IN(".implode(",",$get_atkt_subjects_run) .")";
                                         $get_sub_detail_run=mysqli_query($conn,$get_sub_detail);
                                         if($get_sub_detail_run!=FALSE)
                                         {
