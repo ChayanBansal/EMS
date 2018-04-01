@@ -4,9 +4,7 @@ if (isset($_POST['tr_getFromYear'])) {
     if (isset($_POST['course_id'])) {
 
         if ($_POST['type'] === "main") {
-            $get_from_year = "SELECT distinct(from_year) FROM academic_sessions WHERE course_id=" . $_POST['course_id'] . " AND ac_session_id IN( SELECT DISTINCT(ac_session_id) FROM students WHERE enrol_no IN 
-            (SELECT enrol_no FROM roll_list WHERE roll_id IN
-            (SELECT DISTINCT(roll_id) FROM tr)))";
+            $get_from_year = "SELECT distinct(from_year) FROM academic_sessions WHERE course_id=" . $_POST['course_id'] . " AND tr_gen_flag=1";
             $get_from_year_run = mysqli_query($conn, $get_from_year);
             while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
                 echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
@@ -21,7 +19,7 @@ if (isset($_POST['tr_getFromYear'])) {
 if (isset($_POST['tr_getSemester'])) {
     if ($_POST['tr_getSemester'] == 1 and isset($_POST['course_id']) and isset($_POST['from_year']) and isset($_POST['type'])) {
         if ($_POST['type'] === "main") {
-            $get_semester = "SELECT DISTINCT(semester) FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_POST['course_id'] . " AND from_year=" . $_POST['from_year'] . "))";
+            $get_semester = "SELECT DISTINCT(current_semester) as semester FROM academic_sessions WHERE tr_gen_flag=1 AND course_id=" . $_POST['course_id'] . " AND from_year=" . $_POST['from_year'];
             $get_semester_run = mysqli_query($conn, $get_semester);
             while ($semester = mysqli_fetch_assoc($get_semester_run)) {
                 echo ('<option value="' . $semester['semester'] . '">' . $semester['semester'] . '</option>');
@@ -83,11 +81,9 @@ if (isset($_POST['tr_gen_batch'])) {
     }
 }
 if (isset($_POST['tr_getBatch'])) {
+    //View TR useroptions
     if ($_POST['type'] === "main") {
-        echo ("Hello");
-        $get_from_year = "SELECT DISTINCT(from_year) FROM academic_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM students WHERE course_id=" . $_POST['course_id'] . " AND enrol_no IN 
-        (SELECT enrol_no FROM roll_list WHERE roll_id IN
-        (SELECT DISTINCT(roll_id) FROM tr)))";
+        $get_from_year = "SELECT distinct(from_year) FROM academic_sessions WHERE course_id=" . $_POST['course_id'] . " AND tr_gen_flag=1";
         $get_from_year_run = mysqli_query($conn, $get_from_year);
         while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
             echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');

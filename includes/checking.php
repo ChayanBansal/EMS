@@ -3,7 +3,7 @@ require('config.php');
 session_start();
 if (isset($_POST["check_button_main"])) {
     $_SESSION['check_transaction_id'] = $_POST['check_button_main'];
-    $get_check_detail = "SELECT A.*, T.operator_id, T.remark,acs.*,s.sub_code FROM auditing A, transactions T,academic_sessions acs,subjects s WHERE A.transaction_id=T.transaction_id AND A.ac_sub_code=s.ac_sub_code AND A.session_id=acs.ac_session_id AND A.transaction_id=" . $_SESSION['check_transaction_id'];
+    $get_check_detail = "SELECT A.*, T.operator_id, T.remark,acs.*,s.sub_code,s.sub_name FROM auditing A, transactions T,academic_sessions acs,subjects s WHERE A.transaction_id=T.transaction_id AND A.type_flag=0 AND A.ac_sub_code=s.ac_sub_code AND A.session_id=acs.ac_session_id AND A.transaction_id=" . $_SESSION['check_transaction_id'];
     $get_check_detail_run = mysqli_query($conn, $get_check_detail);
     while ($check_detail = mysqli_fetch_assoc($get_check_detail_run)) {
         $_SESSION['from_year'] = $check_detail['from_year'];
@@ -12,17 +12,18 @@ if (isset($_POST["check_button_main"])) {
         $_SESSION['component_id'] = $check_detail['component_id'];
         $_SESSION['checked_by_operator_id'] = $check_detail['operator_id'];
         $_SESSION['remark'] = $check_detail['remark'];
-        $_SESSION['ac_sess_id']=$check_detail['ac_session_id'];
-        if(!is_null($check_detail['check_id']))
-        {
-            $_SESSION['already_checked']=true;
+        $_SESSION['ac_sess_id'] = $check_detail['ac_session_id'];
+        $_SESSION['sub_name'] = $check_detail['sub_name'];
+        $_SESSION['ac_sub_code'] = $check_detail['ac_sub_code'];
+        if (!is_null($check_detail['check_id'])) {
+            $_SESSION['already_checked'] = true;
             header('location: useroptions');
         }
     }
-    $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=".$_SESSION['ac_sess_id'];
-    $get_sub_name_run = mysqli_query($conn, $get_sub_name);
-    $result_sub_name = mysqli_fetch_assoc($get_sub_name_run);
-    $_SESSION['sub_name'] = $result_sub_name['sub_name'];
+
+    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=".$_SESSION['component_id']." AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code=" . $_SESSION['ac_sub_code'].")";
+    $get_sub_id_run = mysqli_query($conn, $get_sub_id);
+    $_SESSION['sub_id'] = mysqli_fetch_assoc($get_sub_id_run)['sub_id'];
 
     $get_component_name = "SELECT component_name FROM component WHERE component_id=" . $_SESSION['component_id'];
     $get_component_name_run = mysqli_query($conn, $get_component_name);
@@ -34,16 +35,15 @@ if (isset($_POST["check_button_main"])) {
     $result_operator_name_run = mysqli_fetch_assoc($get_operator_name_run);
     $_SESSION['checked_by_operator_name'] = $result_operator_name_run['operator_name'];
 
-    $get_maximum_marks = "SELECT max_marks FROM component_distribution WHERE component_id=" . $_SESSION['component_id'] . " AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=".$_SESSION['ac_sess_id']."))";
+    $get_maximum_marks = "SELECT max_marks FROM component_distribution WHERE component_id=" . $_SESSION['component_id'] . " AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=" . $_SESSION['ac_sess_id'] . "))";
     $get_maximum_marks_run = mysqli_query($conn, $get_maximum_marks);
     $result_max_marks = mysqli_fetch_assoc($get_maximum_marks_run);
     $_SESSION['max_marks'] = $result_max_marks['max_marks'];
-}
-else if(isset($_POST['check_button_atkt'])){
+} else if (isset($_POST['check_button_atkt'])) {
     //atkt process
     $_SESSION['check_transaction_id'] = $_POST['check_button_atkt'];
     $get_check_detail = "SELECT A.*, T.operator_id, T.remark,acs.*,s.sub_code FROM auditing A, transactions T,academic_sessions acs,subjects s WHERE A.transaction_id=T.transaction_id AND A.ac_sub_code=s.ac_sub_code AND A.session_id=acs.ac_session_id AND A.transaction_id=" . $_SESSION['check_transaction_id'];
-    echo($get_check_detail);
+    echo ($get_check_detail);
     $get_check_detail_run = mysqli_query($conn, $get_check_detail);
     while ($check_detail = mysqli_fetch_assoc($get_check_detail_run)) {
         $_SESSION['from_year'] = $check_detail['from_year'];
@@ -52,14 +52,13 @@ else if(isset($_POST['check_button_atkt'])){
         $_SESSION['component_id'] = $check_detail['component_id'];
         $_SESSION['checked_by_operator_id'] = $check_detail['operator_id'];
         $_SESSION['remark'] = $check_detail['remark'];
-        $_SESSION['ac_sess_id']=$check_detail['ac_session_id'];
-        if(!is_null($check_detail['check_id']))
-        {
-            $_SESSION['already_checked']=true;
+        $_SESSION['ac_sess_id'] = $check_detail['ac_session_id'];
+        if (!is_null($check_detail['check_id'])) {
+            $_SESSION['already_checked'] = true;
             header('location: useroptions');
         }
     }
-    $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=".$_SESSION['ac_sess_id'];
+    $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=" . $_SESSION['ac_sess_id'];
     $get_sub_name_run = mysqli_query($conn, $get_sub_name);
     $result_sub_name = mysqli_fetch_assoc($get_sub_name_run);
     $_SESSION['sub_name'] = $result_sub_name['sub_name'];
@@ -74,7 +73,7 @@ else if(isset($_POST['check_button_atkt'])){
     $result_operator_name_run = mysqli_fetch_assoc($get_operator_name_run);
     $_SESSION['checked_by_operator_name'] = $result_operator_name_run['operator_name'];
 
-    $get_maximum_marks = "SELECT max_marks FROM component_distribution WHERE component_id=" . $_SESSION['component_id'] . " AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=".$_SESSION['ac_sess_id']."))";
+    $get_maximum_marks = "SELECT max_marks FROM component_distribution WHERE component_id=" . $_SESSION['component_id'] . " AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=" . $_SESSION['ac_sess_id'] . "))";
     $get_maximum_marks_run = mysqli_query($conn, $get_maximum_marks);
     $result_max_marks = mysqli_fetch_assoc($get_maximum_marks_run);
     $_SESSION['max_marks'] = $result_max_marks['max_marks'];
@@ -168,7 +167,7 @@ else if(isset($_POST['check_button_atkt'])){
 require("config.php");
 require("frontend_lib.php");
 require("class_lib.php");
-$validate=new validate();
+$validate = new validate();
 $validate->conf_logged_in();
 $obj = new head();
 $obj->displayheader();
@@ -188,11 +187,11 @@ $input_btn = new input_button();
            Showing results For
             </div>
             <div class="subtitle">
-            <?=$_SESSION['sub_name']?>   
+            <?= $_SESSION['sub_name'] ?>   
         </div>
 
         <div class="subtitle">
-            <?=$_SESSION['component_name']?>   
+            <?= $_SESSION['component_name'] ?>   
         </div>
              </div>
      <table class="table table-striped table-responsive table-bordered">
@@ -210,22 +209,33 @@ $input_btn = new input_button();
     </thead>
     <tbody id="checking_table">
      <?php 
-        $get_fed_marks="SELECT st.enrol_no, st.first_name, st.middle_name, st.last_name, st.father_name, sc.marks, r.roll_id FROM students st, score sc, roll_list r WHERE sc.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=".$_SESSION['check_transaction_id']." AND st.enrol_no IN
-                        (SELECT enrol_no FROM students WHERE ac_session_id IN (SELECT ac_session_id from academic_sessions WHERE from_year=".$_SESSION['from_year']." AND course_id=".$_SESSION['current_course_id']."))";
-        $get_fed_marks_run=mysqli_query($conn,$get_fed_marks);
-        while($fed_marks=mysqli_fetch_assoc($get_fed_marks_run))
-        {
-            echo('<tr>');
-                echo('<td>'.$fed_marks['enrol_no'].'</td>');
-                echo('<td>'.$fed_marks['first_name'].'</td>');
-                echo('<td>'.$fed_marks['middle_name'].'</td>');
-                echo('<td>'.$fed_marks['last_name'].'</td>');
-                echo('<td>'.$fed_marks['father_name'].'</td>');
-                echo('<td><input class="form-control" id="'.$fed_marks['enrol_no'].'" type="number" name="'.$fed_marks['enrol_no'].'" min="0" max="'.$_SESSION['max_marks'].'" value="'.$fed_marks['marks'].'" required readonly></td>');
-                echo('<td><button class="btn btn-default form-control" type="button" value="'.$fed_marks['enrol_no'].'" onClick="remove_readonly(this.value)" >Change</button></td>');
-            echo('</tr>');
+    $get_detained_list = "SELECT roll_id FROM detained_subject WHERE detained_sub_id=" . $_SESSION['sub_id'];
+    $get_detained_list_run = mysqli_query($conn, $get_detained_list);
+    $detained = array();
+    if ($get_detained_list_run) {
+        while ($roll = mysqli_fetch_assoc($get_detained_list_run)) {
+            array_push($detained, $roll['roll_id']);
         }
-     ?>
+    }
+    $get_fed_marks = "SELECT st.enrol_no, st.first_name, st.middle_name, st.last_name, st.father_name, sc.marks, r.roll_id FROM students st, score sc, roll_list r WHERE sc.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=" . $_SESSION['check_transaction_id'] . " AND st.enrol_no IN
+                        (SELECT enrol_no FROM students WHERE ac_session_id IN (SELECT ac_session_id from academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . "))";
+    $get_fed_marks_run = mysqli_query($conn, $get_fed_marks);
+    while ($fed_marks = mysqli_fetch_assoc($get_fed_marks_run)) {
+        echo ('<tr>');
+        echo ('<td>' . $fed_marks['enrol_no'] . '</td>');
+        echo ('<td>' . $fed_marks['first_name'] . '</td>');
+        echo ('<td>' . $fed_marks['middle_name'] . '</td>');
+        echo ('<td>' . $fed_marks['last_name'] . '</td>');
+        echo ('<td>' . $fed_marks['father_name'] . '</td>');
+        echo ('<td><input class="form-control" id="' . $fed_marks['enrol_no'] . '" type="number" name="' . $fed_marks['enrol_no'] . '" min="0" max="' . $_SESSION['max_marks'] . '" value="' . $fed_marks['marks'] . '" required readonly></td>');
+        if(in_array($fed_marks['roll_id'],$detained)){
+            echo ('<td>Detained</td>');
+        }else{
+            echo ('<td><button class="btn btn-default form-control" type="button" value="' . $fed_marks['enrol_no'] . '" onClick="remove_readonly(this.value)" >Change</button></td>');
+        }
+        echo ('</tr>');
+    }
+    ?>
     </tbody>
   </table>
   <div class="remarks">
@@ -240,7 +250,7 @@ $input_btn = new input_button();
 
         ?>
       <span id="controls"><center><?php
-                                    echo('<button type="submit" class="btn btn-primary" name="check_done">Submit All</button>');//$btn->display_btn("", "btn btn-primary", "submit", "check_done", "", "Submit All"); ?></span> <!--($id, $class, $type, $name, $onclick, $value-->
+                                    echo ('<button type="submit" class="btn btn-primary" name="check_done">Submit All</button>');//$btn->display_btn("", "btn btn-primary", "submit", "check_done", "", "Submit All"); ?></span> <!--($id, $class, $type, $name, $onclick, $value-->
       </center></div>
       
   </div>
