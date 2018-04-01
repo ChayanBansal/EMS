@@ -258,11 +258,13 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
             $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $roll_id['enrol_no'] . "'";
             $get_cur_cgpa = mysqli_query($conn, $get_cur_cgpa);
             $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa);//$cur_cgpa['cgpa']
-            $new_cgpa = ($cur_cgpa['cgpa'] + $sgpa) / 2; //Division by 2?
-
+            $new_cgpa = ($cur_cgpa['cgpa'] + $sgpa) / 2;
+            
+            $update_tr_gen_flag="UPDATE academic_sessions SET tr_gen_flag=1 WHERE ac_session_id=$ac_session_id";
+            $update_tr_gen_flag_run=mysqli_query($conn,$update_tr_gen_flag);
                 /*$update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no='".$roll_id['enrol_no']."'";
                 $update_cgpa_run=mysqli_query($conn,$update_cgpa);*/
-            if ($insert_exam_summary_run == true) {
+            if ($insert_exam_summary_run == true && $update_tr_gen_flag_run) {
                 $_SESSION['tr_generated'] = true;
                 mysqli_commit($conn);
 

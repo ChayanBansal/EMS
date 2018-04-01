@@ -495,29 +495,24 @@ function chat(location,username)
         <h4 class="modal-title">Generate Marksheet</h4>
       </div>
       <div class="modal-body">
-                <div class="form-group">
-                    <label for="tr_batch">Batch (Starting Year) :</label>
-                    <select id="tr_batch_list" name="print_batch" class="form-control" required>
-                        <option value="" disabled selected>Select Batch</option>
-                        <?php
-                        $get_from_year = "SELECT DISTINCT(from_year) FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND enrol_no IN 
-                    (SELECT enrol_no FROM roll_list WHERE roll_id IN
-                    (SELECT DISTINCT(roll_id) FROM tr))";
-                        $get_from_year_run = mysqli_query($conn, $get_from_year);
-                        while ($from_year = mysqli_fetch_assoc($get_from_year_run)) {
-                            echo ('<option value="' . $from_year['from_year'] . '">' . $from_year['from_year'] . '</option>');
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="tr_type">Type :</label>
-                    <select id="tr_type" name="print_type" class="form-control" required onChange="tr_getSemester('tr_batch_list','tr_semester',this.value)">
+      <div class="form-group">
+                    <label for="session_type">Type :</label>
+                    <select id="tr_mks_type_select" name="print_type" class="form-control" required onchange="getTrViewBatch('tr_batch_list',this.value)">
                         <option value="" disabled selected>Select Type</option>
                         <option value="main">Main</option>
+                        <option value="retotal">Retotaling</option>
+                        <option value="reval">Revaluation</option>
+                        <option value="atkt">ATKT</option>
                     </select>
                 </div>
+          <div class="form-group">
                 <div class="form-group">
+                    <label for="tr_batch">Batch (Starting Year) :</label>
+                    <select id="tr_batch_list" name="print_batch" class="form-control" required onchange="tr_getSemester('tr_mks_type_select','tr_semester',this.value)">
+                        <option value="" disabled selected>Select Batch</option>
+                        
+                    </select>
+                </div>
                     <label for="tr_semester">Semester: </label>
                     <select id="tr_semester" name="print_semester" class="form-control" required>
                         <option value="" disabled selected>Semester</option>                       
@@ -525,6 +520,7 @@ function chat(location,username)
                 </div>
       </div>
       <div class="modal-footer">
+      <button type="reset" class="btn btn-danger pull-left">Reset</button>      
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success" name="print_proceed">Proceed</button>
       </div>
@@ -533,7 +529,7 @@ function chat(location,username)
 
   </div>
 </div>
-<!-- Generate Marksheet Close-->
+<!--Generate Marksheet Close-->
 
 <!-- Print TR Start-->
 
@@ -551,7 +547,7 @@ function chat(location,username)
       <div class="modal-body">
       <div class="form-group">
                     <label>Type :</label>
-                    <select id="tr_type_select" name="tr_type_print" class="form-control" required onchange="getTrViewBatch('tr_batch_list_print',this.value)">
+                    <select id="tr_print_type_select" name="tr_type_print" class="form-control" required onchange="getTrViewBatch('tr_batch_list_print',this.value)">
                         <option value="" disabled selected>Select Type</option>
                         <option value="main">Main</option>
                         <option value="retotal">Retotaling</option>
@@ -562,7 +558,7 @@ function chat(location,username)
           <div class="form-group">
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :   </label>
-                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required onchange="tr_getSemester('','tr_semester_print',this.value)">
+                    <select id="tr_batch_list_print" name="tr_print_batch" class="form-control" required onchange="tr_getSemester('tr_print_type_select','tr_semester_print',this.value)">
                         <option value="" disabled selected>Select Batch</option>
                         
                     </select>
@@ -612,7 +608,7 @@ function chat(location,username)
           <div class="form-group">
                 <div class="form-group">
                     <label for="tr_batch">Batch (Starting Year) :</label>
-                    <select id="tr_batch_list_view" name="tr_view_batch" class="form-control" required onchange="tr_getSemester('','tr_semester_view',this.value)">
+                    <select id="tr_batch_list_view" name="tr_view_batch" class="form-control" required onchange="tr_getSemester('tr_type_select','tr_semester_view',this.value)">
                         <option value="" disabled selected>Select Batch</option>
                         
                     </select>
@@ -951,7 +947,7 @@ $logout_modal->display_logout_modal();
 function tr_getSemester(id,id2,batch)
 {
   var tr_from_year=batch;
-  var type=$("#tr_type_select").val();
+  var type=$("#"+id).val();
   var tr_course_id=<?= $_SESSION['current_course_id'] ?>;
   $.ajax(
     {

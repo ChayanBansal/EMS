@@ -6,6 +6,10 @@ if (isset($_POST['print_proceed'])) {
     $_SESSION['semester'] = $_POST['print_semester'];
     $_SESSION['course_id'] = $_SESSION['current_course_id'];
     $_SESSION['main_atkt'] = $_POST['print_type'];
+    $ac_sess_id="SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['course_id'] . " AND from_year=" . $_SESSION['from_year'] . " AND current_semester=" . $_SESSION['semester'];
+    $ac_sess_id=mysqli_query($conn,$ac_sess_id);
+    $ac_sess_id=mysqli_fetch_assoc($ac_sess_id)['ac_session_id'];
+    $_SESSION['ac_sess_id']=$ac_sess_id;
 } else {
    // header('location: /ems/includes/404.html');
 }
@@ -30,15 +34,12 @@ if (isset($_POST['print_proceed'])) {
         text-align: center;
         font-size: 1.6rem;
     }
-    table.table-bordered > tbody > tr >td{
-       
-    }
     table tbody tr:nth-child(odd):hover{
         transition: all 300ms ease-in-out;
         background: white;
         box-shadow: 5px 7px 1px rgba(96, 101, 106,0.5);
     }
-    table tr:nth-child(even):hover{
+    table tbody tr:nth-child(even):hover{
         transition: all 300ms ease-in-out;
         background: white;
         box-shadow: 5px 7px 1px rgba(96, 101, 106,0.5);
@@ -67,7 +68,7 @@ if (isset($_POST['print_proceed'])) {
             </div>
 
         <div class="subtitle">
-    Batch: <?= $_SESSION['from_year'] ?>       
+    Batch: <?= $_SESSION['from_year'] ?> | <?=$_SESSION['main_atkt']?>      
     </div>
 
     <div class="subtitle">
@@ -75,19 +76,26 @@ if (isset($_POST['print_proceed'])) {
     </div>
         </div>
         <form action="marksheet" method="post">
-        <table class="table table-responsive">
+        <table class="table table-responsive table-bordered">
          <caption> <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students.."></caption>
     <thead>
+      <tr>
+        <th colspan="3">Student Details</th>
+        <th colspan="3">Gradesheet Details</th>
+      </tr>
       <tr>
         <th>Enrollment Number</th>
         <th>Student Name</th>
         <th>Father's Name</th>
+        <th>Serial No.</th>
+        <th>No. of Prints</th>
         <th>Print Gradesheet</th>
-      </tr>
+    </tr>
+      
     </thead>
     <tbody id="print"
         <?php
-        $get_students_qry = "SELECT * FROM students s,roll_list rl WHERE s.course_id=" . $_SESSION['course_id'] . " AND s.from_year=" . $_SESSION['from_year'] . " AND rl.semester=" . $_SESSION['semester'] . " AND s.enrol_no=rl.enrol_no";
+        $get_students_qry = "SELECT * FROM students s,roll_list rl WHERE ac_session_id=".$_SESSION['ac_sess_id']." AND s.enrol_no=rl.enrol_no";
         $get_students_qry_run = mysqli_query($conn, $get_students_qry);
 
         if ($get_students_qry_run) {
@@ -95,10 +103,13 @@ if (isset($_POST['print_proceed'])) {
                 echo ('<tr>');
                 echo ('<td>' . $student['enrol_no'] . '</td>
                 <td>' . $student['first_name'] . " " . $student['last_name'] . '</td>
-                <td>' . $student['father_name'] . '</td>');
+                <td>' . $student['father_name'] . '</td>
+                <td>' . $student['serial_no'] . '</td>
+                ');
                 $get_no_of_prints = "SELECT no_prints FROM roll_list WHERE enrol_no='" . $student['enrol_no'] . "' AND semester=" . $_SESSION['semester'];
                 $get_no_of_prints_run = mysqli_query($conn, $get_no_of_prints);
                 $prints = mysqli_fetch_assoc($get_no_of_prints_run)['no_prints'];
+                echo("<td>".$prints."</td>");
                 if ($prints == 0) {
                     echo ('<td>');
                     echo ('<button class="btn btn-default" type="submit" name="print_roll_id" value="' . $student['roll_id'] . '">Print Now <i class="glyphicon glyphicon-print"></i> </button>');
