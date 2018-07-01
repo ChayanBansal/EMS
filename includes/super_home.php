@@ -575,6 +575,23 @@ $options->approve_disapprove_edit_tr($conn);
                 $input = new input_field();
                 ?>
                 <div class="form-group">
+                <label for="cmb_schoolname">School</label>
+                <select name="cmb_schoolname" id="" class="form-control" required>
+                <?php
+                $get_schools_qry="SELECT * FROM schools";
+                $get_schools_qry_run=mysqli_query($conn,$get_schools_qry);
+                if($get_schools_qry_run){
+                  while ($school=mysqli_fetch_assoc($get_schools_qry_run)) {
+                    echo('<option value="'.$school['school_id'].'">'.$school['school_name'].'</option>');
+                  }
+                }else{
+                  echo("<option disabled>No schools found!</option>");
+                }
+                ?>
+                </select>
+                </div>
+                
+                <div class="form-group">
                 <label for="name">Program Name</label>
                 <?php
                 $input->display("prog_name", "form-control", "text", "prog_name", "", 1);
@@ -1585,22 +1602,24 @@ $options->approve_disapprove_edit_tr($conn);
       </div>
       <div class="modal-body">
       <div class="form-group">
-        <div class="checkbox">
-          <?php $get_sessions = "SELECT * FROM academic_sessions";
+        <label for="">Course Selection (hold shift to select multiple)</label>
+          <select name="cmb_course_month_year[]" id="" class="form-control" required multiple>
+          <?php $get_sessions = "SELECT * FROM academic_sessions WHERE tr_gen_flag=0";
           $get_sessions_run = mysqli_query($conn, $get_sessions);
           while ($session = mysqli_fetch_assoc($get_sessions_run)) {
             $get_course_name = "SELECT course_id,course_name FROM courses WHERE course_id=" . $session['course_id'];
             $get_course_name = mysqli_query($conn, $get_course_name);
             $course_name = mysqli_fetch_assoc($get_course_name);
-            echo ('<label><input type="checkbox" name="session' . $session['course_id'] . '" value="' . $session['ac_session_id'] . '">' . $course_name['course_name'] . '-' . $session['from_year'] . '-' . $session['current_semester'] . ' </label>');
+            echo ('<option value="' . $session['ac_session_id'] . '">' . $course_name['course_name'] . ' - Year: ' . $session['from_year'] . ' - Semester: ' . $session['current_semester'] . ' </option>');
           }
           ?>
-          </div>
-          <div clas="form-group">
+          </select>
+        </div>
+          <div class="form-group">
               <label for="month">Select Year: </label>
                 <input type="number" name="year" id="" min="2016" class="form-control">
             </div>
-            <div clas="form-group">
+            <div class="form-group">
               <label for="month">Select Month:</label>
               <select name="month" id="" class="form-control">
                 <option value="january">January</option>
@@ -1618,7 +1637,6 @@ $options->approve_disapprove_edit_tr($conn);
               </select>
               </div>
         </div>
-      </div>
       <div class="modal-footer">
       <button type="reset" class="btn btn-danger pull-left">Reset</button>      
       <button type="submit" class="btn btn-info" name="set_exam_month">Set Examination Month</button>

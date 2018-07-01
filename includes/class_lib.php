@@ -483,6 +483,7 @@ class super_user_options
 			$course_duration = $input_chk->input_safe($conn, $_POST['cduration']);
 			$prog_name = $input_chk->input_safe($conn, $_POST['prog_name']);
 			$branch_name = $input_chk->input_safe($conn, $_POST['branch_name']);
+			$school_id = $input_chk->input_safe($conn, $_POST['cmb_schoolname']);
 			if (empty($branch_name) or empty($prog_name) or empty($course_duration) or is_nan($course_duration)) {
 				return;
 			}
@@ -496,7 +497,7 @@ class super_user_options
 				}
 			}
 
-			$create_course_qry = "INSERT into courses(level_id,course_name,duration) VALUES($level,'" . $course_name . "'," . $course_duration . ")";
+			$create_course_qry = "INSERT into courses(school_id,level_id,course_name,duration) VALUES($school_id,$level,'" . $course_name . "'," . $course_duration . ")";
 			$create_course_qry_run = mysqli_query($conn, $create_course_qry);
 			if ($create_course_qry_run) {
 				$course_id = mysqli_insert_id($conn);
@@ -519,44 +520,36 @@ class super_user_options
 	{
 		if (isset($_POST['set_exam_month'])) {
 			$input_chk = new input_check();
+			$courses_selected = $_POST['cmb_course_month_year'];
 			$month = $input_chk->input_safe($conn, $_POST['month']);
 			$year = $input_chk->input_safe($conn, $_POST['year']);
 			$get_sessions = "SELECT * FROM academic_sessions";
 			$get_sessions_run = mysqli_query($conn, $get_sessions);
 			$session_rows = mysqli_affected_rows($conn);
 			$i = 1;
+			$executed=true;
 			$alert = new alert();
-			$insert_exam_details = "INSERT INTO exam_month_year VALUES";
-			while ($session = mysqli_fetch_assoc($get_sessions_run)) {
-				$get_course_name = "SELECT course_id FROM courses WHERE course_id=" . $session['course_id'];
-				$get_course_name = mysqli_query($conn, $get_course_name);
-				$course_id = mysqli_fetch_assoc($get_course_name)['course_id'];
-				if ($i == $session_rows) {
-					if (isset($_POST['session' . $course_id])) {
-						$check_details_exist = "SELECT count(*) FROM exam_month_year WHERE ac_session_id=" . $_POST['session' . $course_id];
-						$check_details_exist_run = mysqli_query($conn, $check_details_exist);
-						$rows = mysqli_fetch_assoc($check_details_exist_run)['count(*)'];
-						$alert = new alert();
-						if ($rows > 0) {
-							$alert->exec("Exam Session already created!", "info");
-							continue;
-						}
-						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . "')";
-					}
-				} else {
-					if (isset($_POST['session' . $course_id])) {
-						$insert_exam_details .= "(" . $_POST['session' . $course_id] . ",'" . $month . ", " . $year . "'),";
-					}
+			foreach ($courses_selected as $session_id) {
+				$check_exam_month_exists="SELECT count(*) FROM exam_month_year WHERE session_id=$session_id AND type_flag=0";
+				$check_exam_month_exists_run=mysqli_query($conn,$check_exam_month_exists);
+				if(mysqli_fetch_assoc($check_exam_month_exists_run)['count(*)']>0){
+					$alert->exec("Exam slot already selected!","warning");
+					$executed=false;
 				}
-				$i++;
-
+				else{
+					$insert_exam_details = "INSERT INTO exam_month_year VALUES ($session_id,'".$month." ".$year."',0)";
+					$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
+					if (!$insert_exam_details_run) {
+						$executed=false;
+					} 
+				}
 			}
-			$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
-			if ($insert_exam_details_run) {
-				$alert->exec("New Exam Sessions created....", "success");
-			} else {
-				$alert->exec("There was an error while creating the exam sessions!", "danger");
+			if($executed){
+				$alert->exec("New exam slots successfully created!","success");
+			}else{
+				$alert->exec("Unable to allot exam slots!","danger");
 			}
+			
 		}
 	}
 	function add_subject($conn)
