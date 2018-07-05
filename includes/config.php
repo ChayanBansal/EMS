@@ -16,8 +16,8 @@ if(!(similar_text($browser,"Chrome")>=6)){
 /*
 Database Variable declarations
 */
-$main="sql12215234";
-$retotal="ems_retotal";
-$reval="ems_reval";
-$atkt="ems_atkt";
+$main="ems";
+$retotal="ems";
+$reval="ems";
+$atkt="ems";
 ?>

@@ -843,6 +843,7 @@ class super_user_options
 
 	function add_session($conn)
 	{
+		require('config.php');
 		if (isset($_POST['session_submit'])) {
 			$alert = new alert();
 			$type = $_POST['session_type'];
@@ -878,13 +879,13 @@ class super_user_options
 					} else {
 						$ac_sess_id = mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
 					}
-					$check_session_qry = "SELECT count(*) from ems_retotal.retotal_sessions where ac_session_id =$ac_sess_id";
+					$check_session_qry = "SELECT count(*) from $retotal.retotal_sessions where ac_session_id =$ac_sess_id";
 					$check_session_qry_run = mysqli_query($conn, $check_session_qry);
 					if ($check_session_qry_run) {
 						$result_count = mysqli_fetch_assoc($check_session_qry_run);
 						if ($result_count['count(*)'] == 0) {
 							mysqli_autocommit($conn, false);
-							$add_session_qry = "INSERT INTO ems_retotal.retotal_sessions(ac_session_id) VALUES($ac_sess_id)";
+							$add_session_qry = "INSERT INTO $retotal.retotal_sessions(ac_session_id) VALUES($ac_sess_id)";
 						} else {
 							mysqli_rollback($conn);
 							mysqli_autocommit($conn, true);
@@ -905,13 +906,13 @@ class super_user_options
 					} else {
 						$ac_sess_id = mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
 					}
-					$check_session_qry = "SELECT count(*) from ems_reval.reval_sessions where ac_session_id =$ac_sess_id";
+					$check_session_qry = "SELECT count(*) from $reval.reval_sessions where ac_session_id =$ac_sess_id";
 					$check_session_qry_run = mysqli_query($conn, $check_session_qry);
 					if ($check_session_qry_run) {
 						$result_count = mysqli_fetch_assoc($check_session_qry_run);
 						if ($result_count['count(*)'] == 0) {
 							mysqli_autocommit($conn, false);
-							$add_session_qry = "INSERT INTO ems_reval.reval_sessions(ac_session_id) VALUES($ac_sess_id)";
+							$add_session_qry = "INSERT INTO $reval.reval_sessions(ac_session_id) VALUES($ac_sess_id)";
 						} else {
 							mysqli_rollback($conn);
 							mysqli_autocommit($conn, true);
@@ -931,13 +932,14 @@ class super_user_options
 					} else {
 						$ac_sess_id = mysqli_fetch_assoc($get_ac_session_run)['ac_session_id'];
 					}
-					$check_session_qry = "SELECT count(*) from ems_atkt.atkt_sessions where ac_session_id =$ac_sess_id";
+					$check_session_qry = "SELECT count(*) from $atkt.atkt_sessions where ac_session_id =$ac_sess_id";
 					$check_session_qry_run = mysqli_query($conn, $check_session_qry);
 					if ($check_session_qry_run) {
 						$result_count = mysqli_fetch_assoc($check_session_qry_run);
 						if ($result_count['count(*)'] == 0) {
 							mysqli_autocommit($conn, false);
-							$add_session_qry = "INSERT INTO ems_atkt.atkt_sessions(ac_session_id) VALUES($ac_sess_id)";
+							$add_session_qry = "INSERT INTO $atkt.atkt_sessions(ac_session_id) VALUES($ac_sess_id)";
+							$alert->exec("ATKT session created!", "success");
 						} else {
 							mysqli_rollback($conn);
 							mysqli_autocommit($conn, true);
@@ -1148,6 +1150,74 @@ class useroptions
 		}
 
 	}
+	function insert_atkt_marks($conn)
+	{
+		if (isset($_POST['feed_atkt_marks'])) {
+			$alert = new alert();
+			$operator_id = $_SESSION['operator_id'];
+			$form_input_check = new input_check();
+			$sqltransact = new GeneralOptions();
+			$sqltransact->start_transaction($conn);
+			$remark = $form_input_check->input_safe($conn, $_POST['remark']);
+			if (empty($remark)) {
+				$alert->exec("Please enter a remark!", "warning");
+				$sqltransact->rollback($conn);
+				return;
+			}
+			$transaction_qry = "INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
+			$transaction_qry_run = mysqli_query($conn, $transaction_qry);
+			if ($transaction_qry_run) {
+				$transaction_id = mysqli_insert_id($conn);
+			} else {
+				$sqltransact->rollback($conn);
+				return;
+			}
+			$component_id = $_SESSION['sub_comp_id'];
+			$sub_id = $_SESSION['sub_id'];
+
+			$get_atkt_roll_list="SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id=".$_SESSION['atkt_session_id'];
+			$get_atkt_roll_list_run=mysqli_query($conn,$get_atkt_roll_list);
+			$insert_score_qry = "INSERT INTO score_atkt VALUES ";
+			$i=1;
+			while($atkt_roll=mysqli_fetch_assoc($get_atkt_roll_list_run)){
+				$atkt_roll_id = $atkt_roll['atkt_roll_id'];
+				$marks = $_POST['score' . $i];
+				if (empty($marks) or is_nan($marks)) {
+					$alert->exec("Please enter correct value(s) for marks!", "warning");
+					$sqltransact->rollback($conn);
+					return;
+				}
+				if ($i == $_SESSION['num_rows']) {
+					$insert_score_qry .= "($atkt_roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL)";
+				} else {
+					$insert_score_qry .= "($atkt_roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL),";
+				}
+				$i++;
+			}
+			
+			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
+			if ($insert_score_qry_run) {
+				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['atkt_session_id'] . "," . $transaction_id . ",NULL,$component_id,3," . $_SESSION['ac_sub_code'] . ")";
+				$audit_qry_run = mysqli_query($conn, $audit_qry);
+				if ($audit_qry_run) {
+					$_SESSION['score_entered_success'] = true;
+					$sqltransact->end_transaction($conn);
+					header('location: /ems/includes/useroptions');
+				} else {
+					$_SESSION['score_entered_success'] = false;
+					$sqltransact->rollback($conn);
+					header('location: /ems/includes/useroptions');
+				}
+			} else {
+				$_SESSION['score_entered_success'] = false;
+				$sqltransact->rollback($conn);
+				header('location: /ems/includes/useroptions');
+			}
+		}
+
+	}
+	
+	
 	function request_tr_update($conn)
 	{
 		if (isset($_POST['update_tr_submit'])) {
