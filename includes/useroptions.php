@@ -840,7 +840,7 @@ function chat(location,username)
     </thead>
     <tbody style="overflow: auto;" id="checking_modal">
     <?php
-    $get_check_list = "SELECT A.*, T.operator_id,acs.*,s.sub_code FROM auditing A, transactions T, academic_sessions acs,subjects s WHERE A.transaction_id=T.transaction_id AND A.session_id=acs.ac_session_id AND  acs.course_id=" . $_SESSION['current_course_id'] . " AND A.type_flag=0 AND s.ac_sub_code=A.ac_sub_code";
+    $get_check_list = "SELECT A.*, T.operator_id,acs.*,s.sub_code FROM auditing A, transactions T, atkt_sessions atkt, academic_sessions acs, subjects s WHERE A.transaction_id=T.transaction_id AND A.session_id=atkt.atkt_session_id AND  atkt.ac_session_id=acs.ac_session_id AND acs.course_id=" . $_SESSION['current_course_id'] . " AND A.type_flag=3 AND s.ac_sub_code=A.ac_sub_code";
     $get_check_list_run = mysqli_query($conn, $get_check_list);
     echo ('<form action="checking" method="post">');
     while ($check_list = mysqli_fetch_assoc($get_check_list_run)) {
@@ -880,7 +880,7 @@ function chat(location,username)
         } else {
             echo ('<tr class="success">');
             echo ('<td>' . $check_list["from_year"] . '</td>');
-            echo ('<td>' . $check_list["semester"] . '</td>');
+            echo ('<td>' . $check_list["current_semester"] . '</td>');
             echo ('<td>MAIN</td>');
             echo ('<td>' . $check_list["sub_code"] . '</td>');
             $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $check_list['sub_code'] . "' AND ac_session_id=" . $check_list['ac_session_id'];

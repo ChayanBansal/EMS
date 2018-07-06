@@ -167,7 +167,7 @@ if (isset($_POST['proceed_to_feed'])) {
 </head>
 <body>
     <?php
-    if ($_SESSION['examtype'] === "main") {
+    if ($_SESSION['examtype'] == "main") {
     //main process begins
         ?>
 <?php

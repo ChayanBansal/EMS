@@ -2,6 +2,7 @@
 require('config.php');
 session_start();
 if (isset($_POST["check_button_main"])) {
+    $_SESSION['examType'] = "main";
     $_SESSION['check_transaction_id'] = $_POST['check_button_main'];
     $get_check_detail = "SELECT A.*, T.operator_id, T.remark,acs.*,s.sub_code,s.sub_name FROM auditing A, transactions T,academic_sessions acs,subjects s WHERE A.transaction_id=T.transaction_id AND A.type_flag=0 AND A.ac_sub_code=s.ac_sub_code AND A.session_id=acs.ac_session_id AND A.transaction_id=" . $_SESSION['check_transaction_id'];
     $get_check_detail_run = mysqli_query($conn, $get_check_detail);
@@ -21,7 +22,7 @@ if (isset($_POST["check_button_main"])) {
         }
     }
 
-    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=".$_SESSION['component_id']." AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code=" . $_SESSION['ac_sub_code'].")";
+    $get_sub_id = "SELECT sub_id FROM component_distribution WHERE component_id=" . $_SESSION['component_id'] . " AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code=" . $_SESSION['ac_sub_code'] . ")";
     $get_sub_id_run = mysqli_query($conn, $get_sub_id);
     $_SESSION['sub_id'] = mysqli_fetch_assoc($get_sub_id_run)['sub_id'];
 
@@ -40,10 +41,12 @@ if (isset($_POST["check_button_main"])) {
     $result_max_marks = mysqli_fetch_assoc($get_maximum_marks_run);
     $_SESSION['max_marks'] = $result_max_marks['max_marks'];
 } else if (isset($_POST['check_button_atkt'])) {
+
     //atkt process
+    $_SESSION['examType'] = "atkt";
+
     $_SESSION['check_transaction_id'] = $_POST['check_button_atkt'];
-    $get_check_detail = "SELECT A.*, T.operator_id, T.remark,acs.*,s.sub_code FROM auditing A, transactions T,academic_sessions acs,subjects s WHERE A.transaction_id=T.transaction_id AND A.ac_sub_code=s.ac_sub_code AND A.session_id=acs.ac_session_id AND A.transaction_id=" . $_SESSION['check_transaction_id'];
-    echo ($get_check_detail);
+    $get_check_detail = "SELECT A.*, T.operator_id,T.remark,acs.*,s.sub_code FROM auditing A, transactions T, atkt_sessions atkt, academic_sessions acs, subjects s WHERE A.transaction_id=T.transaction_id AND A.session_id=atkt.atkt_session_id AND  atkt.ac_session_id=acs.ac_session_id AND A.type_flag=3 AND s.ac_sub_code=A.ac_sub_code AND A.transaction_id=" . $_SESSION['check_transaction_id'];
     $get_check_detail_run = mysqli_query($conn, $get_check_detail);
     while ($check_detail = mysqli_fetch_assoc($get_check_detail_run)) {
         $_SESSION['from_year'] = $check_detail['from_year'];
@@ -162,7 +165,10 @@ if (isset($_POST["check_button_main"])) {
     </script>
 </head>
 <body>
-
+<?php
+if ($_SESSION['examType'] == "main") {
+    //MAIN process begins
+    ?>
 <?php
 require("config.php");
 require("frontend_lib.php");
@@ -194,7 +200,7 @@ $input_btn = new input_button();
             <?= $_SESSION['component_name'] ?>   
         </div>
              </div>
-     <table class="table table-striped table-responsive table-bordered">
+     <table class="table table-striped table-responsive ">
      <caption> <input class="form-control input-lg" id="searchbarchecking" type="text" placeholder="Search students.."></caption>
      <thead>
       <tr>
@@ -228,9 +234,9 @@ $input_btn = new input_button();
         echo ('<td>' . $fed_marks['last_name'] . '</td>');
         echo ('<td>' . $fed_marks['father_name'] . '</td>');
         echo ('<td><input class="form-control" id="' . $fed_marks['enrol_no'] . '" type="number" name="' . $fed_marks['enrol_no'] . '" min="0" max="' . $_SESSION['max_marks'] . '" value="' . $fed_marks['marks'] . '" required readonly></td>');
-        if(in_array($fed_marks['roll_id'],$detained)){
+        if (in_array($fed_marks['roll_id'], $detained)) {
             echo ('<td>Detained</td>');
-        }else{
+        } else {
             echo ('<td><button class="btn btn-default form-control" type="button" value="' . $fed_marks['enrol_no'] . '" onClick="remove_readonly(this.value)" >Change</button></td>');
         }
         echo ('</tr>');
@@ -256,8 +262,113 @@ $input_btn = new input_button();
   </div>
   </div>
     </form>
+<?php
 
-    
+}
+//MAIN process ends
+?>
+  
+
+
+
+
+
+  <?php
+    if ($_SESSION['examType'] == "atkt") {
+//ATKT process begins
+        ?>
+
+<?php
+require("config.php");
+require("frontend_lib.php");
+require("class_lib.php");
+$validate = new validate();
+$validate->conf_logged_in();
+$obj = new head();
+$obj->displayheader();
+require('../preloader/preload.php');
+$obj->dispmenu(4, ["home", "index", "useroptions", "developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", 'glyphicon glyphicon-th', "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "Options", "About Us"]);
+$dashboard = new dashboard();
+$dashboard->display($_SESSION['operator_name'], ["Change Password", "Sign Out"], ["change_password", "index"], "Contact Super Admin");
+
+$input = new input_field();
+$input_btn = new input_button();
+?>
+ <div id="err"></div>
+ <form action="update_marks" method="post">
+     <div class="feed-container">
+        <div class="subselected">
+        <div class="subtitle">
+           Showing results For
+            </div>
+            <div class="subtitle">
+            <?= $_SESSION['sub_name'] ?>   
+        </div>
+
+        <div class="subtitle">
+            <?= $_SESSION['component_name'] ?>   
+        </div>
+             </div>
+     <table class="table table-striped table-responsive ">
+     <caption> <input class="form-control input-lg" id="searchbarchecking" type="text" placeholder="Search students.."></caption>
+     <thead>
+      <tr>
+        <th>Enrollment Number</th>
+        <th>First Name</th>
+        <th>Middle Name</th>
+        <th>Lastname</th>
+        <th>Father Name</th>
+        <th>Marks</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody id="checking_table">
+     <?php 
+    $get_fed_marks = "SELECT st.enrol_no, st.first_name, st.middle_name, st.last_name, st.father_name, sc.marks, r.roll_id FROM students st, score_atkt sc, atkt_roll_list atktrl, roll_list r WHERE sc.atkt_roll_id=atktrl.atkt_roll_id AND atktrl.roll_id=r.roll_id AND r.enrol_no=st.enrol_no AND sc.transaction_id=" . $_SESSION['check_transaction_id'] . " AND atktrl.atkt_session_id IN(SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id IN (SELECT ac_session_id from academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['current_course_id'] . "))";
+    $get_fed_marks_run = mysqli_query($conn, $get_fed_marks);
+    while ($fed_marks = mysqli_fetch_assoc($get_fed_marks_run)) {
+        echo ('<tr>');
+        echo ('<td>' . $fed_marks['enrol_no'] . '</td>');
+        echo ('<td>' . $fed_marks['first_name'] . '</td>');
+        echo ('<td>' . $fed_marks['middle_name'] . '</td>');
+        echo ('<td>' . $fed_marks['last_name'] . '</td>');
+        echo ('<td>' . $fed_marks['father_name'] . '</td>');
+        echo ('<td><input class="form-control" id="' . $fed_marks['enrol_no'] . '" type="number" name="' . $fed_marks['enrol_no'] . '" min="0" max="' . $_SESSION['max_marks'] . '" value="' . $fed_marks['marks'] . '" required readonly></td>');
+        echo ('<td><button class="btn btn-default form-control" type="button" value="' . $fed_marks['enrol_no'] . '" onClick="remove_readonly(this.value)" >Change</button></td>');
+        echo ('</tr>');
+    }
+    ?>
+    </tbody>
+  </table>
+  <div class="remarks">
+      <?php
+        $textarea = new input_field();
+        $btn = new input_button();
+        ?>
+      <div>
+          <label for="review">Additional Remarks</label>
+      <?php
+        $textarea->display_textarea("review", "reviewtext form-control", "remark", "", "3", "100", 1);
+
+        ?>
+      <span id="controls"><center>
+          <?php
+            echo ('<button type="submit" class="btn btn-primary" name="check_done_atkt">Submit All</button>');//$btn->display_btn("", "btn btn-primary", "submit", "check_done", "", "Submit All"); ?></span> <!--($id, $class, $type, $name, $onclick, $value-->
+      </center></div>
+      
+  </div>
+  </div>
+    </form>
+
+
+
+
+<?php
+
+}
+    //ATKT process terminates
+
+?>
 <?php
 $obj = new footer();
 $obj->disp_footer();
