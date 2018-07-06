@@ -62,7 +62,7 @@ if (isset($_POST['proceed_to_feed'])) {
             $atkt_sess_id = "SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id=$ac_sess_id";
             $atkt_sess_id = mysqli_query($conn, $atkt_sess_id);
             $atkt_sess_id = mysqli_fetch_assoc($atkt_sess_id)['atkt_session_id'];
-            $_SESSION['atkt_session_id']=$atkt_sess_id;
+            $_SESSION['atkt_session_id'] = $atkt_sess_id;
             /* $check_exists_audit_qry = "SELECT count(*) as 'count' from auditing where session_id=$ac_sess_id AND component_id=" . $_SESSION['sub_comp_id'] . " AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_SESSION['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
             $check_exists_audit_qry_run = mysqli_query($conn, $check_exists_audit_qry);
             if ($check_exists_audit_qry_run) {
@@ -204,7 +204,7 @@ $input = new input_field();
             </div>
         </div>
         
-     <table class="table table-striped table-responsive table-bordered">
+     <table class="table table-striped table-responsive">
          <caption> <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students.."></caption>
     <thead>
       <tr>
@@ -347,7 +347,7 @@ $input = new input_field();
             </div>
         </div>
         
-     <table class="table table-striped table-responsive table-bordered">
+     <table class="table table-striped table-responsive">
          <caption> <input class="form-control input-lg" id="searchbar" type="text" placeholder="Search students.."></caption>
     <thead>
       <tr>
@@ -363,17 +363,8 @@ $input = new input_field();
     $get_elective_flag_run = mysqli_query($conn, $get_elective_flag);
     $elective_flag = mysqli_fetch_assoc($get_elective_flag_run);
     if ($elective_flag['elective_flag'] == 0) {
-        $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,roll_id from students s,roll_list r where s.ac_session_id =" . $_SESSION['ac_sess_id'] . "
-                            AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'] . " AND r.roll_id IN(SELECT roll_id FROM $atkt.atkt_roll_list) AND r.atkt_reg_flag=1";
+        $get_stud_qry = "SELECT r.enrol_no,first_name,last_name,father_name,r.roll_id from students s,roll_list r,atkt_roll_list atktrl where atktrl.roll_id=r.roll_id AND atktrl.atkt_session_id IN(SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id=".$_SESSION['ac_sess_id'].") AND s.enrol_no=r.enrol_no AND r.semester=" . $_SESSION['semester'] . " AND r.atkt_reg_flag=1";
         $get_stud_qry_run = mysqli_query($conn, $get_stud_qry);
-        $get_detained_list = "SELECT roll_id FROM detained_subject WHERE detained_sub_id=" . $_SESSION['sub_id'];
-        $get_detained_list_run = mysqli_query($conn, $get_detained_list);
-        $detained = array();
-        if ($get_detained_list_run) {
-            while ($roll = mysqli_fetch_assoc($get_detained_list_run)) {
-                array_push($detained, $roll['roll_id']);
-            }
-        }
         if ($get_stud_qry_run) {
             $row_count = 1;
             while ($row = mysqli_fetch_assoc($get_stud_qry_run)) {
@@ -382,11 +373,7 @@ $input = new input_field();
                     <td>' . $row['first_name'] . " " . $row['last_name'] . '</td>
                     <td>' . $row['father_name'] . '</td>
                     <td>');
-                if (in_array($row['roll_id'], $detained)) {
-                    $input->display_table_readonly_w_value("enrol", "form-control", "number", "score" . $row_count, "", 1, 0, $_SESSION['max_marks'], 1, $_SESSION['max_marks'], "0.0000");
-                } else {
-                    $input->display_table("enrol", "form-control", "number", "score" . $row_count, "", 1, 0, $_SESSION['max_marks'], 0, $_SESSION['max_marks']);
-                }
+                $input->display_table("enrol", "form-control", "number", "score" . $row_count, "", 1, 0, $_SESSION['max_marks'], 0, $_SESSION['max_marks']);
                 echo ('</td>
                     </tr>
                     ');
