@@ -43,7 +43,7 @@ if (isset($_POST['tr_gen_type'])) {
         }
 
     } else if ($_POST['tr_type'] === "atkt") {
-        $get_batch = "SELECT distinct(from_year) FROM $main.academic_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions)";
+        $get_batch = "SELECT distinct(from_year) FROM academic_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM atkt_sessions)";
         $get_batch_run = mysqli_query($conn, $get_batch);
         if (mysqli_num_rows($get_batch_run) == 0) {
             echo ('<option disabled selected">No sessions found!</option>');
@@ -68,7 +68,7 @@ if (isset($_POST['tr_gen_batch'])) {
         }
 
     } else if ($_POST['tr_type'] === "atkt") {
-        $get_course = "SELECT course_id,course_name FROM $main.courses WHERE course_id IN(SELECT distinct(course_id) FROM $main.academic_sessions WHERE from_year=" . $_POST['tr_batch'] . " AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions))";
+        $get_course = "SELECT course_id,course_name FROM courses WHERE course_id IN(SELECT distinct(course_id) FROM academic_sessions WHERE from_year=" . $_POST['tr_batch'] . " AND ac_session_id IN(SELECT ac_session_id FROM atkt_sessions))";
         $get_course_run = mysqli_query($conn, $get_course);
         if (mysqli_num_rows($get_course_run) == 0) {
             echo ('<option disabled selected">No courses found!</option>');

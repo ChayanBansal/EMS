@@ -8,13 +8,18 @@ $validate = new validate();
 $validate->conf_logged_in_super();
 if (isset($_POST['tr_submit'])) {
     $_SESSION['type'] = $_POST['tr_gen_type'];
-    $_SESSION['from_year'] = $_POST['tr_from_year'];
-    $_SESSION['course_id'] = $_POST['tr_course'];
-    $get_course_name_qry = "SELECT course_name from courses where course_id=" . $_SESSION['course_id'];
-    $get_course_name_qry_run = mysqli_query($conn, $get_course_name_qry);
-    if ($get_course_name_qry_run) {
-        $res = mysqli_fetch_assoc($get_course_name_qry_run);
-        $_SESSION['course_name'] = $res['course_name'];
+    if ($_SESSION['type'] == "main") {
+        $_SESSION['from_year'] = $_POST['tr_from_year'];
+        $_SESSION['course_id'] = $_POST['tr_course'];
+        $get_course_name_qry = "SELECT course_name from courses where course_id=" . $_SESSION['course_id'];
+        $get_course_name_qry_run = mysqli_query($conn, $get_course_name_qry);
+        if ($get_course_name_qry_run) {
+            $res = mysqli_fetch_assoc($get_course_name_qry_run);
+            $_SESSION['course_name'] = $res['course_name'];
+        }
+
+    } else if ($_SESSION['type'] == "atkt") {
+
     }
 } else {
     header('location: super_home');
@@ -118,9 +123,9 @@ $input_btn = new input_button();
             </div>
 
 <?php
-if($_SESSION['type']==="main"){
+if ($_SESSION['type'] === "main") {
     //MAIN Start
-?>
+    ?>
 <?php
 $get_current_sem_qry = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id'];
 $get_current_sem_qry_run = mysqli_query($conn, $get_current_sem_qry);
@@ -179,8 +184,8 @@ if ($get_current_sem_qry_run) {
                 $get_comp_qry_run = mysqli_query($conn, $get_comp_qry);
                 if ($get_comp_qry_run) {
                     while ($comp_id = mysqli_fetch_assoc($get_comp_qry_run)) {
-                        if (in_array($comp_id['component_id'], $subj_comp)) {
-                            $check_auditing_qry = "SELECT check_id FROM auditing WHERE component_id=" . $comp_id['component_id'] . " AND session_id=$ac_sess_id AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
+                        if (in_array($comp_id, $subj_comp)) {
+                            $check_auditing_qry = "SELECT check_id FROM auditing WHERE component_id=" . $comp_id . " AND session_id=$ac_sess_id AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
                             $check_auditing_qry_run = mysqli_query($conn, $check_auditing_qry);
                             $check_id = mysqli_fetch_assoc($check_auditing_qry_run);
                             if (is_null($check_id['check_id'])) {
@@ -239,12 +244,146 @@ if ($get_current_sem_qry_run) {
 ?>
 </div>
 <?php
+
 }//Main END
 
-else if($_SESSION['type']==="atkt"){
+
+else if ($_SESSION['type'] === "atkt") {
     //ATKT Code here
+
+    ?>
+
+
+
+<?php
+$get_current_sem_qry = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $_SESSION['from_year'] . " AND course_id=" . $_SESSION['course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM atkt_sessions)";
+$get_current_sem_qry_run = mysqli_query($conn, $get_current_sem_qry);
+if ($get_current_sem_qry_run) {
+    while ($semester = mysqli_fetch_assoc($get_current_sem_qry_run)) {
+        $sem = $semester['current_semester'];
+        $ac_sess_id = "SELECT acs.ac_session_id,atkt_session_id FROM academic_sessions acs,atkt_sessions atkt WHERE acs.ac_session_id=atkt.ac_session_id AND course_id=" . $_SESSION['course_id'] . " AND current_semester=" . $sem . " AND from_year=" . $_SESSION['from_year'];
+        $ac_sess_id = mysqli_query($conn, $ac_sess_id);
+        $ac_result = mysqli_fetch_assoc($ac_sess_id);
+        $ac_sess_id = $ac_result['ac_session_id'];
+        $atkt_sess_id = $ac_result['atkt_session_id'];
+
+
+        echo ('
+        <form action="generate_tr_back_end" method="POST" class="col-lg-12 col-md-12 col-sm-12">
+        <table class="table table-responsive table-striped table-bordered">
+        <caption><div class="name col-lg-7 col-md-7">' . $_SESSION['course_name'] . '</div>  
+        <div class="col-lg-5 col-md-5">
+        SEMESTER ' . $sem . '
+        </div>
+       
+</caption>
+
+<thead>
+<tr>
+<th rowspan="2"><strong>Subject Name</strong></th>
+<th colspan="6">Components</th>
+</tr>
+<tr>        
+');
+        $get_comp_qry = "SELECT component_id,component_name from component WHERE component_id IN(SELECT component_id FROM atkt_subjects WHERE atkt_roll_id IN(SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id IN(SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id=$ac_sess_id)))";
+        $get_comp_qry_run = mysqli_query($conn, $get_comp_qry);
+        $comp_registered = array();
+        if ($get_comp_qry_run) {
+            while ($comp = mysqli_fetch_assoc($get_comp_qry_run)) {
+                array_push($comp_registered, $comp['component_id']);
+                echo ('
+                <th>' . $comp['component_name'] . ' <a data-toggle="popover" title="Meaning of symbols" data-content="A tick indicates marks have been entered, a cross indicates marks for that component are due to be entered, and a minus sign indicates the subject does not have that component"><i class="glyphicon glyphicon-info-sign"></i></a></th>
+                    ');
+            }
+        }
+        echo ('</tr>
+        </thead>
+        <tbody>');
+        $subject_count = 0;
+        $subject_completed = 0;
+        $get_sub_qry = "SELECT * from subjects WHERE ac_session_id = $ac_sess_id AND ac_sub_code IN(SELECT ac_sub_code FROM sub_distribution WHERE sub_id IN(SELECT sub_id FROM atkt_subjects WHERE atkt_roll_id IN(SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id IN(SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id=$ac_sess_id))))";
+        $get_sub_qry_run = mysqli_query($conn, $get_sub_qry);
+        if ($get_sub_qry_run) {
+            while ($sub = mysqli_fetch_assoc($get_sub_qry_run)) {
+                echo (' <tr><td>' . $sub['sub_name'] . '</td>');
+                $get_subcomp_qry = "SELECT component_id from component where component_id IN(SELECT component_id FROM atkt_subjects WHERE atkt_roll_id IN(SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id IN(SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id=$ac_sess_id)) AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub['sub_code'] . "' AND ac_session_id=$ac_sess_id))) ORDER BY component_id";
+                $get_subcomp_qry_run = mysqli_query($conn, $get_subcomp_qry);
+                $subj_comp = array();
+                $no_of_comp = 0;
+                $component_count = 0;
+                while ($subcomp = mysqli_fetch_assoc($get_subcomp_qry_run)) {
+                    $subj_comp[] = $subcomp['component_id'];
+                    $no_of_comp++;
+                }
+                foreach ($comp_registered as $comp_id) {
+                    if (in_array($comp_id, $subj_comp)) {
+                        $check_auditing_qry = "SELECT check_id FROM auditing WHERE component_id=" . $comp_id . " AND session_id=$atkt_sess_id AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
+                        $check_auditing_qry_run = mysqli_query($conn, $check_auditing_qry);
+                        $check_id = mysqli_fetch_assoc($check_auditing_qry_run);
+                        if (is_null($check_id['check_id'])) {
+                            echo (' <td><i class="glyphicon glyphicon-remove" style="color: #CD331D" title="Marks for the component have not been entered!"></i></td>');
+                        } else {
+                            echo (' <td><i class="glyphicon glyphicon-ok" style="color:#30A21C" title="Marks for the component have been entered!"></i></td>
+                                ');
+                            $component_count++;
+                        }
+                    } else {
+                        echo ('<td><i class="glyphicon glyphicon-minus-sign" title="The subject does not contain this component."></i></td>');
+                    }
+                }
+                
+                if ($no_of_comp == $component_count) {
+                    $subject_completed++;
+                }
+                echo ('</tr>');
+                $subject_count++;
+            }
+        }
+        $prog_width = ($subject_completed / $subject_count) * 100;
+        echo ('</tbody>
+        <caption align="bottom">
+        <div class="col-lg-12 col-sm-12 col-md-12" style="display:flex; align-items:center">
+        
+        <div class="col-lg-7 col-md-7 col-sm-6">');
+        if ($subject_count == $subject_completed) {
+            $check_tr_generated = "SELECT tr_gen_flag FROM atkt_sessions WHERE ac_session_id =$ac_sess_id";
+            $check_tr_generated_run = mysqli_query($conn, $check_tr_generated);
+            $check_tr_gen = mysqli_fetch_assoc($check_tr_generated_run)['tr_gen_flag'];
+            if ($check_tr_gen != 0) {
+                echo ('<button class="btn btn-info input-lg" disabled>TR Already Generated <i class="glyphicon glyphicon-ok"></i></button>');
+            } else {
+                echo ('<button class="btn btn-default input-lg" type="submit" name="tab_main_submit" value="' . $sem . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+
+            }
+        } else {
+            echo ('<button class="btn btn-default input-lg" disabled>Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+        }
+        echo ('</div>
+        <div class="col-sm-6 col-xs-12" style="vertical-align: middle;">
+        <div class="progress">
+        <div class="progress-bar progress-bar-custom" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: ' . $prog_width . '%">
+        <span>' . $subject_completed . '/' . $subject_count . ' Subjects Completed</span>
+        </div>
+    </div></div> 
+    </div>
+        </caption>
+    </table>
+    </form>
+    <hr>');
+
+    }
 }
 ?>
+</div>
+
+<?php
+
+} //ATKT ends here
+
+?>
+
+
+
 <?php
 $obj = new footer();
 $obj->disp_footer();
