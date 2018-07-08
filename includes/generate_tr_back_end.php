@@ -321,6 +321,17 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
                     $get_marks = "SELECT marks,component_id FROM score_atkt WHERE atkt_roll_id=" . $roll_id['atkt_roll_id'] . " AND sub_id=" . $row['sub_id'];
                     $get_marks_run = mysqli_query($conn, $get_marks);
                     while ($marks = mysqli_fetch_assoc($get_marks_run)) {
+                        $get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $row['sub_id'] . " AND component_id=" . $marks['component_id'];
+                        $get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
+                        $passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks'];
+                        if ($marks < $passing_marks) {
+                            $insert_atkt_failure = "INSERT INTO atkt_failure_report VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . "," . $marks['component_id'] . ")";
+                            $insert_atkt_failure_run = mysqli_query($conn, $insert_atkt_failure);
+                            if (!$insert_atkt_failure_run) {
+                                mysqli_rollback($conn);
+                                break;
+                            }
+                        }
                         switch ($marks['component_id']) {
                             case 1:
                                 $cat_cap = $marks['marks'];
