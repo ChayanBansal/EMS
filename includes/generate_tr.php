@@ -8,19 +8,16 @@ $validate = new validate();
 $validate->conf_logged_in_super();
 if (isset($_POST['tr_submit'])) {
     $_SESSION['type'] = $_POST['tr_gen_type'];
-    if ($_SESSION['type'] == "main") {
-        $_SESSION['from_year'] = $_POST['tr_from_year'];
-        $_SESSION['course_id'] = $_POST['tr_course'];
-        $get_course_name_qry = "SELECT course_name from courses where course_id=" . $_SESSION['course_id'];
-        $get_course_name_qry_run = mysqli_query($conn, $get_course_name_qry);
-        if ($get_course_name_qry_run) {
-            $res = mysqli_fetch_assoc($get_course_name_qry_run);
-            $_SESSION['course_name'] = $res['course_name'];
-        }
 
-    } else if ($_SESSION['type'] == "atkt") {
-
+    $_SESSION['from_year'] = $_POST['tr_from_year'];
+    $_SESSION['course_id'] = $_POST['tr_course'];
+    $get_course_name_qry = "SELECT course_name from courses where course_id=" . $_SESSION['course_id'];
+    $get_course_name_qry_run = mysqli_query($conn, $get_course_name_qry);
+    if ($get_course_name_qry_run) {
+        $res = mysqli_fetch_assoc($get_course_name_qry_run);
+        $_SESSION['course_name'] = $res['course_name'];
     }
+
 } else {
     header('location: super_home');
 }
@@ -331,7 +328,7 @@ if ($get_current_sem_qry_run) {
                         echo ('<td><i class="glyphicon glyphicon-minus-sign" title="The subject does not contain this component."></i></td>');
                     }
                 }
-                
+
                 if ($no_of_comp == $component_count) {
                     $subject_completed++;
                 }
@@ -352,7 +349,7 @@ if ($get_current_sem_qry_run) {
             if ($check_tr_gen != 0) {
                 echo ('<button class="btn btn-info input-lg" disabled>TR Already Generated <i class="glyphicon glyphicon-ok"></i></button>');
             } else {
-                echo ('<button class="btn btn-default input-lg" type="submit" name="tab_main_submit" value="' . $sem . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+                echo ('<button class="btn btn-default input-lg" type="submit" name="tab_atkt_submit" value="' . $sem . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
 
             }
         } else {

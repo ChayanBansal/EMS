@@ -171,6 +171,20 @@ class alert
 	{
 		echo (' <div class="alert alert-' . $class . ' fade in alert-styled" id="err" style="position:fixed; top:0;left:0;z-index:200; width:100%; text-align:center">' . $msg . '<span class="close-alert" data-dismiss="alert" style="font-size:2.6rem">&times</span></div>');
 	}
+	function session_notification($sess_val,$succ_msg,$fail_msg){
+		if (isset($_SESSION[$sess_val])) {
+			if ($_SESSION[$sess_val] == true) {
+			  $alert = new alert();
+			  $alert->exec($succ_msg, "success");
+		  
+			} else {
+			  $alert = new alert();
+			  $alert->exec($fail_msg, "danger");
+		  
+			}
+			unset($_SESSION[$sess_val]);
+		  }
+	}
 }
 
 class initial

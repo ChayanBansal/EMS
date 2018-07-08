@@ -192,7 +192,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
                         }
                     }
                     $total = $ie;
-                            
+
                     $percentage = (($total * 100) / 100);
                     if ($percentage >= 91 and $percentage <= 100) {
                         $grade = 'O';
@@ -259,9 +259,9 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
             $get_cur_cgpa = mysqli_query($conn, $get_cur_cgpa);
             $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa);//$cur_cgpa['cgpa']
             $new_cgpa = ($cur_cgpa['cgpa'] + $sgpa) / 2;
-            
-            $update_tr_gen_flag="UPDATE academic_sessions SET tr_gen_flag=1 WHERE ac_session_id=$ac_session_id";
-            $update_tr_gen_flag_run=mysqli_query($conn,$update_tr_gen_flag);
+
+            $update_tr_gen_flag = "UPDATE academic_sessions SET tr_gen_flag=1 WHERE ac_session_id=$ac_session_id";
+            $update_tr_gen_flag_run = mysqli_query($conn, $update_tr_gen_flag);
                 /*$update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no='".$roll_id['enrol_no']."'";
                 $update_cgpa_run=mysqli_query($conn,$update_cgpa);*/
             if ($insert_exam_summary_run == true && $update_tr_gen_flag_run) {
@@ -274,7 +274,312 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
             }
         }
     }
-       header('location: super_home.php');
+    header('location: super_home.php');
+} else if (isset($_POST['tab_atkt_submit'])) {
+    //ATKT TR
+    $semester = $_POST['tab_atkt_submit'];//Button's value which is clicked 
+    $from_year = $_SESSION['from_year']; //Selected batch relevant to the tr
+    $course_id = $_SESSION['course_id']; //Selected course's id
+
+    mysqli_autocommit($conn, false);
+    mysqli_begin_transaction($conn);
+    $get_ac_session_id = "SELECT atkt_session_id,ac_session_id FROM atkt_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM academic_sessions WHERE current_semester=$semester AND from_year=$from_year AND course_id=$course_id)";
+    $get_ac_session_id_run = mysqli_query($conn, $get_ac_session_id);
+
+    if (mysqli_num_rows($get_ac_session_id_run) > 0) {
+        $result = mysqli_fetch_assoc($get_ac_session_id_run);
+        $ac_session_id = $result['ac_session_id'];
+        $atkt_sess_id = $result['atkt_session_id'];
+
+        $error = false;
+
+        $get_atkt_roll_list = "SELECT atkt_roll_id,roll_id FROM atkt_roll_list WHERE atkt_session_id=$atkt_sess_id";
+        $get_atkt_roll_list_run = mysqli_query($conn, $get_atkt_roll_list);
+
+        while ($roll_id = mysqli_fetch_assoc($get_atkt_roll_list_run)) {
+            $get_tr = "SELECT * FROM tr WHERE roll_id=" . $roll_id['roll_id'];
+            $get_tr_run = mysqli_query($conn, $get_tr);
+            $total_credits_earned = 0;
+            $total_earned_gpv = 0;
+            $total_credits_allotted = 0;
+            while ($row = mysqli_fetch_assoc($get_tr_run)) {
+
+                $atkt_subjects = "SELECT count(*) FROM atkt_subjects WHERE atkt_roll_id=" . $roll_id['atkt_roll_id'] . " AND sub_id=" . $row['sub_id'];
+                $atkt_subjects_run = mysqli_query($conn, $atkt_subjects);
+                $cat_cap = $row['cat_cap'];
+                $end_sem = $row['end_sem'];
+                $ia = $row['ia'];
+                $ie = $row['ie'];
+                $get_sub_flag = "SELECT practical_flag,credits_allotted FROM sub_distribution WHERE sub_id=" . $row['sub_id'];
+                $get_sub_flag_run = mysqli_query($conn, $get_sub_flag);
+                $result = mysqli_fetch_assoc($get_sub_flag_run);
+                $practical_flag = $result['practical_flag'];
+                $total_credits_allotted += $result['credits_allotted'];
+
+                if (mysqli_fetch_assoc($atkt_subjects_run)['count(*)'] > 0) {
+                    // Take marks from score
+                    $get_marks = "SELECT marks,component_id FROM score_atkt WHERE atkt_roll_id=" . $roll_id['atkt_roll_id'] . " AND sub_id=" . $row['sub_id'];
+                    $get_marks_run = mysqli_query($conn, $get_marks);
+                    while ($marks = mysqli_fetch_assoc($get_marks_run)) {
+                        switch ($marks['component_id']) {
+                            case 1:
+                                $cat_cap = $marks['marks'];
+                                break;
+
+                            case 2:
+                                $cat_cap = $marks['marks'];
+                                break;
+
+                            case 3:
+                                $end_sem = $marks['marks'];
+                                break;
+
+                            case 4:
+                                $end_sem = $marks['marks'];
+                                break;
+
+                            case 5:
+                                $ia = $marks['marks'];
+                                break;
+
+                            case 5:
+                                $ie = $marks['marks'];
+                                break;
+
+                            default:
+                                # code...
+                                break;
+                        }
+                    }
+
+
+                    $credits_allotted = $result['credits_allotted'];
+                    if ($practical_flag == 0) {
+
+                        $total = $cat_cap + $end_sem;
+                        $percentage = (($total * 100) / 100);
+
+                        if ($percentage >= 91 and $percentage <= 100) {
+                            $grade = 'O';
+                            $gp = 10;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 81 and $percentage < 91) {
+                            $grade = 'A+';
+                            $gp = 9;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 71 and $percentage < 81) {
+                            $grade = 'A';
+                            $gp = 8;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 61 and $percentage < 71) {
+                            $grade = 'B+';
+                            $gp = 7;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 51 and $percentage < 61) {
+                            $grade = 'B';
+                            $gp = 6;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 41 and $percentage < 51) {
+                            $grade = 'C';
+                            $gp = 5;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage == 40) {
+                            $grade = 'P';
+                            $gp = 4;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage < 40) {
+                            $grade = 'F';
+                            $gp = 0;
+                            $cr = 0;
+                            $gpv = $gp * $cr;
+                        }
+                        $total_credits_earned = $total_credits_earned + $cr;
+                        $total_earned_gpv = $total_earned_gpv + $gpv;
+
+                        $insert_atkt_tr = "INSERT INTO tr_atkt (atkt_roll_id,sub_id,cat_cap,end_sem,total,percent,grade,gp,cr,gpv) VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . ",$cat_cap,$end_sem,$total,$percentage,'$grade',$gp,$cr,$gpv)";
+                        $insert_atkt_tr_run = mysqli_query($conn, $insert_atkt_tr);
+
+                        if (!$insert_atkt_tr_run) {
+                            $error = true;
+                            mysqli_rollback($conn);
+                            break;
+                        }
+
+                    } else if ($practical_flag == 1) {
+
+                        $total = $cat_cap + $end_sem + $ia;
+                        $percentage = (($total * 100) / 100);
+
+                        if ($percentage >= 91 and $percentage <= 100) {
+                            $grade = 'O';
+                            $gp = 10;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 81 and $percentage < 91) {
+                            $grade = 'A+';
+                            $gp = 9;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 71 and $percentage < 81) {
+                            $grade = 'A';
+                            $gp = 8;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 61 and $percentage < 71) {
+                            $grade = 'B+';
+                            $gp = 7;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 51 and $percentage < 61) {
+                            $grade = 'B';
+                            $gp = 6;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 41 and $percentage < 51) {
+                            $grade = 'C';
+                            $gp = 5;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage == 40) {
+                            $grade = 'P';
+                            $gp = 4;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage < 40) {
+                            $grade = 'F';
+                            $gp = 0;
+                            $cr = 0;
+                            $gpv = $gp * $cr;
+                        }
+                        $total_credits_earned = $total_credits_earned + $cr;
+                        $total_earned_gpv = $total_earned_gpv + $gpv;
+
+                        $insert_atkt_tr = "INSERT INTO tr_atkt (atkt_roll_id,sub_id,cat_cap,ia,end_sem,total,percent,grade,gp,cr,gpv) VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . ",$cat_cap,$ia,$end_sem,$total,$percentage,'$grade',$gp,$cr,$gpv)";
+                        $insert_atkt_tr_run = mysqli_query($conn, $insert_atkt_tr);
+
+                        if (!$insert_atkt_tr_run) {
+                            $error = true;
+                            mysqli_rollback($conn);
+                            break;
+                        }
+
+
+                    } else if ($practical_flag == 2) {
+
+                        $total = $ie;
+                        $percentage = (($total * 100) / 100);
+
+                        if ($percentage >= 91 and $percentage <= 100) {
+                            $grade = 'O';
+                            $gp = 10;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 81 and $percentage < 91) {
+                            $grade = 'A+';
+                            $gp = 9;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 71 and $percentage < 81) {
+                            $grade = 'A';
+                            $gp = 8;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 61 and $percentage < 71) {
+                            $grade = 'B+';
+                            $gp = 7;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 51 and $percentage < 61) {
+                            $grade = 'B';
+                            $gp = 6;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage >= 41 and $percentage < 51) {
+                            $grade = 'C';
+                            $gp = 5;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage == 40) {
+                            $grade = 'P';
+                            $gp = 4;
+                            $cr = $credits_allotted;
+                            $gpv = $gp * $cr;
+                        } else if ($percentage < 40) {
+                            $grade = 'F';
+                            $gp = 0;
+                            $cr = 0;
+                            $gpv = $gp * $cr;
+                        }
+                        $total_credits_earned = $total_credits_earned + $cr;
+                        $total_earned_gpv = $total_earned_gpv + $gpv;
+
+                        $insert_atkt_tr = "INSERT INTO tr_atkt (atkt_roll_id,sub_id,end_sem,total,percent,grade,gp,cr,gpv) VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . ",$ie,$total,$percentage,'$grade',$gp,$cr,$gpv)";
+                        $insert_atkt_tr_run = mysqli_query($conn, $insert_atkt_tr);
+
+                        if (!$insert_atkt_tr_run) {
+                            $error = true;
+                            mysqli_rollback($conn);
+                            break;
+                        }
+
+                    }
+
+
+                } else {
+                        //Take marks directly from Main TR
+                    $insert_atkt_tr = "INSERT INTO tr_atkt VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . "," . $row['cat_cap'] . "," . $row['ia'] . "," . $row['end_sem'] . "," . $row['ie'] . "," . $row['total'] . "," . $row['percent'] . "," . $row['grade'] . "," . $row['gp'] . "," . $row['cr'] . "," . $row['gpv'] . ")";
+                    $insert_atkt_tr_run = mysqli_query($conn, $insert_atkt_tr);
+                    if (!$insert_atkt_tr_run) {
+                        $error = true;
+                        mysqli_rollback($conn);
+                        break;
+                    } else {
+                        $total_credits_earned = $total_credits_earned + $row['cr'];
+                        $total_earned_gpv = $total_earned_gpv + $row['gpv'];
+                    }
+                }
+            }
+
+
+            $sgpa = $total_earned_gpv / $total_credits_allotted;
+
+            $insert_exam_summary = "INSERT INTO atkt_exam_summary VALUES(" . $roll_id['atkt_roll_id'] . ", " . $total_credits_earned . ", " . $total_earned_gpv . ", " . $sgpa . ")";
+            $insert_exam_summary_run = mysqli_query($conn, $insert_exam_summary);
+            
+            //????!!!!Doubtful Code!!!!
+            //Updating CGPA
+            /* $get_cur_cgpa = "SELECT cgpa FROM students WHERE enrol_no='" . $roll_id['enrol_no'] . "'";
+            $get_cur_cgpa = mysqli_query($conn, $get_cur_cgpa);
+            $cur_cgpa = mysqli_fetch_assoc($get_cur_cgpa);//$cur_cgpa['cgpa']
+            $new_cgpa = ($cur_cgpa['cgpa'] + $sgpa) / 2;
+             */
+
+        }
+
+        $update_tr_gen_flag = "UPDATE atkt_sessions SET tr_gen_flag=1 WHERE atkt_session_id=$atkt_sess_id";
+        $update_tr_gen_flag_run = mysqli_query($conn, $update_tr_gen_flag);
+                /*$update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no='".$roll_id['enrol_no']."'";
+                $update_cgpa_run=mysqli_query($conn,$update_cgpa);*/
+        if ($insert_exam_summary_run == true && $update_tr_gen_flag_run) {
+            $_SESSION['tr_generated_atkt'] = true;
+            mysqli_commit($conn);
+
+        } else {
+            $_SESSION['tr_generated_atkt'] = false;
+            mysqli_rollback($conn);
+        }
+
+    }
+    header('location: super_home.php');
+
+
 } else {
     header('location: 404.html');
 }
