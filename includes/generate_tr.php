@@ -120,7 +120,7 @@ $input_btn = new input_button();
             </div>
 
 <?php
-if ($_SESSION['type'] === "main") {
+if ($_SESSION['type'] == "main") {
     //MAIN Start
     ?>
 <?php
@@ -181,8 +181,8 @@ if ($get_current_sem_qry_run) {
                 $get_comp_qry_run = mysqli_query($conn, $get_comp_qry);
                 if ($get_comp_qry_run) {
                     while ($comp_id = mysqli_fetch_assoc($get_comp_qry_run)) {
-                        if (in_array($comp_id, $subj_comp)) {
-                            $check_auditing_qry = "SELECT check_id FROM auditing WHERE component_id=" . $comp_id . " AND session_id=$ac_sess_id AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
+                        if (in_array($comp_id['component_id'], $subj_comp)) {
+                            $check_auditing_qry = "SELECT check_id FROM auditing WHERE component_id=" . $comp_id['component_id'] . " AND session_id=$ac_sess_id AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub['sub_code'] . "' AND ac_session_id=$ac_sess_id)";
                             $check_auditing_qry_run = mysqli_query($conn, $check_auditing_qry);
                             $check_id = mysqli_fetch_assoc($check_auditing_qry_run);
                             if (is_null($check_id['check_id'])) {
@@ -245,7 +245,7 @@ if ($get_current_sem_qry_run) {
 }//Main END
 
 
-else if ($_SESSION['type'] === "atkt") {
+else if ($_SESSION['type'] == "atkt") {
     //ATKT Code here
 
     ?>

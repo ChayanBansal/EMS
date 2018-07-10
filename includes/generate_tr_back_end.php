@@ -339,11 +339,11 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
                                 break;
 
                             case 2:
-                                $cat_cap = $marks['marks'];
+                                $end_sem = $marks['marks'];
                                 break;
 
                             case 3:
-                                $end_sem = $marks['marks'];
+                                $cat_cap = $marks['marks'];
                                 break;
 
                             case 4:

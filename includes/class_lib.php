@@ -170,6 +170,7 @@ class alert
 	function exec($msg, $class)
 	{
 		echo (' <div class="alert alert-' . $class . ' fade in alert-styled" id="err" style="position:fixed; top:0;left:0;z-index:200; width:100%; text-align:center">' . $msg . '<span class="close-alert" data-dismiss="alert" style="font-size:2.6rem">&times</span></div>');
+		$this->log_message($msg,$class);
 	}
 	function session_notification($sess_val,$succ_msg,$fail_msg){
 		if (isset($_SESSION[$sess_val])) {
@@ -184,6 +185,14 @@ class alert
 			}
 			unset($_SESSION[$sess_val]);
 		  }
+	}
+	function log_message($msg,$type){
+		if($type=="danger" OR $type=="warning"){
+			require('config.php');
+			$insert_log="INSERT INTO logs(message,type) VALUES('$msg','$type')";
+			$insert_log_run=mysqli_query($conn,$insert_log);
+
+		}
 	}
 }
 
@@ -827,7 +836,6 @@ class super_user_options
 	function lock_operator($conn)
 	{
 		if (isset($_POST['lock'])) {
-			echo ("Locked");
 			$alert = new alert();
 			$username = $_POST['lock'];
 			$update_locked_qry = "UPDATE operators set locked=1 where operator_username='" . $username . "'";

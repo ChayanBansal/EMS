@@ -21,7 +21,7 @@ if (isset($_POST['getBatch'])) {
             }
             break;
         case 'retotal':
-            $get_ay = "SELECT distinct(from_year) FROM academic_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM $retotal.retotal_sessions)";
+            $get_ay = "SELECT distinct(from_year) FROM academic_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM retotal_sessions)";
             $get_ay_run = mysqli_query($conn, $get_ay);
             if (mysqli_num_rows($get_ay_run) == 0) {
                 echo ("<option disabled selected>No sessions found!</option>");
@@ -44,7 +44,7 @@ if (isset($_POST['getBatch'])) {
 
             break;
         case 'atkt':
-            $get_ay = "SELECT distinct(from_year) FROM academic_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions)";
+            $get_ay = "SELECT distinct(from_year) FROM academic_sessions WHERE ac_session_id IN(SELECT ac_session_id FROM atkt_sessions)";
             $get_ay_run = mysqli_query($conn, $get_ay);
             if (mysqli_num_rows($get_ay_run) == 0) {
                 echo ("<option disabled selected>No sessions found!</option>");
@@ -79,7 +79,7 @@ if (isset($_POST['getSemester'])) {
 
                 break;
             case 'retotal':
-                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM $retotal.retotal_sessions) ORDER BY current_semester DESC";
+                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM retotal_sessions) ORDER BY current_semester DESC";
                 $get_semester_run = mysqli_query($conn, $get_semester);
                 $result = mysqli_fetch_assoc($get_semester_run);
                 $_SESSION['selected_semester'] = $result['current_semester'];
@@ -97,7 +97,7 @@ if (isset($_POST['getSemester'])) {
 
                 break;
             case 'atkt':
-                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions) ORDER BY current_semester DESC";
+                $get_semester = "SELECT current_semester FROM academic_sessions WHERE from_year=" . $from_year . " AND course_id=" . $_SESSION['current_course_id'] . " AND ac_session_id IN(SELECT ac_session_id FROM atkt_sessions) ORDER BY current_semester DESC";
                 $get_semester_run = mysqli_query($conn, $get_semester);
                 $result = mysqli_fetch_assoc($get_semester_run);
                 $_SESSION['selected_semester'] = $result['current_semester'];
@@ -125,8 +125,8 @@ if (isset($_POST['getSubject'])) {
                 }
                 break;
             case 'retotal':
-                $get_sub_retotal = "SELECT sub_code, sub_name FROM subjects WHERE ac_session_id IN (SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND current_semester=" . $_POST['semester'] . " AND from_year=" . $_POST['from_year'] . " AND ac_session_id IN(SELECT ac_session_id FROM $retotal.retotal_sessions) AND ac_sub_code IN(SELECT ac_sub_code FROM sub_distribution WHERE sub_id IN(SELECT distinct(sub_id) FROM $retotal.retotal_subjects)))";
-                $get_sub_retotal_run = mysqli_query($conn, $get_sub_main);
+                $get_sub_retotal = "SELECT sub_code, sub_name FROM subjects WHERE ac_session_id IN (SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND current_semester=" . $_POST['semester'] . " AND from_year=" . $_POST['from_year'] . " AND ac_session_id IN(SELECT ac_session_id FROM retotal_sessions) AND ac_sub_code IN(SELECT ac_sub_code FROM sub_distribution WHERE sub_id IN(SELECT distinct(sub_id) FROM retotal_subjects)))";
+                $get_sub_retotal_run = mysqli_query($conn, $get_sub_retotal);
                 while ($retotal_sub = mysqli_fetch_assoc($get_sub_retotal_run)) {
                     echo ('<option value="' . $retotal_sub['sub_code'] . '">' . $retotal_sub['sub_name'] . '</option>');
                 }
@@ -140,7 +140,7 @@ if (isset($_POST['getSubject'])) {
 
                 break;
             case 'atkt':
-                $get_sub_atkt = "SELECT sub_code, sub_name FROM subjects WHERE ac_session_id IN (SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND current_semester=" . $_POST['semester'] . " AND from_year=" . $_POST['from_year'] . " AND ac_session_id IN(SELECT ac_session_id FROM $atkt.atkt_sessions) AND ac_sub_code IN(SELECT ac_sub_code FROM sub_distribution WHERE sub_id IN(SELECT distinct(sub_id) FROM $atkt.atkt_subjects)))";
+                $get_sub_atkt = "SELECT sub_code, sub_name FROM subjects WHERE ac_session_id IN (SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND current_semester=" . $_POST['semester'] . " AND from_year=" . $_POST['from_year'] . " AND ac_session_id IN(SELECT ac_session_id FROM atkt_sessions) AND ac_sub_code IN(SELECT ac_sub_code FROM sub_distribution WHERE sub_id IN(SELECT distinct(sub_id) FROM atkt_subjects)))";
                 $get_sub_atkt_run = mysqli_query($conn, $get_sub_atkt);
                 while ($atkt_sub = mysqli_fetch_assoc($get_sub_atkt_run)) {
                     echo ('<option value="' . $atkt_sub['sub_code'] . '">' . $atkt_sub['sub_name'] . '</option>');
@@ -180,12 +180,9 @@ if (isset($_POST['getComponent'])) {
                 }
                 break;
             case 'retotal':
-                $get_sub_comp = "SELECT component_id, component_name FROM component WHERE component_id IN 
-            (SELECT component_id FROM component_distribution WHERE sub_id IN
-            (SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_POST['sub_code'] . "' AND ac_session_id=$ac_sess_id))) AND (component_id IN(2)) ";
-                $get_sub_comp_run = mysqli_query($conn, $get_sub_comp);
-                while ($sub_comp = mysqli_fetch_assoc($get_sub_comp_run)) {
-                    $sub_code = $_POST['sub_code'];
+            $get_comp_retotal="SELECT component_id,component_name FROM component WHERE component_id IN(3,4) AND IN(SELECT component_id FROM component_distribution WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_POST['sub_code'] . "' AND ac_session_id=$ac_sess_id)))";    
+            $get_comp_retotal_run=mysqli_query($conn,$get_comp_retotal);
+            while ($sub_comp = mysqli_fetch_assoc($get_comp_retotal_run)) {
                     /*$check_filled = "SELECT COUNT(*) FROM $retotal.retotal_subjects WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub_code . "' AND ac_session_id=$ac_sess_id) AND component_id=" . $sub_comp['component_id'] . " AND roll_id IN 
                     (SELECT roll_id FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE ac_session_id=$ac_sess_id))";
                     $check_filled_run = mysqli_query($conn, $check_filled);
@@ -206,10 +203,7 @@ if (isset($_POST['getComponent'])) {
 
                 break;
             case 'atkt':
-                $ac_sess_id = "SELECT ac_session_id FROM academic_sessions WHERE course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_POST['from_year'] . " AND current_semester=" . $_POST['semester'];
-                $ac_sess_id = mysqli_query($conn, $ac_sess_id);
-                $ac_sess_id = mysqli_fetch_assoc($ac_sess_id)['ac_session_id'];
-                $get_comp_atkt = "SELECT component_id,component_name FROM component WHERE component_id IN(SELECT DISTINCT(component_id) FROM atkt_subjects WHERE atkt_roll_id IN(SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id IN(SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id=$ac_sess_id)) AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='".$_POST['sub_code']."' AND ac_session_id=$ac_sess_id)))";
+                $get_comp_atkt = "SELECT component_id,component_name FROM component WHERE component_id IN(SELECT DISTINCT(component_id) FROM atkt_subjects WHERE atkt_roll_id IN(SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id IN(SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id=$ac_sess_id)) AND sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_POST['sub_code'] . "' AND ac_session_id=$ac_sess_id)))";
                 $get_comp_atkt_run = mysqli_query($conn, $get_comp_atkt);
                 while ($comp = mysqli_fetch_assoc($get_comp_atkt_run)) {
                     $check_filled = "SELECT count(*) FROM auditing WHERE type_flag=3 AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_POST['sub_code'] . "' AND ac_session_id=$ac_sess_id) AND component_id=" . $comp['component_id'] . " AND session_id IN(SELECT atkt_session_id FROM atkt_sessions WHERE ac_session_id=$ac_sess_id)";
