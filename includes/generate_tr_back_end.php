@@ -324,10 +324,11 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
                         $get_passing_marks = "SELECT passing_marks FROM component_distribution WHERE sub_id=" . $row['sub_id'] . " AND component_id=" . $marks['component_id'];
                         $get_passing_marks_run = mysqli_query($conn, $get_passing_marks);
                         $passing_marks = mysqli_fetch_assoc($get_passing_marks_run)['passing_marks'];
-                        if ($marks < $passing_marks) {
+                        if ($marks['marks'] < $passing_marks) {
                             $insert_atkt_failure = "INSERT INTO atkt_failure_report VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . "," . $marks['component_id'] . ")";
                             $insert_atkt_failure_run = mysqli_query($conn, $insert_atkt_failure);
                             if (!$insert_atkt_failure_run) {
+                                $error=true;
                                 mysqli_rollback($conn);
                                 break;
                             }
@@ -578,7 +579,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
         $update_tr_gen_flag_run = mysqli_query($conn, $update_tr_gen_flag);
                 /*$update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no='".$roll_id['enrol_no']."'";
                 $update_cgpa_run=mysqli_query($conn,$update_cgpa);*/
-        if ($insert_exam_summary_run == true && $update_tr_gen_flag_run) {
+        if ($insert_exam_summary_run == true && $update_tr_gen_flag_run && !$error) {
             $_SESSION['tr_generated_atkt'] = true;
             mysqli_commit($conn);
 
