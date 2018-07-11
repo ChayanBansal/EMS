@@ -307,9 +307,13 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
                 $atkt_subjects = "SELECT count(*) FROM atkt_subjects WHERE atkt_roll_id=" . $roll_id['atkt_roll_id'] . " AND sub_id=" . $row['sub_id'];
                 $atkt_subjects_run = mysqli_query($conn, $atkt_subjects);
                 $cat_cap = $row['cat_cap'];
+                $cat_cap = is_null($cat_cap) ? "NULL": $cat_cap;
                 $end_sem = $row['end_sem'];
+                $end_sem = is_null($end_sem) ? "NULL": $end_sem;
                 $ia = $row['ia'];
+                $ia = is_null($ia) ? "NULL": $ia ;
                 $ie = $row['ie'];
+                $ie = is_null($ie) ? "NULL":$ie;
                 $get_sub_flag = "SELECT practical_flag,credits_allotted FROM sub_distribution WHERE sub_id=" . $row['sub_id'];
                 $get_sub_flag_run = mysqli_query($conn, $get_sub_flag);
                 $result = mysqli_fetch_assoc($get_sub_flag_run);
@@ -328,7 +332,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
                             $insert_atkt_failure = "INSERT INTO atkt_failure_report VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . "," . $marks['component_id'] . ")";
                             $insert_atkt_failure_run = mysqli_query($conn, $insert_atkt_failure);
                             if (!$insert_atkt_failure_run) {
-                                $error=true;
+                                $error = true;
                                 mysqli_rollback($conn);
                                 break;
                             }
@@ -419,6 +423,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
                         $insert_atkt_tr_run = mysqli_query($conn, $insert_atkt_tr);
 
                         if (!$insert_atkt_tr_run) {
+
                             $error = true;
                             mysqli_rollback($conn);
                             break;
@@ -477,6 +482,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
                         $insert_atkt_tr_run = mysqli_query($conn, $insert_atkt_tr);
 
                         if (!$insert_atkt_tr_run) {
+
                             $error = true;
                             mysqli_rollback($conn);
                             break;
@@ -546,7 +552,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
 
                 } else {
                         //Take marks directly from Main TR
-                    $insert_atkt_tr = "INSERT INTO tr_atkt VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . "," . $row['cat_cap'] . "," . $row['ia'] . "," . $row['end_sem'] . "," . $row['ie'] . "," . $row['total'] . "," . $row['percent'] . "," . $row['grade'] . "," . $row['gp'] . "," . $row['cr'] . "," . $row['gpv'] . ")";
+                    $insert_atkt_tr = "INSERT INTO tr_atkt VALUES(" . $roll_id['atkt_roll_id'] . "," . $row['sub_id'] . "," . $cat_cap . "," . $ia . "," . $end_sem . "," . $ie . "," . $row['total'] . "," . $row['percent'] . ",'" . $row['grade'] . "'," . $row['gp'] . "," . $row['cr'] . "," . $row['gpv'] . ")";
                     $insert_atkt_tr_run = mysqli_query($conn, $insert_atkt_tr);
                     if (!$insert_atkt_tr_run) {
                         $error = true;
@@ -574,7 +580,6 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
              */
 
         }
-
         $update_tr_gen_flag = "UPDATE atkt_sessions SET tr_gen_flag=1 WHERE atkt_session_id=$atkt_sess_id";
         $update_tr_gen_flag_run = mysqli_query($conn, $update_tr_gen_flag);
                 /*$update_cgpa="UPDATE students SET cgpa=".$new_cgpa." WHERE enrol_no='".$roll_id['enrol_no']."'";
@@ -589,7 +594,7 @@ if (isset($_POST['tab_main_submit'])) //MAIN TR Generation
         }
 
     }
-    header('location: super_home.php');
+    //header('location: super_home.php');
 
 
 } else {

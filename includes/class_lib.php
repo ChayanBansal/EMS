@@ -170,27 +170,29 @@ class alert
 	function exec($msg, $class)
 	{
 		echo (' <div class="alert alert-' . $class . ' fade in alert-styled" id="err" style="position:fixed; top:0;left:0;z-index:200; width:100%; text-align:center">' . $msg . '<span class="close-alert" data-dismiss="alert" style="font-size:2.6rem">&times</span></div>');
-		$this->log_message($msg,$class);
+		$this->log_message($msg, $class);
 	}
-	function session_notification($sess_val,$succ_msg,$fail_msg){
+	function session_notification($sess_val, $succ_msg, $fail_msg)
+	{
 		if (isset($_SESSION[$sess_val])) {
 			if ($_SESSION[$sess_val] == true) {
-			  $alert = new alert();
-			  $alert->exec($succ_msg, "success");
-		  
+				$alert = new alert();
+				$alert->exec($succ_msg, "success");
+
 			} else {
-			  $alert = new alert();
-			  $alert->exec($fail_msg, "danger");
-		  
+				$alert = new alert();
+				$alert->exec($fail_msg, "danger");
+
 			}
 			unset($_SESSION[$sess_val]);
-		  }
+		}
 	}
-	function log_message($msg,$type){
-		if($type=="danger" OR $type=="warning"){
+	function log_message($msg, $type)
+	{
+		if ($type == "danger" or $type == "warning") {
 			require('config.php');
-			$insert_log="INSERT INTO logs(message,type) VALUES('$msg','$type')";
-			$insert_log_run=mysqli_query($conn,$insert_log);
+			$insert_log = "INSERT INTO logs(message,type) VALUES('$msg','$type')";
+			$insert_log_run = mysqli_query($conn, $insert_log);
 
 		}
 	}
@@ -550,29 +552,28 @@ class super_user_options
 			$get_sessions_run = mysqli_query($conn, $get_sessions);
 			$session_rows = mysqli_affected_rows($conn);
 			$i = 1;
-			$executed=true;
+			$executed = true;
 			$alert = new alert();
 			foreach ($courses_selected as $session_id) {
-				$check_exam_month_exists="SELECT count(*) FROM exam_month_year WHERE session_id=$session_id AND type_flag=0";
-				$check_exam_month_exists_run=mysqli_query($conn,$check_exam_month_exists);
-				if(mysqli_fetch_assoc($check_exam_month_exists_run)['count(*)']>0){
-					$alert->exec("Exam slot already selected!","warning");
-					$executed=false;
-				}
-				else{
-					$insert_exam_details = "INSERT INTO exam_month_year VALUES ($session_id,'".$month." ".$year."',0)";
+				$check_exam_month_exists = "SELECT count(*) FROM exam_month_year WHERE session_id=$session_id AND type_flag=0";
+				$check_exam_month_exists_run = mysqli_query($conn, $check_exam_month_exists);
+				if (mysqli_fetch_assoc($check_exam_month_exists_run)['count(*)'] > 0) {
+					$alert->exec("Exam slot already selected!", "warning");
+					$executed = false;
+				} else {
+					$insert_exam_details = "INSERT INTO exam_month_year VALUES ($session_id,'" . $month . " " . $year . "',0)";
 					$insert_exam_details_run = mysqli_query($conn, $insert_exam_details);
 					if (!$insert_exam_details_run) {
-						$executed=false;
-					} 
+						$executed = false;
+					}
 				}
 			}
-			if($executed){
-				$alert->exec("New exam slots successfully created!","success");
-			}else{
-				$alert->exec("Unable to allot exam slots!","danger");
+			if ($executed) {
+				$alert->exec("New exam slots successfully created!", "success");
+			} else {
+				$alert->exec("Unable to allot exam slots!", "danger");
 			}
-			
+
 		}
 	}
 	function add_subject($conn)
@@ -1140,7 +1141,7 @@ class useroptions
 			for ($i = 1; $i <= $_SESSION['num_rows']; $i++) {
 				$roll_id = $_SESSION['roll_id' . $i];
 				$marks = $_POST['score' . $i];
-				if (empty($marks) or is_nan($marks)) {
+				if (!isset($marks) OR is_nan($marks)) {
 					$alert->exec("Please enter correct value(s) for marks!", "warning");
 					$sqltransact->rollback($conn);
 					return;
@@ -1197,14 +1198,14 @@ class useroptions
 			$component_id = $_SESSION['sub_comp_id'];
 			$sub_id = $_SESSION['sub_id'];
 
-			$get_atkt_roll_list="SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id=".$_SESSION['atkt_session_id'];
-			$get_atkt_roll_list_run=mysqli_query($conn,$get_atkt_roll_list);
+			$get_atkt_roll_list = "SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id=" . $_SESSION['atkt_session_id'];
+			$get_atkt_roll_list_run = mysqli_query($conn, $get_atkt_roll_list);
 			$insert_score_qry = "INSERT INTO score_atkt VALUES ";
-			$i=1;
-			while($atkt_roll=mysqli_fetch_assoc($get_atkt_roll_list_run)){
+			$i = 1;
+			while ($atkt_roll = mysqli_fetch_assoc($get_atkt_roll_list_run)) {
 				$atkt_roll_id = $atkt_roll['atkt_roll_id'];
 				$marks = $_POST['score' . $i];
-				if (empty($marks) or is_nan($marks)) {
+				if (!isset($marks) OR is_nan($marks)) {
 					$alert->exec("Please enter correct value(s) for marks!", "warning");
 					$sqltransact->rollback($conn);
 					return;
@@ -1216,7 +1217,7 @@ class useroptions
 				}
 				$i++;
 			}
-			
+
 			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
 			if ($insert_score_qry_run) {
 				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['atkt_session_id'] . "," . $transaction_id . ",NULL,$component_id,3," . $_SESSION['ac_sub_code'] . ")";
@@ -1238,8 +1239,90 @@ class useroptions
 		}
 
 	}
-	
-	
+	function insert_retotal_marks($conn)
+	{
+		if (isset($_POST['feed_retotal_marks'])) {
+			$alert = new alert();
+			$operator_id = $_SESSION['operator_id'];
+			$form_input_check = new input_check();
+			$sqltransact = new GeneralOptions();
+			$sqltransact->start_transaction($conn);
+			$remark = $form_input_check->input_safe($conn, $_POST['remark']);
+			if (empty($remark)) {
+				$alert->exec("Please enter a remark!", "warning");
+				$sqltransact->rollback($conn);
+				return;
+			}
+			$transaction_qry = "INSERT into transactions(operator_id,remark) VALUES($operator_id,'$remark')";
+			$transaction_qry_run = mysqli_query($conn, $transaction_qry);
+			if ($transaction_qry_run) {
+				$transaction_id = mysqli_insert_id($conn);
+			} else {
+				$sqltransact->rollback($conn);
+				return;
+			}
+			$component_id = $_SESSION['sub_comp_id'];
+			$sub_id = $_SESSION['sub_id'];
+
+			$get_retotal_roll_list = "SELECT retotal_roll_id,roll_id FROM retotal_roll_list WHERE retotal_session_id=" . $_SESSION['retotal_session_id'];
+			$get_retotal_roll_list_run = mysqli_query($conn, $get_retotal_roll_list);
+			$insert_score_qry = "INSERT INTO score_retotal VALUES ";
+			$i = 1;
+			while ($retotal_roll = mysqli_fetch_assoc($get_retotal_roll_list_run)) {
+				$get_prev_marks = "SELECT marks FROM score WHERE roll_id=" . $retotal_roll['roll_id'] . " AND sub_id=$sub_id AND component_id=$component_id";
+				$get_prev_marks_run = mysqli_query($conn, $get_prev_marks);
+				$prev_marks = mysqli_fetch_assoc($get_prev_marks_run)['marks'];
+				if (!isset($prev_marks) OR is_nan($prev_marks)) {
+					$alert->exec("Please make sure the process of MAIN is complete before feeding retotalling marks!", "info");
+					$sqltransact->rollback($conn);
+					return;
+				}
+
+				$retotal_roll_id = $retotal_roll['retotal_roll_id'];
+				$marks = $_POST['score' . $i];
+				if (!isset($marks) or is_nan($marks)) {
+					$alert->exec("Please enter correct value(s) for marks!", "warning");
+					$sqltransact->rollback($conn);
+					return;
+				}
+				$status_changed = 1; //1 for no change, 0 for decrease, 2 for increase
+				if ($marks > $prev_marks) {
+					$status_changed = 2;
+				} else if ($marks == $prev_marks) {
+					$status_changed = 1;
+				} else {
+					$status_changed = 0;
+				}
+				if ($i == $_SESSION['num_rows']) {
+					$insert_score_qry .= "($retotal_roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL,$status_changed)";
+				} else {
+					$insert_score_qry .= "($retotal_roll_id,$component_id,$sub_id,$marks,$transaction_id,NULL,$status_changed),";
+				}
+				$i++;
+			}
+
+			$insert_score_qry_run = mysqli_query($conn, $insert_score_qry);
+			if ($insert_score_qry_run) {
+				$audit_qry = "INSERT INTO auditing VALUES(" . $_SESSION['retotal_session_id'] . "," . $transaction_id . ",NULL,$component_id,1," . $_SESSION['ac_sub_code'] . ")";
+				$audit_qry_run = mysqli_query($conn, $audit_qry);
+				if ($audit_qry_run) {
+					$_SESSION['score_entered_success'] = true;
+					$sqltransact->end_transaction($conn);
+					header('location: /ems/includes/useroptions');
+				} else {
+					$_SESSION['score_entered_success'] = false;
+					$sqltransact->rollback($conn);
+					header('location: /ems/includes/useroptions');
+				}
+			} else {
+				$_SESSION['score_entered_success'] = false;
+				$sqltransact->rollback($conn);
+				header('location: /ems/includes/useroptions');
+			}
+		}
+
+	}
+
 	function request_tr_update($conn)
 	{
 		if (isset($_POST['update_tr_submit'])) {
