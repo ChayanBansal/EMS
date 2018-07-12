@@ -1198,7 +1198,7 @@ class useroptions
 			$component_id = $_SESSION['sub_comp_id'];
 			$sub_id = $_SESSION['sub_id'];
 
-			$get_atkt_roll_list = "SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id=" . $_SESSION['atkt_session_id'];
+			$get_atkt_roll_list = "SELECT atkt_roll_id FROM atkt_roll_list WHERE atkt_session_id=" . $_SESSION['atkt_session_id']." AND atkt_roll_id IN(SELECT atkt_roll_id FROM atkt_subjects WHERE sub_id=".$_SESSION['sub_id'].")" ;
 			$get_atkt_roll_list_run = mysqli_query($conn, $get_atkt_roll_list);
 			$insert_score_qry = "INSERT INTO score_atkt VALUES ";
 			$i = 1;
