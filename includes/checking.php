@@ -86,6 +86,7 @@ if (isset($_POST["check_button_main"])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel='shortcut icon' href='images/favicon.ico' type='image/x-icon'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
