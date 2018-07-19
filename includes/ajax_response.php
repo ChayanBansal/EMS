@@ -180,18 +180,16 @@ if (isset($_POST['getComponent'])) {
                 }
                 break;
             case 'retotal':
-            $get_comp_retotal="SELECT component_id,component_name FROM component WHERE component_id IN(3,4) AND IN(SELECT component_id FROM component_distribution WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_POST['sub_code'] . "' AND ac_session_id=$ac_sess_id)))";    
+            $get_comp_retotal="SELECT component_id,component_name FROM component WHERE component_id IN(2,4) AND component_id IN(SELECT component_id FROM component_distribution WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_POST['sub_code'] . "' AND ac_session_id=$ac_sess_id)) AND sub_id IN(SELECT DISTINCT(sub_id) FROM retotal_subjects WHERE retotal_roll_id IN(SELECT retotal_roll_id FROM retotal_roll_list WHERE retotal_session_id IN(SELECT retotal_session_id FROM retotal_sessions WHERE ac_session_id=$ac_sess_id))))";    
             $get_comp_retotal_run=mysqli_query($conn,$get_comp_retotal);
             while ($sub_comp = mysqli_fetch_assoc($get_comp_retotal_run)) {
-                    /*$check_filled = "SELECT COUNT(*) FROM $retotal.retotal_subjects WHERE sub_id IN(SELECT sub_id FROM sub_distribution WHERE ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $sub_code . "' AND ac_session_id=$ac_sess_id) AND component_id=" . $sub_comp['component_id'] . " AND roll_id IN 
-                    (SELECT roll_id FROM roll_list WHERE enrol_no IN (SELECT enrol_no FROM students WHERE ac_session_id=$ac_sess_id))";
+                    $check_filled = "SELECT count(*) FROM auditing WHERE type_flag=1 AND ac_sub_code IN(SELECT ac_sub_code FROM subjects WHERE sub_code='" . $_POST['sub_code'] . "' AND ac_session_id=$ac_sess_id) AND component_id=" . $sub_comp['component_id'] . " AND session_id IN(SELECT retotal_session_id FROM retotal_sessions WHERE ac_session_id=$ac_sess_id)";
                     $check_filled_run = mysqli_query($conn, $check_filled);
-                    $count = mysqli_fetch_assoc($check_filled_run);
-                    if ($count['COUNT(*)'] == 0) {
-                     */ echo ('<option value="' . $sub_comp['component_id'] . '">' . $sub_comp['component_name'] . '</option>');
-                    /*} else {
-                       echo ('<option class="fa" value="' . $sub_comp['component_id'] . '" disabled>' . $sub_comp['component_name'] . ' (Already filled &#xf00c; )</option>');
-                    }*/
+                    if (mysqli_fetch_assoc($check_filled_run)['count(*)'] > 0) {
+                        echo ('<option class="fa" disabled >' . $sub_comp['component_name'] . ' (Already filled &#xf00c; )</option>');
+                    } else {
+                        echo ('<option value="' . $sub_comp['component_id'] . '">' . $sub_comp['component_name'] . '</option>');
+                    }
                 }
                 break;
             case 'reval':
@@ -221,14 +219,7 @@ if (isset($_POST['getComponent'])) {
                 die("Error Encountered!");
                 break;
         }
-        if ($_POST['main_atkt'] == 'main') {
-
-        } else if ($_POST['main_atkt'] == 'atkt') {
-            $get_atkt_sub_comp = "SELECT component_id, component_name FROM component WHERE component_id IN
-            (SELECT DISTINCT(component_id) FROM atkt_subjects WHERE roll_id IN
-            (SELECT roll_id FROM atkt_list WHERE enrol_no IN
-            (SELECT enrol_no FROM students WHERE course_id=" . $_SESSION['current_course_id'] . " AND from_year=" . $_POST['from_year'] . " AND current_sem=" . $_POST['semester'] . ")))";
-        }
+        
     }
 }
 if (isset($_POST['get_ay'])) {

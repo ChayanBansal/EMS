@@ -817,6 +817,96 @@ function chat(location,username)
               </div>
               
               <div id="tabs-checking-retotal" class="tab-pane fade in">
+
+<table id="check_list" class="table table-hover">
+      <caption> <input class="form-control" id="searchbar_modal_checking" type="text" placeholder="Search table by any parameter...."></caption>
+    <thead>
+      <tr>
+        <th>Batch<br>(FROM YEAR)</th>
+        <th>Semester</th>
+        <th>Type</th>
+        <th>Subject Code</th>
+        <th>Subject Name</th>
+        <th>Component Name</th>
+        <th>Operator</th>
+        <th>Operator's Remark</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody style="overflow: auto;" id="checking_modal">
+    <?php
+    $get_check_list = "SELECT A.*, T.operator_id,acs.*,s.sub_code FROM auditing A, transactions T, retotal_sessions retotal, academic_sessions acs, subjects s WHERE A.transaction_id=T.transaction_id AND A.session_id=retotal.retotal_session_id AND  retotal.ac_session_id=acs.ac_session_id AND acs.course_id=" . $_SESSION['current_course_id'] . " AND A.type_flag=1 AND s.ac_sub_code=A.ac_sub_code";
+    $get_check_list_run = mysqli_query($conn, $get_check_list);
+    echo ('<form action="checking" method="post">');
+    while ($check_list = mysqli_fetch_assoc($get_check_list_run)) {
+        if ($check_list["check_id"] == null) {
+            echo ('<tr class="danger">');
+            echo ('<td>' . $check_list["from_year"] . '</td>');
+            echo ('<td>' . $check_list["current_semester"] . '</td>');
+            echo ('<td>MAIN</td>');
+            echo ('<td>' . $check_list["sub_code"] . '</td>');
+            $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $check_list['sub_code'] . "' AND ac_session_id=" . $check_list['ac_session_id'];
+            $get_sub_name_run = mysqli_query($conn, $get_sub_name);
+            $result_sub_name = mysqli_fetch_assoc($get_sub_name_run);
+            echo ('<td>' . $result_sub_name['sub_name'] . '</td>');
+
+            $get_component_name = "SELECT component_name FROM component WHERE component_id=" . $check_list['component_id'];
+            $get_component_name_run = mysqli_query($conn, $get_component_name);
+            $result_component_name = mysqli_fetch_assoc($get_component_name_run);
+            echo ('<td>' . $result_component_name['component_name'] . '</td>');
+
+            $get_operator_name = "SELECT operator_name FROM operators WHERE operator_id=" . $check_list['operator_id'];
+            $get_operator_name_run = mysqli_query($conn, $get_operator_name);
+            $result_operator_name_run = mysqli_fetch_assoc($get_operator_name_run);
+            echo ('<td>' . $result_operator_name_run['operator_name'] . '</td>');
+
+            $get_remark = "SELECT remark FROM transactions WHERE transaction_id=" . $check_list['transaction_id'];
+            $get_remark_run = mysqli_query($conn, $get_remark);
+            $result_remark = mysqli_fetch_assoc($get_remark_run);
+            echo ('<td>' . $result_remark['remark'] . '</td>');
+            echo ('<td style="text-align:center">
+                            <button class="btn btn-default" name="check_button_retotal" type="submit" value=' . $check_list["transaction_id"] . '>
+                            <div class="glyphicon glyphicon-check">
+                            </div>
+                            <div>Check Now</div>
+                            </button>
+                     </td>');
+            echo ('</tr>');
+        } else {
+            echo ('<tr class="success">');
+            echo ('<td>' . $check_list["from_year"] . '</td>');
+            echo ('<td>' . $check_list["current_semester"] . '</td>');
+            echo ('<td>MAIN</td>');
+            echo ('<td>' . $check_list["sub_code"] . '</td>');
+            $get_sub_name = "SELECT sub_name FROM subjects WHERE sub_code='" . $check_list['sub_code'] . "' AND ac_session_id=" . $check_list['ac_session_id'];
+            $get_sub_name_run = mysqli_query($conn, $get_sub_name);
+            $result_sub_name = mysqli_fetch_assoc($get_sub_name_run);
+            echo ('<td>' . $result_sub_name['sub_name'] . '</td>');
+
+            $get_component_name = "SELECT component_name FROM component WHERE component_id=" . $check_list['component_id'];
+            $get_component_name_run = mysqli_query($conn, $get_component_name);
+            $result_component_name = mysqli_fetch_assoc($get_component_name_run);
+            echo ('<td>' . $result_component_name['component_name'] . '</td>');
+
+            $get_operator_name = "SELECT operator_name FROM operators WHERE operator_id=" . $check_list['operator_id'];
+            $get_operator_name_run = mysqli_query($conn, $get_operator_name);
+            $result_operator_name_run = mysqli_fetch_assoc($get_operator_name_run);
+            echo ('<td>' . $result_operator_name_run['operator_name'] . '</td>');
+
+            $get_remark = "SELECT remark FROM transactions WHERE transaction_id=" . $check_list['transaction_id'];
+            $get_remark_run = mysqli_query($conn, $get_remark);
+            $result_remark = mysqli_fetch_assoc($get_remark_run);
+            echo ('<td>' . $result_remark['remark'] . '</td>');
+            echo ('<td style="text-align:center"><div class="glyphicon glyphicon-ok"></div><div>Already Checked</div></td>');
+            echo ('</tr>');
+        }
+    }
+    echo ('</form>');
+    ?>
+    </tbody>
+  </table>
+
+
               </div>
               
               <div id="tabs-checking-reval" class="tab-pane fade in">
