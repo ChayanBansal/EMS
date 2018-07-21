@@ -482,7 +482,7 @@ if ($get_current_sem_qry_run) {
             if ($check_tr_gen != 0) {
                 echo ('<button class="btn btn-info input-lg" disabled>TR Already Generated <i class="glyphicon glyphicon-ok"></i></button>');
             } else {
-                echo ('<button class="btn btn-default input-lg" type="submit" name="tab_atkt_submit" value="' . $sem . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
+                echo ('<button class="btn btn-default input-lg" type="submit" name="tab_retotal_submit" value="' . $sem . '">Generate TR <i class="glyphicon glyphicon-circle-arrow-right"></i></button>');
 
             }
         } else {

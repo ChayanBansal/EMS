@@ -154,6 +154,7 @@ if (isset($_SESSION['tr_generated'])) {
 }
 $tr_notify=new alert();
 $tr_notify->session_notification('tr_generated_atkt',"Tabulation register for ATKT successfully generated","Unable to generate Tabulation Register");
+$tr_notify->session_notification('tr_generated_retotal',"Tabulation register for Retotalling successfully generated","Unable to generate Tabulation Register!");
 $obj = new head();
 $obj->displayheader();
 $obj->dispmenu(3, ["/ems/includes/super_home", "/ems/includes/logout_super", "/ems/includes/developers"], ["glyphicon glyphicon-home", "glyphicon glyphicon-log-out", "glyphicon glyphicon-info-sign"], ["Home", "Log Out", "About Us"]);
