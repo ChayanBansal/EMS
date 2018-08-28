@@ -1,7 +1,7 @@
 <?php
 $host="localhost"; //"sql12.freemysqlhosting.net";
 $user="root"; //"sql12215234";
-$pass="";//"DEFYiHZ4uc";
+$pass="123456";//"DEFYiHZ4uc";
 $db="ems";//"sql12215234";
 $conn=mysqli_connect($host,$user,$pass,$db);
 if(mysqli_connect_errno()){
