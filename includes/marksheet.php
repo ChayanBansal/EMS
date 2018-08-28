@@ -26,25 +26,30 @@ require('config.php');
         $semester = $_SESSION['semester'];
         $course_id = $_SESSION['course_id'];
 
-        $get_stud_detail="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `course_id`, `from_year`, `current_sem`, `cgpa` FROM students WHERE enrol_no = 
-                        (SELECT enrol_no FROM roll_list WHERE roll_id = $roll_id)";
+        $get_stud_detail="SELECT `enrol_no`, `first_name`, `middle_name`, `last_name`, `father_name`, `mother_name`, `ac_session_id`, `cgpa` FROM ems.students WHERE enrol_no = 
+                        (SELECT enrol_no FROM ems.roll_list WHERE roll_id = $roll_id)";
         $get_stud_detail_run=mysqli_query($conn,$get_stud_detail);
         $stud=mysqli_fetch_assoc($get_stud_detail_run);
         //$stud['enrol_no'] $stud['first_name'] $stud['middle_name'] $stud['last_name'] $stud['father_name'] $stud['mother_name'] $stud['course_id'] $stud['from_year'] $stud['current_sem'] $stud['cgpa']
 
-        $get_prog_br="SELECT program, branch FROM branches WHERE course_id=$course_id";
+        //getting school name
+        $get_school_name="SELECT school_name FROM ems.schools WHERE school_id= (SELECT school_id FROM ems.courses WHERE course_id=$course_id)";
+        $get_school_name_run = mysqli_query($conn,$get_school_name);
+        $school_name=mysqli_fetch_assoc($get_school_name_run);
+
+        $get_prog_br="SELECT program, branch FROM ems.branches WHERE course_id=$course_id";
         $get_prog_br_run=mysqli_query($conn,$get_prog_br);
         $prog_br=mysqli_fetch_assoc($get_prog_br_run);
         //$prog_br['progam'] $prog_br['branch']
 
-        $get_exam_month="SELECT month_year FROM exam_month_year WHERE ac_session_id =
-                    (SELECT ac_session_id FROM academic_sessions WHERE course_id=$course_id AND from_year=".$stud['from_year']." AND current_semester=$semester)";
+        $get_exam_month="SELECT month_year FROM ems.exam_month_year WHERE session_id =" .$stud["ac_session_id"];
+                    //(SELECT ac_session_id FROM academic_sessions WHERE course_id=$course_id AND from_year=".$stud['from_year']." AND current_semester=$semester)";
         $get_exam_month_run=mysqli_query($conn,$get_exam_month);
         $exam_month=mysqli_fetch_assoc($get_exam_month_run);//$exam_month['month_year']
         
 
         //Updating no_prints in roll_list
-        $update_prints="UPDATE roll_list set no_prints=(no_prints+1) WHERE roll_id=$roll_id";
+        $update_prints="UPDATE ems.roll_list set no_prints=(no_prints+1) WHERE roll_id=$roll_id";
         $update_prints_run=mysqli_query($conn,$update_prints);
        
     }
@@ -259,7 +264,7 @@ require('config.php');
                     </tr>
                     <tr>
                         <td>Institute:</td>
-                        <td>School Of ".$prog_br['branch']."</td>
+                        <td>School Of ".$school_name["school_name"]."</td>
                     </tr>
                 </table>
             </div>
@@ -303,7 +308,7 @@ require('config.php');
                         <th>EARNED</th>
                     </tr>");
 
-    $get_subjects_opted="SELECT sub_code, sub_name, ie_flag FROM subjects WHERE (course_id=$course_id AND semester=$semester) AND ((elective_flag=0) OR (elective_flag=1 AND sub_code IN (SELECT sub_code FROM elective_map WHERE enrol_no='".$stud['enrol_no']."')))";
+    $get_subjects_opted="SELECT ac_sub_code, sub_code, sub_name, ie_flag FROM ems.subjects WHERE (ac_session_id=".$stud['ac_session_id'].") AND ((elective_flag=0) OR (elective_flag=1 AND sub_code IN (SELECT sub_code FROM ems.elective_map WHERE enrol_no='".$stud['enrol_no']."')))";
     $get_subjects_opted_run=mysqli_query($conn,$get_subjects_opted);
     while($sub=mysqli_fetch_assoc($get_subjects_opted_run)) //$sub['sub_code'] $sub['sub_name'] $sub['ie_flag']
     {
@@ -311,11 +316,11 @@ require('config.php');
         {
             $audit_code=$sub['sub_code'];
             $audit_name=$sub['sub_name'];
-            $get_sub_id="SELECT sub_id, practical_flag FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
+            $get_sub_id="SELECT sub_id, practical_flag FROM ems.sub_distribution WHERE ac_sub_code='".$sub['ac_sub_code']."'";
             $get_sub_id_run=mysqli_query($conn,$get_sub_id);
             $sub_id=mysqli_fetch_assoc($get_sub_id_run); //$sub['sub_id']
 
-            $get_percent="SELECT percent FROM tr WHERE roll_id=$roll_id AND sub_id=".$sub_id['sub_id'];
+            $get_percent="SELECT percent FROM ems.tr WHERE roll_id=$roll_id AND sub_id=".$sub_id['sub_id'];
             $get_percent_run=mysqli_query($conn,$get_percent);
             $percent=mysqli_fetch_assoc($get_percent_run);//$percent['percent']
 
@@ -331,14 +336,14 @@ require('config.php');
         else if($sub['ie_flag']==0)
         {
             $rowspan;
-            $get_sub_id_count="SELECT COUNT(sub_id) as count FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
+            $get_sub_id_count="SELECT COUNT(sub_id) as count FROM ems.sub_distribution WHERE ac_sub_code='".$sub['ac_sub_code']."'";
             $get_sub_id_count_run=mysqli_query($conn,$get_sub_id_count);
             $sub_id_count=mysqli_fetch_assoc($get_sub_id_count_run);
             echo('<tr>
             <td rowspan="'.$sub_id_count['count'].'" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_code'].'</td>  
             <td rowspan="'.$sub_id_count['count'].'" class="'.$sub['sub_code'].'" id="blue">'.$sub['sub_name'].'</td>'); //These two have same class, i.e, sub_code
             
-            $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM sub_distribution WHERE sub_code='".$sub['sub_code']."'";
+            $get_sub_id="SELECT sub_id, practical_flag, credits_allotted FROM ems.sub_distribution WHERE ac_sub_code='".$sub['ac_sub_code']."'";
             $get_sub_id_run=mysqli_query($conn,$get_sub_id);
 
             echo('<script> var rowspan_'.$sub['sub_code'].'=0; </script>'); //JS variable for rowspan
@@ -346,7 +351,7 @@ require('config.php');
             while($sub_id=mysqli_fetch_assoc($get_sub_id_run))//$sub_id['sub_id'] $sub_id['practical_flag'] $sub_id['credits_allotted']
             {
                 
-                $get_cr_grade="SELECT cr, grade FROM tr WHERE roll_id=$roll_id AND sub_id=".$sub_id['sub_id'];
+                $get_cr_grade="SELECT cr, grade FROM ems.tr WHERE roll_id=$roll_id AND sub_id=".$sub_id['sub_id'];
                 $get_cr_grade_run=mysqli_query($conn,$get_cr_grade);
                 $cr_grade=mysqli_fetch_assoc($get_cr_grade_run);//$cr_grade['cr'] $cr_grade['grade']
 
@@ -379,11 +384,11 @@ require('config.php');
                      <div class="block">Result: 
                          <span class="info" id="info" style="font-weight:700;">
                              <?php 
-                                $get_sgpa="SELECT sgpa FROM exam_summary WHERE roll_id=$roll_id";
+                                $get_sgpa="SELECT sgpa FROM ems.exam_summary WHERE roll_id=$roll_id";
                                 $get_sgpa_run=mysqli_query($conn,$get_sgpa);
                                 $sgpa=mysqli_fetch_assoc($get_sgpa_run);//$sgpa['sgpa']
 
-                                $get_fail_count="SELECT COUNT(component_id) AS fail_count FROM failure_report WHERE roll_id=$roll_id";
+                                $get_fail_count="SELECT COUNT(component_id) AS fail_count FROM ems.failure_report WHERE roll_id=$roll_id";
                                 $get_fail_count_run=mysqli_query($conn,$get_fail_count);
                                 $fail_count=mysqli_fetch_assoc($get_fail_count_run);
                                 //$fail_count['fail_count']
