@@ -1404,7 +1404,7 @@ class useroptions
 					$get_sub_id = mysqli_query($conn, $get_sub_id);
 					$subid = mysqli_fetch_assoc($get_sub_id)['sub_id'];
 					//updating score
-					$update_score = "UPDATE score SET marks=" . $_SESSION['marks' . $comp] . " WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
+					$update_score = "UPDATE $main.score SET marks=" . $_SESSION['marks' . $comp] . " WHERE roll_id=$rollid AND sub_id=$subid AND component_id=$comp";
 					$update_score_run = mysqli_query($conn, $update_score);
 					if ($update_score_run) {
 						//success	

@@ -476,7 +476,7 @@ if ($get_current_sem_qry_run) {
         
         <div class="col-lg-7 col-md-7 col-sm-6">');
         if ($subject_count == $subject_completed) {
-            $check_tr_generated = "SELECT tr_gen_flag FROM retotal_sessions WHERE ac_session_id =$ac_sess_id";
+            $check_tr_generated = "SELECT tr_gen_flag FROM ems.retotal_sessions WHERE ac_session_id =$ac_sess_id";
             $check_tr_generated_run = mysqli_query($conn, $check_tr_generated);
             $check_tr_gen = mysqli_fetch_assoc($check_tr_generated_run)['tr_gen_flag'];
             if ($check_tr_gen != 0) {

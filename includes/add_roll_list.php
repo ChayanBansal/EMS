@@ -289,7 +289,7 @@ if(isset($_POST['proceed_to_add_roll']))
             }
             else
             {
-                $get_course_name="SELECT course_name FROM courses WHERE course_id=$course_id";
+                $get_course_name="SELECT course_name FROM $main.courses WHERE course_id=$course_id";
                 $get_course_name_run=mysqli_query($conn,$get_course_name);
                 if($get_course_name_run)
                 {
@@ -577,10 +577,10 @@ if(isset($_POST['proceed_to_add_roll']))
             }
         }
     }
-    else if($type==='3')
+    else if($type==='5')
     {
          //Session in which the students are to be registered
-         $get_atkt_session_id="SELECT ac_session_id, atkt_session_id FROM ems_atkt WHERE ac_session_id =(SELECT ac_session_id FROM $main.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester)";
+         $get_atkt_session_id="SELECT ac_session_id, atkt_session_id FROM ems.atkt_sessions WHERE ac_session_id =(SELECT ac_session_id FROM $main.academic_sessions WHERE from_year=$from_year AND course_id=$course_id AND current_semester=$semester)";
          $get_atkt_session_id_run=mysqli_query($conn,$get_atkt_session_id);
          if($get_atkt_session_id_run!=FALSE)
          {
@@ -589,7 +589,7 @@ if(isset($_POST['proceed_to_add_roll']))
                 $ac_session_id=$result['ac_session_id'];
                 $atkt_session_id=$result['atkt_session_id'];
             }
-            $get_students="SELECT `s.enrol_no`, `s.first_name`, `s.middle_name`, `s.last_name`, `s.father_name`, `s.mother_name`, `s.address`, `s.gender`, r.atkt_reg_flag, r.roll_id FROM $main.students s, $main.roll_list r  WHERE s.ac_session_id=$ac_session_id AND s.enrol_no=r.enrol_no AND s.enrol_no IN(SELECT enrol_no FROM $main.roll_list WHERE semester =$semester AND atkt_flag=1)";
+            $get_students="SELECT s.enrol_no, s.first_name, s.middle_name, s.last_name, s.father_name, s.mother_name, s.address, s.gender, r.atkt_reg_flag, r.roll_id FROM $main.students s, $main.roll_list r  WHERE s.ac_session_id=$ac_session_id AND s.enrol_no=r.enrol_no AND s.enrol_no IN(SELECT enrol_no FROM $main.roll_list WHERE semester =$semester AND atkt_flag=1)";
             $get_students_run=mysqli_query($conn,$get_students);
             if($get_students_run!=FALSE)
             {
@@ -674,12 +674,12 @@ if(isset($_POST['proceed_to_add_roll']))
                 </footer>
                 
                 </div></div></div></td><td>');
-                $get_atkt_roll_id="SELECT atkt_roll_id FROM ems_atkt.atkt_roll_list WHERE roll_id=".$student['roll_id']."' AND atkt_session_id=$atkt_session_id";
+                $get_atkt_roll_id="SELECT atkt_roll_id FROM ems.atkt_roll_list WHERE roll_id=".$student['roll_id']."' AND atkt_session_id=$atkt_session_id";
                 $get_atkt_roll_id_run=mysqli_query($conn,$get_atkt_roll_id);
                 if(mysqli_num_rows($get_atkt_roll_id_run)>0)
                 {
                     $result=mysqli_fetch_assoc($get_atkt_roll_id_run);
-                    $get_atkt_subject="SELECT sd.sub_id,sd.practical_flag, s.sub_code, s.sub_name FROM $main.subjects s, $main.sub_distribution WHERE sd.sub_id IN (SELECT sub_id FROM ems_atkt.atkt_subjects WHERE atkt_roll_id=".$result["atkt_roll_id"].")";
+                    $get_atkt_subject="SELECT sd.sub_id,sd.practical_flag, s.sub_code, s.sub_name FROM $main.subjects s, $main.sub_distribution WHERE sd.sub_id IN (SELECT sub_id FROM ems.atkt_subjects WHERE atkt_roll_id=".$result["atkt_roll_id"].")";
                     $get_atkt_subject_run=mysqli_query($conn,$get_detained_subject);
                     if($get_atkt_subject_run)
                     {
@@ -767,10 +767,10 @@ if(isset($_POST['proceed_to_add_roll']))
                     
                     </div></div></div></td>');
                     echo('<td>');
-                    $get_subjects="SELECT s.ac_sub_code, s.sub_code, s.sub_name, s.elective_flag, sd.sub_id, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE s.ac_sesion_id=$ac_session_id AND s.ac_sub_code=sd.ac_sub_code AND sd.sub_id IN
+                    $get_subjects="SELECT s.ac_sub_code, s.sub_code, s.sub_name, s.elective_flag, sd.sub_id, sd.practical_flag FROM $main.subjects s, $main.sub_distribution sd WHERE s.ac_session_id=$ac_session_id AND s.ac_sub_code=sd.ac_sub_code AND sd.sub_id IN
                                     (SELECT sub_id FROM $main.failure_report WHERE roll_id=".$student["roll_id"].")";
                     $get_subjects_run=mysqli_query($conn,$get_subjects);
-                    if(myqli_num_rows($get_subjects_run)>0)
+                    if(mysqli_num_rows($get_subjects_run)>0)
                     {
                         foreach($get_subjects_run as $subject)
                         {
